@@ -1,53 +1,57 @@
+"""  
+	Recommended *options* are in *
+"""
 # =============================================================
 #		MODULE: option
 # =============================================================
-''' The recommended options are in * '''
 module option
-
 	# DOWNLAOD PACKAGES
-		const DownloadPackage = false
+		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# HYDRAULIC MODEL
-		const HydroModel = "vangenuchten" # [kosugi_dual]* or [kosugi_single]or [vangenuchten]
+		const HydroModel = "Kosugi_Single" # <"Kosugi_Single">* OR <"kosugi_Dual">* OR  <"vangenuchten">
 
-	# DATA AVAILABLE
-		const θΨ = 		true  		# [true]* or [false]
-		const KunsatΨ = false 		# [true]* or [false]
-		const Psd = 	true 		# [true]* or [false]
-		const InfT = 	true 		# [true]* or [false]
-		const IdTrue = 	true 		# [true]* or [false]
-		const OtherId = true 		# [true]* or [false]
+	# MODELS RUN
+		const Id_Select 		= true 	# <true>* Select Id from the data OR <false> use all the data
+		const θΨ 			= "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
+		const KunsatΨ		= true #  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>  
+		const Psd 			= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
+		const Infiltration 	= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
+		const KsatModel 	= false # <true> Derive Ksat from θ(Ψ) OR <false>
+
 
 
 		# =============================================================
 		#		MODULE: hydroparam
 		# =============================================================
 			module hydroparam
-				const Psd_2_θΨ = true
-				const Psd_2_HydroParam = false		
+				const θsOpt 	= false #  <true> Optimize θs OR <false>* fixed from θ(ψ=0)
+				const θrOpt 	= "Opt" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=0 <"0"> Fixed 
+				const KsOpt 	= "true" #  <true> Optimize Ks (require KunsatΨ=true) OR <"false"> fixed from <"K(ψ=0)">		
 			end  # module hydroparam
 		# ............................................................
+
 
 
 		# =============================================================
 		#		MODULE: psd
 		# =============================================================
 			module psd
-				const Psd_2_θΨ = true
-				const Psd_2_HydroParam = false		
+				const Optimize 		= false # <true> Optimize the PSD model (require θΨ) OR <false>* derived from preset values 
+				const HydroParam 	= false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>	
 			end  # module psd
 		# ............................................................
 
 
 
 		# =============================================================
-		#		MODULE: inf
+		#		MODULE: infiltration
 		# =============================================================
 			module inf
-				const Model = "QuasiExact" # [QuasiExact] or [Simplified]
-				const θΨ = false
-				const HydroParam = false
-				const Inf_θini = false	
+				const Optimize 		= false 		# <true> Optimize the parameters of the infiltration model (require θΨ) OR <false> derived from preset values
+				const Model 		= "QuasiExact" 	# <"QuasiExact"> OR <"Simplified">*
+				const HydroParam 	= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
+				const θini 			= false			# <true> derive the infiltration curves for different starting θini OR <false>
 			end  # module inf
 		# ............................................................
 	
@@ -57,10 +61,9 @@ module option
 		#		MODULE: ksat
 		# =============================================================
 			module ksat
-				const Ksat = false # Derive Ksat from θ(Ψ)
+				const Optimize = false # <true> Optimize the parameters of Ks model (require KΨ) OR <false>* derived from preset values 
+				const Ksat = false # <true> Derive Ksat from θ(Ψ) OR <false>
 			end  # module ksat
 			# ............................................................
-
 end  # module option
 # ............................................................
-

@@ -25,7 +25,7 @@
 			"function ${1:name}($2)",
 			"\t$0",
 			"	return",
-			"end  # function ${1:name}"
+			"end  # function: ${1:name}"
 		],
 		"description": "Function declaration with ending comment"
 	},

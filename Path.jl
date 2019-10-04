@@ -4,12 +4,12 @@
 module path
 
 	# INPUT PATH
-		Hkunsat = "H_Kunsat.csv"
-		Hθ = "H_Theta.csv"
-		Psd = "Psd.csv"
-		Infiltration = "Infiltration.csv"
-		IdTrue = "Id_True.csv"
-		Parameter = "Parameter.csv"
+		Id_Select 		= "Id_Select.csv"
+		Kunsat 			= "Kunsat_H.csv"
+		Ψθ 				= "Theta_H.csv"
+		Psd 			= "Psd.csv"
+		Infiltration 	= "Infiltration.csv"
+		Parameter 		= "Parameter.csv"
 
 	# OUTPUT PATH
 
@@ -17,11 +17,11 @@ module path
 
 	# PROCESSING 
 		Home = @__DIR__
+		Id_Select = Home * "//INPUT//" * Id_Select
 
-		Hkunsat = Home * "//INPUT//" * Hkunsat
-		Hθ = Home * "//INPUT//" * Hθ
+		Kunsat = Home * "//INPUT//" * Kunsat
+		Ψθ = Home * "//INPUT//" * Ψθ
 		Psd = Home * "//INPUT//" * Psd
 		Infiltration = Home * "//INPUT//" * Infiltration
-		IdTrue = Home * "//INPUT//" * IdTrue
 end  # module path
 # ............................................................

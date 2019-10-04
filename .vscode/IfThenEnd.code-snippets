@@ -21,9 +21,9 @@
 		"body": [
 			"if ${1:name}",
 			"\t$0",
-			"end  # if ${1:name}"
+			"end  # if: ${1:name}"
 		],
-		"description": "if declaration with ending comment"
+		"description": "if comment"
 	},
 	"Macro Declaration": {
 		"prefix": "macro",

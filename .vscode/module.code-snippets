@@ -23,10 +23,10 @@
 			"# =============================================================",
 			"module ${1:name}",
 			"\t$0",
-			"end  # module ${1:name}",
+			"end  # module: ${1:name}",
 			"# ............................................................",
 		],
-		"description": "Function declaration with ending comment"
+		"description": "Function comment"
 	},
 	"Macro Declaration": {
 		"prefix": "module",
