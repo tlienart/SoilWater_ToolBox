@@ -9,7 +9,7 @@ module option
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# HYDRAULIC MODEL
-		const HydroModel = "Kosugi_Single" # <"Kosugi_Single">* OR <"kosugi_Dual">* OR  <"vangenuchten">
+		const HydroModel = "Kosugi" # <"Kosugi">* OR  <"vangenuchten">
 
 	# MODELS RUN
 		const Id_Select 		= true 	# <true>* Select Id from the data OR <false> use all the data

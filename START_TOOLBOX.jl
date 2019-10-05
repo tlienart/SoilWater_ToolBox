@@ -12,7 +12,6 @@ include("Read.jl")
 function START_TOOLBOX()
 
 	println("=== START READING === \n")
-
 		# Selecting soils of interest 
 		Id_Select, Id_True, N_SoilSelect = read.ID()
 
@@ -26,15 +25,11 @@ function START_TOOLBOX()
 
 		if option.Psd
 			Diameter, ∑Psd, N_Psd  = read.PSD(Id_Select, N_SoilSelect)
-			println(∑Psd[2,1:N_Psd[2]])
 		end
 		
-
 		if option.Infiltration
 			T, ∑Inf, N_Inf  = read.INFILTRATION(Id_Select, N_SoilSelect)
 		end
-
-	
 	println("=== END READING ===")
 		
 end  # function: START_TOOLBOX

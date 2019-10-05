@@ -1,64 +1,42 @@
 
 
+# =============================================================
+#		MODULE: param
+# =============================================================
 module param
-	DIR_Working = pwd() # Saving the current working directory
-	push!(LOAD_PATH, DIR_Working) # All the subroutines are in the current working directory
-	include("Cst.jl")
+	# θr FROM PSD
+		# Optimized values: Psd_2_θr = "Param"
+			Psd_2_θr_Size = 1  # size of particle size corresponding to clay fraction
+			Psd_2_θr_α1 = 16.01602133125399 # α1
+			Psd_2_θr_α2 = 2.013125380534685 # α2 
 
-    # Kosugi params minimum and maximum
+			# Feasible range
+				Psd_2_θr_α1_Min = 0.01
+				Psd_2_θr_α1_Max = 100.0
 
-    i_Sample_Start = 1
-    i_Sample_End = 15 #15
+				Psd_2_θr_α2_Min = 0.001
+				Psd_2_θr_α2_Max = 10.0
 
-    Header = ["Id", "Se_Ini",	"THETAs",	"THETAr",	"Ks", "N",	"Hvg",	"Km",	"Sigma",	"Hkg",	"Err_Ks_BestG_Kg", "Err_Ks_BestG_Vg", "Err_Ks_BestGi_Kg","Err_Ks_BestGi_Vg", "Err_Ks_Qe_Kg", "Err_Ks_Qe_Vg", "Err_Qe", "Err_Sorpt_BestG_Kg", "Err_Sorpt_BestG_Vg", "Err_Sorpt_BestGi_Kg", "Err_Sorpt_BestGi_Vg", "Err_Sorpt_Qe_Kg", "Err_Sorpt_Qe_Vg", "Hkg_Qe",	"Hvg_BestG",	"Hvg_BestGi",	"Hvg_Qe",	"Hkg_BestG",	"Kr_THETAini_Vg",	"Ks_BestG_Kg",	"Ks_BestG_Vg",	"Ks_BestGi_Kg",	"Ks_BestGi_Vg",	"Ks_Qe_Kg",	"Ks_Qe_Vg", "N_BestG",	"N_BestGi",	"N_Qe",	"NSE_Hydro_Inf_BestG_Kg",	"NSE_Hydro_Inf_BestG_Vg",	"NSE_Hydro_Inf_BestG_Vg",	"NSE_Hydro_Inf_BestGi_Kg",	"NSE_Hydro_Inf_BestGi_Vg",	"NSE_Hydro_Inf_Qe_Kg",	"NSE_Hydro_Inf_Qe_Vg",	"NSE_Inf_BestG_Vg",	"NSE_Inf_BestGi_Kg",	"NSE_Inf_BestGi_Kg",	"NSE_Inf_BestGi_Vg",	"NSE_Inf_Qe_Kg",	"NSE_Inf_Qe_Vg",	"NSE_BestGi_Kg","NSE_BestGi_Vg", "NSE_BestG_Kg","NSE_BestG_Vg", "NSE_Qe_Kg",	"NSE_Qe_Vg",	"Sorpt_BestG_Kg",	"Sorpt_BestGi_Kg",	"Sorpt_BestGi_Vg",	"Sorpt_Hydro_Kg",	"Sorpt_Hydro_Vg",	"Sorpt_Qe_Kg",	"Time_TransStead_BestG_Vg",	"Time_TransStead_Hydro_Kg", "Time_TransStead_Hydro_Vg", "Hkg_BestGi", "NSE_Hydro_Inf_BestGi_Vg",	"NSE_Inf_BestG_Kg",	"Sorpt_BestG_Kg",	"Sigma_BestG",	"Sigma_BestGi", "Sigma_Qe"]
+	# HYDROPARAM 
+		# Feasible range of Kosugi
+			θr_Min = 0.
+			θr_Max = 0.25 # 0.2 or 0.25
 
-    ΔInf_SteadyTransit = 0.07 #0.05 #[mm / T] Maximum error of not meeting the slope	
+			σMat_Min = 1.4 # 1.6
+			σMat_Max = 4.3
 
-    # 45
-   TransStead_Multiply = 10000
+			ΨkgMat_Min = 800.0 # [mm]
+			ΨkgMat_Max = 60000.0 # 0.9 * 150000.0 #[mm]
 
-    σ_Min = 0.7
-    σ_Max = 4.0
+			σMac_Min = 0.2
+			σMac_Max = 0.8 #2.55
 
-    B_Min = (2.0- cst.β) / 3.
-    B_Max = B_Min + (1.0+ cst.β) /3.
+			ΨkgMac = 40. # 100 t0 10 [mm]
 
-    Sorptivity_Min = 0.0001 # [mm s-0.5]
-    Sorptivity_Max = 5.0# [mm s-0.5]
+			ΨkgMac_Min = 50. #[mm]
+			ΨkgMac_Max = 390 #[mm]
 
-    Ks_Min = 0.00002 #[mm s-1]
-    Ks_Max = 0.5 #[mm.s-1]
-
-    Ks_Log_Min = log10(Ks_Min) #[mm s-1]
-    Ks_Log_Max = log10(Ks_Max) #[mm.s-1]
-
-    Kr_θini_Min = 0.0001
-    Kr_θini_Max = 0.9999
-
-    Hkg_Min = 30.0#[mm]
-    Hkg_Max =  300000.0#10.0 ^7 #[mm]
-
-    Hvg_Min= 20.0#[mm]
-    Hvg_Max =10^7 #[mm]
-    
-    N_Km1_Min = 1.01
-    N_Km1_Max = 2.8
-
-    N_Km2_Min = 2.001
-    N_Km2_Max = 3.0
-    
-    P_σ1 = 0.38188577734776497 #0.5715138086872856 # 0.5920 0.38188577734776497
-    P_σ2 = 1.0804608847580066 #0.84660977230930 # 0.7679 1.0804608847580066
-
-    H_Min_Kg = 0.001
-    H_Min_Vg = 6.7
-
-    ϵ = 0.000001
-
-    ZinfMax_Min = 1.0#mm
-    ZinfMax_Max = 50000.0#mm
-
-    # Output of time series of hydraulic params
-    ΔSe_Inf_Max = 0.15 # The largest timestep 
-    Se_Inf_Max = 0.95 # The largest θ_inf which is worth computing the hydraulic params
-end
+			Ks_Mac_Max = 0.12 # 10.0 1.14[mm/s]
+	
+end  # module param
+# ............................................................

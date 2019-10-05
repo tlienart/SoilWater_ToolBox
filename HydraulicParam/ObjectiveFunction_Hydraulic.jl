@@ -1,47 +1,40 @@
-module of 
-      include("Option.jl")
-      include("Param.jl")
-      include("Cst.jl")
-      include("Stats.jl")
-      include("Wrc.jl")
-      include("Kunsat.jl")
-
-	  export  WRC_KUNSAT
+module ofHydaulic 
+	using ..option, ..stats, ..wrc, ..kunsat
+	export  WRC_KUNSAT
 	  
-      # OF BIMODAL and UNIMODAL
-      function WRC_KUNSAT(Option_Data_Kθ, iSoil, Ψ_θΨ, θ_θΨ, N_θΨ, K_Kθ, Ψ_Kθ, N_Kθ, θsMac, θr, σMat, ΨkgMat, θsMat, σMac, ΨkgMac, KsMac) 
-         # OF θΨ==
-         θ_Obs = zeros(Float64, N_θΨ[iSoil])
-         θ_Sim = zeros(Float64, N_θΨ[iSoil])
-		 @simd for iH in 1:N_θΨ[iSoil]
-            θ_Obs[iH]= θ_θΨ[iSoil,iH]
-            H_Obs = Ψ_θΨ[iSoil,iH]
-            θ_Sim[iH] = wrc.kg.Ψ_2_θdual(H_Obs, θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac)
-         end
+	function WRC_KUNSAT(iSoil, K_Kθ, N_KΨ, N_θΨ, θ_θΨ, Ψ_Kθ, Ψ_θΨ, hydro) 
 
-		 Of_θh = stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs[1:N_θΨ[iSoil]], θ_Sim[1:N_θΨ[iSoil]], Power=2.0)
+		 # === OF θΨ ====
+			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])
+			θ_Sim = Array{Float64}(undef, N_θΨ[iSoil])
+			
+			@simd for iΨ in 1:N_θΨ[iSoil]
+				θ_Obs[iΨ] = θ_θΨ[iSoil,iΨ]
+				Ψ_Obs = Ψ_θΨ[iSoil,iΨ]
+				θ_Sim[iΨ] = wrc.kg.Ψ_2_θDual(Ψ_Obs, hydro)
+			end # for
 
-         # OF Kunsat==
-         if Option_Data_Kθ
-            Kunsat_Obs = zeros(N_Kθ[iSoil])
-            Kunsat_Sim = zeros(N_Kθ[iSoil])
-            @simd for iH in 1: N_Kθ[iSoil]
-               Kunsat_Obs[iH] = K_Kθ[iSoil,iH]
-               H_Obs =  Ψ_Kθ[iSoil,iH]
-               θ_Sim = wrc.kg.Ψ_2_θdual(H_Obs, θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac)
-               Se = wrc.se.θ_2_Se(θ_Sim, θsMac, θr)
-      
-			   Kunsat_Sim[iH] = kunsat.kg.Se_2_KUNSAT(Se, θsMac, θr, σMat, KsMac, θsMat, σMac)
-            end
+			Of_θΨ = stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs, θ_Sim; Power=2.0)
 
-			Of_Kunsat = stats.NASH_SUTCLIFFE_ERRORmin(log.(1.0 .+ Kunsat_Obs[1:N_Kθ[iSoil]]) , log.(1.0 .+ Kunsat_Sim[1:N_Kθ[iSoil]]))
-         else
-            Of_Kunsat = 0.0
 
-         end
+		 # === OF Kunsat ====
+			Of_Kunsat = 0.0
+			if option.KunsatΨ
+				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iSoil])
+				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iSoil])
+				
+				@simd for iΨ in 1:N_KΨ[iSoil]
+					Kunsat_Obs_Ln[iΨ] = log1p(K_Kθ[iSoil,iΨ])
+					Ψ_Obs =  Ψ_Kθ[iSoil,iΨ]
+				
+				Kunsat_Sim_Ln[iΨ] = log1p(kunsat.kg.Ψ_2_KUNSAT(Ψ_Obs, hydro))
+				end # for
 
-         return Of = param.Of_W * Of_θh + (1.0 - param.Of_W) * Of_Kunsat
+				Of_Kunsat = stats.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
+			end #  option.KunsatΨ
 
-      end # WRC_KUNSAT (OF BIMODAL and UNIMODAL) 
+		 return Of = 0.5 * Of_θΨ + 0.5 * Of_Kunsat
 
-end # module objective function
+	end # WRC_KUNSAT
+
+end # module ofHydaulic
