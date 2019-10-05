@@ -1,4 +1,4 @@
-module stats
+module stat
 	using ..wrc, ..param
 	export NASH_SUTCLIFFE_ERRORmin
 	using Statistics

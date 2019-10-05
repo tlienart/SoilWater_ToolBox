@@ -1,5 +1,5 @@
-module ofHydaulic 
-	using ..option, ..stats, ..wrc, ..kunsat
+module ofHydro 
+	using ..option, ..stat, ..wrc, ..kunsat
 	export  WRC_KUNSAT
 	  
 	function WRC_KUNSAT(iSoil, K_Kθ, N_KΨ, N_θΨ, θ_θΨ, Ψ_Kθ, Ψ_θΨ, hydro) 
@@ -14,7 +14,7 @@ module ofHydaulic
 				θ_Sim[iΨ] = wrc.kg.Ψ_2_θDual(Ψ_Obs, hydro)
 			end # for
 
-			Of_θΨ = stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs, θ_Sim; Power=2.0)
+			Of_θΨ = stat.NASH_SUTCLIFFE_ERRORmin(θ_Obs, θ_Sim; Power=2.0)
 
 
 		 # === OF Kunsat ====
@@ -30,7 +30,7 @@ module ofHydaulic
 				Kunsat_Sim_Ln[iΨ] = log1p(kunsat.kg.Ψ_2_KUNSAT(Ψ_Obs, hydro))
 				end # for
 
-				Of_Kunsat = stats.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
+				Of_Kunsat = stat.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
 			end #  option.KunsatΨ
 
 		 return Of = 0.5 * Of_θΨ + 0.5 * Of_Kunsat

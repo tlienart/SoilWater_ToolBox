@@ -1,23 +1,31 @@
-
-
 # =============================================================
 #		MODULE: param
 # =============================================================
 module param
-	# θr FROM PSD
+
+	# =============================================================
+	#		MODULE:  θr FROM PSD
+	# =============================================================
+	module psd
 		# Optimized values: Psd_2_θr = "Param"
-			Psd_2_θr_Size = 1  # size of particle size corresponding to clay fraction
-			Psd_2_θr_α1 = 16.01602133125399 # α1
-			Psd_2_θr_α2 = 2.013125380534685 # α2 
+		Psd_2_θr_Size = 1  # size of particle size corresponding to clay fraction
+		Psd_2_θr_α1 = 16.01602133125399 # α1
+		Psd_2_θr_α2 = 2.013125380534685 # α2 
 
-			# Feasible range
-				Psd_2_θr_α1_Min = 0.01
-				Psd_2_θr_α1_Max = 100.0
+		# Feasible range
+			Psd_2_θr_α1_Min = 0.01
+			Psd_2_θr_α1_Max = 100.0
 
-				Psd_2_θr_α2_Min = 0.001
-				Psd_2_θr_α2_Max = 10.0
+			Psd_2_θr_α2_Min = 0.001
+			Psd_2_θr_α2_Max = 10.0		
+	end  # module thetarPsd
+	# ............................................................
 
-	# HYDROPARAM 
+
+	# =============================================================
+	#		MODULE: hydro
+	# =============================================================
+	module hydro
 		# Feasible range of Kosugi
 			θr_Min = 0.
 			θr_Max = 0.25 # 0.2 or 0.25
@@ -37,6 +45,9 @@ module param
 			ΨkgMac_Max = 390 #[mm]
 
 			Ks_Mac_Max = 0.12 # 10.0 1.14[mm/s]
-	
+		
+	end  # module: hydro
+	# ............................................................
+
 end  # module param
 # ............................................................
