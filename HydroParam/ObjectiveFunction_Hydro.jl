@@ -2,7 +2,9 @@ module ofHydro
 	using ..option, ...stats, ..wrc, ..kunsat
 	export  WRC_KUNSAT
 	  
-	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, θsMat=hydro.θsMat, σMac=hydro.σMac, ΨmMac=hydro.ΨmMac) 
+	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, ∇_θsMat=∇_θsMat, ∇_σMac=∇_σMac, ΨmMac=hydro.ΨmMac) 
+
+		hydro = mainHydroParam.kg.PARAMETER_ADJUSTMENT(hydro, ∇_θsMat, ∇_σMac)
 
 		 # === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])

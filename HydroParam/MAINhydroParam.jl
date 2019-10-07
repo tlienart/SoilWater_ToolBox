@@ -133,7 +133,7 @@ module mainHydroParam
 
 					# OPTIMIZING	
 						if option.HydroModel == "Kosugi"
-							kg.OPTIMISATION_HYDRO(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Opt_Ks, Opt_θs, Opt_θr, hydro)
+							kg.OPTIMISATION_HYDRO(iSoil, θ_Max, θ_Min, K_KΨ_Max, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Opt_Ks, Opt_θs, Opt_θr, N_ParamOpt, hydro)
 						# elseif option.HydroModel == "Vangenuchten"
 						# 	vg.OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
 						end
@@ -148,28 +148,46 @@ module mainHydroParam
 		#		MODULE: kg
 		# =============================================================
 		module kg
-			using ...ofHydro
+			using ...ofHydro, ...param
 			export OPTIMISATION_HYDRO
+
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : HYDRO_ADJEUSTMENTS
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				function PARAMETER_ADJUSTMENT(hydro, ∇_θsMat, ∇_σMac)
+
+					function NORM_2_PARAM(∇P,  P_Lower, P_Uper,P_Max, P_Min)
+						return P = ∇P * (P_Uper - P_Lower) + P_Lower
+					end  # function: HYDRO_ADJEUSTMENTS
+
+					hydro.θsMat = NORM_2_PARAM(∇_θsMat, hydro.θr, hydro.θs,)
+					hydro.σMac = NORM_2_PARAM(∇_σMac, σ, param.hydro.σMac_Min, param.hydro.σMac_Mac)
+				
+					return hydro
+				end  # function: name
+
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : INITIALIZING_HYDRO
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OPTIMISATION_HYDRO(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Opt_Ks, Opt_θs, Opt_θr, hydro)
+			function OPTIMISATION_HYDRO(iSoil, θ_Max, θ_Min, K_KΨ_Max, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Opt_Ks, Opt_θs, Opt_θr, N_ParamOpt, hydro)
 
 
-					# Feasible range
-					θr_Max[iSoil] = max( min(θ_Min-0.005, param.hydro.θr_Max), 0.0 ) # Maximum value of θr
+				if option.UnimodalBimodal = "Unimodal"
+					∇_θsMat = 1; ∇_σMac = 1
+				end
 
-					θsMat_Min[iSoil] = θ_Max * param.hydro.Coeff_θs_2_θsMat
-					θsMat_Max[iSoil] = θ_Max
+				# Feasible range
+				θr_Max = max( min(θ_Min[iSoil]-0.005, param.hydro.θr_Max), 0.0 ) # Maximum value of θr
 
 
-					SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (param.hydro.Ψm_Min, param.hydro.Ψm_Max), (param.hydro.θr_Min, θr_Max), (param.hydro.θs_Min, param.hydro.θs_Max), (param.hydro.Ks_Min, param.hydro.Ks_Max), (θsMat_Min[iSoil], θsMat_Max[iSoil]), (param.hydro.σMac_Min, param.hydro.σMac_Max), (param.hydro.ΨmMac_Min, param.hydro.ΨmMac_Max)]
+				SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.θr_Min, θr_Max), (θ_Max[iSoil], param.hydro.∇_θs_Max * θ_Max[iSoil]), (log10(K_KΨ_Max[iSoil]), log10(param.hydro.Ks_Max)), (0.0, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 
-					Of = ofHydro.OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, θsMat=hydro.θsMat, σMac=hydro.σMac, ΨmMac=hydro.ΨmMac)
-					
-					# println("$iSoil, $Of")
-		
+				BlackBoxOptim.bboptimize(P -> ofHydro.OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], Ks=P[5], ∇_θsMat=P[6], ∇_σMac=P[7], ΨmMac=P[8]); SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+
+					hydro = PARAMETER_ADJUSTMENT(hydro, ∇_θsMat, ∇_σMac)
+			
 
 				return hydro
 			end  # function: OPTIMISATION_HYDRO
@@ -201,16 +219,7 @@ module mainHydroParam
 			   	# 	KsMac[iSoil] = -999.0
 				# end
 
-				# 	Of_Hydro, hydro = kg.HYDRO_OPTIMISATION()
-					
-
-				# elseif option.HydroModel == "Vangenuchten"
-
-				# 	Of_Hydro, hydro = vg.HYDRO_OPTIMISATION()
-
-				# end # option.HydroModel
-
-
+	
 
 	# =============================================================
 	#		MODULE: vg

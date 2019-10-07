@@ -33,15 +33,13 @@ module param
 		# Coeff_Φ_2_θs
 			Coeff_Φ_2_θs = 0.98
 
-		# Coeff_θs_2_θsMat
-			Coeff_θs_2_θsMat = 0.7
+	
 
 		# Feasible range of Kosugi
 			θr_Min = 0.0
 			θr_Max = 0.25 # 0.2 or 0.25
 
-			θs_Min = 0.0
-			θs_Max = 0.8
+			∇_θs_Max = 1.2
 
 			σ_Min = 1.4 # 1.6
 			σ_Max = 4.3
@@ -49,8 +47,11 @@ module param
 			Ψm_Min = 800.0 # [mm]
 			Ψm_Max = 60000.0 # 0.9 * 150000.0 #[mm]
 
+			∇_σMac_Min = 0.7 
+
 			σMac_Min = 0.2
 			σMac_Max = 0.8 #2.55
+			∇_σMac_Max = 0.8
 
 			ΨmMac = 40. # 100 t0 10 [mm]
 
