@@ -30,25 +30,35 @@ module param
 		# θr = 0
 			θr = 0.0
 
+		# Coeff_Φ_2_θs
+			Coeff_Φ_2_θs = 0.98
+
+		# Coeff_θs_2_θsMat
+			Coeff_θs_2_θsMat = 0.7
+
 		# Feasible range of Kosugi
 			θr_Min = 0.0
 			θr_Max = 0.25 # 0.2 or 0.25
 
-			σMat_Min = 1.4 # 1.6
-			σMat_Max = 4.3
+			θs_Min = 0.0
+			θs_Max = 0.8
 
-			ΨkgMat_Min = 800.0 # [mm]
-			ΨkgMat_Max = 60000.0 # 0.9 * 150000.0 #[mm]
+			σ_Min = 1.4 # 1.6
+			σ_Max = 4.3
+
+			Ψm_Min = 800.0 # [mm]
+			Ψm_Max = 60000.0 # 0.9 * 150000.0 #[mm]
 
 			σMac_Min = 0.2
 			σMac_Max = 0.8 #2.55
 
-			ΨkgMac = 40. # 100 t0 10 [mm]
+			ΨmMac = 40. # 100 t0 10 [mm]
 
-			ΨkgMac_Min = 50. #[mm]
-			ΨkgMac_Max = 390 #[mm]
+			ΨmMac_Min = 50. #[mm]
+			ΨmMac_Max = 390 #[mm]
 
-			Ks_Mac_Max = 0.12 # 10.0 1.14[mm/s]
+			Ks_Min = 0.0001
+			Ks_Max = 0.12 # 10.0 1.14[mm/s]
 		
 	end  # module: hydro
 	# ............................................................

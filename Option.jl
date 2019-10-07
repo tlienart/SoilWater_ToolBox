@@ -9,7 +9,7 @@ module option
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# HYDRAULIC MODEL
-		const HydroModel = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
+		const HydroModel = 		"Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 		const UnimodalBimodal = "Bimodal" 	# <"Unimodal" OR <"Bimodal>>
 
 	# MODELS RUN
@@ -26,9 +26,9 @@ module option
 		#		MODULE: hydroparam
 		# =============================================================
 			module hydro
-				const θsOpt 	= false #  <true> Optimize θs OR <false>* fixed from θ(ψ=0)
+				const θsOpt 	= "Fixed" #  <Opt> Optimize θs OR <Fixed>* fixed from θ(ψ=0) OR <Φ> which requires some correction
 				const θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed 
-				const KsOpt 	= true #  <true> Optimize Ks (require KunsatΨ=true) OR <"false"> fixed from <"K(ψ=0)">		
+				const KsOpt 	= "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Fixed"> from <"K(ψ=0)">		
 			end  # module hydroparam
 		# ............................................................
 

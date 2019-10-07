@@ -35,6 +35,11 @@ module mainHydroParam
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 
+			# WHAT TO OPTIMIZE (just initializing)
+				Opt_θs 		= true
+				Opt_θr 		= true
+				Opt_Ks		= true
+
 			# INITIALIZING
 				θs 		= Array{Float64}(undef, (N_SoilSelect))
 				θr 		= Array{Float64}(undef, (N_SoilSelect))
@@ -51,35 +56,16 @@ module mainHydroParam
 
 					# Number of parameters to be optimized
 						if option.UnimodalBimodal == "Unimodal"
-							
 							# Keep constant
 							σMac 	= 1.0
 							ΨmMac 	= 1000.0
 							
 							# Parameters to be keept constant
 							N_ParamOpt = 5
-							Opt_θs 		= true
-							Opt_θr 		= true
-							Opt_σ 		= true
-							Opt_Ψm 		= true
-							Opt_Ks		= true
-							Opt_θsMat 	= false
-							Opt_σMac 	= false
-							Opt_ΨmMac 	= false
 
 						elseif option.UnimodalBimodal == "Bimodal"
-				
 							# Parameters to be keept constant
 							N_ParamOpt = 8
-
-							Opt_θs 		= true
-							Opt_θr 		= true
-							Opt_σ 		= true
-							Opt_Ψm 		= true
-							Opt_Ks		= true
-							Opt_θsMat 	= true
-							Opt_σMac 	= true
-							Opt_ΨmMac 	= true
 
 						end  # if: option.UnimodalBimodal == "Unimodal"
 					
@@ -99,49 +85,60 @@ module mainHydroParam
 						Opt_Ks		= true
 				end # option.HydroModel
 
+				θ_Max 		= Array{Float64}(undef, (N_SoilSelect))
+				θ_Min 		= Array{Float64}(undef, (N_SoilSelect))
+				K_KΨ_Max 	= Array{Float64}(undef, (N_SoilSelect))
 
-			# SPECIAL REQUIREMENTS TRUE FOR ALL HydroModel
-		
+
+			# INITIALIZING
 				for iSoil=1:N_SoilSelect
+					# LIMITS
+						θ_Max[iSoil] 	= maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  # Greatest measure θ
+						θ_Min[iSoil] 	= minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  # Smallest measure θ
+						K_KΨ_Max[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]]) # Greatest measure of Kunsat
+
 					# Derive θr from data
-					if (option.hydro.θrOpt == "Psd") && (option.Psd)
-						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr(iSoil, ∑Psd), minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]]) )
-						N_ParamOpt -= 1
-						Opt_θr = false
-					else
-						# Keep θr = Cst
-						if option.hydro.θrOpt == "Cst"
+						if (option.hydro.θrOpt == "Psd") && (option.Psd)
+							hydro.θr[iSoil] = min( psdThetar.PSD_2_θr(iSoil, ∑Psd), θ_Min[iSoil] )
+							N_ParamOpt -= 1
+							Opt_θr = false
+						elseif option.hydro.θrOpt == "Cst"
+							# Keep θr = Cst
 							θr = param.hydro.θr
 							N_ParamOpt -= 1
 							Opt_θr = false
-						end # option.hydro.θrOpt
-					end # option.hydro.θrOpt == "Psd"
+						end # option.hydro.θrOpt == "Psd"
+
 
 					# Derive θs from data
-					if !(option.hydro.θsOpt)
-						hydro.θs[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])
-						N_ParamOpt -= 1
-						Opt_θs = false
-					end # option.hydro.θrOpt == "Psd"
+						if option.hydro.θsOpt == "Fixed"
+							hydro.θs[iSoil] = θ_Max[iSoil]
+							N_ParamOpt -= 1
+							Opt_θs = false
+						elseif option.hydro.θsOpt == "Φ"
+							hydro.θs[iSoil] = param.hydro.Coeff_Φ_2_θs * θ_Max[iSoil]
+							Opt_θs = false
+						end # option.hydro.θsOpt
+
 
 					# Derive Ks from data
-					if !(option.hydro.KsOpt) && option.KunsatΨ
-						hydro.Ks[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]])
-						N_ParamOpt -= 1
-						Opt_Ks = false
-					else
-						if option.hydro.KsOpt && !(option.KunsatΨ)
+						if option.hydro.KsOpt == "Fixed" && option.KunsatΨ
+							hydro.Ks[iSoil] = K_KΨ_Max[iSoil]
+							N_ParamOpt -= 1
+							Opt_Ks = false
+						elseif !(option.KunsatΨ) # Not optimized
 							N_ParamOpt -= 1
 							Opt_Ks = false
 						end # option.KunsatΨ
-					end # option.KunsatΨ
-				end  # for iSoil=1:N_SoilSelect
 
-				if option.HydroModel == "Kosugi"
-					kg.OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
-				elseif option.HydroModel == "Vangenuchten"
-					vg.OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
-				end
+					# OPTIMIZING	
+						if option.HydroModel == "Kosugi"
+							kg.OPTIMISATION_HYDRO(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Opt_Ks, Opt_θs, Opt_θr, hydro)
+						# elseif option.HydroModel == "Vangenuchten"
+						# 	vg.OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+						end
+
+				end  # for iSoil=1:N_SoilSelect
 
 
 		end  # function: MAIN_HYDROPARAM()
@@ -157,13 +154,22 @@ module mainHydroParam
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : INITIALIZING_HYDRO
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+			function OPTIMISATION_HYDRO(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Opt_Ks, Opt_θs, Opt_θr, hydro)
 
-				for iSoil=1:N_SoilSelect
+
+					# Feasible range
+					θr_Max[iSoil] = max( min(θ_Min-0.005, param.hydro.θr_Max), 0.0 ) # Maximum value of θr
+
+					θsMat_Min[iSoil] = θ_Max * param.hydro.Coeff_θs_2_θsMat
+					θsMat_Max[iSoil] = θ_Max
+
+
+					SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (param.hydro.Ψm_Min, param.hydro.Ψm_Max), (param.hydro.θr_Min, θr_Max), (param.hydro.θs_Min, param.hydro.θs_Max), (param.hydro.Ks_Min, param.hydro.Ks_Max), (θsMat_Min[iSoil], θsMat_Max[iSoil]), (param.hydro.σMac_Min, param.hydro.σMac_Max), (param.hydro.ΨmMac_Min, param.hydro.ΨmMac_Max)]
+
 					Of = ofHydro.OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, θsMat=hydro.θsMat, σMac=hydro.σMac, ΨmMac=hydro.ΨmMac)
 					
 					# println("$iSoil, $Of")
-				end  # for iSoil=1:N_SoilSelect
+		
 
 				return hydro
 			end  # function: OPTIMISATION_HYDRO
@@ -227,79 +233,8 @@ module mainHydroParam
 	
 end  # module: mainHydroParam
 # ............................................................
-
-
-	# include("Path.jl")
-	# include("Option.jl")
-	# include("Cst.jl")
-	# include("Param.jl")
-	# include("Reading.jl")
-	# include("WRC.jl")
-	# include("Kunsat.jl")
-	# include("Stats.jl")
-	# include("ObjectiveFunction.jl")
-	# include("Table.jl")
-
-
-
 	
-# 	function MAIN_HYDROPARAM()
-
-# 	 # =========================================
-# 	 #        OPTIMISE_CHARAC_UNSAT
-# 	 # =========================================
-#    function OPTIMISE_CHARAC_UNSAT(Ψ_θΨ, θ_θΨ, N_θΨ, Nsample, Φ; N_Kθ=ones(Int8, Nsample), K_Kθ=zeros(Float64,Nsample,1), Ψ_Kθ=zeros(Float64,Nsample,1), θr_Psd=zeros(Float64, Nsample), Option_Data_Kθ = true )
-# 	"""
-# 		Φorθs = "θs" OR "Φ"
-# 			IF Φorθs = "θs" than Φ = θs
-# 			IF Φorθs = "Φ" than Φ is computed
-# 	"""
-
-# 		# Putting in memory
-# 		σMat = zeros(Float64, Nsample)
-# 		σMac = zeros(Float64, Nsample)
-# 		θsMat = zeros(Float64, Nsample)
-# 		θsMac = zeros(Float64, Nsample)
-# 		θr = zeros(Float64, Nsample)
-# 		Nse_θΨ_Uni = zeros(Float64, Nsample)
-# 		Nse_θΨ_Bim = zeros(Float64, Nsample)
-# 		Nse_Kθ_Uni = zeros(Float64, Nsample)
-# 		Nse_Kθ_Bim = zeros(Float64, Nsample)
-# 		KsMac = zeros(Float64, Nsample)
-# 		KsMat = zeros(Float64, Nsample)
-# 		ΨkgMat = zeros(Float64, Nsample)
-# 		ΨkgMac = zeros(Float64, Nsample)
-
-# 		@simd for iSoil in 1:Nsample
-
-# 			# ================= LIMITS =================
-# 				θ_Max = maximum(θ_θΨ[iSoil,1:N_θΨ[iSoil]])  # Greatest measured θ before Φ
-# 				θ_Min = minimum(θ_θΨ[iSoil,1:N_θΨ[iSoil]])  # Smallest measured θ
-
-# 				if option.Φorθs == "Φ"
-# 					θsMac[iSoil] = max( param.Coeff_Φ_2_θs * Φ[iSoil], θ_Max + 0.005 ) # Deriving θsMac
-# 				else
-# 					θsMac[iSoil] = Φ[iSoil]
-# 				end
-
-# 				θr_Max = max( min(θ_Min-0.005, param.θr_Max), 0. ) # Maximum value of θr
-# 				K_Kθ_Min = minimum(K_Kθ[iSoil,1:N_Kθ[iSoil]]) # Greatest measured k(h) before KsMac
-# 			# ======================================
-
-# 		 # DERIVING KOSUGI UNIMODAL HYDRAULIC PARAMETERS <><><><><><><><><><><><><><><><><><><><><>
-# 			if Option_Data_Kθ
-# 			   Dimensions=5
-# 			else
-# 			   Dimensions=4
-# 			end
-
-# 		 	if option.BimodalKg == true	
-# 			 # DERIVING KOSUGI BIMODAL HYDRAULIC PARAMETERS <><><><><><><><><><><><><><><><><><><><><>
-# 				if Option_Data_Kθ
-# 			  	 	Dimensions=5 # number of optimized parameters
-# 				else
-# 			   		Dimensions=6 # number of optimized parameters (one more because of Ks is optimized)
-# 				end
+#
 
 # 				θsMat_Min = θsMac[iSoil] * 0.7
 
