@@ -5,39 +5,39 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function Ψ_2_KUNSAT(Ψ, hydro)
-		if option.θΨKmodel == "Kosugi"
-			return Kunsat = kunsat.kg.Ψ_2_KUNSAT(Ψ, hydro)
-		elseif option.θΨKmodel == "vanGenuchten"
-			return Kunsat = kunsat.vg.Ψ_2_KUNSAT(Ψ, hydro)
+	function Ψ_2_KUNSAT(Ψ, iSoil::Int, hydro)
+		if option.HydroModel == "Kosugi"
+			return Kunsat = kunsat.kg.Ψ_2_KUNSAT(Ψ, iSoil::Int, hydro)
+		elseif option.HydroModel == "vanGenuchten"
+			return Kunsat = kunsat.vg.Ψ_2_KUNSAT(Ψ, iSoil::Int, hydro)
 		end
-	end # function: Ψ_2_KUNSAT
+	end # function Ψ_2_KUNSAT
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :Se_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function Se_2_KUNSAT(Se, hydro)
+	function Se_2_KUNSAT(Se, iSoil, hydro)
 		Se = max(min(Se, 1.0), 0.0)
 
-		if option.θΨKmodel == "Kosugi"
-			return Kunsat = kunsat.kg.Se_2_KUNSAT(Se, hydro)
-		elseif option.θΨKmodel == "vanGenuchten"
-			return Kunsat = kunsat.vg.Se_2_KUNSAT(Se, hydro)
+		if option.HydroModel == "Kosugi"
+			return Kunsat = kunsat.kg.Se_2_KUNSAT(Se, iSoil::Int, hydro)
+		elseif option.HydroModel == "vanGenuchten"
+			return Kunsat = kunsat.vg.Se_2_KUNSAT(Se, iSoil::Int, hydro)
 		end
-	end # function: Se_2_KUNSAT
+	end # function Se_2_KUNSAT
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function ∂K∂Ψ(Ψ,  hydro)
-		if option.θΨKmodel == "Kosugi"
-			return ∂Kunsat = kunsat.kg.∂K∂Ψ(Ψ, hydro)
-		elseif option.θΨKmodel == "vanGenuchten"
-			return ∂Kunsat = kunsat.vg.∂K∂Ψ(Ψ, hydro)
+	function ∂K∂Ψ(Ψ, iSoil, hydro)
+		if option.HydroModel == "Kosugi"
+			return ∂Kunsat = kunsat.kg.∂K∂Ψ(Ψ, iSoil::Int, hydro)
+		elseif option.HydroModel == "vanGenuchten"
+			return ∂Kunsat = kunsat.vg.∂K∂Ψ(Ψ, iSoil::Int, hydro)
 		end
-	end # function: ∂K∂Ψ
+	end # function ∂K∂Ψ
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -53,8 +53,10 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Ψ_2_KUNSAT(Ψ, hydro; θs=hydro.θs, θr=hydro.θr, Ψm=hydro.Ψm, σ=hydro.σ, θsMat=hydro.θsMat, ΨmMac=hydro.ΨmMac, σMac=hydro.σMac, Ks=hydro.Ks)
-			Se = wrc.Ψ_2_SeDual(Ψ, hydro)
+		function Ψ_2_KUNSAT(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψm=hydro.Ψm[iSoil], σ=hydro.σ[iSoil], θsMat=hydro.θsMat[iSoil], ΨmMac=hydro.ΨmMac[iSoil], σMac=hydro.σMac[iSoil], Ks=hydro.Ks[iSoil])
+
+			# Ψ must be negative
+			Se = wrc.Ψ_2_SeDual(-Ψ, iSoil, hydro)
 			
 			KsMat = Ks * (θsMat - θr) / (θs - θr)
 			Kunsat_Mat =  KsMat * sqrt(Se) * (0.5 * erfc(((log(Ψ/Ψm)) / σ + σ)/sqrt(2.0)))^2.0
@@ -69,7 +71,8 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Se_2_KUNSAT(Se, hydro; θs=hydro.θs, θr=hydro.θr, Ψm=hydro.Ψm, σ=hydro.σ, θsMat=hydro.θsMat, ΨmMac=hydro.ΨmMac, σMac=hydro.σMac, Ks=hydro.Ks)
+		function Se_2_KUNSAT(Se, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψm=hydro.Ψm[iSoil], σ=hydro.σ[iSoil], θsMat=hydro.θsMat[iSoil], ΨmMac=hydro.ΨmMac[iSoil], σMac=hydro.σMac[iSoil], Ks=hydro.Ks[iSoil])
+
 			Se = max( min(Se, 1.0), 0.0)
 
 			KsMat = Ks * (θsMat - θr) / (θs - θr)
@@ -85,7 +88,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂K∂Ψ(Ψ,  hydro; θs=hydro.θs, θr=hydro.θr, Ψm=hydro.Ψm, σ=hydro.σ, θsMat=hydro.θsMat, ΨmMac=hydro.ΨmMac, σMac=hydro.σMac, Ks=hydro.Ks) 
+		function ∂K∂Ψ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψm=hydro.Ψm[iSoil], σ=hydro.σ[iSoil], θsMat=hydro.θsMat[iSoil], ΨmMac=hydro.ΨmMac[iSoil], σMac=hydro.σMac[iSoil], Ks=hydro.Ks[iSoil]) 
 
 			KsMat = Ks * (θsMat - θr) / (θs - θr)
 			∂Kunsat_Mat∂Ψ = KsMat * (((0.5 * (θs - θsMat) * (((((1 / ΨmMac) * (1 / (Ψ / ΨmMac))) * (sqrt(2.0) * σMac)) / (sqrt(2.0) * σMac) ^ 2) * ((-2 * exp(-log(Ψ / ΨmMac) / (sqrt(2.0) * σMac) * (log(Ψ / ΨmMac) / (sqrt(2.0) * σMac)))) / sqrt(π))) + 0.5 * (θsMat - θr) * (((((1 / Ψm) * (1 / (Ψ / Ψm))) * (sqrt(2.0) * σ)) / (sqrt(2.0) * σ) ^ 2) * ((-2 * exp(-log(Ψ / Ψm) / (sqrt(2.0) * σ) * (log(Ψ / Ψm) / (sqrt(2.0) * σ)))) / sqrt(π)))) / (θs - θr)) * (0.5 / sqrt((0.5 * (θs - θsMat) * erfc(log(Ψ / ΨmMac) / (sqrt(2.0) * σMac)) + 0.5 * (θsMat - θr) * erfc(log(Ψ / Ψm) / (sqrt(2.0) * σ))) / (θs - θr)))) * (0.5 * erfc((log(Ψ / Ψm) / σ + σ) / sqrt(2.0))) ^ 2.0 + KsMat * sqrt((0.5 * (θs - θsMat) * erfc(log(Ψ / ΨmMac) / (sqrt(2.0) * σMac)) + 0.5 * (θsMat - θr) * erfc(log(Ψ / Ψm) / (sqrt(2.0) * σ))) / (θs - θr)) * (2.0 * (0.5 * (((((1 / Ψm) * (1 / (Ψ / Ψm))) / σ) / sqrt(2.0)) * ((-2 * exp(-(log(Ψ / Ψm) / σ + σ) / sqrt(2.0) * ((log(Ψ / Ψm) / σ + σ) / sqrt(2.0)))) / sqrt(π)))) * (0.5 * erfc((log(Ψ / Ψm) / σ + σ) / sqrt(2.0))))
@@ -111,10 +114,11 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function  Ψ_2_KUNSAT(Ψ, hydro; θs=hydro.θs, θr=hydro.θr, Ψvg=hydro.Ψvg, N=hydro.N, Ks=hydro.Ks, Km=1.0, L=0.5)
+		function  Ψ_2_KUNSAT(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Ks=hydro.Ks[iSoil], Km=1.0, L=0.5)
 			M = 1.0 - Km / N
 
-			Se = wrc.Ψ_2_SeDual(Ψ, hydro)
+			# Ψ must be negative
+			Se = wrc.Ψ_2_SeDual(-Ψ, iSoil, hydro)
 		
 			return Kunsat = Ks * (Se^L) * ( 1.0 - (1.0 - Se ^ (1.0 / M) ) ^ M ) ^ 2.0
 		end #function Ψ_2_KUNSAT
@@ -123,7 +127,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function  Se_2_KUNSAT(Se, hydro, θs=hydro.θs, θr=hydro.θr, Ψvg=hydro.Ψvg, N=hydro.N, Ks=hydro.Ks, Km=1.0, L=0.5)
+		function  Se_2_KUNSAT(Se, iSoil, hydro, θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Ks=hydro.Ks[iSoil], Km=1.0, L=0.5)
 			M = 1.0 - Km/N
 			return Kunsat = Ks * (Se.^L) * ( 1. - (1. - Se.^(1.0/M) ) .^ M ) .^ 2.0
 		end # function Se_2_KUNSAT
@@ -132,7 +136,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂K∂Ψ(Ψ, hydro, θs=hydro.θs, θr=hydro.θr, Ψvg=hydro.Ψvg, N=hydro.N, Ks=hydro.Ks, Km=1.0, L=0.5)
+		function ∂K∂Ψ(Ψ, iSoil, hydro, θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Ks=hydro.Ks[iSoil], Km=1.0, L=0.5)
 			M = 1.0 - Km/N
 	
 			∂K∂Ψ = Ks * (L * (-M * (N * (1 / Ψvg) * (Ψ / Ψvg) ^ (N - 1)) * (1.0 + (Ψ / Ψvg) ^ N) ^ (-M - 1)) * ((1.0 + (Ψ / Ψvg) ^ N) ^ -M) ^ (L - 1)) * (1.0 - (1.0 - ((1.0 + (Ψ / Ψvg) ^ N) ^ -M) ^ (1.0 / M)) ^ M) ^ 2.0 + Ks *

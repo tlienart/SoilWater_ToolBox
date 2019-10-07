@@ -1,8 +1,8 @@
 module ofHydro 
-	using ..option, ..stat, ..wrc, ..kunsat
+	using ..option, ...stats, ..wrc, ..kunsat
 	export  WRC_KUNSAT
 	  
-	function WRC_KUNSAT(iSoil, K_Kθ, N_KΨ, N_θΨ, θ_θΨ, Ψ_Kθ, Ψ_θΨ, hydro) 
+	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, θsMat=hydro.θsMat, σMac=hydro.σMac, ΨmMac=hydro.ΨmMac) 
 
 		 # === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])
@@ -11,10 +11,10 @@ module ofHydro
 			@simd for iΨ in 1:N_θΨ[iSoil]
 				θ_Obs[iΨ] = θ_θΨ[iSoil,iΨ]
 				Ψ_Obs = Ψ_θΨ[iSoil,iΨ]
-				θ_Sim[iΨ] = wrc.kg.Ψ_2_θDual(Ψ_Obs, hydro)
-			end # for
+				θ_Sim[iΨ] = wrc.kg.Ψ_2_θDual(Ψ_Obs, iSoil, hydro)
+			end # for iΨ in 1:N_θΨ[iSoil]
 
-			Of_θΨ = stat.NASH_SUTCLIFFE_ERRORmin(θ_Obs, θ_Sim; Power=2.0)
+			Of_θΨ = stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs, θ_Sim; Power=2.0)
 
 
 		 # === OF Kunsat ====
@@ -24,17 +24,17 @@ module ofHydro
 				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				
 				@simd for iΨ in 1:N_KΨ[iSoil]
-					Kunsat_Obs_Ln[iΨ] = log1p(K_Kθ[iSoil,iΨ])
-					Ψ_Obs =  Ψ_Kθ[iSoil,iΨ]
+					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨ[iSoil,iΨ])
+					Ψ_Obs =  Ψ_KΨ[iSoil,iΨ]
 				
-				Kunsat_Sim_Ln[iΨ] = log1p(kunsat.kg.Ψ_2_KUNSAT(Ψ_Obs, hydro))
-				end # for
+					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.kg.Ψ_2_KUNSAT(Ψ_Obs, iSoil, hydro))
+				end # for iΨ in 1:N_KΨ[iSoil]
 
 				Of_Kunsat = stat.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
 			end #  option.KunsatΨ
 
 		 return Of = 0.5 * Of_θΨ + 0.5 * Of_Kunsat
 
-	end # WRC_KUNSAT
+	end # function OF_WRC_KUNSAT
 
 end # module ofHydaulic

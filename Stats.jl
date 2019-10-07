@@ -1,6 +1,6 @@
-module stat
+module stats
 	using ..wrc, ..param
-	export NASH_SUTCLIFFE_ERRORmin
+	export NASH_SUTCLIFFE_ERRORmin, NASH_SUTCLIFFE_θΨ, RELATIVEerr
 	using Statistics
 
 	function NASH_SUTCLIFFE_ERRORmin(Obs, Sim; Power=2.0)
@@ -25,7 +25,7 @@ module stat
 			@simd for iRpart = 1:Nrpart[iSoil]
 				θΨ[iRpart] = wrc.kg.Ψ_2_θdual(Ψ_Rpart[iSoil,iRpart], θsMac[iSoil], θr[iSoil], ΨkgMat[iSoil], σMat[iSoil], θsMat[iSoil], ΨkgMac[iSoil], σMac[iSoil])
 			end
-			Nse_Psd[iSoil] = 1.0 - stats.NASH_SUTCLIFFE_ERRORmin(θΨ[1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]])	
+			Nse_Psd[iSoil] = 1.0 - stat.NASH_SUTCLIFFE_ERRORmin(θΨ[1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]])	
 		end
 		# Cumulating the objective function to get the overview
 		Nse_Psd_Mean = Statistics.mean(max.(Nse_Psd[1:Nsample],0.0))  # in case of negative value then it is set to 0
@@ -39,8 +39,7 @@ module stat
 
 
 	function RELATIVEerr(Obs, Sim)
-		Err = 1. - Statistics.abs(Obs - Sim ) / Obs
-		return Err
+		return Err = 1. - Statistics.abs(Obs - Sim ) / Obs
 	end
 
 end # module

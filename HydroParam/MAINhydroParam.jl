@@ -2,7 +2,6 @@
 #		MODULE: name
 # =============================================================
 module mainHydroParam
-
 	using ..option, ..psdThetar, ..wrc, ..kunsat
 
 	using BlackBoxOptim
@@ -29,61 +28,204 @@ module mainHydroParam
 			N :: 	Vector{Float64}
 			Ψvg :: 	Vector{Float64}
 		end # struct VANGENUCHTEN
-		
+
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MAIN_HYDROPARAM()
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 
-			if option.HydroModel == "Kosugi"
+			# INITIALIZING
 				θs 		= Array{Float64}(undef, (N_SoilSelect))
 				θr 		= Array{Float64}(undef, (N_SoilSelect))
-				Ks 		= Array{Float64}(undef, (N_SoilSelect))
-				σ 		= Array{Float64}(undef, (N_SoilSelect))
-				Ψm 		= Array{Float64}(undef, (N_SoilSelect))
-				θsMat 	= Array{Float64}(undef, (N_SoilSelect))
-				σMac 	= Array{Float64}(undef, (N_SoilSelect))
-				ΨmMac 	= Array{Float64}(undef, (N_SoilSelect))
-
-				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMat, σMac, ΨmMac)
-				
-			elseif option.HydroModel == "Vangenuchten"
-				θs		= Array{Float64}(undef, (N_SoilSelect))
-				θr		= Array{Float64}(undef, (N_SoilSelect))
 				Ks		= Array{Float64}(undef, (N_SoilSelect))
-				N		= Array{Float64}(undef, (N_SoilSelect))
-				Ψvg		= Array{Float64}(undef, (N_SoilSelect))
+				θsMat 	= Array{Float64}(undef, (N_SoilSelect))
 
-				hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg)
-			end # option.HydroModel
-
-			for iSoil=1:N_SoilSelect
-
-				if (option.hydro.θrOpt == "Psd") && option.Psd
-					hydro.θr[iSoil] = min( psdThetar.PSD_2_θr(iSoil, ∑Psd), minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]]))
-				end # option.hydro.θrOpt == "Psd"
-
-				if !(option.hydro.θsOpt)
-					hydro.θs[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])
-				end # option.hydro.θrOpt == "Psd"
-
-				if !(option.hydro.KsOpt) && option.KunsatΨ
-					hydro.Ks[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]])
-				end # option.KunsatΨ
-
-				# if option.HydroModel == "Kosugi"
+				if option.HydroModel == "Kosugi"
+					σ 		= Array{Float64}(undef, (N_SoilSelect))
+					Ψm 		= Array{Float64}(undef, (N_SoilSelect))
+					σMac 	= Array{Float64}(undef, (N_SoilSelect))
+					ΨmMac 	= Array{Float64}(undef, (N_SoilSelect))
 					
-				# end
-					
+					hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMat, σMac, ΨmMac)
+
+					# Number of parameters to be optimized
+						if option.UnimodalBimodal == "Unimodal"
+							
+							# Keep constant
+							σMac 	= 1.0
+							ΨmMac 	= 1000.0
+							
+							# Parameters to be keept constant
+							N_ParamOpt = 5
+							Opt_θs 		= true
+							Opt_θr 		= true
+							Opt_σ 		= true
+							Opt_Ψm 		= true
+							Opt_Ks		= true
+							Opt_θsMat 	= false
+							Opt_σMac 	= false
+							Opt_ΨmMac 	= false
+
+						elseif option.UnimodalBimodal == "Bimodal"
 				
-			end  # for iSoil=1:N_SoilSelect
+							# Parameters to be keept constant
+							N_ParamOpt = 8
+
+							Opt_θs 		= true
+							Opt_θr 		= true
+							Opt_σ 		= true
+							Opt_Ψm 		= true
+							Opt_Ks		= true
+							Opt_θsMat 	= true
+							Opt_σMac 	= true
+							Opt_ΨmMac 	= true
+
+						end  # if: option.UnimodalBimodal == "Unimodal"
+					
+				elseif option.HydroModel == "Vangenuchten"
+					N		= Array{Float64}(undef, (N_SoilSelect))
+					Ψvg		= Array{Float64}(undef, (N_SoilSelect))
+
+					hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg)
+
+					# Parameters to be optimized
+						N_ParamOpt = 5
+
+						Opt_θs 		= true
+						Opt_θr 		= true
+						Opt_N 		= true
+						Opt_Ψvg		= true
+						Opt_Ks		= true
+				end # option.HydroModel
 
 
-			return hydro
+			# SPECIAL REQUIREMENTS TRUE FOR ALL HydroModel
+		
+				for iSoil=1:N_SoilSelect
+					# Derive θr from data
+					if (option.hydro.θrOpt == "Psd") && (option.Psd)
+						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr(iSoil, ∑Psd), minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]]) )
+						N_ParamOpt -= 1
+						Opt_θr = false
+					else
+						# Keep θr = Cst
+						if option.hydro.θrOpt == "Cst"
+							θr = param.hydro.θr
+							N_ParamOpt -= 1
+							Opt_θr = false
+						end # option.hydro.θrOpt
+					end # option.hydro.θrOpt == "Psd"
+
+					# Derive θs from data
+					if !(option.hydro.θsOpt)
+						hydro.θs[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])
+						N_ParamOpt -= 1
+						Opt_θs = false
+					end # option.hydro.θrOpt == "Psd"
+
+					# Derive Ks from data
+					if !(option.hydro.KsOpt) && option.KunsatΨ
+						hydro.Ks[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]])
+						N_ParamOpt -= 1
+						Opt_Ks = false
+					else
+						if option.hydro.KsOpt && !(option.KunsatΨ)
+							N_ParamOpt -= 1
+							Opt_Ks = false
+						end # option.KunsatΨ
+					end # option.KunsatΨ
+				end  # for iSoil=1:N_SoilSelect
+
+				if option.HydroModel == "Kosugi"
+					kg.OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+				elseif option.HydroModel == "Vangenuchten"
+					vg.OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+				end
+
 
 		end  # function: MAIN_HYDROPARAM()
+
+
+		# =============================================================
+		#		MODULE: kg
+		# =============================================================
+		module kg
+			using ...ofHydro
+			export OPTIMISATION_HYDRO
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : INITIALIZING_HYDRO
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+
+				for iSoil=1:N_SoilSelect
+					Of = ofHydro.OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, θsMat=hydro.θsMat, σMac=hydro.σMac, ΨmMac=hydro.ΨmMac)
+					
+					# println("$iSoil, $Of")
+				end  # for iSoil=1:N_SoilSelect
+
+				return hydro
+			end  # function: OPTIMISATION_HYDRO
+
+			
+		end  # module kg
+		# ............................................................
+
+
+			# OPTIMIZATION
+				# if option.HydroModel == "Kosugi"
+
+
+				
+
+				# 	Optimization = BlackBoxOptim.bboptimize(P -> ofHydro.OF_WRC_KUNSAT() ; SearchRange =[ (param.θr_Min, θr_Max), (param.σMat_Min, param.σMat_Max), (log10.(param.ΨkgMat_Min), log10.(param.ΨkgMat_Max)) , (θsMat_Min, θsMac[iSoil]), (param.σMac_Min, param.σMac_Max), (log10.(K_Kθ_Min), log10.(param.Ks_Mac_Max))], NumDimensions=N_ParamOpt, TraceMode=:silent)
+
+				# # Values of the optimal bimodal hydraulic params===========================
+				# θr[iSoil] = BlackBoxOptim.best_candidate(Optimization)[1]
+				# σMat[iSoil] =  BlackBoxOptim.best_candidate(Optimization)[2]
+				# ΨkgMat[iSoil] =  10.0 ^ (BlackBoxOptim.best_candidate(Optimization)[3])
+				# θsMat[iSoil] = BlackBoxOptim.best_candidate(Optimization)[4]
+				# σMac[iSoil]  = BlackBoxOptim.best_candidate(Optimization)[5]
+				# ΨkgMac[iSoil] = param.ΨkgMac
+
+				# if Option_Data_Kθ
+			   	# 	KsMac[iSoil] = 10.0 ^ (BlackBoxOptim.best_candidate(Optimization)[6])
+				# else
+			   	# 	KsMac[iSoil] = -999.0
+				# end
+
+				# 	Of_Hydro, hydro = kg.HYDRO_OPTIMISATION()
+					
+
+				# elseif option.HydroModel == "Vangenuchten"
+
+				# 	Of_Hydro, hydro = vg.HYDRO_OPTIMISATION()
+
+				# end # option.HydroModel
+
+
+
+	# =============================================================
+	#		MODULE: vg
+	# =============================================================
+	module vg
+		using ...ofHydro
+		export OPTIMISATION_HYDRO
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : INITIALIZING_HYDRO
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function  OPTIMISATION_HYDRO(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+			
+			
+			return hydro
+		end  # function: OPTIMISATION_HYDRO
+		
+	end  # module vg
+		# ............................................................
 	
-end  # mainHydroParam
+end  # module: mainHydroParam
 # ............................................................
 
 
@@ -224,8 +366,8 @@ end  # mainHydroParam
 # 				θ_Sim_Bim[iH] = wrc.kg.Ψ_2_θdual(H_Obs[iH], θsMac[iSoil], θr[iSoil], ΨkgMat[iSoil], σMat[iSoil], θsMat[iSoil], ΨkgMac[iSoil], σMac[iSoil]) # Bimodal Kosugi WR
 # 			end
 
-# 			Nse_θΨ_Uni[iSoil]= 1.0 - stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs[1:N_θΨ[iSoil]], θ_Sim_Uni[1:N_θΨ[iSoil]])
-# 			Nse_θΨ_Bim[iSoil]= 1.0 - stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs[1:N_θΨ[iSoil]], θ_Sim_Bim[1:N_θΨ[iSoil]])
+# 			Nse_θΨ_Uni[iSoil]= 1.0 - stat.NASH_SUTCLIFFE_ERRORmin(θ_Obs[1:N_θΨ[iSoil]], θ_Sim_Uni[1:N_θΨ[iSoil]])
+# 			Nse_θΨ_Bim[iSoil]= 1.0 - stat.NASH_SUTCLIFFE_ERRORmin(θ_Obs[1:N_θΨ[iSoil]], θ_Sim_Bim[1:N_θΨ[iSoil]])
 
 # 			# How good the fit of K(θ)
 # 			Kunsat_Obs = zeros(Float64,(N_Kθ[iSoil]))
@@ -247,8 +389,8 @@ end  # mainHydroParam
 # 			end
 
 # 			if Option_Data_Kθ
-# 			   Nse_Kθ_Uni[iSoil] = 1.0 - stats.NASH_SUTCLIFFE_ERRORmin(log.(1.0 .+ Kunsat_Obs[1:N_Kθ[iSoil]]), log.(1.0 .+ Kunsat_Sim_Uni[1:N_Kθ[iSoil]]))
-# 			   Nse_Kθ_Bim[iSoil] = 1.0 - stats.NASH_SUTCLIFFE_ERRORmin(log.(1.0 .+ Kunsat_Obs[1:N_Kθ[iSoil]]), log.(1.0 .+ Kunsat_Sim_Bim[1:N_Kθ[iSoil]]))
+# 			   Nse_Kθ_Uni[iSoil] = 1.0 - stat.NASH_SUTCLIFFE_ERRORmin(log.(1.0 .+ Kunsat_Obs[1:N_Kθ[iSoil]]), log.(1.0 .+ Kunsat_Sim_Uni[1:N_Kθ[iSoil]]))
+# 			   Nse_Kθ_Bim[iSoil] = 1.0 - stat.NASH_SUTCLIFFE_ERRORmin(log.(1.0 .+ Kunsat_Obs[1:N_Kθ[iSoil]]), log.(1.0 .+ Kunsat_Sim_Bim[1:N_Kθ[iSoil]]))
 # 			else
 # 			   Nse_Kθ_Uni[iSoil] = 0.0
 # 			   Nse_Kθ_Bim[iSoil] = 0.0

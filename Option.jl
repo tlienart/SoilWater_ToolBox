@@ -9,12 +9,13 @@ module option
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# HYDRAULIC MODEL
-		const HydroModel = "Kosugi" # <"Kosugi">* OR  <"Vangenuchten">
+		const HydroModel = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
+		const UnimodalBimodal = "Bimodal" 	# <"Unimodal" OR <"Bimodal>>
 
 	# MODELS RUN
 		const Id_Select 	= true 	# <true>* Select Id from the data OR <false> use all the data
 		const θΨ 			= "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
-		const KunsatΨ		= true #  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>  
+		const KunsatΨ		= true 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>  
 		const Psd 			= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
 		const Infiltration 	= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
 		const KsatModel 	= false # <true> Derive Ksat from θ(Ψ) OR <false>
@@ -26,7 +27,7 @@ module option
 		# =============================================================
 			module hydro
 				const θsOpt 	= false #  <true> Optimize θs OR <false>* fixed from θ(ψ=0)
-				const θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=0 <"0"> Fixed 
+				const θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed 
 				const KsOpt 	= true #  <true> Optimize Ks (require KunsatΨ=true) OR <"false"> fixed from <"K(ψ=0)">		
 			end  # module hydroparam
 		# ............................................................

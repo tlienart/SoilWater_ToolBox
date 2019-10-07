@@ -26,8 +26,12 @@ module param
 	#		MODULE: hydro
 	# =============================================================
 	module hydro
+
+		# θr = 0
+			θr = 0.0
+
 		# Feasible range of Kosugi
-			θr_Min = 0.
+			θr_Min = 0.0
 			θr_Max = 0.25 # 0.2 or 0.25
 
 			σMat_Min = 1.4 # 1.6
