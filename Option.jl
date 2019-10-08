@@ -10,7 +10,7 @@ module option
 
 	# HYDRAULIC MODEL
 		const HydroModel = 		"Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
-		const UnimodalBimodal = "Bimodal" 	# <"Unimodal" OR <"Bimodal>>
+		const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>>
 
 	# MODELS RUN
 		const Id_Select 	= true 	# <true>* Select Id from the data OR <false> use all the data
@@ -26,9 +26,18 @@ module option
 		#		MODULE: hydroparam
 		# =============================================================
 			module hydro
-				const θsOpt 	= "Fixed" #  <Opt> Optimize θs OR <Fixed>* fixed from θ(ψ=0) OR <Φ> which requires some correction
-				const θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed 
-				const KsOpt 	= "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Fixed"> from <"K(ψ=0)">		
+			using ..option
+
+				θsOpt 	= "Data" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
+				if θsOpt == "Opt" && option.UnimodalBimodal == "Bimodal"
+					println("\n NOT POSSIBLE: option.θsOpt == Opt && option.UnimodalBimodal = Bimodal")
+					println("AUTO CORRECT: option.hydro.θsOpt = Data \n")
+					θsOpt = "Data"
+				end 
+
+				θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed with value derived from param.hydro.θr
+
+				KsOpt 	= "Data" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)		
 			end  # module hydroparam
 		# ............................................................
 
@@ -62,9 +71,16 @@ module option
 		#		MODULE: ksat
 		# =============================================================
 			module ksat
-				const Optimize = false # <true> Optimize the parameters of Ks model (require KΨ) OR <false>* derived from preset values 
+				const Optimize = true # <Opt> Optimize the parameters of Ks model (require KΨ) OR <false>* derived from preset values 
 				const Ksat = false # <true> Derive Ksat from θ(Ψ) OR <false>
 			end  # module ksat
 			# ............................................................
+
+
+	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+	#	CHECKING OPTIONS
+	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+	
+				# KsOpt 
 end  # module option
 # ............................................................

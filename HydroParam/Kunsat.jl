@@ -55,8 +55,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_KUNSAT(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψm=hydro.Ψm[iSoil], σ=hydro.σ[iSoil], θsMat=hydro.θsMat[iSoil], ΨmMac=hydro.ΨmMac[iSoil], σMac=hydro.σMac[iSoil], Ks=hydro.Ks[iSoil])
 
-			# Ψ must be negative
-			Se = wrc.Ψ_2_SeDual(-Ψ, iSoil, hydro)
+			Se = wrc.Ψ_2_SeDual(Ψ, iSoil, hydro)
 			
 			KsMat = Ks * (θsMat - θr) / (θs - θr)
 			Kunsat_Mat =  KsMat * sqrt(Se) * (0.5 * erfc(((log(Ψ/Ψm)) / σ + σ)/sqrt(2.0)))^2.0
@@ -117,8 +116,7 @@ module kunsat
 		function  Ψ_2_KUNSAT(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Ks=hydro.Ks[iSoil], Km=1.0, L=0.5)
 			M = 1.0 - Km / N
 
-			# Ψ must be negative
-			Se = wrc.Ψ_2_SeDual(-Ψ, iSoil, hydro)
+			Se = wrc.Ψ_2_SeDual(Ψ, iSoil, hydro)
 		
 			return Kunsat = Ks * (Se^L) * ( 1.0 - (1.0 - Se ^ (1.0 / M) ) ^ M ) ^ 2.0
 		end #function Ψ_2_KUNSAT

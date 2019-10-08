@@ -2,9 +2,7 @@ module ofHydro
 	using ..option, ...stats, ..wrc, ..kunsat
 	export  WRC_KUNSAT
 	  
-	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ, Ψm=hydro.Ψm, θr=hydro.θr, θs=hydro.θs, Ks=hydro.Ks, ∇_θsMat=∇_θsMat, ∇_σMac=∇_σMac, ΨmMac=hydro.ΨmMac) 
-
-		hydro = mainHydroParam.kg.PARAMETER_ADJUSTMENT(hydro, ∇_θsMat, ∇_σMac)
+	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro) 
 
 		 # === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])
@@ -32,10 +30,12 @@ module ofHydro
 					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.kg.Ψ_2_KUNSAT(Ψ_Obs, iSoil, hydro))
 				end # for iΨ in 1:N_KΨ[iSoil]
 
-				Of_Kunsat = stat.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
+				Of_Kunsat = stats.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
 			end #  option.KunsatΨ
 
-		 return Of = 0.5 * Of_θΨ + 0.5 * Of_Kunsat
+			Of = 0.5 * Of_θΨ + 0.5 * Of_Kunsat
+
+		 return Of, Of_θΨ, Of_Kunsat
 
 	end # function OF_WRC_KUNSAT
 
