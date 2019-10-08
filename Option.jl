@@ -8,6 +8,9 @@ module option
 	# DOWNLAOD PACKAGES
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
+	# PLOTTING
+		const Plot = true # <true>* plot or <false> no plotting
+	
 	# HYDRAULIC MODEL
 		const HydroModel = 		"Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 		const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>>
@@ -19,7 +22,6 @@ module option
 		const Psd 			= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
 		const Infiltration 	= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
 		const KsatModel 	= false # <true> Derive Ksat from θ(Ψ) OR <false>
-
 
 
 		# =============================================================

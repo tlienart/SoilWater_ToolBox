@@ -12,16 +12,18 @@ module path
 		Parameter 		= "Parameter.csv"
 
 	# OUTPUT PATH
+		Table_θΨK		= "Table_ThetaHK.csv"
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
 	# PROCESSING 
 		Home = @__DIR__
 		Id_Select = Home * "//INPUT//" * Id_Select
-
 		Kunsat = Home * "//INPUT//" * Kunsat
 		Ψθ = Home * "//INPUT//" * Ψθ
 		Psd = Home * "//INPUT//" * Psd
 		Infiltration = Home * "//INPUT//" * Infiltration
+
+		Table_θΨK = Home * "//OUTPUT//Table2//" * Table_θΨK
 end  # module path
 # ............................................................

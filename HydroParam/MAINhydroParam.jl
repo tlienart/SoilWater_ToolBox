@@ -153,10 +153,9 @@ module mainHydroParam
 				
 			elseif option.HydroModel == "Vangenuchten"
 				Of, Of_θΨ, Of_Kunsat, hydro = kg.HYDROPARAM_OPT(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, θr_Max, θs_Min, θs_Max, Ks_Min, N_ParamOpt, N_SoilSelect, hydro, opt)
-
 			end
 
-			println(hydro)
+			return Of, Of_θΨ, Of_Kunsat, hydro, KOSUGI
 		end # function: MAIN_HYDROPARAM
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -176,12 +175,12 @@ module mainHydroParam
 				function HYDROPARAM_OPT(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, θr_Max, θs_Min, θs_Max, Ks_Min, N_ParamOpt, N_SoilSelect, hydro, opt)
 					Of 			= Array{Float64}(undef, (N_SoilSelect))
 					Of_θΨ 		= Array{Float64}(undef, (N_SoilSelect))
-					Of_Kunsat 	= Array{Float64}(undef, (N_SoilSelect))
+					Of_Kunsat 	= zeros(Float64, (N_SoilSelect))
 
 					for iSoil=1:N_SoilSelect
 
 						# it is to be noted that option Opt_Ks is not needed since it is regulated by N_ParamOpt
-						if option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr
+						if option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -199,7 +198,7 @@ module mainHydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr
+						elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -216,7 +215,7 @@ module mainHydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr
+						elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -233,7 +232,7 @@ module mainHydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr
+						elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -249,60 +248,177 @@ module mainHydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr
+						elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 
-								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], Ks=P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+		
+							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+							hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+							hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[4]
+							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[5]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
+
+
+						elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
+
+							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3], Ks=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+		
+							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+							hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
+
+
+						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
+
+							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], Ks=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+		
+							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+							hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
+
+
+						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
+
+							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], Ks=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+		
+							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[3]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
+
+
+								#4444444444444444444
+							elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+
+								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], Ks=P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], ∇_θsMat=P[5], ∇_σMac=P[6], ΨmMac=P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 								hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
 								hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[4]
-								hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[5]
-								hydro.θsMat[iSoil] = hydro.θs[iSoil]
-								hydro.σMac[iSoil]  = hydro.σ[iSoil]
-
-
-							elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr
-
-								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+								∇_θsMat 			= BlackBoxOptim.best_candidate(Optimization)[5]
+								∇_σMac 				= BlackBoxOptim.best_candidate(Optimization)[6]
+								hydro.ΨmMac[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[7]
+								hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
+								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
+		
+		
+							elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3], Ks=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
+	
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 								hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
-								hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
-								hydro.θsMat[iSoil] = hydro.θs[iSoil]
-								hydro.σMac[iSoil]  = hydro.σ[iSoil]
-
-
-							elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr
-
-								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+								∇_θsMat 			= BlackBoxOptim.best_candidate(Optimization)[4]
+								∇_σMac 				= BlackBoxOptim.best_candidate(Optimization)[5]
+								hydro.ΨmMac[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[6]
+								hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
+								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], Ks=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+	
+							elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+	
+								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
+	
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 								hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
-								hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
-								hydro.θsMat[iSoil] = hydro.θs[iSoil]
-								hydro.σMac[iSoil]  = hydro.σ[iSoil]
-
-
-							elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr
-
-								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+								∇_θsMat 			= BlackBoxOptim.best_candidate(Optimization)[4]
+								∇_σMac 				= BlackBoxOptim.best_candidate(Optimization)[5]
+								hydro.ΨmMac[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[6]
+								hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
+								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], Ks=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+	
+							elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+	
+								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.∇_θs_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+	
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], ∇_θsMat=P[3], ∇_σMac=P[4], ΨmMac=P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
-								hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[3]
-								hydro.θsMat[iSoil] = hydro.θs[iSoil]
-								hydro.σMac[iSoil]  = hydro.σ[iSoil]
+								∇_θsMat 			= BlackBoxOptim.best_candidate(Optimization)[3]
+								∇_σMac 				= BlackBoxOptim.best_candidate(Optimization)[4]
+								hydro.ΨmMac[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[5]
+								hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
+								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
+	
+	
+							elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+	
+									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil])]
+		
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+				
+									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+									hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+									hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[4]
+									hydro.θsMat[iSoil] = hydro.θs[iSoil]
+									hydro.σMac[iSoil]  = hydro.σ[iSoil]
+	
+	
+								elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+	
+									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil])]
+		
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+				
+									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+									hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+									hydro.θsMat[iSoil] = hydro.θs[iSoil]
+									hydro.σMac[iSoil]  = hydro.σ[iSoil]
+	
+	
+								elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+	
+									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil])]
+		
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+				
+									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+									hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+									hydro.θsMat[iSoil] = hydro.θs[iSoil]
+									hydro.σMac[iSoil]  = hydro.σ[iSoil]
+	
+	
+								elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+	
+									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max))]
+		
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+				
+									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+									hydro.θsMat[iSoil] = hydro.θs[iSoil]
+									hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 							end #Option
 
@@ -318,7 +434,7 @@ module mainHydroParam
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : HYDRO_PROCESS
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ[iSoil], Ψm=log10(hydro.Ψm[iSoil]), θr=hydro.θr[iSoil], θs=hydro.θs[iSoil], Ks=hydro.Ks[iSoil], ∇_θsMat=1.0, ∇_σMac=1.0, ΨmMac=log10(hydro.ΨmMac[iSoil]))
+				function OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=hydro.σ[iSoil], Ψm=log10(hydro.Ψm[iSoil]), θr=hydro.θr[iSoil], θs=hydro.θs[iSoil], Ks=hydro.Ks[iSoil], ∇_θsMat=1.0, ∇_σMac=1.0, ΨmMac=log10(hydro.Ψm[iSoil]))
 	
 					hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, θr, θs)
 					

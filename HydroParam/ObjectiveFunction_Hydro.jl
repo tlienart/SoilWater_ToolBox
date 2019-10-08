@@ -19,7 +19,7 @@ module ofHydro
 
 		 # === OF Kunsat ====
 			Of_Kunsat = 0.0
-			if option.KunsatΨ
+			if option.KunsatΨ && option.hydro.KsOpt == "Opt"
 				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				

@@ -12,6 +12,7 @@ include("Stats.jl")
 include("HydroParam\\Kunsat.jl")
 include("HydroParam\\ObjectiveFunction_Hydro.jl")
 include("HydroParam\\MAINhydroParam.jl")
+include("Table.jl")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : START_TOOLBOX
@@ -49,11 +50,24 @@ function START_TOOLBOX()
 	if option.θΨ ≠ "No"
 		println("=== START: DERIVING HYDRO PARAMETERS  ===")
 
-			hydro =  mainHydroParam.MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
+		Of, Of_θΨ, Of_Kunsat, hydro, KOSUGI =  mainHydroParam.MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 		
 		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
 	end
 
+
+	println("=== START: TABLE  ===")
+		if option.θΨ ≠ "No"
+			hydro =  table.θΨK(Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
+		end
+	println("=== END  : TABLE  === \n")
+
+
+	if option.Plot
+		println("=== START: PLOTTING  ===")
+		println("=== END: PLOTTING  === \n")
+		return
+	end
 		
 end  # function: START_TOOLBOX
 
