@@ -12,8 +12,8 @@ module option
 		const Plot = true # <true>* plot or <false> no plotting
 	
 	# HYDRAULIC MODEL
-		const HydroModel = 		"Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
-		const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>>
+		const HydroModel 		= "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
+		const UnimodalBimodal 	= "Unimodal" 	# <"Unimodal" OR <"Bimodal>>
 
 	# MODELS RUN
 		const Id_Select 	= true 	# <true>* Select Id from the data OR <false> use all the data
@@ -59,11 +59,10 @@ module option
 		# =============================================================
 		#		MODULE: infiltration
 		# =============================================================
-			module inf
-				const Optimize 		= false 		# <true> Optimize the parameters of the infiltration model (require θΨ) OR <false> derived from preset values
+			module infilt
+				const OptimizeRun  = "Run" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOpt"> run and optimise for comparison purposes
 				const Model 		= "QuasiExact" 	# <"QuasiExact"> OR <"Simplified">*
 				const HydroParam 	= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
-				const θini 			= false			# <true> derive the infiltration curves for different starting θini OR <false>
 			end  # module inf
 		# ............................................................
 	

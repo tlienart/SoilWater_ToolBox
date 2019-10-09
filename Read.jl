@@ -2,12 +2,19 @@
 #		MODULE: read
 # =============================================================
 module read
-
 	using ..option
 	using ..path
 	import DelimitedFiles
 
 	export ID, KUNSATΨ, INFILTRATION, PSD, READ_ROW_SELECT
+
+	mutable struct INFILT
+		RingRadius
+		Se_Ini
+		θs
+		λ
+		β
+	end
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ID
@@ -29,7 +36,6 @@ module read
 		end  # function: ID
 
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +44,6 @@ module read
 			θ_θΨ, ~ 	= READ_ROW_SELECT(path.Ψθ, "Theta", Id_True, N_SoilSelect)
 			return θ_θΨ, Ψ_θΨ, N_θΨ
 		end  # function: θΨ
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,14 +56,22 @@ module read
 		end  # function: θΨ
 
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function INFILTRATION(Id_True, N_SoilSelect)
-			T, N_Inf 	= READ_ROW_SELECT(path.Infiltration, "T[s]", Id_True, N_SoilSelect)
-			∑Inf , ~ 	= READ_ROW_SELECT(path.Infiltration, "Cumul_Infiltration[mm]", Id_True, N_SoilSelect)
-			return T, ∑Inf, N_Inf 
+			T, N_Infilt 	= READ_ROW_SELECT(path.Infiltration, "T[s]", Id_True, N_SoilSelect)
+			∑Infilt , ~ 	= READ_ROW_SELECT(path.Infiltration, "Cumul_Infiltration[mm]", Id_True, N_SoilSelect)
+
+			RingRadius , ~ 	=  READ_ROW_SELECT(path.Infiltration_Param, "RingRadius[mm]", Id_True, N_SoilSelect, N_Point_Max=1)
+			Se_Ini , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Se_Ini[-]", Id_True, N_SoilSelect, N_Point_Max=1)
+			θs, ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Thetas[-]", Id_True, N_SoilSelect, N_Point_Max=1)
+			λ , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Lambda", Id_True, N_SoilSelect, N_Point_Max=1)
+			β , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Beta", Id_True, N_SoilSelect, N_Point_Max=1)
+
+			infilt = INFILT(RingRadius, Se_Ini, θs, λ, β)
+
+			return T, ∑Infilt, N_Infilt, infilt
 		end  # function: INFILTRATION
 
 
@@ -71,20 +84,6 @@ module read
 			∑Psd , ~ 	= READ_ROW_SELECT(path.Psd, "Cumul_Psd", Id_True, N_SoilSelect)
 			return Diameter, ∑Psd, N_Psd
 		end  # function: PSD
-
-
-
-		
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# #		FUNCTION : PSD_Param
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# function PSD(Id_True, N_SoilSelect)
-	# 	RingDiameter, N_Psd 	= READ_ROW_SELECT(path.Psd, "RingDiameter[mm]", Id_True, N_SoilSelect)
-	# 	∑Psd , ~ 	= READ_ROW_SELECT(path.Psd, "Cumul_Psd", Id_True, N_SoilSelect)
-	# 	return Diameter, ∑Psd, N_Psd
-	# end  # function: PSD
-
-	# 	RingDiameter[mm]
 
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -108,7 +107,7 @@ module read
 				try
 					global Data_Output = Data[2:N_X,findfirst(isequal(Name), Header)]
 				catch
-					error("\n \n HyPix ERROR: cannot find   $Name  in $Path \n \n")
+					error("\n \n SOILWATERTOOLBOX ERROR: cannot find   $Name  in $Path \n \n")
 				end
 
 				N_X -= 1 # To take consideration of the header
@@ -172,42 +171,42 @@ module read
 		end # function READ_ROW_SELECT
 
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : READ_HEADER_HORIZONTAL_FLAG
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READ_HEADER_ROW_FLAG(Path, Name, Id_True)
-			# Read data
-			Data =  DelimitedFiles.readdlm(Path, ',')
-			N_X, N_Y = size(Data) # Size of the array
+# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 	#		FUNCTION : READ_HEADER_HORIZONTAL_FLAG
+# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 		function READ_HEADER_ROW_FLAG(Path, Name, Id_True)
+# 			# Read data
+# 			Data =  DelimitedFiles.readdlm(Path, ',')
+# 			N_X, N_Y = size(Data) # Size of the array
 
-			# Reading header
-			Header = fill("", N_Y)
-			for i in 1:N_Y
-				Header[i] = Data[1,i]
-			end
+# 			# Reading header
+# 			Header = fill("", N_Y)
+# 			for i in 1:N_Y
+# 				Header[i] = Data[1,i]
+# 			end
 
-			# Getting the column which matches the name of the header
-			Name = replace(Name, " " => "") # Remove white spaces
-			Data_Output = Data[2:N_X,findfirst(isequal(Name), Header)]
+# 			# Getting the column which matches the name of the header
+# 			Name = replace(Name, " " => "") # Remove white spaces
+# 			Data_Output = Data[2:N_X,findfirst(isequal(Name), Header)]
 
-			N_X -= 1 # To take consideration of the header
+# 			N_X -= 1 # To take consideration of the header
 
-			# ===========================================
-			# Only keeping data which is flagged as true
-			# ===========================================
-			Data_True = []
-			iTrue = 1
+# 			# ===========================================
+# 			# Only keeping data which is flagged as true
+# 			# ===========================================
+# 			Data_True = []
+# 			iTrue = 1
 	
-			for i in 1:N_X
-				if Id_True[i] == 1
-					append!(Data_True, Data_Output[i])
-					iTrue += 1
-				end
-			end # i in N_X
-			N_X = iTrue
+# 			for i in 1:N_X
+# 				if Id_True[i] == 1
+# 					append!(Data_True, Data_Output[i])
+# 					iTrue += 1
+# 				end
+# 			end # i in N_X
+# 			N_X = iTrue
 
-			return Data_True, N_X
-		end # function READ_HEADER_ROW_FLAG
+# 			return Data_True, N_X
+# 		end # function READ_HEADER_ROW_FLAG
 
 end  # module: read
 # ............................................................		

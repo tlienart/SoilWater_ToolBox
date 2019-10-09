@@ -12,6 +12,10 @@ include("Stats.jl")
 include("HydroParam\\Kunsat.jl")
 include("HydroParam\\ObjectiveFunction_Hydro.jl")
 include("HydroParam\\MAINhydroParam.jl")
+include("Infilt\\Diffusivity.jl")
+include("Infilt\\Sorptivity.jl")
+include("Infilt\\MAINinfilt.jl")
+
 include("Table.jl")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,23 +46,29 @@ function START_TOOLBOX()
 		end
 		
 		if option.Infiltration
-			T, ∑Inf, N_Inf  = read.INFILTRATION(Id_Select, N_SoilSelect)
+			T, ∑Infilt, N_Infilt, infilt  = read.INFILTRATION(Id_Select, N_SoilSelect)
 		end
 	println("=== END  : READING === \n")
 
 
 	if option.θΨ ≠ "No"
 		println("=== START: DERIVING HYDRO PARAMETERS  ===")
-
 		Of, Of_θΨ, Of_Kunsat, hydro, KOSUGI =  mainHydroParam.MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
-		
 		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
+	else
+		hydro = []
+	end
+
+	if option.Infiltration
+		println("=== START: INFILTRATION  ===")
+			mainInfilt.MAIN_INFILT(N_SoilSelect, T, ∑Infilt, N_Infilt, infilt, hydro)
+		println("=== END  : INFILTRATION  === \n")
 	end
 
 
 	println("=== START: TABLE  ===")
 		if option.θΨ ≠ "No"
-			hydro =  table.θΨK(Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
+			table.θΨK(Id_Select, Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
 		end
 	println("=== END  : TABLE  === \n")
 
