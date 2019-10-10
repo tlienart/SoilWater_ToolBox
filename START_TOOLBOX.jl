@@ -61,7 +61,7 @@ function START_TOOLBOX()
 
 	if option.Infiltration
 		println("=== START: INFILTRATION  ===")
-			mainInfilt.MAIN_INFILT(N_SoilSelect, T, ∑Infilt, N_Infilt, infilt, hydro)
+		Infilt_Best_HydroObs, N_ΔT_Best_HydroObs = mainInfilt.MAIN_INFILT(N_SoilSelect, T, ∑Infilt, N_Infilt, infilt, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -75,6 +75,7 @@ function START_TOOLBOX()
 
 	if option.Plot
 		println("=== START: PLOTTING  ===")
+			plot.HYDROPARAM(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
 		println("=== END: PLOTTING  === \n")
 		return
 	end
