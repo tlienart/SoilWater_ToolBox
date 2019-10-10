@@ -4,6 +4,8 @@
 module plot
 
 	using ...wrc, ...kunsat, ..path
+	using PGFPlots
+	export  HYDROPARAM
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : name
