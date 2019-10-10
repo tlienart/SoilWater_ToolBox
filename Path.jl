@@ -14,7 +14,7 @@ module path
 
 	# OUTPUT PATH
 		Table_θΨK			= "Table_ThetaHK.csv"
-
+		
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
 	# PROCESSING 
@@ -27,5 +27,6 @@ module path
 		Infiltration_Param = Home * "//INPUT//" * Infiltration_Param
 
 		Table_θΨK = Home * "//OUTPUT//Table//" * Table_θΨK
+		Plots_θΨK = Home * "//OUTPUT//Plots//"  ########
 end  # module path
 # ............................................................
