@@ -17,6 +17,7 @@ include("Infilt\\Sorptivity.jl")
 include("Infilt\\Best.jl")
 include("Infilt\\MAINinfilt.jl")
 include("Table.jl")
+include("Plot.jl")
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : START_TOOLBOX
@@ -75,7 +76,7 @@ function START_TOOLBOX()
 
 	if option.Plot
 		println("=== START: PLOTTING  ===")
-			plot.HYDROPARAM(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+			plot.HYDROPARAM(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
 		println("=== END: PLOTTING  === \n")
 		return
 	end
