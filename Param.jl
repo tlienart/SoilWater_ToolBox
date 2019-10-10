@@ -26,7 +26,6 @@ module param
 	#		MODULE: hydro
 	# =============================================================
 	module hydro
-
 		# θr = Cst
 			θr = 0.0
 
@@ -59,8 +58,20 @@ module param
 			ΨmMac_Min = 50. #[mm]
 			ΨmMac_Max = 390 #[mm]
 
-		
 	end  # module: hydro
+	# ............................................................
+
+
+	# =============================================================
+	#		MODULE: infilt
+	# =============================================================
+	module infilt
+
+		const SeIni_Output = [0.1 0.3 0.5 0.7 0.9] # [-] Different initial Se_Ini for plotting the infiltration curves 
+		const ΔT_Output = 1.0 # [seconds] different time steps for generating the infiltration plots
+		const Coeff_TransSteady = 5.0
+
+	end  # module: infilt
 	# ............................................................
 
 end  # module param

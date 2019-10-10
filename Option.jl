@@ -30,7 +30,7 @@ module option
 			module hydro
 			using ..option
 
-				θsOpt 	= "Data" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
+				θsOpt 	= "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
 				if θsOpt == "Opt" && option.UnimodalBimodal == "Bimodal"
 					println("\n NOT POSSIBLE: option.θsOpt == Opt && option.UnimodalBimodal = Bimodal")
 					println("AUTO CORRECT: option.hydro.θsOpt = Data \n")
@@ -39,7 +39,7 @@ module option
 
 				θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed with value derived from param.hydro.θr
 
-				KsOpt 	= "Data" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)		
+				KsOpt 	= "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)		
 			end  # module hydroparam
 		# ............................................................
 
@@ -63,7 +63,8 @@ module option
 				const OptimizeRun  = "Run" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOpt"> run and optimise for comparison purposes
 				const Model 		= "QuasiExact" 	# <"QuasiExact"> OR <"Simplified">*
 				const HydroParam 	= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
-			end  # module inf
+				const Dimension		= "1D"	# <"3D"> infiltration rate by using single ring infiltrometer <"1D"> making 1D infiltration rate by using double ring infiltrometer  
+			end  # module infilt
 		# ............................................................
 	
 

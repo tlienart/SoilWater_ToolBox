@@ -2,31 +2,67 @@
 #		MODULE: best
 # =============================================================
 module best
-	include ..option
+	using ..option, ..sorptivity, ..wrc, ..kunsat
+	export BEST
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : MAIN_BEST
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# function MAIN_BEST(iSoil, Kr_θini, Ks, Se_Ini, Sorptivity, Time, hydro, infilt)
+
+		# 	if option
+		# 	Sorptivity = sorptivity.kg.SORPTIVITY(iSoil, Se_Ini, hydro)
+
+		
+			
+		# 	BEST(iSoil, Kr_θini, Ks, Sorptivity, Time, θ_Ini, hydro, infilt)
 
 
-	function BEST(Time, θ_Ini, iSoil, Sorptivity, Kr_θini, Ks, hydro, infilt, )
-		B = B(Kr_θini, infilt, iSoil)
+			
+		# 	return
+		# end  # function: MAIN_BEST
 
-		A = A(θ_Ini, iSoil, hydro, infilt)
 
-		Time_TransStead =  TIME_TRANS_STEADY(Sorptivity, B, Ks)
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : BEST
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function BEST(iSoil, Time, Se_Ini, hydro, infilt)
+			# Required data
+				θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
 
-		if Time <= Time_TransStead 
-			return Infilt = INFILTRATION_3D_TRANSIT(Time, Sorptivity, A, B, Ks)
-		else
-			if Flag_Best == "Best_G"
-				return Infilt = INFILTRATION_3D_STEADY_BESTG(Time, Sorptivity, A, B, Ks)
-			else
-				return Infilt = INFILTRATION_3D_STEADY_BESTGI(Time, Time_TransStead, Sorptivity, A, B, Ks)
-			end
-		end
-	end
+				Kr_θini= (kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydro)) / hydro.Ks[iSoil]
+
+				Sorptivity = sorptivity.SORPTIVITY(Se_Ini, iSoil, hydro)
+
+			# Best parameters
+				A = best.A(θ_Ini, hydro.θs[iSoil], iSoil, infilt)
+
+				B = best.B(iSoil, Kr_θini, infilt)
+
+				Time_TransStead = TIME_TRANS_STEADY(B, hydro.Ks[iSoil], Sorptivity)
+
+			# Required options 1D or 3D
+				if option.infilt.Dimension	== "3D"
+					if Time <= Time_TransStead 
+						return Infilt = best.INFILTRATION_3D_TRANSIT(A, B, hydro.Ks[iSoil], Sorptivity, Time)
+					else
+						return Infilt = best.INFILTRATION_3D_STEADY(A, B, iSoil, hydro.Ks[iSoil], Sorptivity, Time, infilt)
+					end # Time <= Time_TransStead 
+
+				elseif option.infilt.Dimension	== "1D"
+					if Time <= Time_TransStead 
+						return Infilt = best.INFILTRATION_1D_TRANSIT(B, hydro.Ks[iSoil], Sorptivity, Time)
+					else
+						return Infilt = best.INFILTRATION_1D_STEADY(B, iSoil, hydro.Ks[iSoil], Sorptivity, Time, infilt)
+					end # Time <= Time_TransStead 
+				end # option.Infilt.Dimension
+		end # function: BEST
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION_3D_TRANSIT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION_3D_TRANSIT(Time, Sorptivity, A, B, Ks)
+		function INFILTRATION_3D_TRANSIT(A, B, Ks, Sorptivity, Time)
 			return Sorptivity * (Time ^ 0.5) + (A * (Sorptivity ^ 2.0) + B * Ks) * Time
 		end  # function: INFILTRATION_3D_TRANSIT
 
@@ -34,23 +70,60 @@ module best
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION_3D_STEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION_3D_STEADY(Time, Sorptivity, A, B, Ks)
-			return (A * (Sorptivity ^ 2.0) + Ks) * Time + C(B) * (Sorptivity ^ 2.0) / Ks
+		function INFILTRATION_3D_STEADY(A, B, iSoil, Ks, Sorptivity, Time, infilt)
+			return (A * (Sorptivity ^ 2.0) + Ks) * Time + C(B, infilt, iSoil) * (Sorptivity ^ 2.0) / Ks
 		end  # function:
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : INFILTRATION_1D_TRANSIT
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function INFILTRATION_1D_TRANSIT(B, Ks, Sorptivity, Time)
+			return Sorptivity * (Time ^ 0.5) + B * Ks * Time
+		end # function: INFILTRATION_1D_TRANSIT
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : INFILTRATION_1D_STEADY
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function INFILTRATION_1D_STEADY(B, iSoil, Ks, Sorptivity, Time, infilt)
+			return Ks * Time + best.C(B, infilt, iSoil) * (Sorptivity^2.) / Ks
+		end  # function: INFILTRATION_1D_STEADY
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : TIME_TRANS_STEADY
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function TIME_TRANS_STEADY(B, Ks, Sorptivity)
+			return ( Sorptivity / (Ks * 2.0 * (1.0 - B)) ) ^ 2.0
+		end # function: TIME_TRANS_STEADY
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : TIME_TRANS_STEADY
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function TIME_TRANS_STEADY_INDEP(iSoil, Se_Ini, hydro, infilt)
+			Kr_θini= (kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydro)) / hydro.Ks[iSoil]
+			
+			B = best.B(iSoil, Kr_θini, infilt)
+
+			Sorptivity = sorptivity.SORPTIVITY(Se_Ini, iSoil, hydro)
+
+			return ( Sorptivity / (hydro.Ks[iSoil] * 2.0 * (1.0 - B)) ) ^ 2.0
+		end # function: TIME_TRANS_STEADY
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : A
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function A(θ_Ini, iSoil, hydro, infilt)
-			return infilt.γ[iSoil] / ( infilt.RingRadius[iSoil] * (hydro.θs[iSoil] - θ_Ini) ) # Units (mm-1)
+		function A(θ_Ini, θs, iSoil, infilt)
+			return infilt.γ[iSoil] / ( infilt.RingRadius[iSoil] * (θs - θ_Ini) ) # Units (mm-1)
 		end  # function: A
 	
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : B
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function B(Kr_θini, infilt, iSoil)
+		function B(iSoil, Kr_θini, infilt)
 			return (2.0 - infilt.β[iSoil]) / 3.0 + Kr_θini * (1.0 + infilt.β[iSoil]) / 3.0
 		end # function: B
 
@@ -59,48 +132,8 @@ module best
 	#		FUNCTION : C
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function C(B, infilt, iSoil)
-			return log(1.0 / infilt.β[iSoil]) * (1.0 + infilt.β[iSoil]) / (6. * (1.0 - infilt.β[iSoil]) * (1.0 - B) )
+			return log(1.0 / infilt.β[iSoil]) * (1.0 + infilt.β[iSoil]) / (6.0 * (1.0 - infilt.β[iSoil]) * (1.0 - B) )
 		end # function: C
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : TIME_TRANS_STEADY
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIME_TRANS_STEADY(Sorptivity, B, Ks)
-			return ( Sorptivity / (Ks * 2.0 * (1.0 - B)) ) ^ 2.0
-		end # function: TIME_TRANS_STEADY
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : INFILTRATION_1D_TRANSIT
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION_1D_TRANSIT(Time, Sorptivity, B, Ks)
-			return Sorptivity * (Time ^ 0.5) + B * Ks * Time
-		end # function: INFILTRATION_1D_TRANSIT
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : INFILTRATION_1D_STEADY
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION_1D_STEADY(Time, Sorptivity, A, B, Ks)
-			return Ks * Time + C(B) * (Sorptivity^2.) / Ks
-		end  # function: INFILTRATION_1D_STEADY
-
-
-
-
-	function Q1D_TRANSIT(Time, Sorptivity, Se_Ini, θs, θr, σ, Ks)
-		Kr_θini = kunsat.kg.KUNSAT(Se_Ini, θs, θr, σ, 1., θs, σ)
-		Q1D = 0.5 * Sorptivity * (Time^-0.5) + B(Kr_θini)*Ks
-		return Q1D
-	end
-
-
-
-
-
-
-
 
 end  # module: best
 # ............................................................

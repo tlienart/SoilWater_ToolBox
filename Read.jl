@@ -12,7 +12,7 @@ module read
 		RingRadius
 		Se_Ini
 		θs
-		λ
+		γ
 		β
 	end
 
@@ -51,7 +51,7 @@ module read
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function KUNSATΨ(Id_True, N_SoilSelect)
 			Ψ_KΨ, N_KΨ 	= READ_ROW_SELECT(path.Kunsat, "H[kPa]", Id_True, N_SoilSelect)
-			K_KΨ, ~ 	= READ_ROW_SELECT(path.Kunsat, "Kunsat[mm_h]", Id_True, N_SoilSelect)
+			K_KΨ, ~ 	= READ_ROW_SELECT(path.Kunsat, "Kunsat[mm_s]", Id_True, N_SoilSelect)
 			return K_KΨ, Ψ_KΨ, N_KΨ 
 		end  # function: θΨ
 
@@ -66,10 +66,10 @@ module read
 			RingRadius , ~ 	=  READ_ROW_SELECT(path.Infiltration_Param, "RingRadius[mm]", Id_True, N_SoilSelect, N_Point_Max=1)
 			Se_Ini , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Se_Ini[-]", Id_True, N_SoilSelect, N_Point_Max=1)
 			θs, ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Thetas[-]", Id_True, N_SoilSelect, N_Point_Max=1)
-			λ , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Lambda", Id_True, N_SoilSelect, N_Point_Max=1)
+			γ , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Lambda", Id_True, N_SoilSelect, N_Point_Max=1)
 			β , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Beta", Id_True, N_SoilSelect, N_Point_Max=1)
 
-			infilt = INFILT(RingRadius, Se_Ini, θs, λ, β)
+			infilt = INFILT(RingRadius, Se_Ini, θs, γ, β)
 
 			return T, ∑Infilt, N_Infilt, infilt
 		end  # function: INFILTRATION

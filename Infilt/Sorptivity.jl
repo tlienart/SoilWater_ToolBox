@@ -2,6 +2,22 @@
 #		MODULE: sorptivity
 # =============================================================
 module sorptivity
+	using ..option
+	export SORPTIVITY
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		MAIM FUNCTION : SORPTIVITY
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function SORPTIVITY(Se_Ini, iSoil::Int, hydro)
+			if option.HydroModel == "Kosugi"
+				return sorptivity.kg.SORPTIVITY(Se_Ini, iSoil::Int, hydro)
+			elseif option.HydroModel == "vanGenuchten"
+				return sorptivity.vg.SORPTIVITY(Se_Ini, iSoil::Int, hydro)
+			end
+		end # function SORPTIVITY
+
+	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 
 	# =============================================================
 	#		MODULE: kg
@@ -14,15 +30,15 @@ module sorptivity
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : SORPTIVITY
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function SORPTIVITY(iSoil, Se_Ini, hydro)
-				Se_Ini =0.0
-				θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
+			function SORPTIVITY(Se_Ini, iSoil, hydro)
 
 				function SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro)
 					return (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
 				end
-				
-				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] )[1]) ^ 0.5  
+
+				θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
+
+				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps() )[1]) ^ 0.5  
 			end  # function: SORPTIVITY
 
 
@@ -33,11 +49,10 @@ module sorptivity
 	#		MODULE: vg
 	# =============================================================
 	module vg
-
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : SORPTIVITY
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY()
+		function SORPTIVITY(Se_Ini, iSoil, hydro)
 		
 			return
 		end  # function: SORPTIVITY
