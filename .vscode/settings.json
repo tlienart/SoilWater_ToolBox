@@ -1,0 +1,99 @@
+{
+
+    "julia.enableTelemetry": true,
+
+    "julia.executablePath": "C:\\JULIA\\Julia-1.2.0\\bin\\julia.exe", 
+
+    "files.autoSave": "afterDelay",
+
+    "editor.glyphMargin": false,
+
+    "editor.mouseWheelZoom": true,
+
+    "editor.minimap.enabled": false,
+
+    "editor.codeLens": false,
+
+   "editor.detectIndentation": false,
+
+   "editor.tabCompletion": "on",
+
+   "files.associations": {
+
+      "*.jl": "julia"
+
+   },
+
+   "editor.renderWhitespace": "none",
+
+   "editor.renderControlCharacters": true,
+
+"breadcrumbs.enabled": true,
+
+"editor.foldingStrategy": "indentation",
+
+"editor.insertSpaces": false,
+
+"pasteAndIndent.selectAfter": true,
+
+"window.zoomLevel": -1,
+
+"editor.fontSize": 16,
+
+"debug.console.fontSize": 16,
+
+"terminal.integrated.fontSize": 16,
+
+"editor.suggestFontSize": 16,
+
+"editor.fontLigatures": true,
+
+"update.enableWindowsBackgroundUpdates": false,
+
+"extensions.autoUpdate": false,
+
+"extensions.autoCheckUpdates": true,
+
+"update.mode": "manual",
+
+"editor.wordWrap": "on",
+
+"editor.wrappingIndent": "indent",
+
+"html.format.wrapLineLength": 0,
+
+"editor.largeFileOptimizations": false,
+
+"git.confirmSync": false,
+
+"terminal.integrated.rendererType": "dom",
+
+"julia.enableCrashReporter": true,
+
+"diffEditor.ignoreTrimWhitespace": false,
+
+"terminal.integrated.env.windows": {
+
+    "JULIA_NUM_THREADS": "8",
+
+},
+
+"terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
+
+"julia.useCustomSysimage": true,
+
+"workbench.iconTheme": "material-icon-theme",
+
+"material-icon-theme.folders.color": "#fdd835",
+
+"workbench.colorTheme": "Blakai Theme",
+
+"bracket-pair-colorizer-2.forceIterationColorCycle": true,
+
+"files.autoGuessEncoding": true,
+
+"window.openFilesInNewWindow": "default",
+
+"workbench.editor.showTabs": true
+
+}
