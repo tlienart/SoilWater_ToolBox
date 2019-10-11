@@ -1,21 +1,25 @@
 module stats
 	using ..wrc, ..param
-	export NASH_SUTCLIFFE_ERRORmin, NASH_SUTCLIFFE_θΨ, RELATIVEerr
+	export N_SoilSelect, T, ∑Infilt, N_Infilt, infilt, NASH_SUTCLIFFE_θΨ, RELATIVEerr
 	using Statistics
 
-	function NASH_SUTCLIFFE_ERRORmin(Obs, Sim; Power=2.0)
-		N = length(Obs)
-		Obs_Mean = Statistics.mean(Obs[1:N])
-		Obs_Mean_Err =  Statistics.sum(abs.(Obs_Mean .- Obs[1:N]) .^ Power)
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=2)
+			N = length(Obs)
+			Obs_Mean = Statistics.mean(Obs[1:N])
+			Obs_Mean_Err = Statistics.sum(abs.(Obs_Mean .- Obs[1:N]) .^ Power)
 
-		if Obs_Mean_Err < 0.000000000000001   
-			Obs_Mean_Err = 1.0
-		end
-		
-		Err = sum(abs.(Sim[1:N] - Obs[1:N]) .^ Power)
+			if Obs_Mean_Err < 0.000000000000001   
+				Obs_Mean_Err = 1.0
+			end
+			
+			Err = sum(abs.(Sim[1:N] - Obs[1:N]) .^ Power)
 
-		return Of = (Err / Obs_Mean_Err ) 
-	end # function NASH_SUTCLIFFE_ERRORmin
+			return Err / Obs_Mean_Err 
+
+		end  # function: NASH_SUTCLIFE_MINIMIZE
 
 
 	function NASH_SUTCLIFFE_θΨ(Nsample, Nrpart, Ψ_Rpart, θ_Rpart, θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac)

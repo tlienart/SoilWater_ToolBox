@@ -30,7 +30,7 @@ module sorptivity
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : SORPTIVITY
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function SORPTIVITY(Se_Ini, iSoil, hydro)
+			function SORPTIVITY(Se_Ini, iSoil, hydro; Rtol=10^-5.0)
 
 				function SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro)
 					return (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
@@ -38,7 +38,7 @@ module sorptivity
 
 				θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
 
-				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps() )[1]) ^ 0.5  
+				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps(); rtol=Rtol, maxevals=10^3 )[1]) ^ 0.5  
 			end  # function: SORPTIVITY
 
 

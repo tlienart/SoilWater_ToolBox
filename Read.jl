@@ -10,11 +10,12 @@ module read
 
 	mutable struct INFILT
 		RingRadius
-		Se_Ini
+		Theta_Ini
 		θs
 		γ
 		β
 	end
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ID
@@ -64,16 +65,15 @@ module read
 			∑Infilt , ~ 	= READ_ROW_SELECT(path.Infiltration, "Cumul_Infiltration[mm]", Id_True, N_SoilSelect)
 
 			RingRadius , ~ 	=  READ_ROW_SELECT(path.Infiltration_Param, "RingRadius[mm]", Id_True, N_SoilSelect, N_Point_Max=1)
-			Se_Ini , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Se_Ini[-]", Id_True, N_SoilSelect, N_Point_Max=1)
-			θs, ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Thetas[-]", Id_True, N_SoilSelect, N_Point_Max=1)
-			γ , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Lambda", Id_True, N_SoilSelect, N_Point_Max=1)
-			β , ~ 				=  READ_ROW_SELECT(path.Infiltration_Param, "Beta", Id_True, N_SoilSelect, N_Point_Max=1)
+			Theta_Ini , ~ 	=  READ_ROW_SELECT(path.Infiltration_Param, "Theta_Ini[-]", Id_True, N_SoilSelect, N_Point_Max=1)
+			θs, ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Thetas_Bulk[-]", Id_True, N_SoilSelect, N_Point_Max=1)
+			γ , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Lambda[-]", Id_True, N_SoilSelect, N_Point_Max=1)
+			β , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Beta[-]", Id_True, N_SoilSelect, N_Point_Max=1)
 
-			infilt = INFILT(RingRadius, Se_Ini, θs, γ, β)
+			infilt = INFILT(RingRadius, Theta_Ini, θs, γ, β)
 
 			return T, ∑Infilt, N_Infilt, infilt
 		end  # function: INFILTRATION
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,63 +150,25 @@ module read
 				iSelect = 1; iPoint = 1
 				
 				# For all soils in the file
-				for iSoil in 1:N_X
-					if Id_Data[iSoil] == Id_Select[iSelect] # Only append Ids which correspond to the selected one
-						Data_Select[iSelect,iPoint] =  Data_Output[iSoil]
-						# append!(Data_Select, Data_Output[iSoil])
+				for i in 1:N_X
+					if Id_Data[i] == Id_Select[iSelect] # Only append Ids which correspond to the selected one
+						Data_Select[iSelect,iPoint] =  Data_Output[i]
+						# append!(Data_Select, Data_Output[i])
 						N_Point[iSelect] += 1
 						iPoint += 1
 					end
 
-					# Since there are many Data_Output with the same Id only update Id_Select if we are changing soils and Id_Select[iSelect] == Id_Data[iSoil]
-					if iSoil ≤ N_X -1
-						if Id_Data[iSoil+1] > Id_Data[iSoil] && Id_Select[iSelect] == Id_Data[iSoil]
+					# Since there are many Data_Output with the same Id only update Id_Select if we are changing soils and Id_Select[iSelect] == Id_Data[i]
+					if i ≤ N_X -1
+						if Id_Data[i+1] > Id_Data[i] && Id_Select[iSelect] == Id_Data[i]
 							iSelect += 1
 							iPoint = 1
 						end # if:
-					end # if: iSoil ≤ N_X
-				end # for: iSoil in 1:N_X
+					end # if: i ≤ N_X
+				end # for: i in 1:N_X
 
 				return Data_Select, N_Point
 		end # function READ_ROW_SELECT
-
-
-# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 	#		FUNCTION : READ_HEADER_HORIZONTAL_FLAG
-# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 		function READ_HEADER_ROW_FLAG(Path, Name, Id_True)
-# 			# Read data
-# 			Data =  DelimitedFiles.readdlm(Path, ',')
-# 			N_X, N_Y = size(Data) # Size of the array
-
-# 			# Reading header
-# 			Header = fill("", N_Y)
-# 			for i in 1:N_Y
-# 				Header[i] = Data[1,i]
-# 			end
-
-# 			# Getting the column which matches the name of the header
-# 			Name = replace(Name, " " => "") # Remove white spaces
-# 			Data_Output = Data[2:N_X,findfirst(isequal(Name), Header)]
-
-# 			N_X -= 1 # To take consideration of the header
-
-# 			# ===========================================
-# 			# Only keeping data which is flagged as true
-# 			# ===========================================
-# 			Data_True = []
-# 			iTrue = 1
-	
-# 			for i in 1:N_X
-# 				if Id_True[i] == 1
-# 					append!(Data_True, Data_Output[i])
-# 					iTrue += 1
-# 				end
-# 			end # i in N_X
-# 			N_X = iTrue
-
-# 			return Data_True, N_X
-# 		end # function READ_HEADER_ROW_FLAG
 
 end  # module: read
 # ............................................................		
