@@ -2,14 +2,13 @@
 #		MODULE: mainInfiltration
 # =============================================================
 module mainInfilt
-	using ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ..optInfilt
+	using ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ...optInfilt
 	export MAIN_INFILT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MAIN_INFILT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MAIN_INFILT(N_SoilSelect, T, ∑Infilt, N_Infilt, infilt, hydro)
-
+	function MAIN_INFILT(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
 
 		# COMPUTING INFILTRATION FROM PHYSICAL HYDRAULIC PARAMETERS
 			if option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && option.infilt.Model=="Simplified"
@@ -21,7 +20,7 @@ module mainInfilt
 		# COMPUTING HYDRAULIC PARAMETERS FROM BEST
 			if option.infilt.OptimizeRun  == "Opt" || option.infilt.OptimizeRun  == "RunOpt"
 			
-				optInfilt.OPT_INFILTRATION(T, ∑Infilt, N_Infilt, infilt)
+				optInfilt.kg.OPT_INFILTRATION_BEST(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt)
 			end
 
 		return  Infilt_Best_HydroObs

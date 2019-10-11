@@ -60,7 +60,7 @@ module option
 		#		MODULE: infiltration
 		# =============================================================
 			module infilt
-				const OptimizeRun  = "Run" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOpt"> run and optimise for comparison purposes
+				const OptimizeRun  = "Opt" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOpt"> run and optimise for comparison purposes
 				const Model 		= "Simplified" 	# <"QuasiExact"> OR <"Simplified">*
 				const HydroParam 	= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
 				const Dimension		= "1D"	# <"3D"> infiltration rate by using single ring infiltrometer <"1D"> making 1D infiltration rate by using double ring infiltrometer
