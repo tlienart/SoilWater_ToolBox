@@ -2,37 +2,14 @@
 #		MODULE: name
 # =============================================================
 module mainHydroParam
-	using ..option, ..param, ..psdThetar
+	using ..option, ..param, ..psdThetar, ..hydroStruct
 	export MAIN_HYDROPARAM
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		STRUCTURE : HYDRAULIC
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		mutable struct KOSUGI
-			θs :: 		Vector{Float64}
-			θr :: 		Vector{Float64}
-			Ks :: 		Vector{Float64}
-			σ :: 		Vector{Float64}
-			Ψm :: 		Vector{Float64}
-			θsMat ::	Vector{Float64}
-			σMac :: 	Vector{Float64}
-			ΨmMac ::	Vector{Float64}
-		end # struct KOSUGI
-
-		mutable struct VANGENUCHTEN
-			θs :: 	Vector{Float64}
-			θr :: 	Vector{Float64}
-			Ks :: 	Vector{Float64}
-			N :: 	Vector{Float64}
-			Ψvg :: 	Vector{Float64}
-		end # struct VANGENUCHTEN
 
 		mutable struct OPTIMIZE
 			Opt_θs :: Bool
 			Opt_θr :: Bool
 			Opt_Ks :: Bool
 		end # struct VANGENUCHTEN
-
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MAIN_HYDROPARAM()
@@ -54,29 +31,8 @@ module mainHydroParam
 
 				opt = OPTIMIZE(Opt_θs, Opt_θr, Opt_Ks)
 
-			# For all models
-				θs 		= Array{Float64}(undef, (N_SoilSelect))
-				θr 		= Array{Float64}(undef, (N_SoilSelect))
-				Ks		= zeros(Float64, N_SoilSelect)
-				θsMat 	= Array{Float64}(undef, (N_SoilSelect))
-
-			if option.HydroModel == "Kosugi"
-				σ 		= Array{Float64}(undef, (N_SoilSelect))
-				Ψm 		= Array{Float64}(undef, (N_SoilSelect))
-				σMac 	= Array{Float64}(undef, (N_SoilSelect))
-				ΨmMac 	= Array{Float64}(undef, (N_SoilSelect))
-				
-				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMat, σMac, ΨmMac)
-				
-			elseif option.HydroModel == "Vangenuchten"
-				N		= Array{Float64}(undef, (N_SoilSelect))
-				Ψvg		= Array{Float64}(undef, (N_SoilSelect))
-
-				hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg)
-
-				N_ParamOpt = 5 # Number of parameters to be optimized (will change)
-			end # option.HydroModel
-
+			# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
+				hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
 			# LOOPING FOR ERVERY SOIL
 			for iSoil=1:N_SoilSelect
@@ -155,7 +111,7 @@ module mainHydroParam
 				Of, Of_θΨ, Of_Kunsat, hydro = kg.HYDROPARAM_OPT(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, θr_Max, θs_Min, θs_Max, Ks_Min, N_ParamOpt, N_SoilSelect, hydro, opt)
 			end
 
-			return Of, Of_θΨ, Of_Kunsat, hydro, KOSUGI
+			return Of, Of_θΨ, Of_Kunsat, hydro
 		end # function: MAIN_HYDROPARAM
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>

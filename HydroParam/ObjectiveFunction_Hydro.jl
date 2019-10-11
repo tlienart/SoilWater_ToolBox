@@ -14,7 +14,7 @@ module ofHydro
 				θ_Sim[iΨ] = wrc.kg.Ψ_2_θDual(Ψ_Obs, iSoil, hydro)
 			end # for iΨ in 1:N_θΨ[iSoil]
 
-			Of_θΨ = stats.NASH_SUTCLIFFE_ERRORmin(θ_Obs, θ_Sim; Power=2.0)
+			Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs, θ_Sim; Power=2.0)
 
 
 		 # === OF Kunsat ====
@@ -30,7 +30,7 @@ module ofHydro
 					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.kg.Ψ_2_KUNSAT(Ψ_Obs, iSoil, hydro))
 				end # for iΨ in 1:N_KΨ[iSoil]
 
-				Of_Kunsat = stats.NASH_SUTCLIFFE_ERRORmin(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
+				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
 			end #  option.KunsatΨ
 
 			Of = 0.5 * Of_θΨ + 0.5 * Of_Kunsat

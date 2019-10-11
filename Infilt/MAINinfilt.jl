@@ -2,7 +2,7 @@
 #		MODULE: mainInfiltration
 # =============================================================
 module mainInfilt
-	using ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat
+	using ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ..optInfilt
 	export MAIN_INFILT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,6 +19,10 @@ module mainInfilt
 			else
 				global Infilt_Best_HydroObs = []
 			end  # if: option.infilt.OptimizeRun == "Opt"
+
+			if option.infilt.OptimizeRun  == "Opt" || option.infilt.OptimizeRun  == "RunOpt"
+				optInfilt.OPT_INFILTRATION(T, ∑Infilt, N_Infilt, infilt)
+			end
 
 		end  # for iSoil=1:N_SoilSelect
 		

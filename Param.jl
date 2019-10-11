@@ -58,6 +58,10 @@ module param
 			ΨmMac_Min = 50. #[mm]
 			ΨmMac_Max = 390 #[mm]
 
+		# RELATIONSHIP BETWEEN PARAMETERS
+			Pσ_1 = 0.5920
+			Pσ_2 = 0.7679
+
 	end  # module: hydro
 	# ............................................................
 

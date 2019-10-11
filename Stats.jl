@@ -16,9 +16,7 @@ module stats
 			end
 			
 			Err = sum(abs.(Sim[1:N] - Obs[1:N]) .^ Power)
-
 			return Err / Obs_Mean_Err 
-
 		end  # function: NASH_SUTCLIFE_MINIMIZE
 
 
@@ -29,7 +27,7 @@ module stats
 			@simd for iRpart = 1:Nrpart[iSoil]
 				θΨ[iRpart] = wrc.kg.Ψ_2_θdual(Ψ_Rpart[iSoil,iRpart], θsMac[iSoil], θr[iSoil], ΨkgMat[iSoil], σMat[iSoil], θsMat[iSoil], ΨkgMac[iSoil], σMac[iSoil])
 			end
-			Nse_Psd[iSoil] = 1.0 - stat.NASH_SUTCLIFFE_ERRORmin(θΨ[1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]])	
+			Nse_Psd[iSoil] = 1.0 - stat.NASH_SUTCLIFE_MINIMIZE(θΨ[1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]])	
 		end
 		# Cumulating the objective function to get the overview
 		Nse_Psd_Mean = Statistics.mean(max.(Nse_Psd[1:Nsample],0.0))  # in case of negative value then it is set to 0
