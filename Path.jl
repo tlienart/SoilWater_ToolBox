@@ -30,6 +30,6 @@ module path
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
 
 		Table_θΨK = Home * "//OUTPUT//Table//" * Name * Table_θΨK
-		Plots_θΨK = Home * "//OUTPUT//Plots//"  * Name
+		Plots_θΨK = Home * "//OUTPUT//Plots//" * Name
 end  # module path
 # ............................................................
