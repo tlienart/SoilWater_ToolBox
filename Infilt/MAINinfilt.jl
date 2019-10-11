@@ -42,7 +42,6 @@ module mainInfilt
 
 			# For ever soil
 			for iSoil=1:N_SoilSelect
-
 				# For different initial Se_Ini defined by users param.infilt.SeIni_Output
 				iSe_Ini = 0
 				for iSe_Ini in 1: length(param.infilt.SeIni_Output)
@@ -61,9 +60,7 @@ module mainInfilt
 
 							Infilt_Best_HydroObs[iSoil, iSe_Ini, iT] = best.BEST(iSoil, T, θ_Ini, hydro, infilt)
 						end  # for iT=N_\Delta	
-				end # for Se_Ini in param.infilt.SeIni_Output
-
-				
+				end # for Se_Ini in param.infilt.SeIni_Output	
 			end  # for iSoil=1:N_SoilSelect
 				
 			return Infilt_Best_HydroObs

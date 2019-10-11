@@ -99,6 +99,7 @@ module best
 			return ( Sorptivity / (Ks * 2.0 * (1.0 - B)) ) ^ 2.0
 		end # function: TIME_TRANS_STEADY
 
+		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TIME_TRANS_STEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

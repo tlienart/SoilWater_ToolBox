@@ -11,7 +11,7 @@ module optInfilt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPT_INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OPT_INFILTRATION()
+		function OPT_INFILTRATION_BEST()
 
 			Inf_Inv = Array{Float64}(undef, iT_N)
 			θr = 0.
