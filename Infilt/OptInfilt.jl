@@ -4,8 +4,6 @@
 # =============================================================
 module optInfilt
 
-
-
 	# =============================================================
 	#		MODULE: kg
 	# =============================================================
@@ -37,7 +35,6 @@ module optInfilt
 				# or Keep θr = Cst
 				elseif option.hydro.θrOpt == "Cst"
 					hydroBest.θr[iSoil] = param.hydro.θr
-
 				end
 	
 			end # iSOil
