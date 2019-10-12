@@ -138,7 +138,7 @@ module mainHydroParam
 
 							SearchRanges =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], ∇_θsMat=P[5], ∇_σMac=P[6], ΨmMac=P[7], Ks=P[8])[1]; SearchRange = SearchRanges, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], θs=P[4], ∇_θsMat=P[5], ∇_σMac=P[6], ΨmMac=10.0^P[7], Ks=P[8])[1]; SearchRange = SearchRanges, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -157,7 +157,7 @@ module mainHydroParam
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=P[6], Ks=P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θs=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=10.0^P[6], Ks=P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -174,7 +174,7 @@ module mainHydroParam
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=P[6], Ks=P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=10.0^P[6], Ks=P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -191,7 +191,7 @@ module mainHydroParam
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], ∇_θsMat=P[3], ∇_σMac=P[4], ΨmMac=P[5], Ks=P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], ∇_θsMat=P[3], ∇_σMac=P[4], ΨmMac=10.0^P[5], Ks=P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -207,7 +207,7 @@ module mainHydroParam
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], Ks=P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], θs=P[4], Ks=P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -222,7 +222,7 @@ module mainHydroParam
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3], Ks=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θs=P[3], Ks=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -250,7 +250,7 @@ module mainHydroParam
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], Ks=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], Ks=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -264,7 +264,7 @@ module mainHydroParam
 
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4], ∇_θsMat=P[5], ∇_σMac=P[6], ΨmMac=P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], θs=P[4], ∇_θsMat=P[5], ∇_σMac=P[6], ΨmMac=10.0^P[7])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -281,7 +281,7 @@ module mainHydroParam
 	
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θs=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=10.0^P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -297,7 +297,7 @@ module mainHydroParam
 	
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], ∇_θsMat=P[4], ∇_σMac=P[5], ΨmMac=10.0^P[6])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -313,7 +313,7 @@ module mainHydroParam
 	
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 	
-								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], ∇_θsMat=P[3], ∇_σMac=P[4], ΨmMac=P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], ∇_θsMat=P[3], ∇_σMac=P[4], ΨmMac=10.0^P[5])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 			
 								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -328,7 +328,7 @@ module mainHydroParam
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil])]
 		
-									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3], θs=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], θs=P[4])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 				
 									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -342,7 +342,7 @@ module mainHydroParam
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil])]
 		
-									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θs=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θs=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 				
 									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -355,7 +355,7 @@ module mainHydroParam
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil])]
 		
-									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2], θr=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 				
 									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -368,7 +368,7 @@ module mainHydroParam
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max))]
 		
-									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=P[2])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
+									Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2])[1]; SearchRange = SearchRange, NumDimensions=N_ParamOpt, TraceMode=:silent)
 				
 									hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 									hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
