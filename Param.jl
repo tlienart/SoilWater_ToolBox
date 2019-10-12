@@ -32,6 +32,8 @@ module param
 		# Feasible range of Kosugi
 			θr_Max = 0.25 # 0.2 or 0.25
 
+			Ψ_Max= 160000.0 #170000.0 # [mm] 160000.0 # min value is 150000 mm and oven dry would be the best value for the parameter 
+
 		# Coeff_Φ_2_θs
 			Coeff_Φ_2_θs = 0.98
 			Coeff_θs_Max = 1.2
@@ -40,11 +42,11 @@ module param
 			ΨmMac = 40. # 100 t0 10 [mm]
 
 			Ks_Min = 0.0001
-			Ks_Max = 0.12 # 10.0 1.14[mm/s]
-			∇_θs_Min = 0.7
+			Ks_Max = 1.0# 10.0 1.14[mm/s]
+			∇_θsMat_Min = 0.7
 
-			σ_Min = 1.4 # 1.6
-			σ_Max = 4.3
+			σ_Min = 1.6 # 1.6
+			σ_Max = 4.
 
 			Ψm_Min = 800.0 # [mm]
 			Ψm_Max = 60000.0 # 0.9 * 150000.0 #[mm]

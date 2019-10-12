@@ -10,7 +10,7 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_θDual(Ψ, iSoil, hydro)
 			if option.HydroModel == "Kosugi"
-				return θ = wrc.kg.Ψ_2_θDual(ψ, iSoil::Int, hydro)
+				return θ = wrc.kg.Ψ_2_θDual(Ψ, iSoil::Int, hydro)
 			elseif option.HydroModel == "vanGenuchten"
 				return θ = wrc.vg.Ψ_2_θ(Ψ, iSoil::Int, hydro)
 			end

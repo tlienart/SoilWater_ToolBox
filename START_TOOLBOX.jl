@@ -23,6 +23,9 @@ include("Infilt\\MAINinfilt.jl")
 include("Table.jl")
 include("Plot.jl")
 
+using Suppressor
+# using Compat: @warn
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : START_TOOLBOX
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -89,5 +92,7 @@ end  # function: START_TOOLBOX
 
 
 println("\n\n===== START SOIL WATER TOOLBOX ==== \n")
-	@time START_TOOLBOX()
+@suppress_err begin
+		@time START_TOOLBOX()
+	end
 println("==== END SOIL WATER TOOLBOX ===")

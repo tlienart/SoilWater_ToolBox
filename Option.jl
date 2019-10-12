@@ -19,8 +19,8 @@ module option
 		const Id_Select 	= true 	# <true>* Select Id from the data OR <false> use all the data
 		const θΨ 			= "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
 		const KunsatΨ		= true 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>  
-		const Psd 			= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
-		const Infiltration 	= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
+		const Psd 			= false 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
+		const Infiltration 	= false 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
 		const KsatModel 	= false # <true> Derive Ksat from θ(Ψ) OR <false>
 
 
@@ -37,7 +37,7 @@ module option
 					θsOpt = "Data"
 				end 
 
-				θrOpt 	= "Psd" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed with value derived from param.hydro.θr
+				θrOpt 	= "Opt" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed with value derived from param.hydro.θr
 
 				KsOpt 	= "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)		
 			end  # module hydroparam

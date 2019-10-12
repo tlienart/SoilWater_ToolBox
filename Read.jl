@@ -2,8 +2,7 @@
 #		MODULE: read
 # =============================================================
 module read
-	using ..option
-	using ..path
+	using ..option, ..path, ..cst
 	import DelimitedFiles
 
 	export ID, KUNSATΨ, INFILTRATION, PSD, READ_ROW_SELECT
@@ -42,6 +41,7 @@ module read
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θΨ(Id_True, N_SoilSelect)
 			Ψ_θΨ, N_θΨ 	= READ_ROW_SELECT(path.Ψθ, "H[kPa]", Id_True, N_SoilSelect)
+			Ψ_θΨ = Ψ_θΨ * cst.kPa_2_mm
 			θ_θΨ, ~ 	= READ_ROW_SELECT(path.Ψθ, "Theta", Id_True, N_SoilSelect)
 			return θ_θΨ, Ψ_θΨ, N_θΨ
 		end  # function: θΨ
