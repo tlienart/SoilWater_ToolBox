@@ -17,6 +17,8 @@ module table
 		Nse_Kunsat = 1 .- Of_Kunsat
 
 		DelimitedFiles.writedlm(path.Table_θΨK, [Header; Id_Select hydro.θs hydro.θr hydro.Ks hydro.σ hydro.Ψm hydro.θsMat hydro.σMac hydro.ΨmMac Nse Nse_θΨ Nse_Kunsat] , ",")
+
+		println("Nse = $(sum(Nse))")
 	 end # Table DISCRETIZATION
 
 	

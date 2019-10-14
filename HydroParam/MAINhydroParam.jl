@@ -234,14 +234,14 @@ module mainHydroParam
 
 						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 							#############
-							SearchRanges =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
+							SearchRanges =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
 
-							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], Ks=P[4])[1]; SearchRange = SearchRanges, NumDimensions=N_ParamOpt, TraceMode=:silent)
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], Ks=10.0^P[4])[1]; SearchRange = SearchRanges, NumDimensions=N_ParamOpt, TraceMode=:silent)
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 							hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
-							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
+							hydro.Ks[iSoil] 	=  10.0 ^ BlackBoxOptim.best_candidate(Optimization)[4]
 							hydro.θsMat[iSoil] = hydro.θs[iSoil]
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 

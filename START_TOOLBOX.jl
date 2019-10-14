@@ -83,7 +83,15 @@ function START_TOOLBOX()
 
 	if option.Plot
 		println("=== START: PLOTTING  ===")
-			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
+			if option.Plot_WaterRetentionCurve
+				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
+			end # option.Plot_WaterRetentionCurve
+
+			if option.Plot_BestLab
+				plot.BEST_LAB(Infilt_Best_HydroObs, N_SoilSelect)
+			end # option.Plot_BestLab
+
+
 		println("=== END: PLOTTING  === \n")
 		return
 	end

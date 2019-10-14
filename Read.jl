@@ -40,8 +40,7 @@ module read
 	#		FUNCTION : θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θΨ(Id_True, N_SoilSelect)
-			Ψ_θΨ, N_θΨ 	= READ_ROW_SELECT(path.Ψθ, "H[kPa]", Id_True, N_SoilSelect)
-			Ψ_θΨ = Ψ_θΨ * cst.kPa_2_mm
+			Ψ_θΨ, N_θΨ 	= READ_ROW_SELECT(path.Ψθ, "H[mm]", Id_True, N_SoilSelect)
 			θ_θΨ, ~ 	= READ_ROW_SELECT(path.Ψθ, "Theta", Id_True, N_SoilSelect)
 			return θ_θΨ, Ψ_θΨ, N_θΨ
 		end  # function: θΨ
@@ -51,7 +50,7 @@ module read
 	#		FUNCTION : KUNSATΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function KUNSATΨ(Id_True, N_SoilSelect)
-			Ψ_KΨ, N_KΨ 	= READ_ROW_SELECT(path.Kunsat, "H[kPa]", Id_True, N_SoilSelect)
+			Ψ_KΨ, N_KΨ 	= READ_ROW_SELECT(path.Kunsat, "H[mm]", Id_True, N_SoilSelect)
 			K_KΨ, ~ 	= READ_ROW_SELECT(path.Kunsat, "Kunsat[mm_s]", Id_True, N_SoilSelect)
 			return K_KΨ, Ψ_KΨ, N_KΨ 
 		end  # function: θΨ

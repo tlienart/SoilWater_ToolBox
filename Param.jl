@@ -41,15 +41,16 @@ module param
 		# If constant
 			ΨmMac = 40. # 100 t0 10 [mm]
 
-			Ks_Min = 0.0001
-			Ks_Max = 1.0# 10.0 1.14[mm/s]
+			Ks_Min = 10.0 ^ -6.0  	# 0.000555556 wei [mm/s]
+			Ks_Max = 2.0 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
+
 			∇_θsMat_Min = 0.7
 
 			σ_Min = 1.6 # 1.6
-			σ_Max = 4.
+			σ_Max = 4.5
 
-			Ψm_Min = 800.0 # [mm]
-			Ψm_Max = 60000.0 # 0.9 * 150000.0 #[mm]
+			Ψm_Min = 500.0 # [mm]
+			Ψm_Max = 20000.0 # 0.9 * 150000.0 #[mm]
 
 			∇_σMac_Min = 0.7 
 
@@ -73,7 +74,7 @@ module param
 	# =============================================================
 	module infilt
 		const SeIni_Output = [0.3 0.5 0.7] # [-] Different initial Se_Ini for plotting the infiltration curves 
-		const Npoint_Infilt = 5 # Number of points for generating infiltration plots
+		const Npoint_Infilt = 10 # Number of points for generating infiltration plots
 		const Coeff_TransSteady = 5.0
 	end  # module: infilt
 	# ............................................................

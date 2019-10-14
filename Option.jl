@@ -10,6 +10,8 @@ module option
 
 	# PLOTTING
 		const Plot = true # <true>* plot or <false> no plotting
+			const Plot_WaterRetentionCurve 	= false
+			const Plot_BestLab 				= true
 	
 	# HYDRAULIC MODEL
 		const HydroModel 		= "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">

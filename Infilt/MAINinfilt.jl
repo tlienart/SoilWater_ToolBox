@@ -18,8 +18,7 @@ module mainInfilt
 			end  # if: option.infilt.OptimizeRun == "Opt"
 
 		# COMPUTING HYDRAULIC PARAMETERS FROM BEST
-			if option.infilt.OptimizeRun  == "Opt" || option.infilt.OptimizeRun  == "RunOpt"
-			
+			if option.infilt.OptimizeRun  == "Opt" || option.infilt.OptimizeRun  == "RunOpt"		
 				optInfilt.kg.OPT_INFILTRATION_BEST(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt)
 			end
 
@@ -46,19 +45,20 @@ module mainInfilt
 				for iSe_Ini in 1: length(param.infilt.SeIni_Output)
 
 					Se_Ini = param.infilt.SeIni_Output[iSe_Ini]
+
 					# When to stop
-						T_End = best.TIME_TRANS_STEADY_INDEP(iSoil, Se_Ini, hydro, infilt) * param.infilt.Coeff_TransSteady
+					T_End = best.TIME_TRANS_STEADY_INDEP(iSoil, Se_Ini, hydro, infilt) * param.infilt.Coeff_TransSteady
 
-						ΔT = (T_End + 2.0) / param.infilt.Npoint_Infilt # Time step
+					ΔT = (T_End + 2.0) / param.infilt.Npoint_Infilt # Time step
 
-						T = 0.0
-						for iT=1:param.infilt.Npoint_Infilt
-							T += ΔT
+					T = 0.0
+					for iT=1:param.infilt.Npoint_Infilt
+						T += ΔT
 
-							θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
+						θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
 
-							Infilt_Best_HydroObs[iSoil, iSe_Ini, iT] = best.BEST(iSoil, T, θ_Ini, hydro, infilt)
-						end  # for iT=N_\Delta	
+						Infilt_Best_HydroObs[iSoil, iSe_Ini, iT] = best.BEST(iSoil, T, θ_Ini, hydro, infilt)
+					end  # for iT=N_\Delta	
 				end # for Se_Ini in param.infilt.SeIni_Output	
 			end  # for iSoil=1:N_SoilSelect
 				
