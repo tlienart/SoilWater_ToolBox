@@ -12,9 +12,10 @@ module mainInfilt
 
 		# COMPUTING INFILTRATION FROM PHYSICAL HYDRAULIC PARAMETERS
 			if option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && option.infilt.Model=="Simplified"
-				global Infilt_Best_HydroObs = RUN_BEST(N_SoilSelect, infilt, hydro)	
+				Infilt_Best_HydroObs, T_Best_HydroObs = RUN_BEST(N_SoilSelect, infilt, hydro)	
 			else
-				global Infilt_Best_HydroObs = []
+				Infilt_Best_HydroObs = []
+				T_Best_HydroObs = []
 			end  # if: option.infilt.OptimizeRun == "Opt"
 
 		# COMPUTING HYDRAULIC PARAMETERS FROM BEST
@@ -22,7 +23,7 @@ module mainInfilt
 				optInfilt.kg.OPT_INFILTRATION_BEST(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt)
 			end
 
-		return  Infilt_Best_HydroObs
+		return  Infilt_Best_HydroObs, T_Best_HydroObs
 	end  # function: MAIN_INFILT
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -37,7 +38,7 @@ module mainInfilt
 
 			# We vary iSoil & SeIni & Number of time steps
 			Infilt_Best_HydroObs = zeros(Float64, (N_SoilSelect, length(param.infilt.SeIni_Output), param.infilt.Npoint_Infilt))
-
+			
 			# For ever soil
 			for iSoil=1:N_SoilSelect
 				# For different initial Se_Ini defined by users param.infilt.SeIni_Output
@@ -46,23 +47,33 @@ module mainInfilt
 
 					Se_Ini = param.infilt.SeIni_Output[iSe_Ini]
 
-					# When to stop
-					T_End = best.TIME_TRANS_STEADY_INDEP(iSoil, Se_Ini, hydro, infilt) * param.infilt.Coeff_TransSteady
+					Sorptivity = sorptivity.SORPTIVITY(Se_Ini, iSoil, hydro)
 
-					ΔT = (T_End + 2.0) / param.infilt.Npoint_Infilt # Time step
+					println("$iSe_Ini, $Sorptivity")
 
-					T = 0.0
-					for iT=1:param.infilt.Npoint_Infilt
-						T += ΔT
+					# TIME CONTROL
+						global T_Best_HydroObs = zeros(Float64, param.infilt.Npoint_Infilt)
 
-						θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
+						T_End = best.TIME_TRANS_STEADY_INDEP(iSoil, Se_Ini, hydro, infilt) * param.infilt.Coeff_TransSteady
 
-						Infilt_Best_HydroObs[iSoil, iSe_Ini, iT] = best.BEST(iSoil, T, θ_Ini, hydro, infilt)
-					end  # for iT=N_\Delta	
+						ΔT = (T_End + 2.0) / param.infilt.Npoint_Infilt # Time step
+
+						# Cumulating time
+						T_Best_HydroObs[1] = ΔT
+						for iT = 2:param.infilt.Npoint_Infilt
+							T_Best_HydroObs[iT] = T_Best_HydroObs[iT-1] + ΔT
+						end
+
+					# looping
+						for iT = 1:param.infilt.Npoint_Infilt
+							θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
+
+							Infilt_Best_HydroObs[iSoil, iSe_Ini, iT] = best.BEST(iSoil, Sorptivity, T_Best_HydroObs[iT], θ_Ini, hydro, infilt)
+						end  # for iT=N_\Delta	
 				end # for Se_Ini in param.infilt.SeIni_Output	
 			end  # for iSoil=1:N_SoilSelect
 				
-			return Infilt_Best_HydroObs
+			return Infilt_Best_HydroObs, T_Best_HydroObs
 		end  # function: RUN_BEST
 
 

@@ -73,8 +73,8 @@ module param
 	#		MODULE: infilt
 	# =============================================================
 	module infilt
-		const SeIni_Output = [0.3 0.5 0.7] # [-] Different initial Se_Ini for plotting the infiltration curves 
-		const Npoint_Infilt = 10 # Number of points for generating infiltration plots
+		const SeIni_Output = [0.0 0.2 0.4 0.6 0.8] # [-] Different initial Se_Ini for plotting the infiltration curves 
+		const Npoint_Infilt = 100 # Number of points for generating infiltration plots
 		const Coeff_TransSteady = 5.0
 	end  # module: infilt
 	# ............................................................

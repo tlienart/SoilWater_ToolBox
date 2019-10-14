@@ -6,34 +6,14 @@ module best
 	export BEST
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : MAIN_BEST
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function MAIN_BEST(iSoil, Kr_θini, Ks, Se_Ini, Sorptivity, T, hydro, infilt)
-
-		# 	if option
-		# 	Sorptivity = sorptivity.kg.SORPTIVITY(iSoil, Se_Ini, hydro)
-
-		
-			
-		# 	BEST(iSoil, Kr_θini, Ks, Sorptivity, T, θ_Ini, hydro, infilt)
-
-
-			
-		# 	return
-		# end  # function: MAIN_BEST
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST(iSoil, T, θ_Ini, hydro, infilt)
+		function BEST(iSoil, Sorptivity, T, θ_Ini, hydro, infilt)
 
 			# Required data
 				Se_Ini = wrc.θ_2_Se(θ_Ini, iSoil, hydro)
 
 				Kr_θini= (kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydro)) / hydro.Ks[iSoil]
-
-				Sorptivity = sorptivity.SORPTIVITY(Se_Ini, iSoil, hydro)
 
 			# Best parameters
 				A = best.A(θ_Ini, hydro.θs[iSoil], iSoil, infilt)

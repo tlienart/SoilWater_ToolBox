@@ -16,8 +16,7 @@ module plot
 			Kunsat_Sim = Array{Float64}(undef, (N_Se))
 			
 			for iSoil = 1:N_SoilSelect
-				Path = path.Plots_θΨK * "Lab_ThetaH_" *string(Id_Select[iSoil]) * ".svg"
-		
+				
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]]) * 10.0
 
 				Ψ_Sim = 1.0 .+ 10.0 .^ range(log(10.0 ^ -2.0), stop=log(Ψ_θΨ_Max), length=N_Se)
@@ -30,7 +29,7 @@ module plot
 					Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)				
 				end
 
-				println("		== Plotting soil $iSoil ==")
+				println("		== Plotting Lab_ThetaH_ soil $iSoil ==")
 				Plot_CharacUnsat = GroupPlot(2, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
 
 				# Plotting Ψ(θ) 
@@ -53,6 +52,7 @@ module plot
 					)
 				end
 
+				Path = path.Plots_θΨK * "Lab_ThetaH_" *string(Id_Select[iSoil]) * ".svg"	
 				save(Path, Plot_CharacUnsat)
 				
 			end # for iSoil
@@ -64,17 +64,31 @@ module plot
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST_LAB(Infilt_Best_HydroObs)
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST_LAB(Infilt_Best_HydroObs, N_SoilSelect)
+		function BEST_LAB(Id_Select, Infilt_Best_HydroObs, N_SoilSelect, T_Best_HydroObs)
 
 			for iSoil=1:N_SoilSelect
-				# For different initial Se_Ini defined by users param.infilt.SeIni_Output
-				iSe_Ini = 0
-				for iSe_Ini in 1: length(param.infilt.SeIni_Output)
+				println("		== Plotting BestLab_ soil $iSoil ==")
 
-						Infilt_Best_HydroObs[iSoil, iSe_Ini, 1:param.infilt.Npoint_Infilt] 
+				Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
 
+				push!(Plot_BestLab, Axis([
+					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 1, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$SeIni=0.0$"),
+			
+					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 2, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, orange, very thick", legendentry=L"$SeIni=0.2$"),
 
-				end # for Se_Ini in param.infilt.SeIni_Output	
+					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 3, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, teal, very thick", legendentry=L"$SeIni=0.4$"),
+
+					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 4, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, yellow, very thick", legendentry=L"$SeIni=0.6$"),
+
+					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blew, very thick", legendentry=L"$SeIni=0.8$"),
+					], 
+
+					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [Seconds]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
+				)
+				
+				Path = path.Plots_BestLab * "BestLab_" *string(Id_Select[iSoil]) * ".svg"
+				save(Path, Plot_BestLab)
+
 			end  # for iSoil=1:N_SoilSelect
 			
 			return

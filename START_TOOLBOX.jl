@@ -69,7 +69,7 @@ function START_TOOLBOX()
 
 	if option.Infiltration
 		println("=== START: INFILTRATION  ===")
-		Infilt_Best_HydroObs = mainInfilt.MAIN_INFILT(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
+		Infilt_Best_HydroObs, T_Best_HydroObs = mainInfilt.MAIN_INFILT(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -87,8 +87,10 @@ function START_TOOLBOX()
 				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
 			end # option.Plot_WaterRetentionCurve
 
-			if option.Plot_BestLab
-				plot.BEST_LAB(Infilt_Best_HydroObs, N_SoilSelect)
+			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && option.infilt.Model=="Simplified"
+
+				plot.BEST_LAB(Id_Select, Infilt_Best_HydroObs, N_SoilSelect, T_Best_HydroObs)
+
 			end # option.Plot_BestLab
 
 
@@ -100,7 +102,7 @@ end  # function: START_TOOLBOX
 
 
 println("\n\n===== START SOIL WATER TOOLBOX ==== \n")
-@suppress_err begin
+
 		@time START_TOOLBOX()
-	end
+
 println("==== END SOIL WATER TOOLBOX ===")

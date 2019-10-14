@@ -14,7 +14,6 @@ module path
 		Infiltration 		= "Infiltration_1.csv"
 		Infiltration_Param 	= "Infiltration_Param.csv"
 
-
 	# OUTPUT PATH
 		Table_θΨK			= "Table_ThetaHK.csv"
 		
@@ -29,7 +28,8 @@ module path
 		Infiltration = Home * "//INPUT//" * Name * Infiltration
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
 
-		Table_θΨK = Home * "//OUTPUT//Table//" * Name * Table_θΨK
-		Plots_θΨK = Home * "//OUTPUT//Plots//Lab//" * Name
+		Table_θΨK 		= Home * "//OUTPUT//Table//" * Name * Table_θΨK
+		Plots_θΨK 		= Home * "//OUTPUT//Plots//Lab//" * Name
+		Plots_BestLab 	= Home * "//OUTPUT//Plots//BestLab//" * Name
 end  # module path
 # ............................................................
