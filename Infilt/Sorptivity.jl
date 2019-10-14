@@ -38,7 +38,7 @@ module sorptivity
 
 				θ_Ini = wrc.Se_2_θ(Se_Ini, iSoil, hydro)
 
-				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps(); atol=10^-8. )[1]) ^ 0.5  
+				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps(); rtol=1e-7 )[1]) ^ 0.5  
 			end  # function: SORPTIVITY
 
 

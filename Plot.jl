@@ -80,7 +80,7 @@ module plot
 
 					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 4, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, yellow, very thick", legendentry=L"$SeIni=0.6$"),
 
-					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blew, very thick", legendentry=L"$SeIni=0.8$"),
+					Plots.Linear(T_Best_HydroObs[1:param.infilt.Npoint_Infilt], Infilt_Best_HydroObs[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blue, very thick", legendentry=L"$SeIni=0.8$"),
 					], 
 
 					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [Seconds]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")

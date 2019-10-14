@@ -48,9 +48,7 @@ module mainInfilt
 					Se_Ini = param.infilt.SeIni_Output[iSe_Ini]
 
 					Sorptivity = sorptivity.SORPTIVITY(Se_Ini, iSoil, hydro)
-
-					println("$iSe_Ini, $Sorptivity")
-
+					
 					# TIME CONTROL
 						global T_Best_HydroObs = zeros(Float64, param.infilt.Npoint_Infilt)
 
