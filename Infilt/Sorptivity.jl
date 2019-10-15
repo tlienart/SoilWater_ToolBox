@@ -36,7 +36,7 @@ module sorptivity
 					return (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
 				end
 
-				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps(); rtol=1e-7 )[1]) ^ 0.5  
+				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps() )[1]) ^ 0.5  
 			end  # function: SORPTIVITY
 
 

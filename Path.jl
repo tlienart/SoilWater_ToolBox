@@ -30,6 +30,7 @@ module path
 
 		Table_θΨK 		= Home * "//OUTPUT//Table//" * Name * Table_θΨK
 		Plots_θΨK 		= Home * "//OUTPUT//Plots//Lab//" * Name
-		Plots_BestLab 	= Home * "//OUTPUT//Plots//BestLab//" * Name
+		Plots_BestLab 	= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
+		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
 end  # module path
 # ............................................................

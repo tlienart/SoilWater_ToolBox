@@ -3,7 +3,7 @@
 # =============================================================
 module param
 
-	N_iSoil_Simulations = 5 # maximum number of soils to be simulated (good for testing)
+	N_iSoil_Simulations = 10 # maximum number of soils to be simulated (good for testing)
 
 	# =============================================================
 	#		MODULE:  θr FROM PSD
@@ -76,8 +76,8 @@ module param
 	# =============================================================
 	module infilt
 		const SeIni_Output = [0.0 0.2 0.4 0.6 0.8] # [-] Different initial Se_Ini for plotting the infiltration curves 
-		const Npoint_Infilt = 100 # Number of points for generating infiltration plots
-		const Coeff_TransSteady = 5.0
+		const Npoint_Infilt = 300 # Number of points for generating infiltration plots
+		const Coeff_TransSteady = 2.0
 	end  # module: infilt
 	# ............................................................
 

@@ -70,9 +70,10 @@ function START_TOOLBOX()
 		hydro = []
 	end
 
+	
 	if option.Infiltration
 		println("=== START: INFILTRATION  ===")
-		Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange = mainInfilt.MAIN_INFILT(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
+			∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs = mainInfilt.MAIN_INFILT(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -90,12 +91,17 @@ function START_TOOLBOX()
 				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
 			end # option.Plot_WaterRetentionCurve
 
-			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infiltration.OptimizeRun == "Run" ||  option.infiltration.OptimizeRun == "RunOpt") && option.infiltration.Model=="Simplified"
+			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infiltration.OptimizeRun == "Run" ||  option.infiltration.OptimizeRun == "RunOpt") && option.infiltration.Model=="Simplified" && option.infiltration.SeIni_Range	
 
-				plot.BEST_LAB(Id_Select, Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
+				plot.BEST_LAB_SEINIRANGE(Id_Select, ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
 
 			end # option.Plot_BestLab
 
+			if option.Plot_BestLab && option.θΨ ≠ "No" && option.infiltration.OptimizeRun  == "Run" || option.infiltration.OptimizeRun  == "RunOpt" 
+
+				plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
+
+			end
 
 		println("=== END: PLOTTING  === \n")
 		return

@@ -10,7 +10,7 @@ module option
 
 	# PLOTTING
 		const Plot = true # <true>* plot or <false> no plotting
-			const Plot_WaterRetentionCurve 	= false
+			const Plot_WaterRetentionCurve 	= true
 			const Plot_BestLab 				= true
 	
 	# HYDRAULIC MODEL
@@ -67,7 +67,7 @@ module option
 				const HydroParam 		= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
 				const Dimension			= "3D"	# <"3D"> infiltration rate by using single ring infiltrometer <"1D"> making 1D infiltration rate by using double ring infiltrometer
 				const Relation_σ_2_ψm   = false # <true> one parameter will be optimized only
-				const SeIni_Range 		= false # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
+				const SeIni_Range 		= true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
 			end  # module infilt
 		# ............................................................
 	
