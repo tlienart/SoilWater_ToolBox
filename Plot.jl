@@ -82,7 +82,7 @@ module plot
 					Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blue, very thick", legendentry=L"$SeIni=0.8$"),
 					], 
 
-					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [Seconds]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
+					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
 				)
 				
 				Path = path.Plots_BestLab_SeIniRange * "BestLab_SeIniRange_" *string(Id_Select[iSoil]) * ".svg"
