@@ -107,7 +107,7 @@ module plot
 					Plots.Scatter(Tinfilt[iSoil, 1:N_Infilt[iSoil]], ∑Infilt[iSoil, 1:N_Infilt[iSoil]], style="teal, very thick", onlyMarks=true, mark="o", markSize=4, legendentry=L"$Obs$"),
 					], 
 
-					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [Seconds]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
+					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
 				)
 
 				Path = path.Plots_BestLab * "BestLab_" *string(Id_Select[iSoil]) * ".svg"
