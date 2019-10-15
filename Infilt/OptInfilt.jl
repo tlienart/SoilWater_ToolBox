@@ -14,9 +14,9 @@ module optInfilt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPT_INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OPT_INFILTRATION_BEST(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt; N_Point_Max=500)
+		function OPT_INFILTRATION_BEST(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt; N_Point_Max=500)
 
-			Infilt_Best_HydroObs = Array{Float64}(undef, (N_SoilSelect, N_Point_Max))
+			Infilt_Best_HydroObs_SeIniRange = Array{Float64}(undef, (N_SoilSelect, N_Point_Max))
 
 			# Deriving empty structure of hydraulic parameters which will be filled
 				hydroBest = hydroStruct.HYDROSTRUCT(N_SoilSelect)

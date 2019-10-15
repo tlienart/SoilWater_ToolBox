@@ -1,6 +1,6 @@
 module stats
 	using ..wrc, ..param
-	export N_SoilSelect, T, ∑Infilt, N_Infilt, infilt, NASH_SUTCLIFFE_θΨ, RELATIVEerr
+	export N_SoilSelect, Tinfilt, ∑Infilt, N_Infilt, infilt, NASH_SUTCLIFFE_θΨ, RELATIVEerr
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

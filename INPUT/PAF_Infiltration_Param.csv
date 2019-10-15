@@ -1,4 +1,4 @@
-Id,Theta_Ini[-],Thetas[-],RingRadius[mm],Thetas_Bulk[-],BulkDensity[g_cm3],ParticleDensity[g_cm3],Lambda[-],Beta[-]
+Id,θ_Ini[-],Thetas[-],RingRadius[mm],Thetas_Bulk[-],BulkDensity[g_cm3],ParticleDensity[g_cm3],Lambda[-],Beta[-]
 1,0.3458,0.545655645,100,0.542249015,1.198266076,2.617724735,0.75,0.6
 2,0.3664,0.53026227,100,0.536446311,1.217597539,2.626659153,0.75,0.6
 3,0.6371,0.535922916,100,0.525228135,1.22622067,2.58275766,0.75,0.6

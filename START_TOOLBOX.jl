@@ -19,7 +19,7 @@ include("Infilt\\Sorptivity.jl")
 include("HydroParam\\HydroRelation.jl")
 include("Infilt\\Best.jl")
 include("Infilt\\OptInfilt.jl")
-include("Infilt\\MAINinfilt.jl")
+include("Infilt\\MAIN_Infilt.jl")
 include("Table.jl")
 include("Plot.jl")
 
@@ -54,8 +54,11 @@ function START_TOOLBOX()
 		end
 		
 		if option.Infiltration
-			T, ∑Infilt, N_Infilt, infilt  = read.INFILTRATION(Id_Select, N_SoilSelect)
+			Tinfilt, ∑Infilt, N_Infilt, infilt  = read.INFILTRATION(Id_Select, N_SoilSelect)
 		end
+
+		# Reinforcing the maximum of iSoil to simulate
+		N_SoilSelect = min(N_SoilSelect, param.N_iSoil_Simulations)
 	println("=== END  : READING === \n")
 
 
@@ -69,14 +72,14 @@ function START_TOOLBOX()
 
 	if option.Infiltration
 		println("=== START: INFILTRATION  ===")
-		Infilt_Best_HydroObs, T_Best_HydroObs = mainInfilt.MAIN_INFILT(N_SoilSelect, T, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
+		Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange = mainInfilt.MAIN_INFILT(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
 
 	println("=== START: TABLE  ===")
 		if option.θΨ ≠ "No"
-			table.θΨK(Id_Select, Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
+			table.θΨK(Id_Select[1:N_SoilSelect], Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
 		end
 	println("=== END  : TABLE  === \n")
 
@@ -87,9 +90,9 @@ function START_TOOLBOX()
 				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
 			end # option.Plot_WaterRetentionCurve
 
-			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && option.infilt.Model=="Simplified"
+			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infiltration.OptimizeRun == "Run" ||  option.infiltration.OptimizeRun == "RunOpt") && option.infiltration.Model=="Simplified"
 
-				plot.BEST_LAB(Id_Select, Infilt_Best_HydroObs, N_SoilSelect, T_Best_HydroObs)
+				plot.BEST_LAB(Id_Select, Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
 
 			end # option.Plot_BestLab
 

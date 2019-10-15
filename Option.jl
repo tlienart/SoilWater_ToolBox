@@ -9,7 +9,7 @@ module option
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = false # <true>* plot or <false> no plotting
+		const Plot = true # <true>* plot or <false> no plotting
 			const Plot_WaterRetentionCurve 	= false
 			const Plot_BestLab 				= true
 	
@@ -61,12 +61,13 @@ module option
 		# =============================================================
 		#		MODULE: infiltration
 		# =============================================================
-			module infilt
-				const OptimizeRun  = "Run" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOpt"> run and optimise for comparison purposes
-				const Model 		= "Simplified" 	# <"QuasiExact"> OR <"Simplified">*
-				const HydroParam 	= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
-				const Dimension		= "3D"	# <"3D"> infiltration rate by using single ring infiltrometer <"1D"> making 1D infiltration rate by using double ring infiltrometer
+			module infiltration
+				const OptimizeRun  		= "Run" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOpt"> run and optimise for comparison purposes
+				const Model 			= "Simplified" 	# <"QuasiExact"> OR <"Simplified">*
+				const HydroParam 		= false	 		# <true> Optimize the hydraulic parameters from θ(ψ)inf OR <false>
+				const Dimension			= "3D"	# <"3D"> infiltration rate by using single ring infiltrometer <"1D"> making 1D infiltration rate by using double ring infiltrometer
 				const Relation_σ_2_ψm   = false # <true> one parameter will be optimized only
+				const SeIni_Range 		= false # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
 			end  # module infilt
 		# ............................................................
 	

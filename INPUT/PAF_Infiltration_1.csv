@@ -1,4 +1,4 @@
-Id,T[s],Cumul_Infiltration[mm]
+Id,Tinfilt[s],Cumul_Infiltration[mm]
 1,66,5
 1,180,10
 1,379,15
