@@ -23,7 +23,7 @@ module sorptivity
 	#		MODULE: kg
 	# =============================================================
 	module kg
-		using ...wrc, ...diffusivity
+		using ...wrc, ...diffusivity, ..option
 		using QuadGK
 		export SORPTIVITY
 
@@ -33,12 +33,18 @@ module sorptivity
 			function SORPTIVITY(θ_Ini, iSoil, hydro; Rtol=10^-6.0)
 
 				function SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro)
-					return (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
-					#return 2.0 * ( ((hydro.θs[iSoil] -  θ_Ini)^ 0.5) * (θ - θ_Ini)^ 0.5   ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
-					#return 2.0 * (  (θ - θ_Ini)   ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
-					#return 2.0 * (  (θ - θ_Ini) / ((θ - θ_Ini)/(hydro.θs[iSoil] - θ_Ini))^(2-4/pi) ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
-					#return 2.0 * (  (hydro.θs[iSoil] - θ_Ini)  ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
-				end
+					if option.infiltration.Sorptivity == "Parlange"
+						return (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
+					elseif  option.infiltration.Sorptivity == "Option 2"
+						return 2.0 * ( ((hydro.θs[iSoil] -  θ_Ini)^ 0.5) * (θ - θ_Ini)^ 0.5   ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
+					elseif  option.infiltration.Sorptivity == "Option 3"
+						return 2.0 * (  (θ - θ_Ini)   ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
+					elseif  option.infiltration.Sorptivity == "Option 4"
+						return 2.0 * (  (θ - θ_Ini) / ((θ - θ_Ini) / (hydro.θs[iSoil] - θ_Ini)) ^ (2.0 - 4.0 * π) ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
+					elseif  option.infiltration.Sorptivity == "Option 5"
+						return 2.0 * (  (hydro.θs[iSoil] - θ_Ini)  ) * diffusivity.kg.DIFFUSIVITY(θ, iSoil, hydro)
+					end # option.Infiltration
+				end # function: SORPTIVITY_FUNC
 
 				return ( QuadGK.quadgk(θ -> SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro), θ_Ini, hydro.θs[iSoil] - eps() )[1]) ^ 0.5  
 			end  # function: SORPTIVITY

@@ -68,6 +68,7 @@ module option
 				const Dimension			= "3D"	# <"3D"> infiltration rate by using single ring infiltrometer <"1D"> making 1D infiltration rate by using double ring infiltrometer
 				const Relation_σ_2_ψm   = false # <true> one parameter will be optimized only
 				const SeIni_Range 		= true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
+				const Sorptivity		= "Parlange" # <Parlange> or <>
 			end  # module infilt
 		# ............................................................
 	
