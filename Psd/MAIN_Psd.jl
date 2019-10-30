@@ -48,7 +48,8 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 			Rpart_Whole = param.Dpart ./ 2.0
 
 		# Reading PSD data
-			∑Psd = reading.PSD(path.Psd, Flag_Good)
+			# ∑Psd = reading.PSD(path.Psd, Flag_Good) # now need to read with the general reading function!!!!!!!!! 
+			Diameter, ∑Psd, N_Psd = read.PSD(Id_True, N_SoilSelect)
 
 		# =================== FOR EVERY SOIL SAMPLES ===================
 		for iSoil=1:Nsample
@@ -71,7 +72,7 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 
 
 		# =================== COMPUTTING  θr model from Psd ===================
-			if option.Psd_2_θr == "Opt"
+			if option.Psd_2_θr == "Opt" #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!option.Psd.Psd_2_θr to implement θr model from Psd from here
 				θr_Psd = psdFunc.OPTIMIZE_PSD_2_θr(Nsample, θr[1:Nsample], ∑Psd[1:Nsample,:])
 
 			elseif  option.Psd_2_θr == "Cst"

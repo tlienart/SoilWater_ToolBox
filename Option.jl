@@ -48,7 +48,7 @@ module option
 
 
 		# =============================================================
-		#		MODULE: psd
+		#		MODULE: psd      !!!!!!!! there are two psd modeles in this file, we have to combine both in only one!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		# =============================================================
 			module psd
 				const Optimize 		= false # <true> Optimize the PSD model (require θΨ) OR <false>* derived from preset values 
