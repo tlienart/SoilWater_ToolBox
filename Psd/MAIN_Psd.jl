@@ -1,8 +1,5 @@
 module psd
-import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
-
-
-
+	import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 	using Statistics, BlackBoxOptim, JuliaDB
 
 	# ======================================================================================
@@ -16,7 +13,6 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 		plot.PLOTTING_THETA_R_MODEL()
 		plot.PLOTTING_R_2_PSI_MODEL()
 		# plot.PLOTTING_ξ2_MODEL()
-
 
 		# # Number of soils wanted to run
 		# 	Nsample = min(Nsample, param.N_Soil_Select)
@@ -64,7 +60,6 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 					end
 				end
 			
-				
 			# Compute PSD from ∑PSD
 			Psd[iSoil,1:Nrpart[iSoil]] = psdFunc.∑PSD_2_PSD(∑Psd[iSoil,1:Nrpart[iSoil]], Nrpart[iSoil])
 
@@ -73,7 +68,7 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 
 		# =================== COMPUTTING  θr model from Psd ===================
 			if option.Psd_2_θr == "Opt" #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!option.Psd.Psd_2_θr to implement θr model from Psd from here
-				θr_Psd = psdFunc.OPTIMIZE_PSD_2_θr(Nsample, θr[1:Nsample], ∑Psd[1:Nsample,:])
+				θr_Psd = psdThetar.OPTIMIZE_PSD_2_θr(Nsample, θr[1:Nsample], ∑Psd[1:Nsample,:])
 
 			elseif  option.Psd_2_θr == "Cst"
 				@simd for iSoil=1:Nsample

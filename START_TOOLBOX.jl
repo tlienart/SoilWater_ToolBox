@@ -82,16 +82,11 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-				# Computing PSD data
-				if option.Psd.Optimize # If we have  OptimizeKΨ
-					psd.PSD_START(Nsample, θsMat, θr, σMat, ΨkgMat, KsMat, θsMac, σMac, ΨkgMac, KsMac, Ψ_θΨ, θ_θΨ, N_θΨ, Nse_θΨ_Bim_Mean, Flag_Good ; N_Kθ=N_Kθ, K_Kθ=K_Kθ, Ψ_Kθ=Ψ_Kθ)
-				else
-					psd.PSD_START(Nsample, θsMat, θr, σMat, ΨkgMat, KsMat, θsMac, σMac, ΨkgMac, KsMac, Ψ_θΨ, θ_θΨ, N_θΨ, Nse_θΨ_Bim_Mean, Flag_Good)
-				end
+			psd.PSD_START(Nsample, θsMat, θr, σMat, ΨkgMat, KsMat, θsMac, σMac, ΨkgMac, KsMac, Ψ_θΨ, θ_θΨ, N_θΨ, Nse_θΨ_Bim_Mean, Flag_Good ; N_Kθ=N_Kθ, K_Kθ=K_Kθ, Ψ_Kθ=Ψ_Kθ)
 		println("=== END  : PSD MODEL  === \n")
 	end
 
-	
+
 	println("=== START: TABLE  ===")
 		if option.θΨ ≠ "No"
 			table.θΨK(Id_Select[1:N_SoilSelect], Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
