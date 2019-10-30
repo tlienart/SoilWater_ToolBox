@@ -21,6 +21,7 @@ include("Infilt\\Best.jl")
 include("Infilt\\OptInfilt.jl")
 include("Infilt\\MAIN_Infilt.jl")
 include("Psd\\PsdFunc.jl")
+include("Psd\\MAIN_Psd.jl")
 include("Table.jl")
 include("Plot.jl")
 
@@ -78,6 +79,16 @@ function START_TOOLBOX()
 		println("=== END  : INFILTRATION  === \n")
 	end
 
+	if option.Psd
+		println("=== START: PSD MODEL  ===")
+				# Computing PSD data
+				if option.Psd.Optimize # If we have  OptimizeKΨ
+					psd.PSD_START(Nsample, θsMat, θr, σMat, ΨkgMat, KsMat, θsMac, σMac, ΨkgMac, KsMac, Ψ_θΨ, θ_θΨ, N_θΨ, Nse_θΨ_Bim_Mean, Flag_Good ; N_Kθ=N_Kθ, K_Kθ=K_Kθ, Ψ_Kθ=Ψ_Kθ)
+				else
+					psd.PSD_START(Nsample, θsMat, θr, σMat, ΨkgMat, KsMat, θsMac, σMac, ΨkgMac, KsMac, Ψ_θΨ, θ_θΨ, N_θΨ, Nse_θΨ_Bim_Mean, Flag_Good)
+				end
+		println("=== END  : PSD MODEL  === \n")
+	end
 
 	println("=== START: TABLE  ===")
 		if option.θΨ ≠ "No"

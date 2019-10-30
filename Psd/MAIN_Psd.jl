@@ -126,7 +126,7 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 		# =================================================================================================================
 		#       OPTIMIZATION HYDRAULIC PARAMETERS DERIVED FROM psd
 		# =================================================================================================================
-		if option.Psd_2_HydrauParam
+		if option.Psd.HydrauParam
 			println("START Optimizing the hydraulic parameters derived from PSD")
 			println("...")
 
@@ -147,7 +147,7 @@ import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc
 			end # option.Plot_σ_Ψkg
 
 			println("END Optimizing the hydraulic parameters derived from PSD \n") 
-		end # option.Psd_2_HydrauParam
+		end # option.Psd.HydrauParam
 	
 
 		# =================================================================================================================
