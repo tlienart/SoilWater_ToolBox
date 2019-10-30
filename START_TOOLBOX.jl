@@ -20,6 +20,7 @@ include("HydroParam\\HydroRelation.jl")
 include("Infilt\\Best.jl")
 include("Infilt\\OptInfilt.jl")
 include("Infilt\\MAIN_Infilt.jl")
+include("Psd\\PsdFunc.jl")
 include("Table.jl")
 include("Plot.jl")
 

@@ -2,7 +2,7 @@
 #		MODULE: name
 # =============================================================
 module mainHydroParam
-	using ..option, ..param, ..psdThetar, ..hydroStruct
+	import ..option, ..param, ..psdThetar, ..hydroStruct
 	export MAIN_HYDROPARAM
 
 		mutable struct OPTIMIZE
@@ -120,7 +120,7 @@ module mainHydroParam
 		#		MODULE: kg
 		# =============================================================
 		module kg
-			using ...ofHydro, ...param, ..option
+			import ...ofHydro, ...param, ..option
 			using BlackBoxOptim
 			export HYDROPARAM_OPT
 	
@@ -423,7 +423,7 @@ module mainHydroParam
 		#		MODULE: vg
 		# =============================================================
 		module vg
-		using ...ofHydro, ...param, ..option
+		import ...ofHydro, ...param, ..option
 		using BlackBoxOptim
 		export HYDROPARAM_OPT
 

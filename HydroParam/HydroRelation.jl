@@ -2,7 +2,7 @@
 #		MODULE: hydroRealation
 # =============================================================
 module hydroRelation
-	using ..param
+	import ..param
 	using BlackBoxOptim
 	export OPTIMIZATION_σ_2_Ψm, Ψm_2_σ, σ_2_Ψm, OPTIMIZATION_σ_2_Ψm
 

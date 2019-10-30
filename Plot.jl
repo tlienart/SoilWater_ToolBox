@@ -2,7 +2,7 @@
 #		MODULE: plot
 # =============================================================
 module plot
-	using ...wrc, ...kunsat, ..path, ..cst, ..param, ..option
+	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option
 	using PGFPlots
 	export HYDROPARAM, BEST_LAB_SEINIRANGE, BEST_LAB
 

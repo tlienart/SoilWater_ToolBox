@@ -8,8 +8,8 @@ module optInfilt
 	#		MODULE: kg
 	# =============================================================
 	module kg
-		using ...hydroStruct, ...option, ...psdThetar
-		using Optim
+		import ...hydroStruct, ...option, ...psdThetar
+		import Optim
 		export OPT_INFILTRATION_BEST
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPT_INFILTRATION

@@ -2,7 +2,6 @@
 #		MODULE: path
 # =============================================================
 module path
-
 	# NAME OF FILE
 		Name = "PAF_"
 
@@ -16,6 +15,7 @@ module path
 
 	# OUTPUT PATH
 		Table_θΨK			= "Table_ThetaHK.csv"
+		Table_Psd			= "Table_Psd"
 		
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
@@ -28,9 +28,11 @@ module path
 		Infiltration = Home * "//INPUT//" * Name * Infiltration
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
 
-		Table_θΨK 		= Home * "//OUTPUT//Table//" * Name * Table_θΨK
-		Plots_θΨK 		= Home * "//OUTPUT//Plots//Lab//" * Name
-		Plots_BestLab 	= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
+		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * Table_θΨK
+		Table_Psd					= Home * "//OUTPUT//Table//" * Name * Table_Psd
+		Plots_θΨK 					= Home * "//OUTPUT//Plots//Lab//" * Name
+		Plots_BestLab 				= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
 		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
+		Plots_Psd 					= Home * "//OUTPUT//Plots//Psd//" * Name
 end  # module path
 # ............................................................

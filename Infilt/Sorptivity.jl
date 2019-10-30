@@ -2,7 +2,7 @@
 #		MODULE: sorptivity
 # =============================================================
 module sorptivity
-	using ..option
+	import ..option
 	export SORPTIVITY
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,7 +23,7 @@ module sorptivity
 	#		MODULE: kg
 	# =============================================================
 	module kg
-		using ...wrc, ...diffusivity, ..option
+		import ...wrc, ...diffusivity, ..option
 		using QuadGK
 		export SORPTIVITY
 

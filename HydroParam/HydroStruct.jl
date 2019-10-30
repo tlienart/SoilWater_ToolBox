@@ -2,7 +2,7 @@
 #		MODULE: hydroStruct
 # =============================================================
 module hydroStruct
-	using ..option
+	import ..option
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : HYDRAULIC

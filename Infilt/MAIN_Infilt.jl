@@ -2,7 +2,7 @@
 #		MODULE: mainInfiltration
 # =============================================================
 module mainInfilt
-	using ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ...optInfilt
+	import ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ...optInfilt
 	export MAIN_INFILT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

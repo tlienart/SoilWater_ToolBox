@@ -2,7 +2,7 @@
 #		MODULE: best
 # =============================================================
 module best
-	using ..option, ..sorptivity, ..wrc, ..kunsat
+	import ..option, ..sorptivity, ..wrc, ..kunsat
 	export BEST
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,7 +23,7 @@ module best
 				Time_TransStead = TIME_TRANS_STEADY(B, hydro.Ks[iSoil], Sorptivity)
 
 			# Required options 1D or 3D
-				if Dimension	== "3D"
+				if Dimension == "3D"
 					if Tinfilt <= Time_TransStead 
 						return Infilt = best.INFILTRATION_3D_TRANSIT(A, B, hydro.Ks[iSoil], Sorptivity, Tinfilt)
 					else

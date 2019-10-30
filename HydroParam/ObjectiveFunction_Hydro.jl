@@ -1,5 +1,5 @@
 module ofHydro 
-	using ..option, ...stats, ..wrc, ..kunsat
+	import ..option, ...stats, ..wrc, ..kunsat
 	export  WRC_KUNSAT
 	  
 	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; Wof = 0.5) 

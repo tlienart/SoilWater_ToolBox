@@ -1,5 +1,5 @@
 module kunsat
-	using ..option, ..wrc
+	import ..option, ..wrc
 	export Ψ_2_KUNSAT, Se_2_KUNSAT, θ_2_KUNSAT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +55,7 @@ module kunsat
 	#		MODULE KOSUGI
 	# =============================================================
 	module kg
-		using ..option, ..wrc
+		import ..option, ..wrc
 		import SpecialFunctions: erfc, erfcinv
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
@@ -116,7 +116,7 @@ module kunsat
 	#		MODULE VAN GENUCHTEN
 	# =============================================================
 	module vg
-		using ..option, ..wrc
+		import ..option, ..wrc
 		export Ψ_2_KUNSAT, Se_2_KUNSAT,  ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

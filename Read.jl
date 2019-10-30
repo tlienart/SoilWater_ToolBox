@@ -2,7 +2,7 @@
 #		MODULE: read
 # =============================================================
 module read
-	using ..option, ..path, ..cst
+	import ..option, ..path, ..cst
 	import DelimitedFiles
 
 	export ID, KUNSATΨ, INFILTRATION, PSD, READ_ROW_SELECT

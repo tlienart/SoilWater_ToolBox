@@ -7,7 +7,7 @@ module diffusivity
 	#		MODULE: kg
 	# =============================================================
 	module kg
-		using ...wrc, ...kunsat
+		import ...wrc, ...kunsat
 		export DIFFUSIVITY
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

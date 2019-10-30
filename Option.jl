@@ -30,7 +30,7 @@ module option
 		#		MODULE: hydroparam
 		# =============================================================
 			module hydro
-			using ..option
+			import ..option
 
 				θsOpt 	= "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
 				if θsOpt == "Opt" && option.UnimodalBimodal == "Bimodal"
@@ -84,10 +84,45 @@ module option
 			# ............................................................
 
 
-	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-	#	CHECKING OPTIONS
-	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-	
-				# KsOpt 
+		# =============================================================
+		#		MODULE: psd
+		# =============================================================
+			module psd
+				model = "IMP" # <IMP> Intergranular Mixing Model <Chang2019Model> 
+
+				OptimizePsd = "All" # "Single" or "All" or "Run". "Single" =  optimize ξ1 & ξ2 for individual soils. "All" = derive universal parameters for all soils. "Run" = use parameters from Param.jl 
+				
+				Psd_2_θr = "Opt" # (1) "Opt" optimises parameters α1 and α1; (2) "Cst" uses θr = param.θr_Cst; (3) "Param" uses α1 and α1 from parameters in Param.jl  # for new table model 1
+
+				# For OptimizePsd = "SINGLE"
+					∑Psd_2_ξ1 = true # If "TRUE" we use relationship between ξ1 and ∑Psd and we do not optimize ξ1.
+
+					∑Psd_2_ξ2 = false # If "TRUE" we use relationship between ξ2 and ∑Psd and we do not optimize ξ2.
+				
+				Psd_2_HydrauParam = true # If "TRUE" we optimize the hydraulic parameters from PSD
+				
+				Chang2019Model = false # when true computes WRC from PSD using Chang et al., 2019
+				
+				# PLOTTING ========================
+					Plot_σ_Ψkg = true
+
+					Plotting = true # Its plots
+						Plot_Kθ = true
+						Plot_IntergranularMixing = true
+						Plot_Pdf = true
+						Plot_∑Pdf = true
+						Plot_OFsingle_OFmeas = true
+						Plot_∑Psd_2_ξ2 = true
+						Plot_Ψkg_σmod = true
+						Plot_θr = true
+								
+					if OptimizePsd == "Single" 
+						SubclayOpt = false
+					else
+						SubclayOpt = true # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
+					end		
+				end # module psd
+			# ............................................................
+
 end  # module option
 # ............................................................
