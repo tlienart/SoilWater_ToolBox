@@ -69,7 +69,7 @@ module psd
 
 
 		# =================== COMPUTTING  θr model from Psd ===================
-			if option.psd.Psd_2_θr == "Opt" #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!option.Psd.Psd_2_θr to implement θr model from Psd from here
+			if option.psd.Psd_2_θr == "Opt" 
 				θr_Psd = psdThetar.OPTIMIZE_PSD_2_θr(N_SoilSelect, θr[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,:])
 
 			elseif  option.psd.Psd_2_θr == "Cst"
@@ -124,7 +124,7 @@ module psd
 		# =================================================================================================================
 		#       OPTIMIZATION HYDRAULIC PARAMETERS DERIVED FROM psd
 		# =================================================================================================================
-		if option.Psd.HydrauParam
+		if option.psd.HydroParam
 			println("START Optimizing the hydraulic parameters derived from PSD")
 			println("...")
 
@@ -145,7 +145,7 @@ module psd
 			end # option.psd.Plot_σ_Ψkg
 
 			println("END Optimizing the hydraulic parameters derived from PSD \n") 
-		end # option.Psd.HydrauParam
+		end # option.Psd.HydroParam
 	
 
 		# =================================================================================================================
@@ -158,7 +158,7 @@ module psd
 				table.SINGLEOPT_T1_T2(θsMac[1:N_SoilSelect], θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect], σMat[1:N_SoilSelect], ΨkgMat[1:N_SoilSelect], θsMat[1:N_SoilSelect], σMac[1:N_SoilSelect], ΨkgMac[1:N_SoilSelect], ξ1[1:N_SoilSelect], ξ2[1:N_SoilSelect], Nse_Psd[1:N_SoilSelect], Subclay[1:N_SoilSelect])
 			end
 
-			if option.psd.Psd_2_HydrauParam
+			if option.psd.HydroParam
 				table.HYDRAULICPARAM_Psd(θsMat_Psd[1:N_SoilSelect], θr_Psd_Kg[1:N_SoilSelect], σMat_Psd[1:N_SoilSelect], ΨkgMat_Psd[1:N_SoilSelect], θsMac_Psd[1:N_SoilSelect], σMac_Psd[1:N_SoilSelect], ΨkgMac_Psd[1:N_SoilSelect], Nse_θh_Uni_Psd[1:N_SoilSelect],Nse_θh_Bim_Psd[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,1:param.psd.N_Psd])
 			end
 
@@ -206,16 +206,16 @@ module psd
 						ξ[iRpart] = psdFunc.INTERGRANULARMIXING(Rpart[iSoil,iRpart], ξ1[iSoil], ξ2[iSoil])
 					end
 
-					if option.psd.OptimizeKΨ && option.psd.Psd_2_HydrauParam
+					if option.psd.OptimizeKΨ && option.psd.HydroParam
 						plot.PLOTTING(iSoil, Nrpart[iSoil], Rpart[iSoil,1:Nrpart[iSoil]], Psd[iSoil,1:Nrpart[iSoil]], ∑Psd[iSoil,1:Nrpart[iSoil]], θsMac[iSoil], θr[iSoil], σMat[iSoil], ΨkgMat[iSoil], KsMat[iSoil], KsMac[iSoil], θsMat[iSoil], σMac[iSoil], ΨkgMac[iSoil], Ψ_θΨ[iSoil,1:N_θΨ[iSoil]], θ_θΨ[iSoil,1:N_θΨ[iSoil]], N_θΨ[iSoil], Ψ_Rpart[iSoil,1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]], ξ[1:Nrpart[iSoil]]; N_Kθ=N_Kθ[iSoil], K_Kθ=K_Kθ[iSoil,1:N_Kθ[iSoil]], Ψ_Kθ=Ψ_Kθ[iSoil,1:N_Kθ[iSoil]],θsMat_Psd=θsMat_Psd[iSoil], θr_Psd=θr_Psd[iSoil], σMat_Psd=σMat_Psd[iSoil], ΨkgMat_Psd=ΨkgMat_Psd[iSoil], θsMac_Psd=θsMac_Psd[iSoil], σMac_Psd=σMac_Psd[iSoil], ΨkgMac_Psd=ΨkgMac_Psd[iSoil])
 
-					elseif option.psd.OptimizeKΨ && !option.psd.Psd_2_HydrauParam
+					elseif option.psd.OptimizeKΨ && !option.psd.HydroParam
 						plot.PLOTTING(iSoil, Nrpart[iSoil], Rpart[iSoil,1:Nrpart[iSoil]], Psd[iSoil,1:Nrpart[iSoil]], ∑Psd[iSoil,1:Nrpart[iSoil]], θsMac[iSoil], θr[iSoil], σMat[iSoil], ΨkgMat[iSoil], KsMat[iSoil], KsMac[iSoil], θsMat[iSoil], σMac[iSoil], ΨkgMac[iSoil], Ψ_θΨ[iSoil,1:N_θΨ[iSoil]], θ_θΨ[iSoil,1:N_θΨ[iSoil]], N_θΨ[iSoil], Ψ_Rpart[iSoil,1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]], ξ[1:Nrpart[iSoil]]; N_Kθ=N_Kθ[iSoil], K_Kθ=K_Kθ[iSoil,1:N_Kθ[iSoil]], Ψ_Kθ=Ψ_Kθ[iSoil,1:N_Kθ[iSoil]])
 
-					elseif !option.psd.OptimizeKΨ && option.psd.Psd_2_HydrauParam
+					elseif !option.psd.OptimizeKΨ && option.psd.HydroParam
 						plot.PLOTTING(iSoil, Nrpart[iSoil], Rpart[iSoil,1:Nrpart[iSoil]],Psd[iSoil,1:Nrpart[iSoil]], ∑Psd[iSoil,1:Nrpart[iSoil]], θsMac[iSoil], θr[iSoil], σMat[iSoil], ΨkgMat[iSoil], KsMat[iSoil], KsMac[iSoil], θsMat[iSoil], σMac[iSoil], ΨkgMac[iSoil], Ψ_θΨ[iSoil,1:N_θΨ[iSoil]], θ_θΨ[iSoil,1:N_θΨ[iSoil]], N_θΨ[iSoil], Ψ_Rpart[iSoil,1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]], ξ[1:Nrpart[iSoil]];θsMat_Psd=θsMat_Psd[iSoil], θr_Psd=θr_Psd[iSoil], σMat_Psd=σMat_Psd[iSoil], ΨkgMat_Psd=ΨkgMat_Psd[iSoil], θsMac_Psd=θsMac_Psd[iSoil], σMac_Psd=σMac_Psd[iSoil], ΨkgMac_Psd=ΨkgMac_Psd[iSoil])
 					
-					elseif !option.psd.OptimizeKΨ && !option.psd.Psd_2_HydrauParam
+					elseif !option.psd.OptimizeKΨ && !option.psd.HydroParam
 						plot.PLOTTING(iSoil, Nrpart[iSoil], Rpart[iSoil,1:Nrpart[iSoil]], Psd[iSoil,1:Nrpart[iSoil]], ∑Psd[iSoil,1:Nrpart[iSoil]], θsMac[iSoil], θr[iSoil], σMat[iSoil], ΨkgMat[iSoil], KsMat[iSoil], KsMac[iSoil], θsMat[iSoil], σMac[iSoil], ΨkgMac[iSoil], Ψ_θΨ[iSoil,1:N_θΨ[iSoil]], θ_θΨ[iSoil,1:N_θΨ[iSoil]], N_θΨ[iSoil], Ψ_Rpart[iSoil,1:Nrpart[iSoil]], θ_Rpart[iSoil,1:Nrpart[iSoil]], ξ[1:Nrpart[iSoil]])
 					end # elseif
 
