@@ -201,7 +201,7 @@ module plot
 
 			Kunsat_Uni[i] = kunsat.kg.Se_2_KUNSAT(Se, θsMat, θr, σMat, KsMac, θsMat, σMat)
 
-			if option.Psd_2_HydrauParam
+			if option.psd.HydroParam
 				Se_Psd = wrc.kg.Ψ_2_Se(Ψ[i], ΨkgMat_Psd, σMat_Psd)
 				θ_Uni_Psd[i] = wrc.se.Se_2_θ(Se_Psd, θsMat_Psd, θr_Psd)
 				H_Uni_Psd[i] = Ψ[i]
@@ -223,7 +223,7 @@ module plot
 				end
 			end
 
-			if option.Psd_2_HydrauParam
+			if option.psd.HydroParam
 				θ_Bim_Psd[i] = wrc.kg.Ψ_2_θdual(Ψ[i], θsMac_Psd, θr_Psd, ΨkgMat_Psd, σMat_Psd, θsMat_Psd, ΨkgMac_Psd, σMac_Psd)
 				H_Bim_Psd[i] = Ψ[i]
 			end
@@ -286,7 +286,7 @@ module plot
 		end
 
 		# Title = string("Se(Ψ) Sigma = ", σMat)
-		if option.Psd_2_HydrauParam
+		if option.psd.HydroParam
 			push!(Plot_CharacUnsat, Axis([
 				Plots.Scatter(H_θh_Obs/10., θ_θh_Obs, mark="square", markSize=4, onlyMarks=true, style="red, very thick", legendentry=L"$Obs$"),
 
@@ -343,7 +343,7 @@ module plot
 			Plot_CharacUnsat2 = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.cm, vertical sep = 2.5cm")
 
 
-			if option.Psd_2_HydrauParam
+			if option.psd.HydroParam
 				push!(Plot_CharacUnsat2, Axis([
 					Plots.Scatter(H_θh_Obs/10., θ_θh_Obs, mark="square", markSize=4, onlyMarks=true, style="red, very thick", legendentry=L"$Obs$"),
 	

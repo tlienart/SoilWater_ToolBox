@@ -56,8 +56,7 @@ module option
 				const Model 		= "IMP" # <IMP> Intergranular Mixing Model OR <Chang2019Model> 
 				const OptimizePsd 	= "All" # <Single> or <All> or <Run>. <Single> =  optimize ξ1 & ξ2 for individual soils. <All> = derive universal parameters for all soils. <Run> = use parameters from Param.jl 
 				const Psd_2_θr 		= "Opt" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl  # for new table model 1
-				const Psd_2_HydrauParam = true # <true> Optimize hydraulic parameters from PSD !!!!!!!THIS IS ALREADY HydroParam!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+				
 				# For OptimizePsd = "Single"
 					const ∑Psd_2_ξ1 = true  # <true> Use relationship between ξ1 and ∑Psd and do not optimize ξ1
 					const ∑Psd_2_ξ2 = false # <true> Use relationship between ξ2 and ∑Psd and do not optimize ξ2
