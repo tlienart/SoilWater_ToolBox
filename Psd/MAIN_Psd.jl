@@ -69,7 +69,7 @@ module psd
 
 
 		# =================== COMPUTTING  θr model from Psd ===================
-			if option.psd.Psd_2_θr == "Opt" #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!option.Psd.Psd_2_θr to implement θr model from Psd from here
+			if option.psd.Psd_2_θr == "Opt" 
 				θr_Psd = psdThetar.OPTIMIZE_PSD_2_θr(N_SoilSelect, θr[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,:])
 
 			elseif  option.psd.Psd_2_θr == "Cst"
