@@ -5,7 +5,7 @@ module psd
 	# ======================================================================================
 	#          PSD_START
 	# ======================================================================================
-	function PSD_MAIN(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro; N_Psd=100)
+	function PSD_MAIN(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro; N_Psd_Max=100)
 
 		println("option.psd.SubclayOpt = $(option.psd.SubclayOpt), option.psd.∑Psd_2_ξ2 = $(option.psd.∑Psd_2_ξ2), option.psd.∑Psd_2_ξ1 = $(option.psd.∑Psd_2_ξ1), \n")
 
@@ -15,7 +15,7 @@ module psd
 		# plot.PLOTTING_ξ2_MODEL()
 
 		# # Number of soils wanted to run
-		# 	N_SoilSelect = min(N_SoilSelect, param.N_Soil_Select)
+		# 	N_SoilSelect = min(N_SoilSelect, param.psd.N_Soil_Select)
 
 		# RESERVING MEMORY
 			Nrpart 		= zeros(Int32, N_SoilSelect)
@@ -39,11 +39,11 @@ module psd
 			ξ 			= zeros(Float64, N_Psd) # Problem need to solve
 
 		# INITIAL VALUES WHICH CAN CHANGE (depending on options)
-			∑Psd_2_ξ2_β1 = param.∑Psd_2_ξ2_β1
-			∑Psd_2_ξ2_β2 = param.∑Psd_2_ξ2_β2
+			∑Psd_2_ξ2_β1 = param.psd.∑Psd_2_ξ2_β1
+			∑Psd_2_ξ2_β2 = param.psd.∑Psd_2_ξ2_β2
 
 		# Computing the radius of the particles from the diameters
-			Rpart_Whole = param.Dpart ./ 2.0
+			Rpart_Whole = param.psd.Dpart ./ 2.0
 
 		# Reading PSD data
 			# ∑Psd = reading.PSD(path.Psd, Flag_Good) # now need to read with the general reading function!!!!!!!!! 
@@ -74,13 +74,13 @@ module psd
 
 			elseif  option.psd.Psd_2_θr == "Cst"
 				@simd for iSoil=1:N_SoilSelect
-					θr_Psd[iSoil] = param.θr_Cst
+					θr_Psd[iSoil] = param.psd.θr_Cst
 				end
 				
 			elseif  option.psd.Psd_2_θr == "Param"
-				println("Optimize θr = Psd_2_θr_α1 = $(param.Psd_2_θr_α1) ; param.Psd_2_θr_α2 = $(param.Psd_2_θr_α2)")
+				println("Optimize θr = Psd_2_θr_α1 = $(param.psd.Psd_2_θr_α1) ; param.psd.Psd_2_θr_α2 = $(param.psd.Psd_2_θr_α2)")
 				@simd for iSoil=1:N_SoilSelect
-					θr_Psd[iSoil] = psdFunc.PSD_2_θr(∑Psd[iSoil,param.Psd_2_θr_Size])
+					θr_Psd[iSoil] = psdFunc.PSD_2_θr(∑Psd[iSoil,param.psd.Psd_2_θr_Size])
 				end
 			else
 				error("option.psd.Psd_2_θr = $option.psd.Psd_2_θr  not allowed option.psd.Psd_2_θr must be either (1)'Opt' or (2) 'Cst' or (3) 'Param' ")
@@ -91,7 +91,7 @@ module psd
 			println("NASH_SUTCLIFFE θr_Psd = $Nse_θr \n")
 
 			if option.psd.Plot_θr
-				plot.PLOTTING_θr(θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,param.Psd_2_θr_Size])
+				plot.PLOTTING_θr(θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,param.psd.Psd_2_θr_Size])
 			end # option.psd.Plot_θr
 
 		# ........................................................................
@@ -159,7 +159,7 @@ module psd
 			end
 
 			if option.psd.Psd_2_HydrauParam
-				table.HYDRAULICPARAM_Psd(θsMat_Psd[1:N_SoilSelect], θr_Psd_Kg[1:N_SoilSelect], σMat_Psd[1:N_SoilSelect], ΨkgMat_Psd[1:N_SoilSelect], θsMac_Psd[1:N_SoilSelect], σMac_Psd[1:N_SoilSelect], ΨkgMac_Psd[1:N_SoilSelect], Nse_θh_Uni_Psd[1:N_SoilSelect],Nse_θh_Bim_Psd[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,1:param.N_Psd])
+				table.HYDRAULICPARAM_Psd(θsMat_Psd[1:N_SoilSelect], θr_Psd_Kg[1:N_SoilSelect], σMat_Psd[1:N_SoilSelect], ΨkgMat_Psd[1:N_SoilSelect], θsMac_Psd[1:N_SoilSelect], σMac_Psd[1:N_SoilSelect], ΨkgMac_Psd[1:N_SoilSelect], Nse_θh_Uni_Psd[1:N_SoilSelect],Nse_θh_Bim_Psd[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,1:param.psd.N_Psd])
 			end
 
 			table.INTERGRANULARMIXING(θsMac[1:N_SoilSelect], θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect], σMat[1:N_SoilSelect], ΨkgMat[1:N_SoilSelect], θsMat[1:N_SoilSelect], σMac[1:N_SoilSelect], ΨkgMac[1:N_SoilSelect], ξ1[1:N_SoilSelect], ξ2[1:N_SoilSelect], Nse_Psd[1:N_SoilSelect], Subclay[1:N_SoilSelect], ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, 0.0, 0.0, 0.0)
@@ -176,10 +176,10 @@ module psd
 			if option.psd.Plot_∑Psd_2_ξ2
 				Data = JuliaDB.loadtable(path.Table * "\\IndividualSamples_T1_T2.csv")
 				ξ2_Obs = JuliaDB.select(Data,:Tau2)
-				plot.PLOTTING_∑Psd_2_ξ2(ξ2_Obs[1:N_SoilSelect], ξ2[1:N_SoilSelect], ∑Psd[1:N_SoilSelect, param.∑Psd_2_ξ2_Size])
+				plot.PLOTTING_∑Psd_2_ξ2(ξ2_Obs[1:N_SoilSelect], ξ2[1:N_SoilSelect], ∑Psd[1:N_SoilSelect, param.psd.∑Psd_2_ξ2_Size])
 
 				#  Paper graph
-				plot.PLOTTING_ξ2_MODEL(ξ2_Obs[1:N_SoilSelect], ξ2[1:N_SoilSelect], ∑Psd[1:N_SoilSelect, param.∑Psd_2_ξ2_Size])
+				plot.PLOTTING_ξ2_MODEL(ξ2_Obs[1:N_SoilSelect], ξ2[1:N_SoilSelect], ∑Psd[1:N_SoilSelect, param.psd.∑Psd_2_ξ2_Size])
 
 				# Statistics
 				Nse_ξ2 = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE(ξ2_Obs[1:N_SoilSelect], ξ2[1:N_SoilSelect])
@@ -232,7 +232,7 @@ module psd
 	function OPTIMIZATION_SINGLE_SOIL(iSoil, Psd, ∑Psd, Rpart, Nrpart, θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd)
 		if option.psd.SubclayOpt  && !(option.psd.∑Psd_2_ξ2) && !(option.psd.∑Psd_2_ξ1) # <><><><><><><>	
 
-			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(P[1], P[2], P[3], Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.ξ1_Min, param.ξ1_Max), (param.ξ2_Min, param.ξ2_Max), (param.Wsubclay_Min, param.Wsubclay_Max)], NumDimensions=3,  TraceMode=:silent)
+			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(P[1], P[2], P[3], Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.psd.ξ1_Min, param.psd.ξ1_Max), (param.psd.ξ2_Min, param.psd.ξ2_Max), (param.psd.Wsubclay_Min, param.psd.Wsubclay_Max)], NumDimensions=3,  TraceMode=:silent)
 
 			 # Optimal values
 			ξ1 = BlackBoxOptim.best_candidate(Optimization)[1]
@@ -241,9 +241,9 @@ module psd
 			Of_Psd = BlackBoxOptim.best_fitness(Optimization)
 
 		elseif !(option.psd.SubclayOpt) && !(option.psd.∑Psd_2_ξ2) && !(option.psd.∑Psd_2_ξ1)# <><><><><><><># <><><><><><><>
-			Subclay = param.Subclay
+			Subclay = param.psd.Subclay
 	
-			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(P[1], P[2], Subclay , Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.ξ1_Min, param.ξ1_Max), (param.ξ2_Min, param.ξ2_Max)], NumDimensions=2,  TraceMode=:silent)
+			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(P[1], P[2], Subclay , Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.psd.ξ1_Min, param.psd.ξ1_Max), (param.psd.ξ2_Min, param.psd.ξ2_Max)], NumDimensions=2,  TraceMode=:silent)
 
 			 # Optimal values
 			ξ1 = BlackBoxOptim.best_candidate(Optimization)[1]
@@ -251,21 +251,21 @@ module psd
 			Of_Psd = BlackBoxOptim.best_fitness(Optimization)
 
 		elseif !(option.psd.SubclayOpt) && !(option.psd.∑Psd_2_ξ2)  && (option.psd.∑Psd_2_ξ1)
-			Subclay = param.Subclay
+			Subclay = param.psd.Subclay
 
-			ξ1 = param.P_ξ1
+			ξ1 = param.psd.P_ξ1
 	
-			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(ξ1 , P[1], Subclay , Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.ξ2_Min, param.ξ2_Max)], NumDimensions=1,  TraceMode=:silent)
+			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(ξ1 , P[1], Subclay , Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.psd.ξ2_Min, param.psd.ξ2_Max)], NumDimensions=1,  TraceMode=:silent)
 			 # Optimal values
 			ξ2 = BlackBoxOptim.best_candidate(Optimization)[1]
 			Of_Psd = BlackBoxOptim.best_fitness(Optimization)
 
 
 		elseif option.psd.∑Psd_2_ξ2  && !(option.psd.∑Psd_2_ξ1)
-			Subclay = param.Subclay
-			ξ2 = psdFunc.∑PSD_2_ξ2(∑Psd[param.∑Psd_2_ξ2_Size])
+			Subclay = param.psd.Subclay
+			ξ2 = psdFunc.∑PSD_2_ξ2(∑Psd[param.psd.∑Psd_2_ξ2_Size])
 
-			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(P[1], ξ2 , Subclay , Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.ξ1_Min, param.ξ1_Max)], NumDimensions=1,  TraceMode=:silent)
+			Optimization = BlackBoxOptim.bboptimize(P -> OF_SINGLE_SOIL(P[1], ξ2 , Subclay , Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd) ; SearchRange =[(param.psd.ξ1_Min, param.psd.ξ1_Max)], NumDimensions=1,  TraceMode=:silent)
 
 			 # Optimal values
 			ξ1 = BlackBoxOptim.best_candidate(Optimization)[1]
@@ -273,13 +273,13 @@ module psd
 
 
 		elseif option.psd.∑Psd_2_ξ2  && option.psd.∑Psd_2_ξ1
-			Subclay = param.Subclay # Average value
+			Subclay = param.psd.Subclay # Average value
 
-			ξ2 =  psdFunc.∑PSD_2_ξ2(∑Psd[param.∑Psd_2_ξ2_Size])
+			ξ2 =  psdFunc.∑PSD_2_ξ2(∑Psd[param.psd.∑Psd_2_ξ2_Size])
 
-			ξ1 = param.P_ξ1
+			ξ1 = param.psd.P_ξ1
 
-			Of_Psd = OF_SINGLE_SOIL(ξ1, ξ2, param.Subclay, Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd)
+			Of_Psd = OF_SINGLE_SOIL(ξ1, ξ2, param.psd.Subclay, Rpart[1:Nrpart], Nrpart, Psd[1:Nrpart], ∑Psd[1:Nrpart], θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd)
 		else
 			error(" NO SUITABLE OPTIONS FOUND ")
 		end # if option.psd.
@@ -324,7 +324,7 @@ module psd
 		function OF_ALL_SOIL(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, Subclay, N_SoilSelect, Psd, ∑Psd, Rpart, Nrpart, θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd)
 			Of_AllSoil = 0.
 			@simd for iSoil = 1:N_SoilSelect
-				ξ2 =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=∑Psd_2_ξ2_β2) #####################for new table model 4######
+				ξ2 =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.psd.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=∑Psd_2_ξ2_β2) #####################for new table model 4######
 				# ξ2 = ∑Psd_2_ξ2_β1   ############################for new table model 1######
 
 				Of_AllSoil += OF_SINGLE_SOIL(ξ1, ξ2, Subclay, Rpart[iSoil,1:Nrpart[iSoil]], Nrpart[iSoil], Psd[iSoil,1:Nrpart[iSoil]], ∑Psd[iSoil,1:Nrpart[iSoil]], θsMac[iSoil], θr[iSoil], ΨkgMat[iSoil], σMat[iSoil], θsMat[iSoil], ΨkgMac[iSoil], σMac[iSoil], θr_Psd[iSoil])
@@ -334,7 +334,7 @@ module psd
 
 
 		if option.psd.SubclayOpt 
-			Optimization = BlackBoxOptim.bboptimize(P -> OF_ALL_SOIL(P[1], P[2], P[3], P[4], N_SoilSelect, Psd[1:N_SoilSelect,:], ∑Psd[1:N_SoilSelect,:], Rpart[1:N_SoilSelect,:], Nrpart[1:N_SoilSelect], θsMac[1:N_SoilSelect], θr[1:N_SoilSelect], ΨkgMat[1:N_SoilSelect], σMat[1:N_SoilSelect], θsMat[1:N_SoilSelect], ΨkgMac[1:N_SoilSelect], σMac[1:N_SoilSelect], θr_Psd[1:N_SoilSelect]);  SearchRange =[(param.ξ1_Min, param.ξ1_Max), (param.∑Psd_2_ξ2_β1_Min,param.∑Psd_2_ξ2_β1_Max), (param.∑Psd_2_ξ2_β2_Min,param.∑Psd_2_ξ2_β2_Max), (param.Wsubclay_Min, param.Wsubclay_Max)], NumDimensions=4, TraceMode=:silent )
+			Optimization = BlackBoxOptim.bboptimize(P -> OF_ALL_SOIL(P[1], P[2], P[3], P[4], N_SoilSelect, Psd[1:N_SoilSelect,:], ∑Psd[1:N_SoilSelect,:], Rpart[1:N_SoilSelect,:], Nrpart[1:N_SoilSelect], θsMac[1:N_SoilSelect], θr[1:N_SoilSelect], ΨkgMat[1:N_SoilSelect], σMat[1:N_SoilSelect], θsMat[1:N_SoilSelect], ΨkgMac[1:N_SoilSelect], σMac[1:N_SoilSelect], θr_Psd[1:N_SoilSelect]);  SearchRange =[(param.psd.ξ1_Min, param.psd.ξ1_Max), (param.psd.∑Psd_2_ξ2_β1_Min,param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min,param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Wsubclay_Min, param.psd.Wsubclay_Max)], NumDimensions=4, TraceMode=:silent )
 
 			ξ1_All =  BlackBoxOptim.best_candidate(Optimization)[1]
 			∑Psd_2_ξ2_β1 = BlackBoxOptim.best_candidate(Optimization)[2]
@@ -342,9 +342,9 @@ module psd
 			Wsubclay_All =  BlackBoxOptim.best_candidate(Optimization)[4]
 
 		elseif !(option.psd.SubclayOpt)
-			Wsubclay_All = param.Subclay
+			Wsubclay_All = param.psd.Subclay
 
-			Optimization = BlackBoxOptim.bboptimize(P -> OF_ALL_SOIL(P[1], P[2], P[3], Wsubclay_All, N_SoilSelect, Psd[1:N_SoilSelect,:], ∑Psd[1:N_SoilSelect,:], Rpart[1:N_SoilSelect,:], Nrpart[1:N_SoilSelect], θsMac[1:N_SoilSelect], θr[1:N_SoilSelect], ΨkgMat[1:N_SoilSelect], σMat[1:N_SoilSelect], θsMat[1:N_SoilSelect], ΨkgMac[1:N_SoilSelect], σMac[1:N_SoilSelect], θr_Psd[1:N_SoilSelect]);  SearchRange =[(param.ξ1_Min, param.ξ1_Max), (param.∑Psd_2_ξ2_β1_Min,param.∑Psd_2_ξ2_β1_Max), (param.∑Psd_2_ξ2_β2_Min,param.∑Psd_2_ξ2_β2_Max)], NumDimensions=3, TraceMode=:silent )
+			Optimization = BlackBoxOptim.bboptimize(P -> OF_ALL_SOIL(P[1], P[2], P[3], Wsubclay_All, N_SoilSelect, Psd[1:N_SoilSelect,:], ∑Psd[1:N_SoilSelect,:], Rpart[1:N_SoilSelect,:], Nrpart[1:N_SoilSelect], θsMac[1:N_SoilSelect], θr[1:N_SoilSelect], ΨkgMat[1:N_SoilSelect], σMat[1:N_SoilSelect], θsMat[1:N_SoilSelect], ΨkgMac[1:N_SoilSelect], σMac[1:N_SoilSelect], θr_Psd[1:N_SoilSelect]);  SearchRange =[(param.psd.ξ1_Min, param.psd.ξ1_Max), (param.psd.∑Psd_2_ξ2_β1_Min,param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min,param.psd.∑Psd_2_ξ2_β2_Max)], NumDimensions=3, TraceMode=:silent )
 
 			ξ1_All =  BlackBoxOptim.best_candidate(Optimization)[1]
 			∑Psd_2_ξ2_β1 = BlackBoxOptim.best_candidate(Optimization)[2]
@@ -374,7 +374,7 @@ module psd
 
 			ξ1[iSoil] =  ξ1_All 
 
-			ξ2[iSoil] =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=∑Psd_2_ξ2_β2) #####################for new table model 4######
+			ξ2[iSoil] =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.psd.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=∑Psd_2_ξ2_β2) #####################for new table model 4######
 			# ξ2[iSoil] = ∑Psd_2_ξ2_β1  #####################for new table model 1######
 
 			θ_Rpart[iSoil,1:Nrpart[iSoil]], Ψ_Rpart[iSoil,1:Nrpart[iSoil]] = psdFunc.PSD_MODEL(Rpart[iSoil,1:Nrpart[iSoil]], Psd[iSoil,:], ∑Psd[iSoil,:], Nrpart[iSoil], θsMac[iSoil], θr_Psd[iSoil], Subclay[iSoil], ξ1[iSoil], ξ2[iSoil])
@@ -393,7 +393,7 @@ module psd
 		function OF_ALL_SOIL(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, Subclay, N_SoilSelect, Psd, ∑Psd, Rpart, Nrpart, θsMac, θr, ΨkgMat, σMat, θsMat, ΨkgMac, σMac, θr_Psd)
 			Of_AllSoil = 0.0
 			@simd for iSoil = 1:N_SoilSelect
-				ξ2 =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=param.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.∑Psd_2_ξ2_β2) 				
+				ξ2 =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.psd.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=param.psd.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.∑Psd_2_ξ2_β2) 				
 
 				Of_AllSoil += OF_SINGLE_SOIL(ξ1, ξ2, Subclay, Rpart[iSoil,1:Nrpart[iSoil]], Nrpart[iSoil], Psd[iSoil,1:Nrpart[iSoil]], ∑Psd[iSoil,1:Nrpart[iSoil]], θsMac[iSoil], θr[iSoil], ΨkgMat[iSoil], σMat[iSoil], θsMat[iSoil], ΨkgMac[iSoil], σMac[iSoil], θr_Psd[iSoil])
 			end # for loop
@@ -403,17 +403,17 @@ module psd
 
 		if option.psd.SubclayOpt 
 			
-			ξ1_All =  param.ξ1
-			∑Psd_2_ξ2_β1 = param.∑Psd_2_ξ2_β1
-			∑Psd_2_ξ2_β2 = param.∑Psd_2_ξ2_β2
-			Wsubclay_All =  param.Subclay
+			ξ1_All =  param.psd.ξ1
+			∑Psd_2_ξ2_β1 = param.psd.∑Psd_2_ξ2_β1
+			∑Psd_2_ξ2_β2 = param.psd.∑Psd_2_ξ2_β2
+			Wsubclay_All =  param.psd.Subclay
 
 		elseif !(option.psd.SubclayOpt)
-			Wsubclay_All = param.Subclay
+			Wsubclay_All = param.psd.Subclay
 
-			ξ1_All =  param.ξ1
-			∑Psd_2_ξ2_β1 = param.∑Psd_2_ξ2_β1
-			∑Psd_2_ξ2_β2 = param.∑Psd_2_ξ2_β2
+			ξ1_All =  param.psd.ξ1
+			∑Psd_2_ξ2_β1 = param.psd.∑Psd_2_ξ2_β1
+			∑Psd_2_ξ2_β2 = param.psd.∑Psd_2_ξ2_β2
 		end # if option.psd.SubclayOpt 
 
 		println("PSD HYDRAULIC PARAMETERS from PARAM:")
@@ -436,7 +436,7 @@ module psd
 
 			ξ1[iSoil] =  ξ1_All 
 
-			ξ2[iSoil] =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=param.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.∑Psd_2_ξ2_β2) 			
+			ξ2[iSoil] =  psdFunc.∑PSD_2_ξ2(∑Psd[iSoil, param.psd.∑Psd_2_ξ2_Size]; ∑Psd_2_ξ2_β1=param.psd.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.∑Psd_2_ξ2_β2) 			
 
 			θ_Rpart[iSoil,1:Nrpart[iSoil]], Ψ_Rpart[iSoil,1:Nrpart[iSoil]] = psdFunc.PSD_MODEL(Rpart[iSoil,1:Nrpart[iSoil]], Psd[iSoil,:], ∑Psd[iSoil,:], Nrpart[iSoil], θsMac[iSoil], θr_Psd[iSoil], Subclay[iSoil], ξ1[iSoil], ξ2[iSoil])
 
