@@ -1,38 +1,39 @@
 module psdFunc
 	using ..option
 
-	export PSD_MODEL, ∑PSD_2_ξ2, ∑PSD_2_PSD, SUBCLAY_CORRECTION, INTERGRANULARMIXING
+	export PSD_MODEL
 	import BlackBoxOptim
 		
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function PSD_MODEL(Rpart, Psd, ∑Psd, Nrpart, θsMac, θr_Psd, Subclay, ξ1, ξ2)
-			# Correction for the small PSD
-			Psd, ∑Psd = SUBCLAY_CORRECTION(∑Psd, Subclay, Nrpart)
-
+		function PSD_MODEL(Nrpart, Psd, Rpart, Subclay, ∑Psd, θr_Psd, θs, ξ1, ξ2)
+			
 			if option.psd.model == "IMP"
-				θ_Rpart = imp.RPART_2_θ(θsMac, θr_Psd, Psd[1:Nrpart], Rpart[1:Nrpart], Nrpart, ξ1, ξ2) 	# Computing θ from Psd
+				# Correction for the small PSD
+				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, Subclay, Nrpart) 
+				θ_Rpart = imp.RPART_2_θ(θs, θr_Psd, Psd[1:Nrpart], Rpart[1:Nrpart], Nrpart, ξ1, ξ2) 	# Computing θ from Psd
 				Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, Nrpart) 											# Computing ψ from Psd
 
 			elseif option.psd.model == "Chang2019Model"
-				θ_Rpart = chang.RPART_2_θ(θsMac, Psd[1:Nrpart], Rpart[1:Nrpart], Nrpart, ξ1) 		# Computing θ from Psd
-				Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, Nrpart) 										# Computing ψ from Psd
+				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, Subclay, Nrpart)  						#? Not sure if this should be put here?
+				θ_Rpart = chang.RPART_2_θ(θs, Psd[1:Nrpart], Rpart[1:Nrpart], Nrpart, ξ1) 		# Computing θ from Psd
+				Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, Nrpart)
+				 									# Computing ψ from Psd
 			end # option.psd.Chang2019Model
 			
 			return θ_Rpart, Ψ_Rpart
 		end # function PSD_MODEL
-
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>	
+
 
 
 	# =============================================================
 	#		MODULE: imp
 	# =============================================================
 	module imp
-
-		import ...cst, ...param, ...option
+		import ...cst, ...param
 		export ∑PSD_2_ξ2, ∑PSD_2_PSD, SUBCLAY_CORRECTION, INTERGRANULARMIXING
 
 		# =========================================
@@ -53,7 +54,7 @@ module psdFunc
 	#      INTERGRANULARMIXING MODELS
 	# =========================================
 		function INTERGRANULARMIXING(Rpart, ξ1, ξ2)
-			return INTERGRANULARMIXING = min.(max.(ξ1 .* exp(.-(Rpart .^ .-ξ2)), 0.0), param.psd.ξ_Max)
+			return IntergranularMixing = min.(max.(ξ1 .* exp(.-(Rpart .^ .-ξ2)), 0.0), param.psd.ξ_Max)
 		end # function INTERGRANULARMIXING
 
 
@@ -72,25 +73,25 @@ module psdFunc
 	# =========================================
 	#       Rpart -> θ
 	# =========================================
-		function RPART_2_θ(θsMac, θr_Psd, Psd, Rpart, Nrpart, ξ1, ξ2)
+		function RPART_2_θ(θs, θr_Psd, Psd, Rpart, Nrpart, ξ1, ξ2)
 			θ_Rpart = zeros(Float64, Nrpart)
 
 			# Computing the divisor
-			∑θRpart = Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
-			@simd for iRpart=2:Nrpart
-				∑θRpart +=  Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
-			end
+				∑θRpart = Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
+				@simd for iRpart=2:Nrpart
+					∑θRpart +=  Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
+				end
 		
 			# Computing the dividend
-			θ_Rpart[1] =  Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
-			@simd for iRpart=2:Nrpart
-				θ_Rpart[iRpart] = θ_Rpart[iRpart-1] + Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
-			end
+				θ_Rpart[1] =  Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
+				@simd for iRpart=2:Nrpart
+					θ_Rpart[iRpart] = θ_Rpart[iRpart-1] + Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
+				end
 
 			# Computing θ_Rpart
-			@simd for iRpart=1:Nrpart
-				θ_Rpart[iRpart] =  (θsMac - θr_Psd) * (θ_Rpart[iRpart] / ∑θRpart) + θr_Psd
-			end
+				@simd for iRpart=1:Nrpart
+					θ_Rpart[iRpart] =  (θs - θr_Psd) * (θ_Rpart[iRpart] / ∑θRpart) + θr_Psd
+				end
 
 			return θ_Rpart
 		end # function RPART_2_θ
@@ -149,6 +150,8 @@ module psdFunc
 	#		MODULE: Chang et al., 2019
 	# =============================================================
 	module chang
+		import ...cst, ...param
+
 		# ==============================================
 		#      Rpart -> Ψ_Rpart  from Chang et al., 2019
 		# ==============================================
@@ -161,7 +164,7 @@ module psdFunc
 		# ==============================================
 		#        Rpart -> θ  from Chang et al., 2019
 		# ==============================================
-			function RPART_2_θ_Chang(θsMac, Psd, Rpart, Nrpart, β)
+			function RPART_2_θ_Chang(θs, Psd, Rpart, Nrpart, β)
 				θ_Rpart = zeros(Float64, Nrpart)
 				δ = zeros(Float64, Nrpart)
 				∑ = zeros(Float64, Nrpart)
@@ -173,9 +176,9 @@ module psdFunc
 					∑[iRpart] = ∑[iRpart-1] + Psd[iRpart] - ((Clay ^ β) - Clay) * δ[iRpart]
 				end
 
-				θ_Rpart[1] = θsMac * ∑[1] 
+				θ_Rpart[1] = θs * ∑[1] 
 				@simd  for iRpart = 2:Nrpart
-					θ_Rpart[iRpart] = θsMac * ∑[iRpart] 
+					θ_Rpart[iRpart] = θs * ∑[iRpart] 
 				end
 				return θ_Rpart
 			end # function RPART_2_θ_Chang

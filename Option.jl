@@ -21,7 +21,7 @@ module option
 		const Id_Select 	= true 	# <true>* Select Id from the data OR <false> use all the data
 		const θΨ 			= "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
 		const KunsatΨ		= true 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>  
-		const Psd 			= false 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
+		const Psd 			= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
 		const Infiltration 	= true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
 		const KsatModel 	= false # <true> Derive Ksat from θ(Ψ) OR <false>
 
@@ -30,7 +30,7 @@ module option
 		#		MODULE: hydroparam
 		# =============================================================
 			module hydro
-			import ..option
+				import ..option
 
 				θsOpt 	= "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
 				if θsOpt == "Opt" && option.UnimodalBimodal == "Bimodal"
@@ -53,39 +53,32 @@ module option
 			module psd
 				const Optimize 		= false # <true> Optimize the PSD model (require θΨ) OR <false>* derived from preset values 
 				const HydroParam 	= false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
-				const constmodel 	= "IMP" # <IMP> Intergranular Mixing Model <Chang2019Model> 
+				const Model 		= "IMP" # <IMP> Intergranular Mixing Model <Chang2019Model> 
+				const OptimizePsd 	= "All" # <Single> or <All> or <Run>. <Single> =  optimize ξ1 & ξ2 for individual soils. <All> = derive universal parameters for all soils. <Run> = use parameters from Param.jl 
+				const Psd_2_θr 		= "Opt" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl  # for new table model 1
+				const Psd_2_HydrauParam = true # If "TRUE" we optimize the hydraulic parameters from PSD
 
-				OptimizePsd = "All" # "Single" or "All" or "Run". "Single" =  optimize ξ1 & ξ2 for individual soils. "All" = derive universal parameters for all soils. "Run" = use parameters from Param.jl 
+				# For OptimizePsd = "Single"
+					const ∑Psd_2_ξ1 = true # If "TRUE" we use relationship between ξ1 and ∑Psd and we do not optimize ξ1.
+					const ∑Psd_2_ξ2 = false # If "TRUE" we use relationship between ξ2 and ∑Psd and we do not optimize ξ2.
 				
-				Psd_2_θr = "Opt" # (1) "Opt" optimises parameters α1 and α1; (2) "Cst" uses θr = param.θr_Cst; (3) "Param" uses α1 and α1 from parameters in Param.jl  # for new table model 1
-
-				# For OptimizePsd = "SINGLE"
-					∑Psd_2_ξ1 = true # If "TRUE" we use relationship between ξ1 and ∑Psd and we do not optimize ξ1.
-
-					∑Psd_2_ξ2 = false # If "TRUE" we use relationship between ξ2 and ∑Psd and we do not optimize ξ2.
-				
-				Psd_2_HydrauParam = true # If "TRUE" we optimize the hydraulic parameters from PSD
-				
-				Chang2019Model = false # when true computes WRC from PSD using Chang et al., 2019
-				
-				# PLOTTING ========================
-					Plot_σ_Ψkg = true
-
-					Plotting = true # Its plots
-						Plot_Kθ = true
-						Plot_IntergranularMixing = true
-						Plot_Pdf = true
-						Plot_∑Pdf = true
-						Plot_OFsingle_OFmeas = true
-						Plot_∑Psd_2_ξ2 = true
-						Plot_Ψkg_σmod = true
-						Plot_θr = true
-								
-					if OptimizePsd == "Single" 
-						SubclayOpt = false
-					else
-						SubclayOpt = true # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
-					end			
+				# PLOTTING
+				const Plotting = true # Its plots
+					const Plot_σ_Ψkg = true
+					const Plot_Kθ = true
+					const Plot_IntergranularMixing = true
+					const Plot_Pdf = true
+					const Plot_∑Pdf = true
+					const Plot_OFsingle_OFmeas = true
+					const Plot_∑Psd_2_ξ2 = true
+					const Plot_Ψkg_σmod = true
+					const Plot_θr = true
+							
+				if OptimizePsd == "Single" 
+					const SubclayOpt = false # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
+				else
+					const SubclayOpt = true # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
+				end			
 			end  # module psd
 		# ............................................................
 
@@ -114,15 +107,6 @@ module option
 				const Optimize = true # <Opt> Optimize the parameters of Ks model (require KΨ) OR <false>* derived from preset values 
 				const Ksat = false # <true> Derive Ksat from θ(Ψ) OR <false>
 			end  # module ksat
-			# ............................................................
-
-
-		# =============================================================
-		#		MODULE: psd
-		# =============================================================
-			module psd
-				
-				end # module psd
 			# ............................................................
 
 end  # module option

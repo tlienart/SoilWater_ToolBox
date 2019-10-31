@@ -72,12 +72,12 @@ module table
 			  rm(Path_Table)
 		end
 		
-		Nsample = length(θsMac)
-		∑Psd_2_ξ2_β1 = fill(∑Psd_2_ξ2_β1, Nsample)
-		∑Psd_2_ξ2_β2 = fill(∑Psd_2_ξ2_β2, Nsample)
-		P_∑Psd_2_ξ2_C = fill(P_∑Psd_2_ξ2_C, Nsample)
-		P_ξ2_2_ξ1_A = fill(P_ξ2_2_ξ1_A , Nsample)
-		P_ξ2_2_ξ1_B = fill(P_ξ2_2_ξ1_B , Nsample)
+		N_SoilSelect = length(θsMac)
+		∑Psd_2_ξ2_β1 = fill(∑Psd_2_ξ2_β1, N_SoilSelect)
+		∑Psd_2_ξ2_β2 = fill(∑Psd_2_ξ2_β2, N_SoilSelect)
+		P_∑Psd_2_ξ2_C = fill(P_∑Psd_2_ξ2_C, N_SoilSelect)
+		P_ξ2_2_ξ1_A = fill(P_ξ2_2_ξ1_A , N_SoilSelect)
+		P_ξ2_2_ξ1_B = fill(P_ξ2_2_ξ1_B , N_SoilSelect)
   
 		Data = [θsMac, θr, θr_Psd, σMat, ΨkgMat, θsMat, σMac, ΨkgMac, ξ1, ξ2, Subclay, Of_Psd, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, P_∑Psd_2_ξ2_C, P_ξ2_2_ξ1_A, P_ξ2_2_ξ1_B]
   

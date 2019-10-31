@@ -1,3 +1,14 @@
+#=
+       ,--. ,--.                                                                                                                                                        
+     ,-|  |-|  |-.     ,---.   ,-----. ,--.,--.       ,--.   ,--.  ,---. ,--------.,------.,------.     ,--------. ,-----.  ,-----. ,--.   ,-----.   ,-----.,--.   ,--. 
+     '-|  |-|  |-'    '   .-' '  .-.  '|  ||  |       |  |   |  | /  O  \'--.  .--'|  .---'|  .--. '    '--.  .--''  .-.  ''  .-.  '|  |   |  |) /_ '  .-.  '\  `.'  /  
+     ,-|  |-|  |-.    `.  `-. |  | |  ||  ||  |       |  |.'.|  ||  .-.  |  |  |   |  `--, |  '--'.'       |  |   |  | |  ||  | |  ||  |   |  .-.  \|  | |  | .'    \   
+     '-|  |-|  |-'    .-'    |'  '-'  '|  ||  '--.    |   ,'.   ||  | |  |  |  |   |  `---.|  |\  \        |  |   '  '-'  ''  '-'  '|  '--.|  '--' /'  '-'  '/  .'.  \  
+       `--' `--'      `-----'  `-----' `--'`-----'    '--'   '--'`--' `--'  `--'   `------'`--' '--'       `--'    `-----'  `-----' `-----'`------'  `-----''--'   '--' 
+                                                                                                                                                                    
+=#
+
+
 include("Option.jl")
 # Install packages to run program
 	if option.DownloadPackage
@@ -50,7 +61,7 @@ function START_TOOLBOX()
 		end
 
 		if option.Psd
-			Diameter, ∑Psd, N_Psd  = read.PSD(Id_Select, N_SoilSelect)
+			Rpart, ∑Psd, N_Psd  = read.PSD(Id_Select, N_SoilSelect)
 		else
 			∑Psd = zeros(Float64, N_SoilSelect,1)
 		end
@@ -82,7 +93,7 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psd.PSD_START(Nsample, θsMat, θr, σMat, ΨkgMat, KsMat, θsMac, σMac, ΨkgMac, KsMac, Ψ_θΨ, θ_θΨ, N_θΨ, Nse_θΨ_Bim_Mean, Flag_Good ; N_Kθ=N_Kθ, K_Kθ=K_Kθ, Ψ_Kθ=Ψ_Kθ)
+			psd.PSD_MAIN(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
 		println("=== END  : PSD MODEL  === \n")
 	end
 
@@ -107,9 +118,7 @@ function START_TOOLBOX()
 			end # option.Plot_BestLab
 
 			if option.Plot_BestLab && option.θΨ ≠ "No" && option.infiltration.OptimizeRun  == "Run" || option.infiltration.OptimizeRun  == "RunOpt" 
-
 				plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
-
 			end
 
 		println("=== END: PLOTTING  === \n")

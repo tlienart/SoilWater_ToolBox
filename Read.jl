@@ -79,9 +79,12 @@ module read
 	#		FUNCTION : PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function PSD(Id_True, N_SoilSelect)
-			Diameter, N_Psd 	= READ_ROW_SELECT(path.Psd, "Diameter[mm]", Id_True, N_SoilSelect)
-			∑Psd , ~ 	= READ_ROW_SELECT(path.Psd, "Cumul_Psd", Id_True, N_SoilSelect)
-			return Diameter, ∑Psd, N_Psd
+			Diameter_Psd, N_Psd 	= READ_ROW_SELECT(path.Psd, "Diameter[mm]", Id_True, N_SoilSelect)
+			∑Psd , ~ 				= READ_ROW_SELECT(path.Psd, "Cumul_Psd", Id_True, N_SoilSelect)
+
+			Rpart = @. Diameter_Psd / 2.0
+
+			return Rpart, ∑Psd, N_Psd
 		end  # function: PSD
 
 
