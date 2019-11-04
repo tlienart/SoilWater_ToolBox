@@ -1,29 +1,32 @@
 module psdFunc
 	using ..option
 
-	export PSD_MODEL
+	export PSD_MODEL, ∑PSD_2_PSD
 	import BlackBoxOptim
 		
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function PSD_MODEL(Nrpart, Psd, Rpart, Subclay, ∑Psd, θr_Psd, θs, ξ1, ξ2)
+		function PSD_MODEL(N_Psd, Psd, Rpart, Subclay, ∑Psd, θr_Psd, θs, ξ1, ξ2)
 			
 			if option.psd.model == "IMP"
 				# Correction for the small PSD
-				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, Subclay, Nrpart) 
-				θ_Rpart = imp.RPART_2_θ(θs, θr_Psd, Psd[1:Nrpart], Rpart[1:Nrpart], Nrpart, ξ1, ξ2) 	# Computing θ from Psd
-				Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, Nrpart) 											# Computing ψ from Psd
+				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, Subclay, N_Psd) 
+				θ_Rpart = imp.RPART_2_θ(θs, θr_Psd, Psd[1:N_Psd], Rpart[1:N_Psd], N_Psd, ξ1, ξ2) 	# Computing θ from Psd
+				Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd) 											# Computing ψ from Psd
 
 			elseif option.psd.model == "Chang2019Model"
-				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, Subclay, Nrpart)  						#? Not sure if this should be put here?
-				θ_Rpart = chang.RPART_2_θ(θs, Psd[1:Nrpart], Rpart[1:Nrpart], Nrpart, ξ1) 		# Computing θ from Psd
-				Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, Nrpart)
+				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, Subclay, N_Psd)  						#? Not sure if this should be put here?
+				θ_Rpart = chang.RPART_2_θ(θs, Psd[1:N_Psd], Rpart[1:N_Psd], N_Psd, ξ1) 		# Computing θ from Psd
+				Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, N_Psd)
 				 									# Computing ψ from Psd
 			end # option.psd.Chang2019Model
 			
 			return θ_Rpart, Ψ_Rpart
 		end # function PSD_MODEL
+
+
+
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>	
 
@@ -34,19 +37,19 @@ module psdFunc
 	# =============================================================
 	module imp
 		import ...cst, ...param
-		export ∑PSD_2_ξ2, ∑PSD_2_PSD, SUBCLAY_CORRECTION, INTERGRANULARMIXING
+		export ∑PSD_2_ξ2, SUBCLAY_CORRECTION, INTERGRANULARMIXING
 
 		# =========================================
 		#      Rpart -> Ψ_Rpart
 		# =========================================
-			function RPART_2_ΨRPART(Rpart, Nrpart) 
-				Ψ_Rpart = zeros(Float64, Nrpart)
+			function RPART_2_ΨRPART(Rpart, N_Psd) 
+				Ψ_Rpart = zeros(Float64, N_Psd)
 				
 				# It is to be noted that
-				Rpart_Max = Rpart[Nrpart]
+				Rpart_Max = Rpart[N_Psd]
 				Rpart_Min = Rpart[1]
 				
-				return Ψ_Rpart =  param.psd.Ψ_Max .* ( ( (cst.Y  ./ Rpart[1:Nrpart]) .- (cst.Y ./ Rpart_Max) ) ./ ((cst.Y  ./ Rpart_Min) - (cst.Y  ./ Rpart_Max)) ) .^ param.psd.λ 
+				return Ψ_Rpart =  param.psd.Ψ_Max .* ( ( (cst.Y  ./ Rpart[1:N_Psd]) .- (cst.Y ./ Rpart_Max) ) ./ ((cst.Y  ./ Rpart_Min) - (cst.Y  ./ Rpart_Max)) ) .^ param.psd.λ 
 			end # function RPART_2_ΨRPART
 
 
@@ -73,23 +76,23 @@ module psdFunc
 	# =========================================
 	#       Rpart -> θ
 	# =========================================
-		function RPART_2_θ(θs, θr_Psd, Psd, Rpart, Nrpart, ξ1, ξ2)
-			θ_Rpart = zeros(Float64, Nrpart)
+		function RPART_2_θ(θs, θr_Psd, Psd, Rpart, N_Psd, ξ1, ξ2)
+			θ_Rpart = zeros(Float64, N_Psd)
 
 			# Computing the divisor
 				∑θRpart = Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
-				@simd for iRpart=2:Nrpart
+				@simd for iRpart=2:N_Psd
 					∑θRpart +=  Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
 				end
 		
 			# Computing the dividend
 				θ_Rpart[1] =  Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
-				@simd for iRpart=2:Nrpart
+				@simd for iRpart=2:N_Psd
 					θ_Rpart[iRpart] = θ_Rpart[iRpart-1] + Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
 				end
 
 			# Computing θ_Rpart
-				@simd for iRpart=1:Nrpart
+				@simd for iRpart=1:N_Psd
 					θ_Rpart[iRpart] =  (θs - θr_Psd) * (θ_Rpart[iRpart] / ∑θRpart) + θr_Psd
 				end
 
@@ -97,28 +100,17 @@ module psdFunc
 		end # function RPART_2_θ
 
 
-	# =========================================
-	#          ∑PSD -> PSD
-	# =========================================
-		function ∑PSD_2_PSD(∑Psd, Nrpart)
-			Psd = zeros(Float64, Nrpart)
 
-			Psd[1] = ∑Psd[1]
-			@simd  for iRpart =2:Nrpart
-				Psd[iRpart] = ∑Psd[iRpart] - ∑Psd[iRpart-1]
-			end
-			return Psd
-		end # function ∑PSD_2_PSD
 
 
 	# =========================================
 	#          Subclay -> ∑PSD, PSD
 	# =========================================
-		function SUBCLAY_CORRECTION(∑Psd, Subclay, Nrpart)
+		function SUBCLAY_CORRECTION(∑Psd, Subclay, N_Psd)
 			# Correction for the small PSD
 			# Subclay = 1.0 # no subclay correction applied
 			∑Psd[1] = ∑Psd[1] * Subclay
-			Psd = ∑PSD_2_PSD(∑Psd[1:Nrpart], Nrpart)
+			Psd = ∑PSD_2_PSD(∑Psd[1:N_Psd], N_Psd)
 			return Psd, ∑Psd
 		end # Subclay
 
@@ -126,10 +118,10 @@ module psdFunc
 	# =========================================
 	#          PSD -> ∑PSD
 	# =========================================
-		function PSD_2_∑PSD(Psd, Nrpart)
-			∑Psd = zeros(Float64, Nrpart)
+		function PSD_2_∑PSD(Psd, N_Psd)
+			∑Psd = zeros(Float64, N_Psd)
 			∑Psd[1] = Psd[1]
-			@simd  for iRpart = 2:Nrpart
+			@simd  for iRpart = 2:N_Psd
 				∑Psd[iRpart] = ∑Psd[iRpart-1] + Psd[iRpart]
 			end
 			return ∑Psd
@@ -155,29 +147,29 @@ module psdFunc
 		# ==============================================
 		#      Rpart -> Ψ_Rpart  from Chang et al., 2019
 		# ==============================================
-			function RPART_2_ΨRPART_Chang(Rpart, Nrpart) 
-				Ψ_Rpart = zeros(Float64, Nrpart)
-				return Ψ_Rpart =  cst.Y ./ (0.3 .* Rpart[1:Nrpart]) 
+			function RPART_2_ΨRPART_Chang(Rpart, N_Psd) 
+				Ψ_Rpart = zeros(Float64, N_Psd)
+				return Ψ_Rpart =  cst.Y ./ (0.3 .* Rpart[1:N_Psd]) 
 			end # function RPART_2_ΨRPART_Chang
 
 
 		# ==============================================
 		#        Rpart -> θ  from Chang et al., 2019
 		# ==============================================
-			function RPART_2_θ_Chang(θs, Psd, Rpart, Nrpart, β)
-				θ_Rpart = zeros(Float64, Nrpart)
-				δ = zeros(Float64, Nrpart)
-				∑ = zeros(Float64, Nrpart)
+			function RPART_2_θ_Chang(θs, Psd, Rpart, N_Psd, β)
+				θ_Rpart = zeros(Float64, N_Psd)
+				δ = zeros(Float64, N_Psd)
+				∑ = zeros(Float64, N_Psd)
 
 				Clay = Psd[1]
 				∑[1] = Clay ^ β
-				@simd  for iRpart = 2:Nrpart
-					δ[iRpart] = Psd[iRpart] / sum(Psd[2:Nrpart])
+				@simd  for iRpart = 2:N_Psd
+					δ[iRpart] = Psd[iRpart] / sum(Psd[2:N_Psd])
 					∑[iRpart] = ∑[iRpart-1] + Psd[iRpart] - ((Clay ^ β) - Clay) * δ[iRpart]
 				end
 
 				θ_Rpart[1] = θs * ∑[1] 
-				@simd  for iRpart = 2:Nrpart
+				@simd  for iRpart = 2:N_Psd
 					θ_Rpart[iRpart] = θs * ∑[iRpart] 
 				end
 				return θ_Rpart

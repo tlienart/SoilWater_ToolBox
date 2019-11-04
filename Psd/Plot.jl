@@ -159,7 +159,7 @@ module plot
 	# =========================================
 	#       Plotting
 	# ========================================
-	function PLOTTING(iSoil, Nrpart, Rpart, Psd, ∑Psd, θsMac, θr, σMat, ΨkgMat, KsMat, KsMac, θsMat, σMac, ΨkgMac, Ψ_θΨ, θ_θΨ, N_θΨ, Ψ_Rpart, θ_Rpart, ξ; N_Kθ=1, K_Kθ=zeros(Float64, 1), Ψ_Kθ=zeros(Float64,1), θsMat_Psd=0., θr_Psd=0., σMat_Psd=0., ΨkgMat_Psd=0., θsMac_Psd=0., σMac_Psd=0., ΨkgMac_Psd=0.)
+	function PLOTTING(iSoil, N_Psd, Rpart, Psd, ∑Psd, θsMac, θr, σMat, ΨkgMat, KsMat, KsMac, θsMat, σMac, ΨkgMac, Ψ_θΨ, θ_θΨ, N_θΨ, Ψ_Rpart, θ_Rpart, ξ; N_Kθ=1, K_Kθ=zeros(Float64, 1), Ψ_Kθ=zeros(Float64,1), θsMat_Psd=0., θr_Psd=0., σMat_Psd=0., ΨkgMat_Psd=0., θsMac_Psd=0., σMac_Psd=0., ΨkgMac_Psd=0.)
 
 		Path = path.Plots_Psd * "PSD_Charac_" * param.Name * "_" *string(iSoil) * ".svg"
 		println(Path)
@@ -246,11 +246,11 @@ module plot
 		θ_Max = 0.55 #θsMac
 
 		if Ψ_Kθ[1] > 1.0 
-			H_θh_Min = min(minimum(H_θh_Obs[1:N_θΨ]), minimum(Ψ_Rpart[1:Nrpart]), minimum(Ψ_Kθ))
-			H_θh_Max = max(maximum(H_θh_Obs[1:N_θΨ]), maximum(Ψ_Rpart[1:Nrpart]), maximum(Ψ_Kθ))
+			H_θh_Min = min(minimum(H_θh_Obs[1:N_θΨ]), minimum(Ψ_Rpart[1:N_Psd]), minimum(Ψ_Kθ))
+			H_θh_Max = max(maximum(H_θh_Obs[1:N_θΨ]), maximum(Ψ_Rpart[1:N_Psd]), maximum(Ψ_Kθ))
 		else
-			H_θh_Min = min(minimum(H_θh_Obs[1:N_θΨ]), minimum(Ψ_Rpart[1:Nrpart]))
-			H_θh_Max = max(maximum(H_θh_Obs[1:N_θΨ]), maximum(Ψ_Rpart[1:Nrpart]))
+			H_θh_Min = min(minimum(H_θh_Obs[1:N_θΨ]), minimum(Ψ_Rpart[1:N_Psd]))
+			H_θh_Max = max(maximum(H_θh_Obs[1:N_θΨ]), maximum(Ψ_Rpart[1:N_Psd]))
 		end
 				
 		K_Min = 0.
