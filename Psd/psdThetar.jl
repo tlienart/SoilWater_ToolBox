@@ -16,12 +16,14 @@ module psdThetar
 					θr_Psd = OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
 		
 				elseif option.psd.Psd_2_θr == "Cst"
+					θr_Psd = zeros(Float64, N_SoilSelect)
 					@simd for iSoil=1:N_SoilSelect
 						θr_Psd[iSoil] = param.psd.θr_Cst
 					end
 					
 				elseif option.psd.Psd_2_θr == "Param"
 					println("Optimize θr = Psd_2_θr_α1 = $(param.psd.Psd_2_θr_α1) ; param.psd.Psd_2_θr_α2 = $(param.psd.Psd_2_θr_α2)")
+					θr_Psd = zeros(Float64, N_SoilSelect)
 					@simd for iSoil=1:N_SoilSelect
 						θr_Psd[iSoil] = PSD_2_θr(iSoil, ∑Psd)
 					end
