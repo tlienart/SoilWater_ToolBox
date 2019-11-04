@@ -1,5 +1,5 @@
 module psd
-	import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc, ..psdInitiate, ..psdThetar
+	import ..option, ..param, ..wrc, ..kunsat, ..cst, ..path, ..stats, ..psdFunc, ..psdInitiate, ..psdThetar, ..table
 	using Statistics, BlackBoxOptim, JuliaDB
 
 	# ======================================================================================
@@ -68,6 +68,27 @@ module psd
 		println("END Optimizing the hydraulic parameters derived from PSD \n") 
 		end # option.Psd.HydroParam =======================================================================================
 		
+
+		# =================================================================================================================
+		#			TABLES
+		# =================================================================================================================
+		println("START WRITTING TABLE, \n")
+		println(" ... ")
+
+		if option.psd.OptimizePsd == "Single" 
+			# table.SINGLEOPT_ξ1_ξ2(hydro.θsMac[1:N_SoilSelect], hydro.θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect], hydro.σMat[1:N_SoilSelect], hydro.ΨkgMat[1:N_SoilSelect], hydro.θsMat[1:N_SoilSelect], hydro.σMac[1:N_SoilSelect], hydro.ΨkgMac[1:N_SoilSelect], ξ1[1:N_SoilSelect], ξ2[1:N_SoilSelect], Nse_Psd[1:N_SoilSelect], Subclay[1:N_SoilSelect])
+			table.SINGLEOPT_ξ1_ξ2(θr_Psd[1:N_SoilSelect], ξ1[1:N_SoilSelect], ξ2[1:N_SoilSelect], Nse_Psd[1:N_SoilSelect], Subclay[1:N_SoilSelect], hydro[1:N_SoilSelect]) #!!!!!!!!!!!!
+		end
+
+		if option.psd.HydroParam
+			table.HYDRAULICPARAM_Psd(θsMat_Psd[1:N_SoilSelect], θr_Psd_Kg[1:N_SoilSelect], σMat_Psd[1:N_SoilSelect], ΨkgMat_Psd[1:N_SoilSelect], θsMac_Psd[1:N_SoilSelect], σMac_Psd[1:N_SoilSelect], ΨkgMac_Psd[1:N_SoilSelect], Nse_θh_Uni_Psd[1:N_SoilSelect],Nse_θh_Bim_Psd[1:N_SoilSelect], ∑Psd[1:N_SoilSelect,1:param.psd.N_Psd])
+		end
+
+		table.INTERGRANULARMIXING(hydro.θsMac[1:N_SoilSelect], hydro.θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect], hydro.σMat[1:N_SoilSelect], hydro.ΨkgMat[1:N_SoilSelect], hydro.θsMat[1:N_SoilSelect], hydro.σMac[1:N_SoilSelect], hydro.ΨkgMac[1:N_SoilSelect], ξ1[1:N_SoilSelect], ξ2[1:N_SoilSelect], Nse_Psd[1:N_SoilSelect], Subclay[1:N_SoilSelect], ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, 0.0, 0.0, 0.0)
+
+		println("END WRITTING TABLE, \n")
+
+
 
 
 
