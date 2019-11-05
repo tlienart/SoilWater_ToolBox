@@ -23,7 +23,7 @@ module param
 			Psd_2_θr_α2 = 2.013125380534685 # α2  
 			
 			# ξ1 constant
-			P_ξ1 = 8.85 #3.514424626509076
+			P_ξ1 = 8.85 #3.514424626509076 # TODO check parameters
 
 		# WEIGHTED OF DERIVING THE LAST PARTICLE
 			Wsubclay_Min = 0.1
