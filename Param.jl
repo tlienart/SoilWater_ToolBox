@@ -9,22 +9,32 @@ module param
 	# =============================================================
 	module psd
 		import ...option
+
+		# optimized values: OptimizePsd = "Run" ###
+			ξ1 = 9.040974907360946
+			∑Psd_2_ξ2_β1 = 0.0874077451694647     
+			∑Psd_2_ξ2_β2 = 0.9463302042937239
+			Subclay = 0.6934995359806453
+			∑Psd_2_ξ2_Size = 2  # cumulative particle size fraction corresponding 
+			
+		# Relationship which computes ξ2 from ∑Psd			to very fine silt
+			### optimized values: Psd_2_θr = "Param" ###
+			Psd_2_θr_α1 = 16.01602133125399 # α1
+			Psd_2_θr_α2 = 2.013125380534685 # α2  
+			
+			# ξ1 constant
+			P_ξ1 = 8.85 #3.514424626509076
+
 		# WEIGHTED OF DERIVING THE LAST PARTICLE
 			Wsubclay_Min = 0.1
 			Wsubclay_Max = 1.0
-			### optimized value: OptimizePsd = "Run" ###
-			Subclay = 0.6934995359806453 
 
 		# OPTIMISATION OF PSD
-			Ψ_Max= 160000.0 #170000.0 # [mm] 160000.0 # min value is 150000 mm and oven dry would be the best value for the parameter 
+			Ψ_Max = 160000.0 #170000.0 # [mm] 160000.0 # min value is 150000 mm and oven dry would be the best value for the parameter 
 			λ = 2.0 # exponent of the normalised Young-Laplace capillary equation # λ = 1 for new table model 1 ######
-
 			ξ_Max = 3.0 
 
 			ξ1_Min = 0.01 # 0.0 
-
-			### optimized value: OptimizePsd = "Run" ###
-				ξ1 = 9.040974907360946
 
 			if option.psd.Model == "IMP"
 				ξ1_Max =  20.0 
@@ -42,28 +52,17 @@ module param
 				Psd_2_θr_α1_Max = 100.0
 				Psd_2_θr_α2_Min = 0.001
 				Psd_2_θr_α2_Max = 10.0
-				### optimized values: Psd_2_θr = "Param" ###
-				Psd_2_θr_α1 = 16.01602133125399 # α1
-				Psd_2_θr_α2 = 2.013125380534685 # α2 
-		
+
 			# If option.Psd_2_θr = false Residual θ kept constant during the model
 				θr_Cst = 0.0 # 0.14515925    # is kept constant when not optimized
 		
-			# ξ1 constant
-				P_ξ1 = 8.85 #3.514424626509076
-
-		# Relationship which computes ξ2 from ∑Psd
-			∑Psd_2_ξ2_Size = 2  # cumulative particle size fraction corresponding to very fine silt
 
 			∑Psd_2_ξ2_β1_Min = 0.001 # for new table model 4   # ξ2_Min 
 			∑Psd_2_ξ2_β1_Max = 0.1   # for new table model 4   # 1.0   
 
 			∑Psd_2_ξ2_β2_Min  = 0.1 
 			∑Psd_2_ξ2_β2_Max  = 5.0
-
-			### optimized values: OptimizePsd = "Run" ###
-			∑Psd_2_ξ2_β1 = 0.0874077451694647     
-			∑Psd_2_ξ2_β2 = 0.9463302042937239		
+	
 	end  # module psd
 	# ............................................................
 

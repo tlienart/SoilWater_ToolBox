@@ -51,7 +51,6 @@ module hydroStruct
 
 				return hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg)
 			end # option.HydroModel
-
 		end #  function HYDROSTRUCT
 end  # module: hydroStruct
 

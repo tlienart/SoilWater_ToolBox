@@ -19,21 +19,22 @@ include("Cst.jl")
 include("Param.jl")
 include("Read.jl")
 include("HydroParam\\HydroStruct.jl")
-include("Psd\\PsdThetar.jl")
 include("HydroParam\\WaterRetentionCurve.jl")
 include("Stats.jl")
 include("HydroParam\\Kunsat.jl")
 include("HydroParam\\ObjectiveFunction_Hydro.jl")
-include("HydroParam\\MAIN_HydroParam.jl")
+include("HydroParam\\START_HydroParam.jl")
 include("Infilt\\Diffusivity.jl")
 include("Infilt\\Sorptivity.jl")
 include("HydroParam\\HydroRelation.jl")
 include("Infilt\\Best.jl")
 include("Infilt\\OptInfilt.jl")
 include("Infilt\\MAIN_Infilt.jl")
-include("Psd\\PsdFunc.jl")
+include("Psd\\PsdThetar.jl")
+include("Psd\\PsdStruct.jl")
 include("Psd\\PsdInitiate.jl")
-include("Psd\\MAIN_Psd.jl")
+include("Psd\\PsdFunc.jl")
+include("Psd\\START_PSD.jl")
 include("Table.jl")
 include("Plot.jl")
 
@@ -78,7 +79,7 @@ function START_TOOLBOX()
 
 	if option.θΨ ≠ "No"
 		println("=== START: DERIVING HYDRO PARAMETERS  ===")
-		Of, Of_θΨ, Of_Kunsat, hydro =  mainHydroParam.MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
+		Of, Of_θΨ, Of_Kunsat, hydro =  mainHydroParam.START_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
 	else
 		hydro = []
@@ -94,7 +95,7 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psd.PSD_MAIN(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
+			psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
 		println("=== END  : PSD MODEL  === \n")
 	end
 

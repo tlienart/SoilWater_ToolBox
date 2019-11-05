@@ -53,8 +53,8 @@ module option
 			module psd
 				const Optimize 		= false # <true> Optimize the PSD model (require θΨ) OR <false>* derived from preset values 
 				const HydroParam 	= false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
-				const Model 		= "IMP" # <IMP> Intergranular Mixing Model OR <Chang2019Model> 
-				const OptimizePsd 	= "All" # <Single> or <All> or <Run>. <Single> =  optimize ξ1 & ξ2 for individual soils. <All> = derive universal parameters for all soils. <Run> = use parameters from Param.jl 
+				const Model 		= "Chang2019Model" # <IMP> Intergranular Mixing Model OR <Chang2019Model> 
+				const OptimizePsd 	= "Run" # <Single> or <All> or <Run>. <Single> =  optimize ξ1 & ξ2 for individual soils. <All> = derive universal parameters for all soils. <Run> = use parameters from Param.jl 
 				const Psd_2_θr 		= "Param" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl  # for new table model 1
 				
 				# For OptimizePsd = "Single"

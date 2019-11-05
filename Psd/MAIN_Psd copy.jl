@@ -5,7 +5,7 @@ module psd
 	# ======================================================================================
 	#          PSD_START
 	# ======================================================================================
-	function PSD_MAIN(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
+	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
 
 		N_Psd_Max = maximum(N_Psd[1:N_SoilSelect])
 

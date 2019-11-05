@@ -3,7 +3,7 @@
 # =============================================================
 module mainHydroParam
 	import ..option, ..param, ..psdThetar, ..hydroStruct
-	export MAIN_HYDROPARAM
+	export START_HYDROPARAM
 
 		mutable struct OPTIMIZE
 			Opt_θs :: Bool
@@ -12,9 +12,9 @@ module mainHydroParam
 		end # struct VANGENUCHTEN
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : MAIN_HYDROPARAM()
+	#		FUNCTION : START_HYDROPARAM()
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function MAIN_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
+		function START_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 			# INITIALIZING
 				θ_Max 		= Array{Float64}(undef, (N_SoilSelect))
 				θ_Min 		= Array{Float64}(undef, (N_SoilSelect))
@@ -111,7 +111,7 @@ module mainHydroParam
 				end
 
 			return Of, Of_θΨ, Of_Kunsat, hydro
-		end # function: MAIN_HYDROPARAM
+		end # function: START_HYDROPARAM
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
