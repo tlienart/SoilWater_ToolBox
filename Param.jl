@@ -11,28 +11,25 @@ module param
 		import ...option
 
 		# optimized values: OptimizePsd = "Run" ###
-			ξ1 = 9.040974907360946
-			∑Psd_2_ξ2_β1 = 0.0874077451694647     
-			∑Psd_2_ξ2_β2 = 0.9463302042937239
-			Subclay = 0.6934995359806453
-			∑Psd_2_ξ2_Size = 2  # cumulative particle size fraction corresponding 
+			ξ1 			   = 9.040974907360946
+			∑Psd_2_ξ2_β1   = 0.0874077451694647     
+			∑Psd_2_ξ2_β2   = 0.9463302042937239
+			Subclay		   = 0.6934995359806453
+			∑Psd_2_ξ2_Size = 2  				# cumulative particle size fraction corresponding to very fine silt
 			
-		# Relationship which computes ξ2 from ∑Psd			to very fine silt
+		# Relationship which computes ξ2 from ∑Psd
 			### optimized values: Psd_2_θr = "Param" ###
-			Psd_2_θr_α1 = 16.01602133125399 # α1
-			Psd_2_θr_α2 = 2.013125380534685 # α2  
+			Psd_2_θr_α1    = 16.01602133125399 # α1
+			Psd_2_θr_α2    = 2.013125380534685 # α2  
 			
-			# ξ1 constant
-			P_ξ1 = 8.85 #3.514424626509076 # TODO check parameters
-
-		# WEIGHTED OF DERIVING THE LAST PARTICLE
+		# WEIGHTED OF DERIVING THE SMALLEST PARTICLE SIZE
 			Wsubclay_Min = 0.1
 			Wsubclay_Max = 1.0
 
 		# OPTIMISATION OF PSD
-			Ψ_Max = 160000.0 #170000.0 # [mm] 160000.0 # min value is 150000 mm and oven dry would be the best value for the parameter 
-			λ = 2.0 # exponent of the normalised Young-Laplace capillary equation # λ = 1 for new table model 1 ######
-			ξ_Max = 3.0 
+			Ψ_Max = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
+			λ 	  = 2.0 	 # exponent of the normalised Young-Laplace capillary equation # λ = 1 for new table model 1 ######
+			ξ_Max = 3.0 	 # ξ maximum physical value 
 
 			ξ1_Min = 0.01 # 0.0 
 
@@ -47,21 +44,20 @@ module param
 
 		# PEDOTRANSFERT FUNCTIONS
 			# Relationship which computes θr from PSD
-				Psd_2_θr_Size = 1  # size of particle size corresponding to clay fraction
+				Psd_2_θr_Size   = 1  # size of particle size corresponding to clay fraction
 				Psd_2_θr_α1_Min = 0.01
 				Psd_2_θr_α1_Max = 100.0
 				Psd_2_θr_α2_Min = 0.001
 				Psd_2_θr_α2_Max = 10.0
 
-			# If option.Psd_2_θr = false Residual θ kept constant during the model
-				θr_Cst = 0.0 # 0.14515925    # is kept constant when not optimized
+			# If option.Psd_2_θr = <false> then θr keep constant during the model
+				θr_Cst = 0.0 # 0.14515925    
 		
-
 			∑Psd_2_ξ2_β1_Min = 0.001 # for new table model 4   # ξ2_Min 
 			∑Psd_2_ξ2_β1_Max = 0.1   # for new table model 4   # 1.0   
 
-			∑Psd_2_ξ2_β2_Min  = 0.1 
-			∑Psd_2_ξ2_β2_Max  = 5.0
+			∑Psd_2_ξ2_β2_Min = 0.1 
+			∑Psd_2_ξ2_β2_Max = 5.0
 	
 	end  # module psd
 	# ............................................................
@@ -75,18 +71,16 @@ module param
 			θr = 0.0
 
 		# Feasible range of Kosugi
-			θr_Max = 0.25 # 0.2 or 0.25
-
-			Ψ_Max= 160000.0 #170000.0 # [mm] 160000.0 # min value is 150000 mm and oven dry would be the best value for the parameter 
+			θr_Max = 0.25     # 0.2 or 0.25
+			Ψ_Max  = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
 
 		# Coeff_Φ_2_θs
 			Coeff_Φ_2_θs = 0.98
 			Coeff_θs_Max = 1.2
 
 		# If constant
-			ΨmMac = 40. # 100 t0 10 [mm]
-
-			Ψ_MatrixMacro = 390 # 490[mm] determine when matrix and macro domain starts
+			ΨmMac 		  = 40.0  # 100 to 10 [mm]
+			Ψ_MatrixMacro = 390.0 # 490 [mm] determine when matrix and macro domain starts
 
 			Ks_Min = 10.0 ^ -6.0  	# 0.000555556 wei [mm/s]
 			Ks_Max = 0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
@@ -96,17 +90,17 @@ module param
 			σ_Min = 1.8 # 1.6
 			σ_Max = 4.5
 
-			Ψm_Min = 800.0 # [mm]
-			Ψm_Max = 15000.0 # 0.9 * 150000.0 #[mm]
+			Ψm_Min = 800.0   # [mm]
+			Ψm_Max = 15000.0 # [mm] # 0.9*150000.0 
 
 			∇_σMac_Min = 0.7 
 
 			σMac_Min = 0.2
-			σMac_Max = 0.8 #2.55
+			σMac_Max = 0.8 # 2.55
 			∇_σMac_Max = 0.8
 
-			ΨmMac_Min = 50. #[mm]
-			ΨmMac_Max = 390 #[mm]
+			ΨmMac_Min = 50.0  # [mm]
+			ΨmMac_Max = 390.0 # [mm]
 
 		# RELATIONSHIP BETWEEN PARAMETERS
 			Pσ_1 = 0.5920
