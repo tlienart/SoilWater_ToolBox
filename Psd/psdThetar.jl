@@ -33,7 +33,7 @@ module psdThetar
 		
 				Nse_θr = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE(hydro.θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect])
 		
-				println("NASH_SUTCLIFFE θr_Psd = $Nse_θr \n")
+				println("    ~ NSE θr_Psd = $Nse_θr \n")
 
 				return Nse_θr, θr_Psd
 			end # function MAIN_PSD_2_θr(N_SoilSelect, ∑Psd, hydro)

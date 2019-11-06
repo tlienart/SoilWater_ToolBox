@@ -11,11 +11,11 @@ module param
 		import ...option
 
 		# optimized values: OptimizePsd = "Run" ###
-			ξ1 			   = 9.040974907360946
-			∑Psd_2_ξ2_β1   = 0.0874077451694647     
-			∑Psd_2_ξ2_β2   = 0.9463302042937239
-			Subclay		   = 0.6934995359806453
-			∑Psd_2_ξ2_Size = 2  				# cumulative particle size fraction corresponding to very fine silt
+            ξ1             = 9.040974907360946
+            ∑Psd_2_ξ2_β1   = 0.0874077451694647
+            ∑Psd_2_ξ2_β2   = 0.9463302042937239
+            Subclay        = 0.6934995359806453
+            ∑Psd_2_ξ2_Size = 2  # cumulative particle size fraction corresponding to very fine silt
 			
 		# Relationship which computes ξ2 from ∑Psd
 			### optimized values: Psd_2_θr = "Param" ###
@@ -23,8 +23,8 @@ module param
 			Psd_2_θr_α2    = 2.013125380534685 # α2  
 			
 		# WEIGHTED OF DERIVING THE SMALLEST PARTICLE SIZE
-			Wsubclay_Min = 0.1
-			Wsubclay_Max = 1.0
+			Subclay_Min = 0.1
+			Subclay_Max = 1.0
 
 		# OPTIMISATION OF PSD
 			Ψ_Max = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  

@@ -1,31 +1,34 @@
 module psdFunc
 	import ..option
 
-	export PSD_MODEL
+	export _PSD_MODEL_
 	import BlackBoxOptim
 		
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function PSD_MODEL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam)
+		function _PSD_MODEL_(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam)
  		
 			if option.psd.Model == "IMP"
 				# Correction for the small PSD
 				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, psdparam.Subclay[iSoil], N_Psd)  		
 
-				ξ2 = imp.∑PSD_2_ξ2(∑Psd[psdparam.∑Psd_2_ξ2_Size[iSoil]]; ∑Psd_2_ξ2_β1=psdparam.∑Psd_2_ξ2_β1[iSoil], ∑Psd_2_ξ2_β2=psdparam.∑Psd_2_ξ2_β2[iSoil])
-	
-				θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, psdparam.ξ1[iSoil], ξ2) 	# Computing θ from Psd
+				# Computing ξ2 from Psd
+					ξ2 = imp.∑PSD_2_ξ2(∑Psd[psdparam.∑Psd_2_ξ2_Size[iSoil]]; ∑Psd_2_ξ2_β1=psdparam.∑Psd_2_ξ2_β1[iSoil], ∑Psd_2_ξ2_β2=psdparam.∑Psd_2_ξ2_β2[iSoil])
 
-				Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd) 	# Computing  from Psd
+				# Computing θ from Psd
+					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, psdparam.ξ1[iSoil], ξ2) 
+					
+				# Computing ψ from Psd
+					Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd) 	# Computing  from Psd
 	
 			elseif option.psd.Model == "Chang2019Model"
-				θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, psdparam.ξ1[iSoil]) 
+				# Computing θ from Psd
+					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, psdparam.ξ1[iSoil]) 
 				
-	
-							# Computing θ from Psd
-				Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, N_Psd)
-				 									# Computing ψ from Psd
+				# Computing ψ from Psd
+					Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, N_Psd)
+				 									
 			end # option.psd.Chang2019Model
 			
 			return θ_Rpart, Ψ_Rpart
