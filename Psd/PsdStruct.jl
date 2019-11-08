@@ -38,11 +38,11 @@ module psdStruct
 
 			# Initializing
 			for iSoil=1:N_SoilSelect
-				ξ1[iSoil] 				= param.psd.ξ1
-				∑Psd_2_ξ2_β1[iSoil] 	= param.psd.∑Psd_2_ξ2_β1
-				∑Psd_2_ξ2_β2[iSoil] 	= param.psd.∑Psd_2_ξ2_β2
-				Subclay[iSoil] 			= param.psd.Subclay
-				∑Psd_2_ξ2_Size[iSoil] 	= param.psd.∑Psd_2_ξ2_Size
+				ξ1[iSoil] 				= param.psd.imp.ξ1
+				∑Psd_2_ξ2_β1[iSoil] 	= param.psd.imp.∑Psd_2_ξ2_β1
+				∑Psd_2_ξ2_β2[iSoil] 	= param.psd.imp.∑Psd_2_ξ2_β2
+				Subclay[iSoil] 			= param.psd.imp.Subclay
+				∑Psd_2_ξ2_Size[iSoil] 	= param.psd.imp.∑Psd_2_ξ2_Size
 			end
 			
 			return psdparam = IMP(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, Subclay, Psd_2_θr_α1, Psd_2_θr_α2, ∑Psd_2_ξ2_Size )
@@ -51,7 +51,7 @@ module psdStruct
 			ξ1		= Array{Float64}(undef, (N_SoilSelect))
 
 			for iSoil=1:N_SoilSelect
-				ξ1[iSoil] 				= param.psd.ξ1
+				ξ1[iSoil] 				= param.psd.chan.ξ1
 			end
 
 			return psdparam = CHANG(ξ1)

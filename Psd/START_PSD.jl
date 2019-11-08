@@ -2,7 +2,7 @@ module psd
 	import ..option, ..psdInitiate, ..psdThetar, ..psdStruct
 
 	# ======================================================================================
-	#          PSD_START
+	#          PSD_START Slow initialization
 	# ======================================================================================
 	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
 		# INITIATING THE PSD DATA		
@@ -88,7 +88,7 @@ module psd
 				@simd for iSoil = 1:N_SoilSelect
 					if !(option.psd.∑Psd_2_ξ1)
 					
-						SearchRange = [ (param.psd.∑Psd_2_ξ2_β1_Min, param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min, param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Subclay_Min, param.psd.Subclay_Max) ]
+						SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
 						Optimization = BlackBoxOptim.bboptimize(P->OF_SINGLE_SOIL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam, hydro; ∑Psd_2_ξ2_β1 = P[1], ∑Psd_2_ξ2_β2 = P[2], Subclay = P[3])
 						; SearchRange = SearchRange, NumDimensions = 3, TraceMode = :silent)
@@ -99,7 +99,7 @@ module psd
 
 
 					elseif option.psd.∑Psd_2_ξ1	
-						SearchRange =  [(param.psd.ξ1_Min, param.psd.ξ1_Max), (param.psd.∑Psd_2_ξ2_β1_Min, param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min, param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Subclay_Min, param.psd.Subclay_Max) ]
+						SearchRange =  [(param.psd.imp.ξ1_Min, param.psd.imp.ξ1_Max), (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
 						Optimization = BlackBoxOptim.bboptimize(P->OF_SINGLE_SOIL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam, hydro; ξ1 = P[1], ∑Psd_2_ξ2_β1 = P[2] ,∑Psd_2_ξ2_β2 = P[3], Subclay = P[4])
 						; SearchRange = SearchRange, NumDimensions = 4, TraceMode = :silent)
@@ -158,7 +158,7 @@ module psd
 
 
 				if !(option.psd.∑Psd_2_ξ1)	
-					SearchRange = [ (param.psd.∑Psd_2_ξ2_β1_Min, param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min, param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Subclay_Min, param.psd.Subclay_Max) ]
+					SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
 					Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, psdparam, hydro; ∑Psd_2_ξ2_β1 = P[1], ∑Psd_2_ξ2_β2 = P[2], Subclay = P[3])
 					; SearchRange = SearchRange, NumDimensions = 3, TraceMode = :silent)
@@ -170,7 +170,7 @@ module psd
 					end
 
 				elseif option.psd.∑Psd_2_ξ1
-					SearchRange =  [(param.psd.ξ1_Min, param.psd.ξ1_Max), (param.psd.∑Psd_2_ξ2_β1_Min, param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min, param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Subclay_Min, param.psd.Subclay_Max) ]
+					SearchRange =  [(param.psd.imp.ξ1_Min, param.psd.imp.ξ1_Max), (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
 					Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, psdparam, hydro; ξ1 = P[1], ∑Psd_2_ξ2_β1 = P[2] ,∑Psd_2_ξ2_β2 = P[3], Subclay = P[4])
 					; SearchRange = SearchRange, NumDimensions = 4, TraceMode = :silent)
@@ -230,14 +230,14 @@ module psd
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : OPTIMIZATION_SINGLE_SOIL
+		#		chang FUNCTION : OPTIMIZATION_SINGLE_SOIL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 				θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 				Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 				
 				@simd for iSoil = 1:N_SoilSelect
-					SearchRange = [ (param.psd.∑Psd_2_ξ2_β1_Min, param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min, param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Subclay_Min, param.psd.Subclay_Max) ]
+					SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
 					Optimization = BlackBoxOptim.bboptimize(P->OF_SINGLE_SOIL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam, hydro; ∑Psd_2_ξ2_β1 = P[1], ∑Psd_2_ξ2_β2 = P[2], Subclay = P[3])
 					; SearchRange = SearchRange, NumDimensions = 3, TraceMode = :silent)
@@ -259,7 +259,7 @@ module psd
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : OPTIMIZATION_ALL_SOIL
+		#		chang FUNCTION : OPTIMIZATION_ALL_SOIL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
@@ -293,7 +293,7 @@ module psd
 					end  # function OF_ALL_SOIL
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				SearchRange = [ (param.psd.∑Psd_2_ξ2_β1_Min, param.psd.∑Psd_2_ξ2_β1_Max), (param.psd.∑Psd_2_ξ2_β2_Min, param.psd.∑Psd_2_ξ2_β2_Max), (param.psd.Subclay_Min, param.psd.Subclay_Max) ]
+				SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
 				Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, psdparam, hydro; ∑Psd_2_ξ2_β1 = P[1], ∑Psd_2_ξ2_β2 = P[2], Subclay = P[3])
 				; SearchRange = SearchRange, NumDimensions = 3, TraceMode = :silent)
@@ -317,7 +317,7 @@ module psd
 
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			#		FUNCTION : OF_SINGLE_SOIL
+			#		chang FUNCTION : OF_SINGLE_SOIL
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				function OF_SINGLE_SOIL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro; ξ1 = psdparam.ξ1[iSoil], ∑Psd_2_ξ2_β1 = psdparam.∑Psd_2_ξ2_β1[iSoil], ∑Psd_2_ξ2_β2 = psdparam.∑Psd_2_ξ2_β2[iSoil], Subclay = psdparam.Subclay[iSoil])
 

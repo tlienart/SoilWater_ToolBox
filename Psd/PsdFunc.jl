@@ -58,7 +58,7 @@ module psdFunc
 				Rpart_Max = Rpart[N_Psd]
 				Rpart_Min = Rpart[1]
 				
-				return Ψ_Rpart =  param.psd.Ψ_Max .* ( ( (cst.Y  ./ Rpart[1:N_Psd]) .- (cst.Y ./ Rpart_Max) ) ./ ((cst.Y  ./ Rpart_Min) - (cst.Y  ./ Rpart_Max)) ) .^ param.psd.λ 
+				return Ψ_Rpart =  param.psd.imp.Ψ_Max .* ( ( (cst.Y  ./ Rpart[1:N_Psd]) .- (cst.Y ./ Rpart_Max) ) ./ ((cst.Y  ./ Rpart_Min) - (cst.Y  ./ Rpart_Max)) ) .^ param.psd.imp.λ 
 			end # function RPART_2_ΨRPART
 
 
@@ -66,18 +66,18 @@ module psdFunc
 		#      INTERGRANULARMIXING MODELS
 		# =========================================
 			function INTERGRANULARMIXING(Rpart, ξ1, ξ2)
-				return IntergranularMixing = min.(max.(ξ1 .* exp(.-(Rpart .^ .-ξ2)), 0.0), param.psd.ξ_Max)
+				return IntergranularMixing = min.(max.(ξ1 .* exp(.-(Rpart .^ .-ξ2)), 0.0), param.psd.imp.ξ_Max)
 			end # function INTERGRANULARMIXING
 
 
 		# =========================================
 		#      UNIVERSAL INTERGRANULARMIXING MODEL
 		# =========================================
-			function ∑PSD_2_ξ2(∑Psd; ∑Psd_2_ξ2_β1=param.psd.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.∑Psd_2_ξ2_β2)
-				return ξ2 = min(∑Psd_2_ξ2_β1 * exp(∑Psd_2_ξ2_β2 * ∑Psd), param.psd.ξ2_Max)   # ξ2 = ∑Psd_2_ξ2_β1 + (∑Psd_2_ξ2_β2 * ∑Psd) 
+			function ∑PSD_2_ξ2(∑Psd; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
+				return ξ2 = min(∑Psd_2_ξ2_β1 * exp(∑Psd_2_ξ2_β2 * ∑Psd), param.psd.imp.ξ2_Max)   # ξ2 = ∑Psd_2_ξ2_β1 + (∑Psd_2_ξ2_β2 * ∑Psd) 
 			end # function ∑PSD_2_ξ2
 
-			function MODEL_ξ1(P_ξ1=param.psd.P_ξ1)
+			function MODEL_ξ1(P_ξ1=param.psd.imp.P_ξ1)
 				return ξ1 = P_ξ1
 			end # function MODEL_ξ1
 

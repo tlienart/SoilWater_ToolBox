@@ -10,57 +10,59 @@ module param
 	module psd
 		import ...option
 
-		# INTERGRANULAR MIXING PARTICLE MODEL
-			ξ1 = 9.040974907360946
-				ξ1_Min = 0.01 # 0.0 
-				ξ1_Max =  20.0 
-			ξ2_Max = 0.2  
-			∑Psd_2_ξ2_β1   = 0.0874077451694647 # Relationship which computes ξ2 from ∑Psd
-				∑Psd_2_ξ2_β1_Min = 0.001 # for new table model 4   # ξ2_Min 
-				∑Psd_2_ξ2_β1_Max = 0.1   # for new table model 4   # 1.0 
-			∑Psd_2_ξ2_β2   = 0.9463302042937239
-				∑Psd_2_ξ2_β2_Min = 0.1 
-				∑Psd_2_ξ2_β2_Max = 5.0
-			∑Psd_2_ξ2_Size = 2  # TODO cumulative particle size fraction corresponding to very fine silt
-			Subclay        = 0.6934995359806453 # weighted of deriving the smallest particle size
-				Subclay_Min = 0.1
-				Subclay_Max = 1.0
-		
+			# OPTIMIZE θr: Relationship which computes θr from PSD
+			θr_Cst = 0.0 # 0.14515925     # If option.Psd_2_θr = <false> then θr keep constant during the model
 
-		
-			### optimized values: Psd_2_θr = "Param" ###
 			Psd_2_θr_α1    = 16.01602133125399 # α1
-			Psd_2_θr_α2    = 2.013125380534685 # α2  
-			
-		
-
-		# OPTIMISATION OF PSD
-			Ψ_Max = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
-			λ 	  = 2.0 	 # exponent of the normalised Young-Laplace capillary equation # λ = 1 for new table model 1 ######
-			ξ_Max = 3.0 	 # ξ maximum physical value 
-
-
-
-				ξ1_Max_Chang =  1.0 # TODO ξ1_Max chang
-
-			
-			ξ2_Min = 0.001   # 0.0 for new table model 1, 0.001 for new table model 4 ######
-
-		# PEDOTRANSFERT FUNCTIONS
-			# Relationship which computes θr from PSD
-				Psd_2_θr_Size   = 1  # size of particle size corresponding to clay fraction
 				Psd_2_θr_α1_Min = 0.01
 				Psd_2_θr_α1_Max = 100.0
+			Psd_2_θr_α2    = 2.013125380534685 # α2  
 				Psd_2_θr_α2_Min = 0.001
 				Psd_2_θr_α2_Max = 10.0
 
-			# If option.Psd_2_θr = <false> then θr keep constant during the model
-				θr_Cst = 0.0 # 0.14515925    
-		
-  
+			Psd_2_θr_Size   = 1  # size of particle size corresponding to clay fraction
+
+		# =============================================================
+		#		MODULE: imp
+		#		
+		# =============================================================
+		module imp
+			# OPTIMISATION OF PSD
+				Ψ_Max = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
+				λ 	  = 2.0 	 # exponent of the normalised Young-Laplace capillary equation # λ = 1 for new table model 1 ######
+				ξ_Max = 3.0 	 # ξ maximum physical value 
+
+			# INTERGRANULAR MIXING PARTICLE MODEL
+				ξ1 = 9.040974907360946
+				ξ1_Min = 0.01 # 0.0 
+				ξ1_Max =  20.0
+
+				ξ2_Max = 0.2  
+
+				∑Psd_2_ξ2_β1   = 0.0874077451694647 # Relationship which computes ξ2 from ∑Psd
+					∑Psd_2_ξ2_β1_Min = 0.001 # for new table model 4   # ξ2_Min 
+					∑Psd_2_ξ2_β1_Max = 0.1   # for new table model 4   # 1.0 
+				∑Psd_2_ξ2_β2   = 0.9463302042937239
+					∑Psd_2_ξ2_β2_Min = 0.1 
+					∑Psd_2_ξ2_β2_Max = 5.0
+				∑Psd_2_ξ2_Size = 2  # TODO cumulative particle size fraction corresponding to very fine silt
+				Subclay        = 0.6934995359806453 # weighted of deriving the smallest particle size
+					Subclay_Min = 0.1
+					Subclay_Max = 1.0
+		end  # module psi
+		# ............................................................
 
 
-	
+		# =============================================================
+		#		MODULE: chan
+		# =============================================================
+		module chan
+			ξ1 = 0.5
+				ξ1_Min =  0.0 # TODO ξ1_Max chang
+				ξ1_Max =  1.0 # TODO ξ1_Max chang
+		end  # module chan
+		# ............................................................
+
 	end  # module psd
 	# ............................................................
 
