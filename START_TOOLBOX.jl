@@ -3,40 +3,39 @@
 ##                                 Soil Water ToolBox                                   ##
 ##                                                                                      ##
 ##========================================================================================
-
-
-
-include("Option.jl")
-# Install packages to run program
-	if option.DownloadPackage
-		include("Packages.jl")
-	end
-include("Path.jl")
-include("Cst.jl")
-include("Param.jl")
-include("Read.jl")
-include("HydroParam\\HydroStruct.jl")
-include("HydroParam\\WaterRetentionCurve.jl")
-include("Stats.jl")
-include("HydroParam\\Kunsat.jl")
-include("HydroParam\\ObjectiveFunction_Hydro.jl")
-include("HydroParam\\START_HydroParam.jl")
-include("Infilt\\Diffusivity.jl")
-include("Infilt\\Sorptivity.jl")
-include("HydroParam\\HydroRelation.jl")
-include("Infilt\\Best.jl")
-include("Infilt\\OptInfilt.jl")
-include("Infilt\\MAIN_Infilt.jl")
-include("Psd\\PsdThetar.jl")
-include("Psd\\PsdStruct.jl")
-include("Psd\\PsdInitiate.jl")
-include("Psd\\PsdFunc.jl")
-include("Psd\\START_PSD.jl")
-include("Table.jl")
-include("Plot.jl")
-
 using Suppressor
-# using Compat: @warn
+
+@suppress_err begin
+	include("Option.jl")
+	# Install packages to run program
+		if option.DownloadPackage
+			include("Packages.jl")
+		end
+	include("Path.jl")
+	include("Cst.jl")
+	include("Param.jl")
+	include("Read.jl")
+	include("HydroParam\\HydroStruct.jl")
+	include("HydroParam\\WaterRetentionCurve.jl")
+	include("Stats.jl")
+	include("HydroParam\\Kunsat.jl")
+	include("HydroParam\\ObjectiveFunction_Hydro.jl")
+	include("HydroParam\\START_HydroParam.jl")
+	include("Infilt\\Diffusivity.jl")
+	include("Infilt\\Sorptivity.jl")
+	include("HydroParam\\HydroRelation.jl")
+	include("Infilt\\Best.jl")
+	include("Infilt\\OptInfilt.jl")
+	include("Infilt\\MAIN_Infilt.jl")
+	include("Psd\\PsdThetar.jl")
+	include("Psd\\PsdStruct.jl")
+	include("Psd\\PsdInitiate.jl")
+	include("Psd\\PsdFunc.jl")
+	include("Psd\\START_PSD.jl")
+	include("Table.jl")
+	include("Plot.jl")
+end
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : START_TOOLBOX
@@ -93,7 +92,7 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
+			psdparam, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
 		println("=== END  : PSD MODEL  === \n")
 	end
 
@@ -129,7 +128,7 @@ end  # function: START_TOOLBOX
 
 
 println("\n\n===== START SOIL WATER TOOLBOX ==== \n")
-
+	
 		@time START_TOOLBOX()
 
 println("==== END SOIL WATER TOOLBOX ===")

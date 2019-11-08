@@ -7,7 +7,6 @@ module psdThetar
 	import BlackBoxOptim
 	export PSD_2_θr, OPTIMIZE_PSD_2_θr
 
-
 		# =========================================
 		#       MAIN PSD -> θr 
 		# =========================================
@@ -22,7 +21,7 @@ module psdThetar
 					end
 					
 				elseif option.psd.Psd_2_θr == "Param"
-					println("Optimize θr = Psd_2_θr_α1 = $(param.psd.Psd_2_θr_α1) ; param.psd.Psd_2_θr_α2 = $(param.psd.Psd_2_θr_α2)")
+					println("    ~ Optimize θr: Psd_2_θr_α1 = $(round(param.psd.Psd_2_θr_α1,digits=3)) ; Psd_2_θr_α2 = $(round(param.psd.Psd_2_θr_α2,digits=3))")
 					θr_Psd = zeros(Float64, N_SoilSelect)
 					@simd for iSoil=1:N_SoilSelect
 						θr_Psd[iSoil] = PSD_2_θr(iSoil, ∑Psd)

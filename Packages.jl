@@ -22,6 +22,7 @@ function PACKAGES(Option_PackageUpdate)
 		PACKAGE_MANAGER("QuadGK")
 		PACKAGE_MANAGER("Suppressor")
 		PACKAGE_MANAGER("Compat")
+		PACKAGE_MANAGER("Distributed")
 		PACKAGE_MANAGER("PGFPlots")
 
 			if Option_PackageUpdate

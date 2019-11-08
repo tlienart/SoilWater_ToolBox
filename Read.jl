@@ -78,7 +78,7 @@ module read
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PSD(Id_True, N_SoilSelect)
+		function PSD(Id_True, N_SoilSelect) # TODO make sure that the particles are ordered from smalest to largest
 			Diameter_Psd, N_Psd 	= READ_ROW_SELECT(path.Psd, "Diameter[mm]", Id_True, N_SoilSelect)
 			∑Psd , ~ 				= READ_ROW_SELECT(path.Psd, "Cumul_Psd", Id_True, N_SoilSelect)
 
