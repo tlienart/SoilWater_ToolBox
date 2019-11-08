@@ -12,6 +12,7 @@ module path
 		Psd 				= "Psd.csv"
 		Infiltration 		= "Infiltration_1.csv"
 		Infiltration_Param 	= "Infiltration_Param.csv"
+		PsdΦ		 		= "PsdPorosity.csv" 
 
 	# OUTPUT PATH
 		Table_θΨK			= "Table_ThetaHK.csv"
@@ -27,6 +28,7 @@ module path
 		Psd = Home * "//INPUT//"  * Name * Psd
 		Infiltration = Home * "//INPUT//" * Name * Infiltration
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
+		PsdΦ = Home * "//INPUT//" * Name * PsdΦ
 
 		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * Table_θΨK
 		Table_Psd					= Home * "//OUTPUT//Table//" * Name * Table_Psd

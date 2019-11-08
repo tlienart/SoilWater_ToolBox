@@ -1,17 +1,17 @@
 module psd
-	import ..option, ..psdInitialize, ..psdThetar, ..psdStruct, ..stats, ..psdOpt, ..psdFunc
+	import ..option, ..psdInitialize, ..psdThetar, ..psdStruct, ..stats, ..psdOpt, ..psdFunc, ..param
 
 	# ======================================================================================
 	#          PSD_START Slow initialization
 	# ======================================================================================
-	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
+	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
 		# INITIATING THE PSD DATA		
  			N_Psd, N_Psd_Max, Psd = psdInitialize.PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd)
 		
 		# COMPUTING θr FROM PSD DATA
  			Nse_θr, θr_Psd = psdThetar.MAIN_PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
 
- 			θs_Psd = hydro.θs[1:N_SoilSelect] # TODO need to read θs from file
+ 			θs_Psd = param.hydro.Coeff_Φ_2_θs .* Φ_Psd[1:N_SoilSelect]  
 
 		# DERIVING THE STRUCTURE PARAMETERS
 			 psdparam = psdStruct.PSDSTRUCT(N_SoilSelect)

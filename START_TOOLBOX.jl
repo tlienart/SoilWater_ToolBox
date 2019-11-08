@@ -61,7 +61,7 @@ function START_TOOLBOX()
 		end
 
 		if option.Psd
-			Rpart, ∑Psd, N_Psd  = read.PSD(Id_Select, N_SoilSelect)
+			Rpart, ∑Psd, N_Psd, Φ_Psd  = read.PSD(Id_Select, N_SoilSelect)
 		else
 			∑Psd = zeros(Float64, N_SoilSelect,1)
 		end
@@ -93,7 +93,7 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psdparam, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, hydro)
+			psdparam, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
 		println("=== END  : PSD MODEL  === \n")
 	end
 

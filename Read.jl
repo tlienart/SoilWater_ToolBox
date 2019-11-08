@@ -81,10 +81,11 @@ module read
 		function PSD(Id_True, N_SoilSelect) # TODO make sure that the particles are ordered from smalest to largest
 			Diameter_Psd, N_Psd 	= READ_ROW_SELECT(path.Psd, "Diameter[mm]", Id_True, N_SoilSelect)
 			∑Psd , ~ 				= READ_ROW_SELECT(path.Psd, "Cumul_Psd", Id_True, N_SoilSelect)
+			Φ_Psd , ~ 				= READ_ROW_SELECT(path.PsdΦ, "Porosity[-]", Id_True, N_SoilSelect)
 
 			Rpart = @. Diameter_Psd / 2.0
 
-			return Rpart, ∑Psd, N_Psd
+			return Rpart, ∑Psd, N_Psd, Φ_Psd
 		end  # function: PSD
 
 
