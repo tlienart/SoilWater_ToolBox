@@ -1,7 +1,7 @@
 module psdFunc
 	import ..option
 
-	export _PSD_MODEL_
+	export PSD_MODEL
 	import BlackBoxOptim
 		
 	# =========================================
