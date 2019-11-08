@@ -1,15 +1,15 @@
 # =============================================================
 #		MODULE: psdInitiate
 # =============================================================
-module psdInitiate
+module psdInitialize
 
 	import ..psdFunc
-	export PSD_INITIATE
+	export PSD_INITIALIZE
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : PSD_INITIATE
+	#		FUNCTION : PSD_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PSD_INITIATE(N_Psd, N_SoilSelect, ∑Psd)
+	function PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd)
 				
 		# Compute new N_Psd to take into account when ∑Psd 
 		# Correction for N_Psd such that to determine the real maximum Rpart size
@@ -36,7 +36,7 @@ module psdInitiate
 			end # iSoil=1:N_SoilSelect
 		
 		return N_Psd, N_Psd_Max, Psd
-	end  # function: PSD_INITIATE
+	end  # function: PSD_INITIALIZE
 
 
 	# =========================================

@@ -7,7 +7,7 @@ module psdFunc
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function _PSD_MODEL_(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam)
+		function PSD_MODEL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam)
  		
 			if option.psd.Model == "IMP"
 				# Correction for the small PSD
@@ -45,7 +45,7 @@ module psdFunc
 	#		MODULE: imp
 	# =============================================================
 	module imp
-		import ...cst, ...param, ...psdInitiate
+		import ...cst, ...param, ...psdInitialize
 		export ∑PSD_2_ξ2, SUBCLAY_CORRECTION, INTERGRANULARMIXING
 
 		# =========================================
@@ -117,7 +117,7 @@ module psdFunc
 				# Correction for the small PSD
 				# Subclay = 1.0 # no subclay correction applied
 				∑Psd[1] = ∑Psd[1] * Subclay
-				Psd = psdInitiate.∑PSD_2_PSD(∑Psd[1:N_Psd], N_Psd)
+				Psd = psdInitialize.∑PSD_2_PSD(∑Psd[1:N_Psd], N_Psd)
 				return Psd, ∑Psd
 			end # Subclay
 
