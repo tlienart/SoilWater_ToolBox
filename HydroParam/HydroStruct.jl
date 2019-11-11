@@ -2,7 +2,7 @@
 #		MODULE: hydroStruct
 # =============================================================
 module hydroStruct
-	import ..option
+	import ..option, ..tool
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : HYDRAULIC
@@ -16,6 +16,8 @@ module hydroStruct
 			θsMat ::	Vector{Float64}
 			σMac :: 	Vector{Float64}
 			ΨmMac ::	Vector{Float64}
+
+			FieldName::	Vector{Symbol}
 		end # struct KOSUGI
 
 		mutable struct VANGENUCHTEN
@@ -29,7 +31,7 @@ module hydroStruct
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROSTRUCT
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function HYDROSTRUCT(N_SoilSelect)
 			# For all models
 				θs 		= Array{Float64}(undef, (N_SoilSelect))
@@ -42,16 +44,26 @@ module hydroStruct
 				Ψm 		= Array{Float64}(undef, (N_SoilSelect))
 				σMac 	= Array{Float64}(undef, (N_SoilSelect))
 				ΨmMac 	= Array{Float64}(undef, (N_SoilSelect))
+				FieldName = Array{Symbol}(undef, 1)
 				
-				return hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMat, σMac, ΨmMac)
-				
+				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMat, σMac, ΨmMac, FieldName)
+
+				hydro = tool.STRUCT_2_FIELDNAME(KOSUGI, hydro)
+				return hydro
+
+	
 			elseif option.HydroModel == "Vangenuchten"
 				N		= Array{Float64}(undef, (N_SoilSelect))
 				Ψvg		= Array{Float64}(undef, (N_SoilSelect))
+				FieldName = Array{Symbol}(undef, 1)
 
-				return hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg)
+				hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg, FieldName)
+
+				hydro = tool.STRUCT_2_FIELDNAME(VANGENUCHTEN, hydro)
+				return hydro
 			end # option.HydroModel
 		end #  function HYDROSTRUCT
 end  # module: hydroStruct
+
 
 # ............................................................

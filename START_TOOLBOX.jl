@@ -14,6 +14,7 @@ using Suppressor
 	include("Path.jl")
 	include("Cst.jl")
 	include("Param.jl")
+	include("Tool.jl")
 	include("Read.jl")
 	include("HydroParam\\HydroStruct.jl")
 	include("HydroParam\\WaterRetentionCurve.jl")
@@ -100,7 +101,7 @@ function START_TOOLBOX()
 
 	println("=== START: TABLE  ===")
 		if option.θΨ ≠ "No"
-			table.θΨK(Id_Select[1:N_SoilSelect], Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
+			table.hydroParam.θΨK(Id_Select[1:N_SoilSelect], Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
 		end
 	println("=== END  : TABLE  === \n")
 

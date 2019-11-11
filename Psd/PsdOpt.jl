@@ -43,7 +43,7 @@ module psdOpt
 					end # if option.psd.
 				end	# for iSoil = 1:N_SoilSelect
 				
-				# **Compute the optimal values**
+				# Compute the optimal values
 				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics

@@ -11,6 +11,7 @@ module psd
 		# COMPUTING θr FROM PSD DATA
  			Nse_θr, θr_Psd = psdThetar.MAIN_PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
 
+		# COMPUTING θs FROM TOTAL POROSITY
  			θs_Psd = param.hydro.Coeff_Φ_2_θs .* Φ_Psd[1:N_SoilSelect]  
 
 		# DERIVING THE STRUCTURE PARAMETERS
