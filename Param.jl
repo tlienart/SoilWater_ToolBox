@@ -58,7 +58,7 @@ module param
 		# =============================================================
 		module chan
 			ξ1 = 0.5
-				ξ1_Min =  0.0 # TODO ξ1_Max chang
+				ξ1_Min =  0.0 # TODO ξ1_Min chang
 				ξ1_Max =  1.0 # TODO ξ1_Max chang
 		end  # module chan
 		# ............................................................
@@ -109,6 +109,12 @@ module param
 		# RELATIONSHIP BETWEEN PARAMETERS
 			Pσ_1 = 0.5920
 			Pσ_2 = 0.7679
+
+			N_Min = 1.0001
+			N_Max = 3.0
+
+			Ψvg_Min = 1.0  # mm
+			Ψvg_Max = 500000.0  # mm
 
 	end  # module: hydro
 	# ............................................................

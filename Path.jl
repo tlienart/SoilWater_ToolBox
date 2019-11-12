@@ -2,6 +2,8 @@
 #		MODULE: path
 # =============================================================
 module path
+	import ..option
+
 	# NAME OF FILE
 		Name = "PAF_"
 
@@ -16,7 +18,7 @@ module path
 
 	# OUTPUT PATH
 		Table_θΨK			= "Table_ThetaHK.csv"
-		Table_Psd			= "Table_Psd"
+		Table_Psd			= "Table_Psd.csv"
 		
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
@@ -30,8 +32,8 @@ module path
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
 		PsdΦ = Home * "//INPUT//" * Name * PsdΦ
 
-		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * Table_θΨK
-		Table_Psd					= Home * "//OUTPUT//Table//" * Name * Table_Psd
+		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * "_" * option.HydroModel * "_" * Table_θΨK
+		Table_Psd					= Home * "//OUTPUT//Table//" * Name * "_" * option.psd.Model * "_" * Table_Psd
 		Plots_θΨK 					= Home * "//OUTPUT//Plots//Lab//" * Name
 		Plots_BestLab 				= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
 		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name

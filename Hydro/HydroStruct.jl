@@ -10,22 +10,24 @@ module hydroStruct
 		mutable struct KOSUGI
 			θs :: 		Vector{Float64}
 			θr :: 		Vector{Float64}
-			Ks :: 		Vector{Float64}
 			σ :: 		Vector{Float64}
 			Ψm :: 		Vector{Float64}
+			Ks :: 		Vector{Float64}
 			θsMat ::	Vector{Float64}
 			σMac :: 	Vector{Float64}
 			ΨmMac ::	Vector{Float64}
 
-			FieldName::	Vector{Symbol}
+			FieldName::	Vector{Symbol} # Need to put
 		end # struct KOSUGI
 
 		mutable struct VANGENUCHTEN
 			θs :: 	Vector{Float64}
 			θr :: 	Vector{Float64}
-			Ks :: 	Vector{Float64}
 			N :: 	Vector{Float64}
 			Ψvg :: 	Vector{Float64}
+			Ks :: 	Vector{Float64}
+
+			FieldName::	Vector{Symbol} # Need to put
 		end # struct VANGENUCHTEN
 
 
@@ -34,36 +36,33 @@ module hydroStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function HYDROSTRUCT(N_SoilSelect)
 			# For all models
+				FieldName = Array{Symbol}(undef, 1) # Need to put
 				θs 		= Array{Float64}(undef, (N_SoilSelect))
 				θr 		= Array{Float64}(undef, (N_SoilSelect))
 				Ks		= zeros(Float64, N_SoilSelect)
 				θsMat 	= Array{Float64}(undef, (N_SoilSelect))
 
-			if option.HydroModel == "Kosugi"
+			if option.HydroModel == "Kosugi" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				σ 		= Array{Float64}(undef, (N_SoilSelect))
 				Ψm 		= Array{Float64}(undef, (N_SoilSelect))
 				σMac 	= Array{Float64}(undef, (N_SoilSelect))
 				ΨmMac 	= Array{Float64}(undef, (N_SoilSelect))
-				FieldName = Array{Symbol}(undef, 1)
-				
-				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMat, σMac, ΨmMac, FieldName)
 
-				hydro = tool.STRUCT_2_FIELDNAME(KOSUGI, hydro)
-				return hydro
+				hydro = KOSUGI(θs, θr, σ, Ψm, Ks, θsMat, σMac, ΨmMac, FieldName)
+
+				return hydro = tool.readWrite.FIELDNAME_2_STRUCT(KOSUGI, hydro) # Saving the FieldNames
 
 	
-			elseif option.HydroModel == "Vangenuchten"
+			elseif option.HydroModel == "Vangenuchten" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				N		= Array{Float64}(undef, (N_SoilSelect))
 				Ψvg		= Array{Float64}(undef, (N_SoilSelect))
-				FieldName = Array{Symbol}(undef, 1)
 
-				hydro = VANGENUCHTEN(θs, θr, Ks, N, Ψvg, FieldName)
+				hydro = VANGENUCHTEN(θs, θr, N, Ψvg, Ks, FieldName) # Need to put
 
-				hydro = tool.STRUCT_2_FIELDNAME(VANGENUCHTEN, hydro)
-				return hydro
+				return hydro = tool.readWrite.FIELDNAME_2_STRUCT(VANGENUCHTEN, hydro) # Saving the FieldNames
 			end # option.HydroModel
+
 		end #  function HYDROSTRUCT
 end  # module: hydroStruct
-
 
 # ............................................................

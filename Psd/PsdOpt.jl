@@ -47,9 +47,9 @@ module psdOpt
 				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
-				Nse_SingleOpt, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				psdparam.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
-				return psdparam, θ_Rpart, Ψ_Rpart, Nse_SingleOpt, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
+				return psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
 			end # function: OPTIMIZATION_SINGLE_SOIL
 
 
@@ -119,9 +119,9 @@ module psdOpt
 				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
-				Nse_OptAllSoil, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				psdparam.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
-				return psdparam, θ_Rpart, Ψ_Rpart, Nse_OptAllSoil, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
+				return psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
 			end # function OPTIMIZATION_ALL_SOIL
 
 
@@ -180,9 +180,9 @@ module psdOpt
 				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
-				Nse_SingleOpt, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				psdparam.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
-				return psdparam, θ_Rpart, Ψ_Rpart, Nse_SingleOpt, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
+				return psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
 			end # function: OPTIMIZATION_SINGLE_SOIL
 
 
@@ -231,9 +231,9 @@ module psdOpt
 				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
-				Nse_OptAllSoil, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				psdparam.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
-				return psdparam, θ_Rpart, Ψ_Rpart, Nse_OptAllSoil, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
+				return psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
 			end # function OPTIMIZATION_ALL_SOIL
 
 
