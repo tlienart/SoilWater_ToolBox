@@ -2,12 +2,29 @@
 #		MODULE: psdOpt
 # =============================================================
 module psdOpt
+	import ..psdFunc
+
+	# =========================================
+	#       PSD_RUN_ALLMODEL
+	# 		THIS WILL RUN FOR ALL MODELS
+	# =========================================
+		function PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
+			θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+			Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+
+			for iSoil = 1:N_SoilSelect
+					θ_Rpart[iSoil,1:N_Psd[iSoil]], Ψ_Rpart[iSoil,1:N_Psd[iSoil]] = psdFunc.PSD_MODEL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam)
+			end # for iSoil = 1:N_SoilSelect
+
+			return θ_Rpart, Ψ_Rpart
+		end # function PSD_RUN_ALLMODEL
+
 	
 	# =============================================================
 	#		MODULE: imp
 	# =============================================================
 	module imp
-		import ...param, ...stats, ...wrc, ...option, ...psdFunc, ...psd
+		import ...param, ...stats, ...wrc, ...option, ...psdFunc, ..psdOpt
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,7 +61,7 @@ module psdOpt
 				end	# for iSoil = 1:N_SoilSelect
 				
 				# Compute the optimal values
-				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
 				psdparam.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
@@ -116,7 +133,7 @@ module psdOpt
 				end # if option.psd.
 
 				# **Compute the optimal values**
-				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
 				psdparam.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
@@ -157,7 +174,7 @@ module psdOpt
 	#		MODULE: chang
 	# =============================================================
 	module chang
-	 	import ...param, ...stats, ...wrc, ...option, ...psdFunc, ...psd
+	 	import ...param, ...stats, ...wrc, ...option, ....psdFunc, ..psdOpt
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,7 +194,7 @@ module psdOpt
 				end	# for iSoil = 1:N_SoilSelect
 				
 				# **Compute the optimal values**
-				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
 				psdparam.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
@@ -228,7 +245,7 @@ module psdOpt
 				end
 
 				# **Compute the optimal values**
-				θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
 				# Statistics
 				psdparam.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)

@@ -42,7 +42,7 @@ module hydroStruct
 				Ks		= zeros(Float64, N_SoilSelect)
 				θsMat 	= Array{Float64}(undef, (N_SoilSelect))
 
-			if option.HydroModel == "Kosugi" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			if option.hydro.HydroModel == "Kosugi" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				σ 		= Array{Float64}(undef, (N_SoilSelect))
 				Ψm 		= Array{Float64}(undef, (N_SoilSelect))
 				σMac 	= Array{Float64}(undef, (N_SoilSelect))
@@ -53,14 +53,14 @@ module hydroStruct
 				return hydro = tool.readWrite.FIELDNAME_2_STRUCT(KOSUGI, hydro) # Saving the FieldNames
 
 	
-			elseif option.HydroModel == "Vangenuchten" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			elseif option.hydro.HydroModel == "Vangenuchten" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				N		= Array{Float64}(undef, (N_SoilSelect))
 				Ψvg		= Array{Float64}(undef, (N_SoilSelect))
 
 				hydro = VANGENUCHTEN(θs, θr, N, Ψvg, Ks, FieldName) # Need to put
 
 				return hydro = tool.readWrite.FIELDNAME_2_STRUCT(VANGENUCHTEN, hydro) # Saving the FieldNames
-			end # option.HydroModel
+			end # option.hydro.HydroModel
 
 		end #  function HYDROSTRUCT
 end  # module: hydroStruct

@@ -46,7 +46,7 @@ module psdFunc
 	# =============================================================
 	module imp
 		import ...cst, ...param, ...psdInitialize
-		export ∑PSD_2_ξ2, SUBCLAY_CORRECTION, INTERGRANULARMIXING
+		export ∑PSD_2_ξ2, SUBCLAY_CORRECTION, INTERGRANULARMIXING, RPART_2_ΨRPART
 
 		# =========================================
 		#      Rpart -> Ψ_Rpart

@@ -85,11 +85,11 @@ module hydroParam
 			end  # for iSoil=1:N_SoilSelect
 
 			# DETERMENING THE NUMBER OF PARAMETERS TO BE OPTIMIZED
-				if option.UnimodalBimodal == "Unimodal"
+				if option.hydro.UnimodalBimodal == "Unimodal"
 					N_ParamOpt = 5 	# Number of parameters to be optimized (will change)
-				elseif option.UnimodalBimodal == "Bimodal"
+				elseif option.hydro.UnimodalBimodal == "Bimodal"
 					N_ParamOpt = 8 	# Number of parameters to be optimized (will change)
-				end  # if: option.UnimodalBimodal
+				end  # if: option.hydro.UnimodalBimodal
 				if !opt.Opt_θr
 					N_ParamOpt -= 1
 				end
@@ -103,10 +103,10 @@ module hydroParam
 				
 			
 			# OPTIMIZATION HYDRAULIC PARAMETERS
-				if option.HydroModel == "Kosugi"
+				if option.hydro.HydroModel == "Kosugi"
 					Of, Of_θΨ, Of_Kunsat, hydro = kg.HYDROPARAM_OPT(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, θr_Max, θs_Min, θs_Max, Ks_Min, N_ParamOpt, N_SoilSelect, hydro, opt)
 					
-				elseif option.HydroModel == "Vangenuchten"
+				elseif option.hydro.HydroModel == "Vangenuchten"
 					Of, Of_θΨ, Of_Kunsat, hydro = vg.HYDROPARAM_OPT(θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, θr_Max, θs_Min, θs_Max, Ks_Min, N_ParamOpt, N_SoilSelect, hydro, opt)
 				end
 
@@ -134,7 +134,7 @@ module hydroParam
 
 					for iSoil=1:N_SoilSelect
 
-						if option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
+						if option.hydro.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 
 							SearchRanges =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -153,7 +153,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -170,7 +170,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -187,7 +187,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -203,7 +203,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -218,7 +218,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -232,7 +232,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks
 							#############
 							SearchRanges =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
 
@@ -246,7 +246,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks
 
 							SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -259,7 +259,7 @@ module hydroParam
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
-							elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+							elseif option.hydro.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
 
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
@@ -276,7 +276,7 @@ module hydroParam
 								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 		
 		
-							elseif option.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+							elseif option.hydro.UnimodalBimodal=="Bimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
 	
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
@@ -292,7 +292,7 @@ module hydroParam
 								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 	
 	
-							elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+							elseif option.hydro.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
 	
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max))]
 	
@@ -308,7 +308,7 @@ module hydroParam
 								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 	
 	
-							elseif option.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+							elseif option.hydro.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
 	
 								SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (param.hydro.∇_θsMat_Min, 1.0), (0.0, 1.0), (log10(param.hydro.ΨmMac_Min), log10(param.hydro.ΨmMac_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 	
@@ -323,7 +323,7 @@ module hydroParam
 								hydro.σMac[iSoil]  = ∇NORM_2_PARAMETER(∇_σMac, param.hydro.σMac_Min, hydro.σ[iSoil])
 	
 	
-							elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+							elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil])]
 		
@@ -337,7 +337,7 @@ module hydroParam
 									hydro.σMac[iSoil]  = hydro.σ[iSoil]
 	
 	
-								elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+								elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (θs_Min[iSoil], θs_Max[iSoil])]
 		
@@ -350,7 +350,7 @@ module hydroParam
 									hydro.σMac[iSoil]  = hydro.σ[iSoil]
 	
 	
-								elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
+								elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max)), (0.0, θr_Max[iSoil])]
 		
@@ -363,7 +363,7 @@ module hydroParam
 									hydro.σMac[iSoil]  = hydro.σ[iSoil]
 	
 	
-								elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
+								elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks
 	
 									SearchRange =[(param.hydro.σ_Min, param.hydro.σ_Max), (log10(param.hydro.Ψm_Min), log10(param.hydro.Ψm_Max))]
 		
@@ -437,7 +437,7 @@ module hydroParam
 				for iSoil=1:N_SoilSelect
 
 					# it is to be noted that option Opt_Ks is not needed since it is regulated by N_ParamOpt
-					if option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr
+					if option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr
 
 							SearchRange =[(param.hydro.N_Min, param.hydro.N_Max), (log10(param.hydro.Ψvg_Min), log10(param.hydro.Ψvg_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -450,7 +450,7 @@ module hydroParam
 							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[5]
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr
 
 							SearchRange =[(param.hydro.N_Min, param.hydro.N_Max), (log10(param.hydro.Ψvg_Min), log10(param.hydro.Ψvg_Max)), (θs_Min[iSoil], θs_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -462,7 +462,7 @@ module hydroParam
 							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr
 
 							SearchRange =[(param.hydro.N_Min, param.hydro.N_Max), (log10(param.hydro.Ψvg_Min), log10(param.hydro.Ψvg_Max)), (0.0, θr_Max[iSoil]), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 
@@ -474,7 +474,7 @@ module hydroParam
 							hydro.Ks[iSoil] 	=  BlackBoxOptim.best_candidate(Optimization)[4]
 
 
-						elseif option.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr
 
 							SearchRange =[(param.hydro.N_Min, param.hydro.N_Max), (log10(param.hydro.Ψvg_Min), log10(param.hydro.Ψvg_Max)), ((Ks_Min[iSoil]), (param.hydro.Ks_Max))]
 

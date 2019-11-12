@@ -67,7 +67,7 @@ module psdStruct
 			psdparam = CHANG(ξ1, FieldName)
 
 			return psdparam = tool.readWrite.FIELDNAME_2_STRUCT(CHANG, Nse, psdparam) # Saving the FieldNames
-		end # option.HydroModel
+		end # option.hydro.HydroModel
 	end #  function HYDROSTRUCT
 	
 end # module psdStruct

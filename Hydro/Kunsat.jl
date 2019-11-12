@@ -6,9 +6,9 @@ module kunsat
 	#		FUNCTION : Ψ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_KUNSAT(Ψ, iSoil::Int, hydro)
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return Kunsat = kunsat.kg.Ψ_2_KUNSAT(Ψ, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return Kunsat = kunsat.vg.Ψ_2_KUNSAT(Ψ, iSoil::Int, hydro)
 			end
 		end # function Ψ_2_KUNSAT
@@ -20,9 +20,9 @@ module kunsat
 		function Se_2_KUNSAT(Se, iSoil, hydro)
 			Se = max(min(Se, 1.0), 0.0)
 
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return Kunsat = kunsat.kg.Se_2_KUNSAT(Se, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return Kunsat = kunsat.vg.Se_2_KUNSAT(Se, iSoil::Int, hydro)
 			end
 		end # function Se_2_KUNSAT
@@ -41,9 +41,9 @@ module kunsat
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂K∂Ψ(Ψ, iSoil, hydro)
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return ∂Kunsat = kunsat.kg.∂K∂Ψ(Ψ, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return ∂Kunsat = kunsat.vg.∂K∂Ψ(Ψ, iSoil::Int, hydro)
 			end
 		end # function ∂K∂Ψ

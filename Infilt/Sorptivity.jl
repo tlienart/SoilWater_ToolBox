@@ -9,9 +9,9 @@ module sorptivity
 	#		MAIM FUNCTION : SORPTIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function SORPTIVITY(θ_Ini, iSoil::Int, hydro)
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return sorptivity.kg.SORPTIVITY(θ_Ini, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return sorptivity.vg.SORPTIVITY(θ_Ini, iSoil::Int, hydro)
 			end
 		end # function SORPTIVITY

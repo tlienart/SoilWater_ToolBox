@@ -1,5 +1,5 @@
 module psd
-	import ..option, ..psdInitialize, ..psdThetar, ..psdStruct, ..stats, ..psdOpt, ..psdFunc, ..param
+	import ..option, ..param, ..stats, ..psdInitialize, ..psdThetar, ..psdStruct, ..psdOpt, ..psdFunc
 
 	# ======================================================================================
 	#          PSD_START Slow initialization
@@ -17,20 +17,20 @@ module psd
 		# DERIVING THE STRUCTURE PARAMETERS
 			 psdparam = psdStruct.PSDSTRUCT(N_SoilSelect)
 
-		if option.psd.OptimizePsd == "Run"  # <> <> <> <> <> <> 
-			θ_Rpart, Ψ_Rpart = psd.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
+		if option.psd.OptimizePsd == "Run"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
+			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 			
-			if option.θΨ ≠ "No"
+			if option.θΨ ≠ "No" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				psdparam.Nse, Nse_Mean_Run, Nse_Std_Run = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 				println("    ~ Nse_Mean_Run=$Nse_Mean_Run, Nse_Std_Run=$Nse_Std_Run ~")
 			end
 		
 
 		elseif option.psd.OptimizePsd == "OptSingleSoil" && option.θΨ ≠ "No" # <> <> <> <> <> <>
-			if option.psd.Model == "IMP"
+			if option.psd.Model == "IMP" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = psdOpt.imp.OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
-			elseif option.psd.Model == "Chang2019Model"
+			elseif option.psd.Model == "Chang2019Model" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = psdOpt.chang.OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 			end
 
@@ -38,10 +38,10 @@ module psd
 
 
 		elseif option.psd.OptimizePsd == "OptAllSoil" && option.θΨ ≠ "No" # <> <> <> <> <> <>
-			if option.psd.Model == "IMP"
+			if option.psd.Model == "IMP" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = psdOpt.imp.OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 
-			elseif option.psd.Model == "Chang2019Model"
+			elseif option.psd.Model == "Chang2019Model" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				psdparam, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = psdOpt.chang.OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
 			end
 
@@ -55,23 +55,5 @@ module psd
 		  	
 	end # function START_PSD
 
-	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-
-	# =========================================
-	#       PSD_RUN_ALLMODEL
-	# 		THIS WILL RUN FOR ALL MODELS
-	# =========================================
-		function PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
-			θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-			Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-
-			for iSoil = 1:N_SoilSelect
-					θ_Rpart[iSoil,1:N_Psd[iSoil]], Ψ_Rpart[iSoil,1:N_Psd[iSoil]] = psdFunc.PSD_MODEL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam)
-			end # for iSoil = 1:N_SoilSelect
-
-			return θ_Rpart, Ψ_Rpart
-		end # function PSD_RUN_ALLMODEL
 
 end # module PSD

@@ -28,11 +28,11 @@ using Suppressor
 	include("Infilt\\Best.jl")
 	include("Infilt\\OptInfilt.jl")
 	include("Infilt\\MAIN_Infilt.jl")
-	include("Psd\\PsdThetar.jl")
 	include("Psd\\PsdStruct.jl")
 	include("Psd\\PsdInitialize.jl")
-	include("Psd\\PsdOpt.jl")
+	include("Psd\\PsdThetar.jl")
 	include("Psd\\PsdFunc.jl")
+	include("Psd\\PsdOpt.jl")
 	include("Psd\\START_PSD.jl")
 	include("Table.jl")
 	include("Plot.jl")
@@ -112,7 +112,7 @@ function START_TOOLBOX()
 
 	if option.Plot
 		println("=== START: PLOTTING  ===")
-			if option.Plot_WaterRetentionCurve
+			if option.Plot_WaterRetentionCurve  && option.θΨ ≠ "No"
 				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
 			end # option.Plot_WaterRetentionCurve
 

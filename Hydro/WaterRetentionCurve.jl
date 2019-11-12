@@ -9,9 +9,9 @@ module wrc
 	#		FUNCTION : Ψ_2_θDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_θDual(Ψ, iSoil, hydro)
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return θ = wrc.kg.Ψ_2_θDual(Ψ, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return θ = wrc.vg.Ψ_2_θ(Ψ, iSoil::Int, hydro)
 			end
 		end # function Ψ_2_θDual
@@ -21,9 +21,9 @@ module wrc
 	#		FUNCTION : Ψ_2_SeDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_SeDual(Ψ, iSoil, hydro)
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return Se = wrc.kg.Ψ_2_SeDual(Ψ, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return Se = wrc.vg.Ψ_2_Se(Ψ, iSoil::Int, hydro)
 			end
 		end # function Ψ_2_θDual
@@ -33,9 +33,9 @@ module wrc
 	#		FUNCTION : θ_2_ΨDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function  θ_2_ΨDual(θ, iSoil, hydro)
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return Ψ = wrc.kg.θ_2_ΨDual(θ, iSoil, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return Ψ = wrc.vg.θ_2_Ψ(θ, iSoil, hydro)
 			end
 		end  # function  θ_2_ΨDual
@@ -63,9 +63,9 @@ module wrc
 	#		FUNCTION :  ∂Ψ∂θ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Ψ∂θ(Ψ, iSoil::Int, hydro)	
-			if option.HydroModel == "Kosugi"
+			if option.hydro.HydroModel == "Kosugi"
 				return ∂Ψ∂θ = wrc.kg. ∂Ψ∂θ(Ψ, iSoil::Int, hydro)
-			elseif option.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "vanGenuchten"
 				return ∂Ψ∂θ = wrc.vg. ∂Ψ∂θ(Ψ, iSoil::Int, hydro)
 			end
 		end # function ∂Ψ∂θ

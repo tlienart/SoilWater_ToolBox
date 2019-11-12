@@ -32,7 +32,7 @@ module path
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
 		PsdΦ = Home * "//INPUT//" * Name * PsdΦ
 
-		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * "_" * option.HydroModel * "_" * Table_θΨK
+		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * "_" * option.hydro.HydroModel * "_" * Table_θΨK
 		Table_Psd					= Home * "//OUTPUT//Table//" * Name * "_" * option.psd.Model * "_" * Table_Psd
 		Plots_θΨK 					= Home * "//OUTPUT//Plots//Lab//" * Name
 		Plots_BestLab 				= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
