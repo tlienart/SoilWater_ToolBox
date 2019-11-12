@@ -20,8 +20,6 @@ module table
 			
 			pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
-			println(FieldName_String)
-
 			Nse = 1 .- Of
 			Nse_θΨ = 1 .- Of_θΨ
 			Nse_Kunsat = 1 .- Of_Kunsat
@@ -44,18 +42,26 @@ module table
 	module psd
 		import ...path, ...tool
 		import DelimitedFiles
-		export PSD
+		export PSD, PSD_θr
 
 		function PSD(Id_Select, N_SoilSelect, psdparam)
 			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect,  psdparam)
 			
 			pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
-			println(FieldName_String)
-
 			open(path.Table_Psd, "w") do io
 				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(Matrix,digits=3)], ",")
+			end
+		end
+
+
+		function PSD_θr(Err_θr_Psd, Id_Select, N_SoilSelect, θr, θr_Psd)
+			open(path.Table_θr, "w") do io
+				Header = ["Id", "θr_Obs", "θr_Psd", "Err_θr_Psd"]
+				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+
+				DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(θr,digits=4) round.(θr_Psd,digits=4)  round.(Err_θr_Psd,digits=3)], ",")
 			end
 		end
 

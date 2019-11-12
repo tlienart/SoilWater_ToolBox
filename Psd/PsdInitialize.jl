@@ -45,7 +45,7 @@ module psdInitialize
 			Psd = zeros(Float64, N_Psd)
 
 			Psd[1] = ∑Psd[1]
-			@simd for iRpart =2:N_Psd
+			for iRpart =2:N_Psd
 				Psd[iRpart] = ∑Psd[iRpart] - ∑Psd[iRpart-1]
 			end
 			return Psd

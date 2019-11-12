@@ -94,7 +94,7 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psdparam, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
+		Err_θr_Psd, psdparam, θ_Rpart, θr_Psd, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
 		println("=== END  : PSD MODEL  === \n")
 	end
 
@@ -106,6 +106,7 @@ function START_TOOLBOX()
 
 		if option.Psd
 			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, psdparam)
+			table.psd.PSD_θr(Err_θr_Psd[1:N_SoilSelect], Id_Select[1:N_SoilSelect], N_SoilSelect, hydro.θr[1:N_SoilSelect], θr_Psd[1:N_SoilSelect])
 		end  # if: name
 	println("=== END  : WRITING TABLE  === \n")
 

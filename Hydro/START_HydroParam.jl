@@ -47,7 +47,7 @@ module hydroParam
 				# DERIVING θr FROM DATA IF REQUESTED
 					# Derive θr frpm PSD
 					if (option.hydro.θrOpt == "Psd") && (option.Psd)
-						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr(iSoil, ∑Psd), θ_Min[iSoil]-0.005 )
+						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd), θ_Min[iSoil]-0.005 )
 						opt.Opt_θr = false # No need to optimize θr
 					# Keep θr = Cst
 					elseif option.hydro.θrOpt == "Cst"

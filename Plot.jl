@@ -23,7 +23,7 @@ module plot
 				θ_θΨ_Max = maximum(θ_θΨ[iSoil,1:N_θΨ[iSoil]]) + 0.05
 
 				# Simulated
-				@simd for iΨ = 1:N_Se
+				for iΨ = 1:N_Se
 					θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iSoil, hydro)
 					Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)				
 				end

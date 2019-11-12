@@ -30,7 +30,7 @@ module optInfilt
 
 				# Deriving θr from Psd if available
 				if (option.hydro.θrOpt == "Psd") && (option.Psd)
-					hydroBest.θr[iSoil] = psdThetar.PSD_2_θr(iSoil, ∑Psd)
+					hydroBest.θr[iSoil] = psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd)
 
 				# or Keep θr = Cst
 				elseif option.hydro.θrOpt == "Cst"

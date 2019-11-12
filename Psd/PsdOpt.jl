@@ -34,7 +34,7 @@ module psdOpt
 				θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 				Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 				
-				@simd for iSoil = 1:N_SoilSelect
+				for iSoil = 1:N_SoilSelect
 					if !(option.psd.∑Psd_2_ξ1)
 					
 						SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
@@ -82,7 +82,7 @@ module psdOpt
 						θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 						Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 
-						@simd for iSoil = 1:N_SoilSelect
+						for iSoil = 1:N_SoilSelect
 							psdparam.ξ1[iSoil]           = ξ1
 							psdparam.∑Psd_2_ξ2_β1[iSoil] = ∑Psd_2_ξ2_β1
 							psdparam.∑Psd_2_ξ2_β2[iSoil] = ∑Psd_2_ξ2_β2
@@ -90,7 +90,7 @@ module psdOpt
 						end
 
 						Of = 0.0
-						@simd for iSoil = 1:N_SoilSelect
+						for iSoil = 1:N_SoilSelect
 							θ_Rpart[iSoil,1:N_Psd[iSoil]], Ψ_Rpart[iSoil,1:N_Psd[iSoil]] = psdFunc.PSD_MODEL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam)
 
 							θΨ = zeros(Float64, N_Psd[iSoil])
@@ -184,7 +184,7 @@ module psdOpt
 				θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 				Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 				
-				@simd for iSoil = 1:N_SoilSelect
+				for iSoil = 1:N_SoilSelect
 					SearchRange = [ (param.psd.chan.ξ1_Min, param.psd.chan.ξ1_Max) ]
 
 					Optimization = BlackBoxOptim.bboptimize(P->OF_SINGLE_SOIL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam, hydro; ξ1=P[1])
@@ -215,12 +215,12 @@ module psdOpt
 						θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 						Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 
-						@simd for iSoil = 1:N_SoilSelect
+						for iSoil = 1:N_SoilSelect
 							psdparam.ξ1[iSoil] = ξ1
 						end
 
 						Of = 0.0
-						@simd for iSoil = 1:N_SoilSelect
+						for iSoil = 1:N_SoilSelect
 							θ_Rpart[iSoil,1:N_Psd[iSoil]], Ψ_Rpart[iSoil,1:N_Psd[iSoil]] = psdFunc.PSD_MODEL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam)
 
 							θΨ = zeros(Float64, N_Psd[iSoil])

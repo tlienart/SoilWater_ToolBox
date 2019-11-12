@@ -90,18 +90,18 @@ module psdFunc
 
 				# Computing the divisor
 					∑θRpart = Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
-					@simd for iRpart=2:N_Psd
+					for iRpart=2:N_Psd
 						∑θRpart +=  Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
 					end
 			
 				# Computing the dividend
 					θ_Rpart[1] =  Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
-					@simd for iRpart=2:N_Psd
+					for iRpart=2:N_Psd
 						θ_Rpart[iRpart] = θ_Rpart[iRpart-1] + Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
 					end
 
 				# Computing θ_Rpart
-					@simd for iRpart=1:N_Psd
+					for iRpart=1:N_Psd
 						θ_Rpart[iRpart] =  (θs - θr_Psd) * (θ_Rpart[iRpart] / ∑θRpart) + θr_Psd
 					end
 
@@ -128,7 +128,7 @@ module psdFunc
 			function PSD_2_∑PSD(Psd, N_Psd)
 				∑Psd = zeros(Float64, N_Psd)
 				∑Psd[1] = Psd[1]
-				@simd  for iRpart = 2:N_Psd
+				 for iRpart = 2:N_Psd
 					∑Psd[iRpart] = ∑Psd[iRpart-1] + Psd[iRpart]
 				end
 				return ∑Psd
@@ -170,13 +170,13 @@ module psdFunc
 
 				Clay = Psd[1]
 				∑[1] = Clay ^ β
-				@simd  for iRpart = 2:N_Psd
+				 for iRpart = 2:N_Psd
 					δ[iRpart] = Psd[iRpart] / sum(Psd[2:N_Psd])
 					∑[iRpart] = ∑[iRpart-1] + Psd[iRpart] - ((Clay ^ β) - Clay) * δ[iRpart]
 				end
 
 				θ_Rpart[1] = θs * ∑[1] 
-				@simd  for iRpart = 2:N_Psd
+				 for iRpart = 2:N_Psd
 					θ_Rpart[iRpart] = θs * ∑[iRpart] 
 				end
 				return θ_Rpart

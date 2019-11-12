@@ -8,7 +8,7 @@ module ofHydro
 			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])
 			θ_Sim = Array{Float64}(undef, N_θΨ[iSoil])
 			
-			@simd for iΨ in 1:N_θΨ[iSoil]
+			for iΨ in 1:N_θΨ[iSoil]
 				θ_Obs[iΨ] = θ_θΨ[iSoil,iΨ]
 				θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_θΨ[iSoil,iΨ], iSoil, hydro)
 			end # for iΨ in 1:N_θΨ[iSoil]
@@ -22,7 +22,7 @@ module ofHydro
 
 				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iSoil])
-				@simd for iΨ in 1:N_KΨ[iSoil]
+				for iΨ in 1:N_KΨ[iSoil]
 					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨ[iSoil,iΨ])
 						
 					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(Ψ_KΨ[iSoil,iΨ], iSoil, hydro))

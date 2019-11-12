@@ -1,6 +1,6 @@
 module stats
 	import ..wrc, ..param
-	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVEerr
+	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,26 +29,43 @@ module stats
 		function NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Data, Ψ_Sim, θ_Sim, hydro)
 			Nse = zeros(Float64, N_SoilSelect)
 
-			@simd for iSoil = 1:N_SoilSelect	
+			for iSoil = 1:N_SoilSelect	
 				θΨ = zeros(Float64, N_Data[iSoil])
-				@simd for iRpart = 1:N_Data[iSoil]
+				for iRpart = 1:N_Data[iSoil]
 					θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Sim[iSoil,iRpart], iSoil, hydro)
 				end
 				Nse[iSoil] = 1.0 - NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Data[iSoil]], θ_Sim[iSoil,1:N_Data[iSoil]])	
 			end
+
 			# Cumulating the objective function to get the overview
-			Ns_Mean = round(Statistics.mean(max.(Nse[1:N_SoilSelect],0.0)), digits=3)  # in case of negative value then it is set to 0
+			Nse_Mean = round(Statistics.mean(max.(Nse[1:N_SoilSelect],0.0)), digits=3)  # in case of negative value then it is set to 0
 			Nse_Std  = round(Statistics.std(max.(Nse[1:N_SoilSelect],0.0)), digits=3)   # in case of negative value then it is set to 0
 
-			return Nse, Ns_Mean, Nse_Std
+			return Nse, Nse_Mean, Nse_Std
 		end # function NASH_SUTCLIFFE_θΨ
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : RELATIVEerr
+	#		FUNCTION : NASH_SUTCLIFFE_θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RELATIVEerr(Obs, Sim)
-			return Err = 1. - Statistics.abs(Obs - Sim ) / Obs
+		function ERR_OBSSIM(N_SoilSelect, Obs, Sim)
+
+			Err = zeros(Float64, N_SoilSelect)
+			for iSoil = 1:N_SoilSelect	
+				Err[iSoil] = RELATIVE_ERR(Obs[iSoil], Sim[iSoil])
+			end
+
+			Nse = 1.0 - NASH_SUTCLIFE_MINIMIZE(Obs[1:N_SoilSelect], Sim[1:N_SoilSelect]; Power=2)	
+	
+			return Err, Nse
+		end # function NASH_SUTCLIFFE_θΨ
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : RELATIVE_ERR
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function RELATIVE_ERR(Obs, Sim)
+			return Err = 1.0 - Statistics.abs(Obs - Sim ) / Obs
 		end
 
 end # module

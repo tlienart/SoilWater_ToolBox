@@ -19,6 +19,7 @@ module path
 	# OUTPUT PATH
 		Table_θΨK			= "Table_ThetaHK.csv"
 		Table_Psd			= "Table_Psd.csv"
+		Table_θr			= "Table_Thetar.csv"
 		
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
@@ -34,6 +35,7 @@ module path
 
 		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * "_" * option.hydro.HydroModel * "_" * Table_θΨK
 		Table_Psd					= Home * "//OUTPUT//Table//" * Name * "_" * option.psd.Model * "_" * Table_Psd
+		Table_θr					= Home * "//OUTPUT//Table//" * Name * "_" * Table_θr
 		Plots_θΨK 					= Home * "//OUTPUT//Plots//Lab//" * Name
 		Plots_BestLab 				= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
 		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name

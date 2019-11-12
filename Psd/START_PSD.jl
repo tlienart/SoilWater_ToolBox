@@ -9,8 +9,8 @@ module psd
  			N_Psd, N_Psd_Max, Psd = psdInitialize.PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd)
 		
 		# COMPUTING θr FROM PSD DATA
- 			Nse_θr, θr_Psd = psdThetar.MAIN_PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
-
+			Err_θr_Psd, θr_Psd = psdThetar.PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
+			
 		# COMPUTING θs FROM TOTAL POROSITY
  			θs_Psd = param.hydro.Coeff_Φ_2_θs .* Φ_Psd[1:N_SoilSelect]  
 
@@ -51,7 +51,7 @@ module psd
      		error("  $(option.psd.OptimizePsd) not found ")
 		end # option.psd.OptimizePsd
 
-		return psdparam, θ_Rpart, Ψ_Rpart
+		return Err_θr_Psd, psdparam, θ_Rpart, θr_Psd, Ψ_Rpart
 		  	
 	end # function START_PSD
 
