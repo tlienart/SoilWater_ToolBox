@@ -3,7 +3,7 @@
 # =============================================================
 module plot
 	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option
-	using PGFPlots
+	using PGFPlots, Winston
 	export HYDROPARAM, BEST_LAB_SEINIRANGE, BEST_LAB
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,6 +54,34 @@ module plot
 				Path = path.Plots_θΨK * "Lab_ThetaH_" *string(Id_Select[iSoil]) * ".svg"	
 				save(Path, Plot_CharacUnsat)
 				
+				# MultiPlots = Winston.Table(1,2)
+				
+				# # Plot Ψ(θ)
+				# Plot_θ_Ψ = Winston.FramedPlot(
+				# xlabel="Ψ [cm]",
+				# ylabel=L"$\theta \ [cm^3 \ cm^{-3}]$"                           #"θ [cm^3 \ cm^{-3}]")
+				# θ_Ψ = Winston.Curve(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")
+				# Winston.add(Plot_θ_Ψ, θ_Ψ)
+
+				# # Plot K(Ψ)
+				# Plot_K_θ = Winston.FramedPlot(
+				# xlabel="Ψ [cm]",
+				# ylabel="K(Ψ) [cm \ h^{-1}]")
+				# K_θ = Winston.Curve(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, "g^", Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, "b-o")
+				# Winston.add(Plot_K_θ, K_θ)
+
+				# MultiPlots[1,1] = Plot_θ_Ψ
+				# MultiPlots[1,2] = Plot_K_θ
+
+				# Winston.savefig(MultiPlots, Path)
+
+
+				# a=Winston.plot(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")				
+				# #Winston.savefig(a, "Test.svg")
+				
+				# Winston.savefig(a, Path)
+
+
 			end # for iSoil
 			
 			return
