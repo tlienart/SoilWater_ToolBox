@@ -72,49 +72,64 @@ module param
 	# =============================================================
 	module hydro
 		# θr = Cst
-			θr = 0.0
-
-		# Feasible range of Kosugi
+		θr = 0.0
+			θr_Min = 0.0     # 0.2 or 0.25
 			θr_Max = 0.25     # 0.2 or 0.25
-			Ψ_Max  = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
+
+		Ks_Min = 10.0 ^ -6.0  	# 0.000555556 wei [mm/s]
+		Ks_Max = 0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
 		# Coeff_Φ_2_θs
 			Coeff_Φ_2_θs = 0.98
 			Coeff_θs_Max = 1.2
 
 		# If constant
-			ΨmMac 		  = 40.0  # 100 to 10 [mm]
-			Ψ_MatrixMacro = 390.0 # 490 [mm] determine when matrix and macro domain starts
+			Ψ_MatrixMacro = 390.0 # 490 [mm] determine when matrix and macro domain 
+			Ψ_Max  = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
 
-			Ks_Min = 10.0 ^ -6.0  	# 0.000555556 wei [mm/s]
-			Ks_Max = 0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
-			∇_θsMat_Min = 0.7
 
+
+		# =============================================================
+		#		MODULE: KOSUGI
+		# =============================================================
+		module kg
 			σ_Min = 1.8 # 1.6
 			σ_Max = 4.5
 
-			Ψm_Min = 800.0   # [mm]
-			Ψm_Max = 15000.0 # [mm] # 0.9*150000.0 
-
-			∇_σMac_Min = 0.7 
+			ΨmMac  = 40.0  # 100 to 10 [mm]
+				Ψm_Min = 800.0   # [mm]
+				Ψm_Max = 15000.0 # [mm] # 0.9*150000.0 
 
 			σMac_Min = 0.2
 			σMac_Max = 0.8 # 2.55
-			∇_σMac_Max = 0.8
 
 			ΨmMac_Min = 50.0  # [mm]
 			ΨmMac_Max = 390.0 # [mm]
 
-		# RELATIONSHIP BETWEEN PARAMETERS
+			∇_θsMat_Min = 0.7
+
+			# RELATIONSHIP BETWEEN PARAMETERS
 			Pσ_1 = 0.5920
 			Pσ_2 = 0.7679
 
+			
+		end  # module kg
+		# ............................................................
+
+
+			
+		# =============================================================
+		#		MODULE: VAN GENUCHTEN
+		# =============================================================
+		module vg
 			N_Min = 1.0001
 			N_Max = 3.0
 
 			Ψvg_Min = 1.0  # mm
 			Ψvg_Max = 500000.0  # mm
+		end  # module vg
+		# ............................................................
 
 	end  # module: hydro
 	# ............................................................

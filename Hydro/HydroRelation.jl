@@ -10,8 +10,8 @@ module hydroRelation
 	#		FUNCTION : Ψm_2_σ(iSoil, hydro)
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψm_2_σ(iSoil::Int, hydro)
-			hydro.σ[iSoil] = param.hydro.Pσ_1 * ( log(hydro.Ψm[iSoil]) -1.0 ) ^ param.hydro.Pσ_2
-			hydro.σ[iSoil] = max(min(hydro.σ[iSoil], param.hydro.σ_Max), param.hydro.σ_Min)
+			hydro.σ[iSoil] = param.hydro.kg.Pσ_1 * ( log(hydro.Ψm[iSoil]) -1.0 ) ^ param.hydro.kg.Pσ_2
+			hydro.σ[iSoil] = max(min(hydro.σ[iSoil], param.hydro.kg.σ_Max), param.hydro.kg.σ_Min)
 			return hydro
 		end  # function: Ψm_2_σ
 
@@ -20,8 +20,8 @@ module hydroRelation
 	#		FUNCTION : Ψm_2_σ(iSoil, hydro)
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function σ_2_Ψm(iSoil::Int, hydro)
-			Hydro.Ψm[iSoil] = exp(exp( inv(param.hydro.Pσ_2) * log(hydro.σ[iSoil] / param.hydro.Pσ_1)) + 1.0) #[mm]
-			Hydro.Ψm[iSoil] = max(min(hydro.Ψm[iSoil] , param.hydro.Ψm_Max), param.hydro.Ψm_Min)
+			Hydro.Ψm[iSoil] = exp(exp( inv(param.hydro.kg.Pσ_2) * log(hydro.σ[iSoil] / param.hydro.kg.Pσ_1)) + 1.0) #[mm]
+			Hydro.Ψm[iSoil] = max(min(hydro.Ψm[iSoil] , param.hydro.kg.Ψm_Max), param.hydro.kg.Ψm_Min)
 			return hydro
 		end # function: σ_2_Ψm
 
@@ -36,7 +36,7 @@ module hydroRelation
 				i = 1
 				for σ in σ_Obs
 					Ψm_Sim = exp( exp(inv(Pσ_2) * log(σ / Pσ_1)) + 1.0 ) #[mm]
-					Ψm_Sim = max(min(Ψm_Sim , param.hydro.Ψm_Max), param.hydro.Ψm_Min)
+					Ψm_Sim = max(min(Ψm_Sim , param.hydro.kg.Ψm_Max), param.hydro.kg.Ψm_Min)
 					Of += (log(Ψm_Sim) - log(Ψm_Obs[i]))^2.  
 					i += 1
 				end # for σ in σ_Obs

@@ -1,6 +1,6 @@
 module stats
 	import ..wrc, ..param
-	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR
+	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,28 +44,20 @@ module stats
 			return Nse, Nse_Mean, Nse_Std
 		end # function NASH_SUTCLIFFE_θΨ
 
-
+		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFFE_θΨ
+	#		FUNCTION : NASH_SUTCLIFFE_EFFICIENCY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ERR_OBSSIM(N_SoilSelect, Obs, Sim)
-
-			Err = zeros(Float64, N_SoilSelect)
-			for iSoil = 1:N_SoilSelect	
-				Err[iSoil] = RELATIVE_ERR(Obs[iSoil], Sim[iSoil])
-			end
-
-			Nse = 1.0 - NASH_SUTCLIFE_MINIMIZE(Obs[1:N_SoilSelect], Sim[1:N_SoilSelect]; Power=2)	
-	
-			return Err, Nse
-		end # function NASH_SUTCLIFFE_θΨ
+		function NASH_SUTCLIFFE_EFFICIENCY(;Obs=Obs, Sim=Sim, Power=2)
+			return Nse = 1 - NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=Power)
+		end  # function: NASH_SUTCLIFFE_EFFICIENCY
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RELATIVE_ERR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RELATIVE_ERR(Obs, Sim)
-			return Err = 1.0 - Statistics.abs(Obs - Sim ) / Obs
+		function RELATIVE_ERR(;Obs=Obs, Sim=Sim)
+			return Err = 1.0 - abs(Obs - Sim) / Obs
 		end
 
 end # module
