@@ -19,13 +19,13 @@ module hydroInitialize
 	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 
 		# INITIALIZING
-			θ_Max 		= Array{Float64}(undef, (N_SoilSelect))
-			θ_Min 		= Array{Float64}(undef, (N_SoilSelect))
-			θr_Max 		= Array{Float64}(undef, (N_SoilSelect))
-			θs_Min 		= Array{Float64}(undef, (N_SoilSelect))
-			θs_Max 		= Array{Float64}(undef, (N_SoilSelect))
-			K_KΨ_Max 	= Array{Float64}(undef, (N_SoilSelect))
-			Ks_Min 		= Array{Float64}(undef, (N_SoilSelect))
+			θ_Max 		= zeros(Float64, N_SoilSelect)
+			θ_Min 		= zeros(Float64, N_SoilSelect)
+			θr_Max 		= zeros(Float64, N_SoilSelect)
+			θs_Min 		= zeros(Float64, N_SoilSelect)
+			θs_Max 		= zeros(Float64, N_SoilSelect)
+			K_KΨ_Max 	= zeros(Float64, N_SoilSelect)
+			Ks_Min 		= zeros(Float64, N_SoilSelect)
 
 			Opt_θs 		= true
 			Opt_θr 		= true
@@ -40,8 +40,8 @@ module hydroInitialize
 		# LOOPING FOR ERVERY SOIL
 			for iSoil=1:N_SoilSelect
 				# LIMITS
-					θ_Max[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Greatest measure θ
 					θ_Min[iSoil] = minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Smallest measure θ
+					θ_Max[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Greatest measure θ
 
 					if option.KunsatΨ
 						K_KΨ_Max[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]]) 	# Greatest measure of Kunsat

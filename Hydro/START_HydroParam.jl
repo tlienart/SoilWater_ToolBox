@@ -128,8 +128,8 @@ module hydroParam
 							hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
 							hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[4]
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[5]
-							# hydro.θsMat[iSoil] = hydro.θs[iSoil]
-							# hydro.σMac[iSoil]  = hydro.σ[iSoil]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
 						elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks  # <>=<>=<>=<>=<>
@@ -142,8 +142,8 @@ module hydroParam
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 							hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[4]
-							# hydro.θsMat[iSoil] = hydro.θs[iSoil]
-							# hydro.σMac[iSoil]  = hydro.σ[iSoil]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
 						elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks  # <>=<>=<>=<>=<>
@@ -169,8 +169,8 @@ module hydroParam
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[3]
-							# hydro.θsMat[iSoil] = hydro.θs[iSoil]
-							# hydro.σMac[iSoil]  = hydro.σ[iSoil]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
 						elseif option.hydro.UnimodalBimodal=="Bimodal" && opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks  # <>=<>=<>=<>=<>
@@ -251,8 +251,8 @@ module hydroParam
 								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 								hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
 								hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[4]
-								# hydro.θsMat[iSoil] = hydro.θs[iSoil]
-								# hydro.σMac[iSoil]  = hydro.σ[iSoil]
+								hydro.θsMat[iSoil] = hydro.θs[iSoil]
+								hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
 						elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr && !opt.Opt_Ks  # <>=<>=<>=<>=<>
@@ -264,8 +264,8 @@ module hydroParam
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 							hydro.θs[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
-							# hydro.θsMat[iSoil] = hydro.θs[iSoil]
-							# hydro.σMac[iSoil]  = hydro.σ[iSoil]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 
 						elseif option.hydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks  # <>=<>=<>=<>=<>
@@ -289,8 +289,8 @@ module hydroParam
 		
 							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
-							# hydro.θsMat[iSoil] = hydro.θs[iSoil]
-							# hydro.σMac[iSoil]  = hydro.σ[iSoil]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 						else
 							error( " SoilWater-Toolbox error: option.hydro not found ")
@@ -298,6 +298,10 @@ module hydroParam
 
 	
 						Of[iSoil], Of_θΨ[iSoil], Of_Kunsat[iSoil] = OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+
+						hydro.Nse[iSoil] = 1.0 - Of[iSoil]
+						hydro.Nse_θψ[iSoil] = 1.0 - Of_θΨ[iSoil]
+						hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat[iSoil]
 	
 					end  # for iSoil=1:N_SoilSelect
 					
@@ -410,6 +414,10 @@ module hydroParam
 
 
 					Of[iSoil], Of_θΨ[iSoil], Of_Kunsat[iSoil] = OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro)
+
+					hydro.Nse[iSoil] = 1.0 - Of[iSoil]
+					hydro.Nse_θψ[iSoil] = 1.0 - Of_θΨ[iSoil]
+					hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat[iSoil]
 
 				end  # for iSoil=1:N_SoilSelect
 				
