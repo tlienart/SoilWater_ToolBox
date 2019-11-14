@@ -11,7 +11,7 @@ module wrc
 		function Ψ_2_θDual(Ψ, iSoil, hydro)
 			if option.hydro.HydroModel == "Kosugi"
 				return θ = wrc.kg.Ψ_2_θDual(Ψ, iSoil::Int, hydro)
-			elseif option.hydro.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "Vangenuchten"
 				return θ = wrc.vg.Ψ_2_θ(Ψ, iSoil::Int, hydro)
 			end
 		end # function Ψ_2_θDual
@@ -23,7 +23,7 @@ module wrc
 		function Ψ_2_SeDual(Ψ, iSoil, hydro)
 			if option.hydro.HydroModel == "Kosugi"
 				return Se = wrc.kg.Ψ_2_SeDual(Ψ, iSoil::Int, hydro)
-			elseif option.hydro.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "Vangenuchten"
 				return Se = wrc.vg.Ψ_2_Se(Ψ, iSoil::Int, hydro)
 			end
 		end # function Ψ_2_θDual
@@ -35,7 +35,7 @@ module wrc
 		function  θ_2_ΨDual(θ, iSoil, hydro)
 			if option.hydro.HydroModel == "Kosugi"
 				return Ψ = wrc.kg.θ_2_ΨDual(θ, iSoil, hydro)
-			elseif option.hydro.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "Vangenuchten"
 				return Ψ = wrc.vg.θ_2_Ψ(θ, iSoil, hydro)
 			end
 		end  # function  θ_2_ΨDual
@@ -65,7 +65,7 @@ module wrc
 		function ∂Ψ∂θ(Ψ, iSoil::Int, hydro)	
 			if option.hydro.HydroModel == "Kosugi"
 				return ∂Ψ∂θ = wrc.kg. ∂Ψ∂θ(Ψ, iSoil::Int, hydro)
-			elseif option.hydro.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "Vangenuchten"
 				return ∂Ψ∂θ = wrc.vg. ∂Ψ∂θ(Ψ, iSoil::Int, hydro)
 			end
 		end # function ∂Ψ∂θ
@@ -151,9 +151,9 @@ module wrc
 		export Ψ_2_θ, ∂Ψ∂θ
 	
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : Ψ_2_θ
+		#		vg FUNCTION : Ψ_2_θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Ψ_2_θ(Ψ, iSoil, hydro, θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) # van Genuchten WRC
+			function Ψ_2_θ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) # van Genuchten WRC
 				M = 1.0 - Km / N
 				Se = (1.0 + (Ψ / Ψvg) ^ N ) ^ (-M)
 				return θ = wrc.Se_2_θ(Se, iSoil, hydro)
@@ -161,18 +161,18 @@ module wrc
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : Ψ_2_Se
+		#		vg FUNCTION : Ψ_2_Se
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Ψ_2_Se(Ψ, iSoil, hydro, θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) # van Genuchten WRC
+			function Ψ_2_Se(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) # van Genuchten WRC
 				M = 1.0 - Km / N
 				return Se = (1.0 + (Ψ / Ψvg) ^ N ) ^ (-M)
 			end #  function Ψ_2_θ
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : θ_2_Ψ
+		#		vg FUNCTION : θ_2_Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θ_2_Ψ(θ, iSoil, hydro, θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) # van Genuchten WRC
+			function θ_2_Ψ(θ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) # van Genuchten WRC
 				θ = max(min(θ, θs), θr)
 
 				Se = wrc.θ_2_Se(θ, iSoil, hydro) 
@@ -183,9 +183,9 @@ module wrc
 
 		
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : ∂Ψ∂θ
+		#		vg FUNCTION : ∂Ψ∂θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Ψ∂θ(Ψ, iSoil, hydro, θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) 
+			function ∂Ψ∂θ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) 
 				M = 1.0 - Km/N # van Genuchten
 				return M * (θs-θr) / ( Ψvg*(1-M)) * ((Ψ/Ψvg) .^ (N * M)) .* (1.0 + (Ψ/Ψvg) .^ N) .^ (-M-1.)
 			end #  function ∂Ψ∂θ

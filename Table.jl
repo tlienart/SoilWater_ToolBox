@@ -19,11 +19,7 @@ module table
 			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydro)
 			
 			pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
-
-			Nse = 1 .- Of
-			Nse_θΨ = 1 .- Of_θΨ
-			Nse_Kunsat = 1 .- Of_Kunsat
-
+			Matrix =  round.(Matrix, digits=3)
 			open(path.Table_θΨK, "w") do io
 				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 				DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")

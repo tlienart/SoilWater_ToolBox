@@ -29,8 +29,10 @@ module option
 			const HydroModel 		= "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 			const UnimodalBimodal 	= "Bimodal" 	# <"Unimodal" OR <"Bimodal>>
 
-			const θsOpt 	= "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
-			const θrOpt 	= "Opt" #  <"Opt">* Optimize θr OR  <"Psd"> Derived from particle size distribution: OR  θr=Cst <"Cst"> Fixed with value derived from param.hydro.θr
+			const θsOpt 	= "Data" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
+
+			const θrOpt 	= "Opt"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Psd> uses α1 and α1 from parameters in Param.jl  
+
 			const KsOpt 	= "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)	
 			
 			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
