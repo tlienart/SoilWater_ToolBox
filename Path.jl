@@ -5,7 +5,7 @@ module path
 	import ..option
 
 	# NAME OF FILE
-		Name = "PAF_"
+		Name = "SSF_"
 
 	# INPUT PATH
 		Id_Select 			= "Id_Select.csv"
