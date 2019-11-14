@@ -151,7 +151,6 @@ module read
 				N_Point = zeros(Int64, N_SoilSelect) 
 				
 				iSelect = 1; iPoint = 1
-				
 				# For all soils in the file
 				for i in 1:N_X
 					if Id_Data[i] == Id_Select[iSelect] # Only append Ids which correspond to the selected one
@@ -163,7 +162,7 @@ module read
 
 					# Since there are many Data_Output with the same Id only update Id_Select if we are changing soils and Id_Select[iSelect] == Id_Data[i]
 					if i ≤ N_X -1
-						if Id_Data[i+1] > Id_Data[i] && Id_Select[iSelect] == Id_Data[i]
+						if Id_Data[i+1] > Id_Data[i] && Id_Select[iSelect] == Id_Data[i] && iSelect ≤ N_SoilSelect -1
 							iSelect += 1
 							iPoint = 1
 						end # if:
