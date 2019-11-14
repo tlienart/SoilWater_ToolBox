@@ -102,7 +102,7 @@ module hydroInitialize
 		if !opt.Opt_Ks
 			opt.N_ParamOpt -= 1
 		end 
-		println("    ~ Optimizing  $N_ParamOpt  hydraulic parameters  ~")  
+		println("    ~ Optimizing  $(opt.N_ParamOpt)  hydraulic parameters  ~")  
 		
 		return opt, θr_Max, θs_Min, θs_Max, Ks_Min, hydro
 	end  # function: HYDRO_INITIALIZE

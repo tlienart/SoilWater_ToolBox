@@ -24,14 +24,14 @@ module hydroStruct
 		end # struct KOSUGI
 
 		mutable struct VANGENUCHTEN
-			θs :: 	Vector{Float64}
-			θr :: 	Vector{Float64}
-			N :: 	Vector{Float64}
-			Ψvg :: 	Vector{Float64}
-			Ks :: 	Vector{Float64}
-			Nse    :: 	Vector{Float64}
-            Nse_θψ :: 	Vector{Float64}
-            Nse_Kψ :: 	Vector{Float64}
+			θs		::Vector{Float64}
+			θr		::Vector{Float64}
+			N		::Vector{Float64}
+			Ψvg		::Vector{Float64}
+			Ks		::Vector{Float64}
+			Nse		::Vector{Float64}
+            Nse_θψ	::Vector{Float64}
+            Nse_Kψ	::Vector{Float64}
 
 			FieldName::	Vector{Symbol} # Need to put
 		end # struct VANGENUCHTEN
@@ -62,7 +62,7 @@ module hydroStruct
 				return hydro = tool.readWrite.FIELDNAME_2_STRUCT(KOSUGI, hydro) # Saving the FieldNames
 
 	
-			elseif option.hydro.HydroModel == "Vangenuchten" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			elseif option.hydro.HydroModel == "Vangenuchten" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<><>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				N		= zeros(Float64, N_SoilSelect)
 				Ψvg		= zeros(Float64, N_SoilSelect)
 

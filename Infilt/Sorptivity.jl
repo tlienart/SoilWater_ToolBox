@@ -11,7 +11,7 @@ module sorptivity
 		function SORPTIVITY(θ_Ini, iSoil::Int, hydro)
 			if option.hydro.HydroModel == "Kosugi"
 				return sorptivity.kg.SORPTIVITY(θ_Ini, iSoil::Int, hydro)
-			elseif option.hydro.HydroModel == "vanGenuchten"
+			elseif option.hydro.HydroModel == "Vangenuchten"
 				return sorptivity.vg.SORPTIVITY(θ_Ini, iSoil::Int, hydro)
 			end
 		end # function SORPTIVITY
