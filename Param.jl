@@ -81,7 +81,7 @@ module param
 
 		# Coeff_Φ_2_θs
 			Coeff_Φ_2_θs = 0.98
-			Coeff_θs_Max = 1.2
+			Coeff_θs_Max = 1.2 # Maximum value of θs when optimized
 
 		# If constant
 			Ψ_MatrixMacro = 390.0 # 490 [mm] determine when matrix and macro domain 

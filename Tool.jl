@@ -24,9 +24,9 @@ module tool
 
 				NameStruct.FieldName = FieldName_String
 
-				for i=1:N_FieldName
-					Struct_Array = getfield(NameStruct, FieldName_String[i])
-				end
+				# for i=1:N_FieldName
+				# 	Struct_Array = getfield(NameStruct, FieldName_String[i])
+				# end
 
 				return NameStruct
 			end  # function: FIELDNAMES
