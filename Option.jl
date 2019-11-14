@@ -14,7 +14,7 @@ module option
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = false # <true>* plot or <false> no plotting
+		const Plot = true # <true>* plot or <false> no plotting
 			const Plot_WaterRetentionCurve 	= true
 			const Plot_BestLab 				= true
 	
