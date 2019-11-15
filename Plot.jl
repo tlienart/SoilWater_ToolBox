@@ -54,38 +54,36 @@ module plot
 				 Path = path.Plots_θΨK * "Lab_ThetaH_" *string(Id_Select[iSoil]) * ".svg"	
 				# PGFPlots.save(Path, Plot_CharacUnsat)
 				
-				MultiPlots = Winston.Table(1,2)
+				 MultiPlots = Winston.Table(1,2)
 				
 				# θ_Ψ=Winston.semilogx(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")
 				# Winston.savefig(θ_Ψ, Path)
 
-				# Plot Ψ(θ)
-				Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)                          
-				Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
-				Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^3 cm^{-3}]", range=(0.0, θ_θΨ_Max))
-				Obs_θ_Ψ = Winston.Points(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
-				Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue")
-				θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ) 
-				#Winston.savefig(θ_Ψ, Path)
-
-				# Plot K(Ψ)
-				Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
-				Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
-				Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
-				Obs_K_Ψ = Winston.Points(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
-				Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue")
-				K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ)
-
-				MultiPlots[1,1] = Plot_θ_Ψ
-				MultiPlots[1,2] = Plot_K_Ψ
-				Winston.savefig(MultiPlots, Path)
-
-
-				# a=Winston.plot(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")				
-				# Winston.savefig(a, "Test.svg")
+				 # Plot Ψ(θ)
+				 Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)                          
+				 Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
+				 Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^3 cm^{-3}]", range=(0.0, θ_θΨ_Max))
+				 Obs_θ_Ψ = Winston.Points(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
+				 Winston.setattr(Obs_θ_Ψ, label="Obs")
+				 Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue")
+				 Winston.setattr(Sim_θ_Ψ, label="Sim")
+				 legend_θ_Ψ = Winston.Legend(0.1, 0.15, [Obs_θ_Ψ, Sim_θ_Ψ])
+				 θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, legend_θ_Ψ) 
 				
-				# Winston.savefig(a, Path)
+				 # Plot K(Ψ)
+				 Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
+				 Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
+				 Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
+				 Obs_K_Ψ = Winston.Points(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
+				 Winston.setattr(Obs_K_Ψ, label="Obs")
+				 Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue")
+				 Winston.setattr(Sim_K_Ψ, label="Sim")
+				 legend_K_Ψ = Winston.Legend(0.8, 0.9, [Obs_K_Ψ, Sim_K_Ψ])
+				 K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ)
 
+				 MultiPlots[1,1] = Plot_θ_Ψ
+				 MultiPlots[1,2] = Plot_K_Ψ
+				 Winston.savefig(MultiPlots, Path)
 
 			end # for iSoil
 			
