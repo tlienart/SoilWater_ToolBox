@@ -91,6 +91,55 @@ module plot
 		end  # function: HYDROPARAM
 
 
+		function PLOT_θr(θr, θr_Psd, ∑Psd, hydro) #TODO put the right values in the function
+			
+			# # Sorting out with∑Psd
+			Array = zeros(Float64, 3, length(∑Psd))
+			Array[1,:] =∑Psd
+			Array[2,:] = θr_Psd
+			Array[3,:] = θr
+			Array = sortslices(Array, dims=2)
+			Psd = Array[1,:]
+			θr_Psd = Array[2,:]
+			θr = Array[3,:]
+
+			# Minimum and maximum value
+			θr_Min = 0.001 # TODO use the value from param.hydro.θr_Min 
+			θr_Max = param.hydro.θr_Max + 0.05
+			Psd_Min = minimum(Psd)
+			Psd_Max = maximum(Psd)
+
+			MultiPlots = Winston.Table(1,2)
+			
+			# Plot θr(Clay)
+			Plot_θr_Clay = Winston.FramedPlot(aspect_ratio=1.66)                          
+			Winston.setattr(Plot_θr_Clay.x1, label="Clay [g g^{-1}]", range=(Psd_Min, Psd_Max))
+			Winston.setattr(Plot_θr_Clay.y1, label="θ_{r} [cm^3 cm^{-3}]", range=(θr_Min, θr_Max))
+			θr_Sim = Winston.Points(Psd, θr, color="violet")
+			Winston.setattr(θr_Sim, label="θ_{r}")
+			θr_Psd = Winston.Curve(Psd, θr_Psd, color="cyan")
+			Winston.setattr(θr_Psd, label="θ_{r psd}")
+			legend_θr_Clay = Winston.Legend(0.8, 0.15, [θr_Sim, θr_Psd])
+			θr_Clay = Winston.add(Plot_θr_Clay, θr_Sim, θr_Psd, legend_θr_Clay) 
+		   
+			# Plot θr_Psd(θr)
+			Plot_θrPsd_θrSim = Winston.FramedPlot(aspect_ratio=1)  
+			Winston.setattr(Plot_θrPsd_θrSim.x1, label="θ_{r} [cm^3 cm^{-3}]", range=(θr_Min, θr_Max))
+			Winston.setattr(Plot_θrPsd_θrSim.y1, label="θ_{r psd} [cm^3 cm^{-3}]", range=(θr_Min, θr_Max))
+			θrPsd_θrSim = Winston.Points(θr, θr_Psd, color="teal")
+			s = Winston.Slope(1, (0,0), kind="dotted")
+			θrPsd_θrSim = Winston.add(Plot_θrPsd_θrSim, θrPsd_θrSim, s)
+			
+			MultiPlots[1,1] = Plot_θr_Clay
+			MultiPlots[1,2] = Plot_θrPsd_θrSim
+			Path = path.Plots_Psd * "ALL\\" * "ThetaR.svg"
+			Winston.savefig(MultiPlots, Path)
+			
+			return
+		end # function: PLOT_θr
+
+
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST_LAB_SEINIRANGE( ∑Infilt_Best_HydroObs_SeIniRange)
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

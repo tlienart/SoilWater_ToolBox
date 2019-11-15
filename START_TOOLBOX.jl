@@ -130,6 +130,12 @@ function START_TOOLBOX()
 			if option.Plot_BestLab && option.θΨ ≠ "No" && option.infiltration.OptimizeRun  == "Run" || option.infiltration.OptimizeRun  == "RunOpt" 
 				plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
 			end
+		
+			if option.Psd
+				plot.PLOT_θr(θr, θr_Psd, ∑Psd, hydro) #TODO put the right values in the function
+			end
+
+
 
 		println("=== END: PLOTTING  === \n")
 		return
