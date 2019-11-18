@@ -46,7 +46,7 @@ module psdThetar
 		# =========================================
 		#       PSD -> θr 
 		# =========================================
-		# ∑Psd = 0.002 mm = Clay
+		# ∑Psd = 0.002 mm = Clay    # TODO this is not true, in here ∑Psd[iSoil, param.psd.Psd_2_θr_Size] = Clay !!!!!!!!!! 
 			function PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1 = param.psd.Psd_2_θr_α1, Psd_2_θr_α2 = param.psd.Psd_2_θr_α2)
 				return θr_Psd = max( param.hydro.θr_Max * ( 1.0 - exp(- ( Psd_2_θr_α1 * (∑Psd[iSoil, param.psd.Psd_2_θr_Size] ^ Psd_2_θr_α2) ) ) ) , 0.0 )
 			end # Function PSD_2_θr_FUNC
@@ -60,14 +60,14 @@ module psdThetar
 				function OF(Psd_2_θr_α1, Psd_2_θr_α2, N_SoilSelect, ∑Psd, hydro)
 					∑Rmse = 0.0
 					for iSoil=1:N_SoilSelect
-						θr_Psd = PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1=Psd_2_θr_α1, Psd_2_θr_α2=Psd_2_θr_α2)
+						θr_Psd = PSD_2_θr_FUNC(iSoil, ∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]; Psd_2_θr_α1=Psd_2_θr_α1, Psd_2_θr_α2=Psd_2_θr_α2)  #!!!!!!!!!
 						∑Rmse = abs(hydro.θr[iSoil] - θr_Psd) ^ Power
 					end
 				
 					return ∑Rmse
 				end # function OF =====
 
-				Optimization = BlackBoxOptim.bboptimize(Param ->  OF(Param[1], Param[2], N_SoilSelect, ∑Psd, hydro) ; SearchRange =[ (param.psd.Psd_2_θr_α1_Min, param.psd.Psd_2_θr_α1_Max), (param.psd.Psd_2_θr_α2_Min, param.psd.Psd_2_θr_α2_Max)], NumDimensions=2, TraceMode=:silent)
+				Optimization = BlackBoxOptim.bboptimize(Param ->  OF(Param[1], Param[2], N_SoilSelect, ∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size], hydro) ; SearchRange =[ (param.psd.Psd_2_θr_α1_Min, param.psd.Psd_2_θr_α1_Max), (param.psd.Psd_2_θr_α2_Min, param.psd.Psd_2_θr_α2_Max)], NumDimensions=2, TraceMode=:silent)  #!!!!!!
 
 				Psd_2_θr_α1 = BlackBoxOptim.best_candidate(Optimization)[1]
 				Psd_2_θr_α2 = BlackBoxOptim.best_candidate(Optimization)[2]
@@ -79,7 +79,7 @@ module psdThetar
 				# COMPUTING THE OPTIMAL VALUE
 					θr_Psd = zeros(Float64, N_SoilSelect)
 					for iSoil=1:N_SoilSelect
-						psdparam.θr_Psd[iSoil] = PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1=Psd_2_θr_α1, Psd_2_θr_α2=Psd_2_θr_α2)
+						psdparam.θr_Psd[iSoil] = PSD_2_θr_FUNC(iSoil, ∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]; Psd_2_θr_α1=Psd_2_θr_α1, Psd_2_θr_α2=Psd_2_θr_α2) #!!!!!!
 					end
 
 				# STATISTICS

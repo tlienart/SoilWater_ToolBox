@@ -132,7 +132,7 @@ function START_TOOLBOX()
 			end
 		
 			if option.Psd
-				# plot.PLOT_θr(θr, θr_Psd, ∑Psd, hydro) #TODO put the right values in the function
+				plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam) #TODO put the right values in the function
 			end
 
 

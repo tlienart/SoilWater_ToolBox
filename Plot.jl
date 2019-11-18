@@ -2,7 +2,7 @@
 #		MODULE: plot
 # =============================================================
 module plot
-	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option
+	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar
 	using PGFPlots, Winston
 	export HYDROPARAM, BEST_LAB_SEINIRANGE, BEST_LAB
 
@@ -93,42 +93,32 @@ module plot
 		end  # function: HYDROPARAM
 
 
-		function PLOT_θr(θr, θr_Psd, ∑Psd, hydro) #TODO put the right values in the function
+		function PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam) #TODO put the right values in the function   hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect]
 			
-			# # Sorting out with∑Psd
-			Array = zeros(Float64, 3, length(∑Psd))
-			Array[1,:] =∑Psd
-			Array[2,:] = θr_Psd
-			Array[3,:] = θr
-			Array = sortslices(Array, dims=2)
-			Psd = Array[1,:]
-			θr_Psd = Array[2,:]
-			θr = Array[3,:]
-
 			# Minimum and maximum value
-			θr_Min = 0.001 # TODO use the value from param.hydro.θr_Min 
+			θr_Min = param.hydro.θr_Min  
 			θr_Max = param.hydro.θr_Max + 0.05
-			Psd_Min = minimum(Psd)
-			Psd_Max = maximum(Psd)
+			Psd_Min = minimum(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]) - 0.05
+			Psd_Max = maximum(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]) + 0.05
 
 			MultiPlots = Winston.Table(1,2)
 			
 			# Plot θr(Clay)
-			Plot_θr_Clay = Winston.FramedPlot(aspect_ratio=1.66)                          
+			Plot_θr_Clay = Winston.FramedPlot(aspect_ratio=0.7)                          
 			Winston.setattr(Plot_θr_Clay.x1, label="Clay [g g^{-1}]", range=(Psd_Min, Psd_Max))
 			Winston.setattr(Plot_θr_Clay.y1, label="θ_{r} [cm^3 cm^{-3}]", range=(θr_Min, θr_Max))
-			θr_Sim = Winston.Points(Psd, θr, color="violet")
+			θr_Sim = Winston.Points(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size], hydro.θr[1:N_SoilSelect], color="violet")   
 			Winston.setattr(θr_Sim, label="θ_{r}")
-			θr_Psd = Winston.Curve(Psd, θr_Psd, color="cyan")
-			Winston.setattr(θr_Psd, label="θ_{r psd}")
-			legend_θr_Clay = Winston.Legend(0.8, 0.15, [θr_Sim, θr_Psd])
-			θr_Clay = Winston.add(Plot_θr_Clay, θr_Sim, θr_Psd, legend_θr_Clay) 
+			θrPsd = Winston.Curve(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size], psdparam.θr_Psd[1:N_SoilSelect], color="cyan")
+			Winston.setattr(θrPsd, label="θ_{r psd}")
+			legend_θr_Clay = Winston.Legend(0.8, 0.15, [θr_Sim, θrPsd])
+			θr_Clay = Winston.add(Plot_θr_Clay, θr_Sim, θrPsd, legend_θr_Clay) 
 		   
 			# Plot θr_Psd(θr)
 			Plot_θrPsd_θrSim = Winston.FramedPlot(aspect_ratio=1)  
 			Winston.setattr(Plot_θrPsd_θrSim.x1, label="θ_{r} [cm^3 cm^{-3}]", range=(θr_Min, θr_Max))
 			Winston.setattr(Plot_θrPsd_θrSim.y1, label="θ_{r psd} [cm^3 cm^{-3}]", range=(θr_Min, θr_Max))
-			θrPsd_θrSim = Winston.Points(θr, θr_Psd, color="teal")
+			θrPsd_θrSim = Winston.Points(hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect], color="teal")
 			s = Winston.Slope(1, (0,0), kind="dotted")
 			θrPsd_θrSim = Winston.add(Plot_θrPsd_θrSim, θrPsd_θrSim, s)
 			
@@ -137,7 +127,8 @@ module plot
 			Path = path.Plots_Psd_ThetaR
 			println("		== Plotting θr == ")
 			Winston.savefig(MultiPlots, Path)
-			
+			println(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size])
+			println(length(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]))
 			return
 		end # function: PLOT_θr
 
