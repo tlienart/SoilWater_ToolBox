@@ -66,7 +66,7 @@ function START_TOOLBOX()
 		end
 
 		if option.Psd
-			Rpart, ∑Psd, N_Psd, Φ_Psd  = read.PSD(Id_Select, N_SoilSelect)
+			Rpart, ∑Psd, N_Psd, Φ_Psd = read.PSD(Id_Select, N_SoilSelect)
 		else
 			∑Psd = zeros(Float64, N_SoilSelect,1)
 		end
@@ -118,7 +118,7 @@ function START_TOOLBOX()
 	if option.Plot
 		println("=== START: PLOTTING  ===")
 			if option.Plot_WaterRetentionCurve  && option.θΨ ≠ "No"
-				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro)
+				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro) # TODO hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect]
 			end # option.Plot_WaterRetentionCurve
 
 			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infiltration.OptimizeRun == "Run" ||  option.infiltration.OptimizeRun == "RunOpt") && option.infiltration.Model=="Simplified" && option.infiltration.SeIni_Range	
