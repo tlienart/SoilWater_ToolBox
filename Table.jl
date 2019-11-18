@@ -14,7 +14,7 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨK(Id_Select, Of, Of_θΨ, Of_Kunsat, N_SoilSelect, hydro)
+		function θΨK(Id_Select, N_SoilSelect, hydro)
 
 			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydro)
 			
@@ -64,25 +64,6 @@ module table
 		
 	end  # module psd
 	# ............................................................
-
-
-
-
-
-
-	
-
-		
-
-
-
-
-		
-
-
-
-
-
 	
 end  # module table
 # ............................................................

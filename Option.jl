@@ -29,7 +29,7 @@ module option
 			const HydroModel 		= "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 			const UnimodalBimodal 	= "Bimodal" 	# <"Unimodal" OR <"Bimodal>>
 
-			const θsOpt 	= "Data" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
+			const θsOpt 	= "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
 
 			const θrOpt 	= "Opt"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Psd> uses α1 and α1 from parameters in Param.jl  
 

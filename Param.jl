@@ -77,10 +77,10 @@ module param
 			θr_Max = 0.25     # 0.2 or 0.25
 
 		# Ks_Min = 10.0 ^ -6.0  	# 0.000555556 wei [mm/s]
-		Ks_Max = 10.0 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
+		Ks_Max = 0.12 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
 		# Coeff_Φ_2_θs
-			Coeff_Φ_2_θs = 0.98
+			Coeff_Φ_2_θs = 0.95
 			Coeff_θs_Max = 1.2 # Maximum value of θs when optimized
 
 		# If constant
@@ -88,30 +88,29 @@ module param
 			Ψ_Max  = 160000.0 # [mm] min value is 150000 mm and oven dry would be the best value  
 
 
-
-
 		# =============================================================
 		#		MODULE: KOSUGI
 		# =============================================================
 		module kg
-			σ_Min = 1.8 # 1.6
-			σ_Max = 4.5
-
-			ΨmMac  = 40.0  # 100 to 10 [mm]
-				Ψm_Min = 800.0   # [mm]
-				Ψm_Max = 15000.0 # [mm] # 0.9*150000.0 
+			σ_Min = 1.4 # 1.6
+			σ_Max = 4.3
 
 			σMac_Min = 0.2
 			σMac_Max = 0.8 # 2.55
-
-			ΨmMac_Min = 50.0  # [mm]
-			ΨmMac_Max = 390.0 # [mm]
+			
+			Ψm_Min = 800.0   # [mm]
+			Ψm_Max = 60000.0 # [mm] # 0.9*150000.0 
+			
+			ΨmMac  = 40.0  # 100 to 10 [mm]
+				ΨmMac_Min = 50.0  # [mm]
+				ΨmMac_Max = 390.0 # [mm]
 
 			∇_θsMat_Min = 0.7
+			∇_θsMat_Max = 1.0
 
 			# RELATIONSHIP BETWEEN PARAMETERS
-			Pσ_1 = 0.5920
-			Pσ_2 = 0.7679
+				Pσ_1 = 0.5920
+				Pσ_2 = 0.7679
 
 			
 		end  # module kg

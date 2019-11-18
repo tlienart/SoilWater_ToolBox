@@ -28,7 +28,7 @@ module plot
 					Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)				
 				end
 
-				println("		== Plotting Lab_ThetaH_ soil $iSoil ==")
+				# println("		== Plotting Lab_ThetaH_ soil $iSoil ==")
 				# Plot_CharacUnsat = GroupPlot(2, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
 
 				# # Plotting Ψ(θ) 
@@ -74,6 +74,7 @@ module plot
 				 Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
 				 Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 				 Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
+				
 				 Obs_K_Ψ = Winston.Points(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
 				 Winston.setattr(Obs_K_Ψ, label="Obs")
 				 Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue")
@@ -132,7 +133,8 @@ module plot
 			
 			MultiPlots[1,1] = Plot_θr_Clay
 			MultiPlots[1,2] = Plot_θrPsd_θrSim
-			Path = path.Plots_Psd * "ALL\\" * "ThetaR.svg"
+			Path = path.Plots_Psd_ThetaR
+			println("		== Plotting θr == ")
 			Winston.savefig(MultiPlots, Path)
 			
 			return

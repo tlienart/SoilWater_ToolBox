@@ -24,6 +24,7 @@ module path
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
 	# PROCESSING 
+	
 		Home = @__DIR__
 		Id_Select = Home * "//INPUT//" * Name * Id_Select
 		Kunsat = Home * "//INPUT//" * Name * Kunsat
@@ -39,6 +40,7 @@ module path
 		Plots_θΨK 					= Home * "//OUTPUT//Plots//Lab//" * Name
 		Plots_BestLab 				= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
 		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
-		Plots_Psd 					= Home * "//OUTPUT//Plots//Psd//" * Name
+		Plots_Psd 					= Home * "//OUTPUT//Plots//Psd//"
+		Plots_Psd_ThetaR			= Home * "//OUTPUT//Plots//Psd//ThetaR//" * Name * "_Plot_ThetaR.svg"
 end  # module path
 # ............................................................

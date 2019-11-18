@@ -19,11 +19,11 @@ module hydroInitialize
 	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
 
 		# INITIALIZING
-			θ_Max 		= zeros(Float64, N_SoilSelect)
-			θ_Min 		= zeros(Float64, N_SoilSelect)
-			θr_Max 		= zeros(Float64, N_SoilSelect)
-			θs_Min 		= zeros(Float64, N_SoilSelect)
-			θs_Max 		= zeros(Float64, N_SoilSelect)
+			θ_Max 		=  Array{Float64}(undef, (N_SoilSelect))
+			θ_Min 		=  Array{Float64}(undef, (N_SoilSelect))
+			θr_Max 		=  Array{Float64}(undef, (N_SoilSelect)) 
+			θs_Min 		=  Array{Float64}(undef, (N_SoilSelect))
+			θs_Max 		= Array{Float64}(undef, (N_SoilSelect))
 			K_KΨ_Max 	= zeros(Float64, N_SoilSelect)
 			Ks_Min 		= zeros(Float64, N_SoilSelect)
 
@@ -106,7 +106,6 @@ module hydroInitialize
 		
 		return opt, θr_Max, θs_Min, θs_Max, Ks_Min, hydro
 	end  # function: HYDRO_INITIALIZE
-
 	
 end  # module hydroInitialize
 
