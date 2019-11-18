@@ -27,7 +27,7 @@ module option
 		
 		# HYDRAULIC MODEL
 			const HydroModel 		= "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
-			const UnimodalBimodal 	= "Bimodal" 	# <"Unimodal" OR <"Bimodal>>
+			const UnimodalBimodal 	= "Unimodal" 	# <"Unimodal" OR <"Bimodal>>
 
 			const θsOpt 	= "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
 

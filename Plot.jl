@@ -51,13 +51,14 @@ module plot
 				# 	)
 				# end
 
-				 Path = path.Plots_θΨK * "Lab_ThetaH_" *string(Id_Select[iSoil]) * ".svg"	
+				 Path = path.Plots_θΨK * "Lab_ThetaH_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"	
 				# PGFPlots.save(Path, Plot_CharacUnsat)
 				
 				 MultiPlots = Winston.Table(1,2)
 				
 				# θ_Ψ=Winston.semilogx(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")
 				# Winston.savefig(θ_Ψ, Path)
+				Winston._winston_config.defaults["fontsize_min"] = ".5"
 
 				 # Plot Ψ(θ)
 				 Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)                          

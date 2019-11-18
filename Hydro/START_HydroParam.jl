@@ -71,10 +71,21 @@ module hydroParam
 							hydro.θsMat[iSoil] = hydro.θs[iSoil]
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
-							Of = BlackBoxOptim.best_fitness(Optimization)
+						elseif option.hydro.UnimodalBimodal=="Unimodal" && !(opt.Opt_θs) && opt.Opt_θr && opt.Opt_Ks  # <>=<>=<>=<>=<>
+							SearchRange =[(param.hydro.kg.σ_Min, param.hydro.kg.σ_Max), (log10(param.hydro.kg.Ψm_Min), log10(param.hydro.kg.Ψm_Max)), (0.0, θr_Max[iSoil]), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
+
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], Ks=10.0^P[4])[1]; SearchRange=SearchRange, NumDimensions=opt.N_ParamOpt, TraceMode=:silent)
+		
+							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+							hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[4]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.ΨmMac[iSoil] = hydro.Ψm[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
 
 						else
-							error( " SoilWater-Toolbox error: option.hydro not found ")
+							error( " SoilWater-Toolbox error: option.hydro not found please add")
 						end #Option
 
 						# STATISTICS OF THE OPTIMIZATION
@@ -100,11 +111,19 @@ module hydroParam
 					hydro.Ks[iSoil] = Ks
 					hydro.σ[iSoil] = σ
 					hydro.Ψm[iSoil] = Ψm
-					hydro.ΨmMac[iSoil] = ΨmMac
-					hydro.σMac[iSoil] = σMac
-	
-					hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
 
+
+					if option.hydro.UnimodalBimodal == "Unimodal"
+						hydro.θsMat[iSoil] = θs
+						hydro.ΨmMac[iSoil] = Ψm
+						hydro.σMac[iSoil] = σ
+
+					elseif option.hydro.UnimodalBimodal == "Bimodal"
+						hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
+						hydro.ΨmMac[iSoil] = ΨmMac
+						hydro.σMac[iSoil] = σMac
+					end
+	
 					Of, Of_θΨ, Of_Kunsat = ofHydro.OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro) 
 	
 					return Of, Of_θΨ, Of_Kunsat
