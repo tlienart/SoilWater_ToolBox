@@ -107,7 +107,6 @@ function START_TOOLBOX()
 		if option.θΨ ≠ "No"
 			table.hydroParam.θΨK(Id_Select[1:N_SoilSelect], N_SoilSelect, hydro)
 		end
-
 		if option.Psd
 			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, psdparam)
 			table.psd.PSD_θr(Err_θr_Psd[1:N_SoilSelect], Id_Select[1:N_SoilSelect], N_SoilSelect, hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect])
@@ -134,9 +133,6 @@ function START_TOOLBOX()
 			if option.Psd
 				plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam) #TODO put the right values in the function
 			end
-
-
-
 		println("=== END: PLOTTING  === \n")
 		return
 	end

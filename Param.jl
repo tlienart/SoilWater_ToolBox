@@ -14,8 +14,8 @@ module param
 			θr_Cst = 0.0 # 0.14515925     # If option.Psd_2_θr = <false> then θr keep constant during the model
 
 			Psd_2_θr_α1    = 16.01602133125399 # α1
-				Psd_2_θr_α1_Min = 0.01
-				Psd_2_θr_α1_Max = 100.0
+				Psd_2_θr_α1_Min =5.0
+				Psd_2_θr_α1_Max = 25.0
 			Psd_2_θr_α2    = 2.013125380534685 # α2  
 				Psd_2_θr_α2_Min = 0.001
 				Psd_2_θr_α2_Max = 10.0
