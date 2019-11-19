@@ -79,7 +79,8 @@ module psdOpt
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		imp FUNCTION : OF_ALL_SOIL
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					function OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, psdparam, hydro; ξ1 = psdparam.ξ1, ∑Psd_2_ξ2_β1 = psdparam.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2 = psdparam.∑Psd_2_ξ2_β2, Subclay = psdparam.Subclay)
+					function OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, psdparam, hydro; ξ1 = param.psd.imp.ξ1, ∑Psd_2_ξ2_β1 = param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2 = param.psd.imp.∑Psd_2_ξ2_β2, Subclay = param.psd.imp.Subclay)
+
 						θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 						Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
 
@@ -94,13 +95,13 @@ module psdOpt
 						for iSoil = 1:N_SoilSelect
 							θ_Rpart[iSoil,1:N_Psd[iSoil]], Ψ_Rpart[iSoil,1:N_Psd[iSoil]] = psdFunc.PSD_MODEL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam)
 
-							θΨ = zeros(Float64, N_Psd[iSoil])
+							θΨ =  Array{Float64}(undef, (N_Psd[iSoil]))
 							for iRpart = 1:N_Psd[iSoil]
 								# Observed data
 								θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Rpart[iSoil, iRpart], iSoil, hydro)
 							end
 
-							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iSoil]], θ_Rpart[1:N_Psd[iSoil]]; Power=2)
+							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iSoil]], θ_Rpart[iSoil,1:N_Psd[iSoil]]; Power=2)
 						end # for iSoil = 1:N_SoilSelect
 						return Of
 					end  # function OF_ALL_SOIL
@@ -230,7 +231,7 @@ module psdOpt
 								θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Rpart[iSoil, iRpart], iSoil, hydro)
 							end
 
-							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iSoil]], θ_Rpart[1:N_Psd[iSoil]]; Power=2)
+							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iSoil]], θ_Rpart[iSoil,1:N_Psd[iSoil]]; Power=2)
 						end # for iSoil = 1:N_SoilSelect
 						return Of
 					end  # function OF_ALL_SOIL
@@ -266,7 +267,6 @@ module psdOpt
 					θ_Rpart, Ψ_Rpart = psdFunc.PSD_MODEL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam)
 
 					# For every Ψ_Rpart
-					Of = 0.0
 					θΨ = zeros(Float64, N_Psd)
 					for iRpart = 1:N_Psd
 						# Observed data
