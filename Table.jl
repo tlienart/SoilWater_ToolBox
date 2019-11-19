@@ -50,17 +50,6 @@ module table
 				DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(Matrix,digits=3)], ",")
 			end
 		end
-
-
-		function PSD_θr(Err_θr_Psd, Id_Select, N_SoilSelect, θr, θr_Psd)
-			open(path.Table_θr, "w") do io
-				Header = ["Id", "θr_Obs", "θr_Psd", "Err_θr_Psd"]
-				DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-
-				DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(θr,digits=4) round.(θr_Psd,digits=4)  round.(Err_θr_Psd,digits=3)], ",")
-			end
-		end
-
 		
 	end  # module psd
 	# ............................................................

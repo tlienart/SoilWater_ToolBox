@@ -122,7 +122,7 @@ module read
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : READ_HEADER_VERTICAL_FLAG
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READ_ROW_SELECT(Path::String, Name::String, Id_Select::Vector{Int64}, N_SoilSelect::Int64; N_Point_Max=500)
+		function READ_ROW_SELECT(Path::String, Name::String, Id_Select::Vector{Int64}, N_SoilSelect::Int64; N_Point_Max=50)
 			# READ DATA
 				Data =  DelimitedFiles.readdlm(Path, ',')
 				N_X, N_Y = size(Data) # Size of the array

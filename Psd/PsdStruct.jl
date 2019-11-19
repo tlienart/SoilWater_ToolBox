@@ -16,6 +16,7 @@ module psdStruct
         Psd_2_θr_α1    :: Vector{Float64}
 		Psd_2_θr_α2    :: Vector{Float64}
 		θr_Psd    	   :: Vector{Float64}
+		Err_θr_Psd     :: Vector{Float64}
         Nse            :: Vector{Float64}
 
 		FieldName		::Vector{Symbol} # Need to put
@@ -27,7 +28,9 @@ module psdStruct
         Psd_2_θr_α1 :: Vector{Float64}
         Psd_2_θr_α2 :: Vector{Float64}
         θr_Psd      :: Vector{Float64}
-        Nse         :: Vector{Float64}
+		Err_θr_Psd  :: Vector{Float64}
+		Nse         :: Vector{Float64}
+
         FieldName   :: Vector{Symbol} # Need to put
 	end # struct CHANG
 
@@ -40,6 +43,8 @@ module psdStruct
 		θr_Psd         = zeros(Float64, N_SoilSelect)
 		Psd_2_θr_α1    = zeros(Float64, N_SoilSelect)
 		Psd_2_θr_α2    = zeros(Float64, N_SoilSelect)
+		Err_θr_Psd    = zeros(Float64, N_SoilSelect)
+		Nse            = zeros(Float64, N_SoilSelect)
 
 		if option.psd.Model == "IMP"
             ξ1             = zeros(Float64, N_SoilSelect)
@@ -47,7 +52,7 @@ module psdStruct
             ∑Psd_2_ξ2_β2   = zeros(Float64, N_SoilSelect)
             Subclay        = zeros(Float64, N_SoilSelect)
 			∑Psd_2_ξ2_Size = zeros(Int, N_SoilSelect)
-            Nse            = zeros(Float64, N_SoilSelect)
+
 
 			# Initializing
 			for iSoil=1:N_SoilSelect
@@ -58,20 +63,19 @@ module psdStruct
 				∑Psd_2_ξ2_Size[iSoil] 	= param.psd.imp.∑Psd_2_ξ2_Size
 			end
 			
-			psdparam = IMP(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, ∑Psd_2_ξ2_Size, Subclay, Psd_2_θr_α1, Psd_2_θr_α2, Nse, θr_Psd, FieldName)
+			psdparam = IMP(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, ∑Psd_2_ξ2_Size, Subclay, Psd_2_θr_α1, Psd_2_θr_α2, Err_θr_Psd, Nse, θr_Psd, FieldName)
 
 			return psdparam = tool.readWrite.FIELDNAME_2_STRUCT(IMP, psdparam) # Saving the FieldNames
 	
 		elseif option.psd.Model == "Chang2019Model"
 			ξ1		= zeros(Float64, N_SoilSelect)
 			θr_Psd  = zeros(Float64, N_SoilSelect)
-			Nse     = zeros(Float64, N_SoilSelect)
 
 			for iSoil=1:N_SoilSelect
 				ξ1[iSoil] = param.psd.chan.ξ1
 			end
 
-			psdparam = CHANG(ξ1, Psd_2_θr_α1, Psd_2_θr_α2, θr_Psd, Nse, FieldName)
+			psdparam = CHANG(ξ1, Psd_2_θr_α1, Psd_2_θr_α2, θr_Psd, Err_θr_Psd, Nse, FieldName)
 
 			return psdparam = tool.readWrite.FIELDNAME_2_STRUCT(CHANG, psdparam) # Saving the FieldNames
 		end # option.hydro.HydroModel

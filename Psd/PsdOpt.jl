@@ -9,8 +9,9 @@ module psdOpt
 	# 		THIS WILL RUN FOR ALL MODELS
 	# =========================================
 		function PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdparam, hydro)
-			θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-			Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+			
+			θ_Rpart = Array{Float64}(undef, (N_SoilSelect, N_Psd_Max))
+			Ψ_Rpart = Array{Float64}(undef, (N_SoilSelect, N_Psd_Max))
 
 			for iSoil = 1:N_SoilSelect
 					θ_Rpart[iSoil,1:N_Psd[iSoil]], Ψ_Rpart[iSoil,1:N_Psd[iSoil]] = psdFunc.PSD_MODEL(iSoil, Psd[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], Rpart[iSoil,1:N_Psd[iSoil]], N_Psd[iSoil], θs_Psd[iSoil], θr_Psd[iSoil], psdparam)

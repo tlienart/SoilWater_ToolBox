@@ -14,7 +14,7 @@ module psdThetar
 				Err_θr_Psd = zeros(Float64, N_SoilSelect)
 
 				if option.psd.Psd_2_θr == "Opt" && option.θΨ ≠ "No"
-					Err_θr_Psd, psdparam = OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdparam)
+					psdparam = OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdparam)
 		
 				elseif option.psd.Psd_2_θr == "Cst" # <>=<>=<>=<>=<>
 					θr_Psd =  Array{Float64}(undef, N_SoilSelect)
@@ -35,9 +35,10 @@ module psdThetar
 					if option.θΨ ≠ "No"
 						Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_SoilSelect], Sim=psdparam.θr_Psd[1:N_SoilSelect])
 
-						Err_θr_Psd = Array{Float64}(undef, (N_SoilSelect))
+						println("    ~ Nse_θr_Psd = $(round(Nse_θr_Psd,digits=3)) ~")
+
 						for iSoil=1:N_SoilSelect
-							Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=psdparam.θr_Psd[iSoil])
+							psdparam.Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=psdparam.θr_Psd[iSoil])
 						end
 					end
 				
@@ -45,7 +46,7 @@ module psdThetar
 					error("option.psd.Psd_2_θr = $option.psd.Psd_2_θr  not allowed option.psd.Psd_2_θr must be either (1)'Opt' or (2) 'Cst' or (3) 'Param' ")
 				end # if option.psd.Psd_2_θr	
 
-				return Err_θr_Psd, psdparam
+				return psdparam
 			end # function PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -97,14 +98,13 @@ module psdThetar
 				# STATISTICS
 					Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_SoilSelect], Sim=psdparam.θr_Psd[1:N_SoilSelect])
 
-					Err_θr_Psd = Array{Float64}(undef, (N_SoilSelect))
 					for iSoil=1:N_SoilSelect
-						Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=psdparam.θr_Psd[iSoil])
+						psdparam.Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=psdparam.θr_Psd[iSoil])
 					end
 					
 					println("    ~ Psd_2_θr_α1 = $(round(Psd_2_θr_α1,digits=3)) ;  Psd_2_θr_α2 = $(round(Psd_2_θr_α2,digits=3)) ;  Nse_θr_Psd = $(round(Nse_θr_Psd,digits=3)) ~")
 
-				return Err_θr_Psd, psdparam
+				return psdparam
 			end # function OPTIMIZE_PSD_2_θr
 	
 end  # module psdThetar

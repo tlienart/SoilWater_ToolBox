@@ -88,6 +88,16 @@ function START_TOOLBOX()
 		hydro = []
 	end
 
+
+	if option.Psd
+		println("=== START: PSD MODEL  ===")
+			psdparam, N_Psd, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
+		println("=== END  : PSD MODEL  === \n")
+	else
+		θ_Rpart = zeros(Float64, N_SoilSelect,1)
+		Ψ_Rpart = zeros(Float64, N_SoilSelect,1)
+	end
+
 	
 	if option.Infiltration
 		println("=== START: INFILTRATION  ===")
@@ -95,29 +105,20 @@ function START_TOOLBOX()
 		println("=== END  : INFILTRATION  === \n")
 	end
 
-
-	if option.Psd
-		println("=== START: PSD MODEL  ===")
-			Err_θr_Psd, psdparam, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
-		println("=== END  : PSD MODEL  === \n")
-	end
-
-
 	println("=== START: WRITING TABLE  ===")
 		if option.θΨ ≠ "No"
 			table.hydroParam.θΨK(Id_Select[1:N_SoilSelect], N_SoilSelect, hydro)
 		end
 		if option.Psd
 			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, psdparam)
-			table.psd.PSD_θr(Err_θr_Psd[1:N_SoilSelect], Id_Select[1:N_SoilSelect], N_SoilSelect, hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect])
 		end  # if: name
 	println("=== END  : WRITING TABLE  === \n")
 
 
 	if option.Plot
 		println("=== START: PLOTTING  ===")
-			if option.Plot_WaterRetentionCurve  && option.θΨ ≠ "No"
-				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro) # TODO hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect]
+			if option.Plot && option.Plot_WaterRetentionCurve  && option.θΨ ≠ "No"
+				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro)
 			end # option.Plot_WaterRetentionCurve
 
 			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infiltration.OptimizeRun == "Run" ||  option.infiltration.OptimizeRun == "RunOpt") && option.infiltration.Model=="Simplified" && option.infiltration.SeIni_Range	
@@ -131,7 +132,7 @@ function START_TOOLBOX()
 			end
 		
 			if option.Psd
-				plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam) #TODO put the right values in the function
+				plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)
 			end
 		println("=== END: PLOTTING  === \n")
 		return

@@ -9,7 +9,7 @@ module plot
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROPARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, hydro; N_Se = 100)
+		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro; N_Se = 100)
 
 			θ_Sim = Array{Float64}(undef, (N_Se))
 			Kunsat_Sim = Array{Float64}(undef, (N_Se))
@@ -59,26 +59,37 @@ module plot
 				# θ_Ψ=Winston.semilogx(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")
 
 				 # Plot Ψ(θ)
-					Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)                          
+				Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)
+
 					Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
-					Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^3 cm^{-3}]", range=(0.0, θ_θΨ_Max))
+					Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^{3} cm^{-3}]", range=(0.0, θ_θΨ_Max))
+					
 					Obs_θ_Ψ = Winston.Points(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
 					Winston.setattr(Obs_θ_Ψ, label="Obs")
+					
 					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue")
 					Winston.setattr(Sim_θ_Ψ, label="Sim")
+
+					Plot_Psd = Winston.Points( Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="green")
+					Winston.setattr(Plot_Psd, label="Psd")
+
 					legend_θ_Ψ = Winston.Legend(0.1, 0.15, [Obs_θ_Ψ, Sim_θ_Ψ])
-					θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, legend_θ_Ψ) 
+
+					θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Plot_Psd, legend_θ_Ψ) 
 				
 				 # Plot K(Ψ)
-					Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
+				Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
 					Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
 					
 					Obs_K_Ψ = Winston.Points(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
 					Winston.setattr(Obs_K_Ψ, label="Obs")
+
 					Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue")
 					Winston.setattr(Sim_K_Ψ, label="Sim")
+
 					legend_K_Ψ = Winston.Legend(0.8, 0.9, [Obs_K_Ψ, Sim_K_Ψ])
+
 					K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ)
 
 					MultiPlots[1,1] = Plot_θ_Ψ
@@ -91,8 +102,7 @@ module plot
 		end  # function: HYDROPARAM
 
 
-		function PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam) #TODO put the right values in the function   hydro.θr[1:N_SoilSelect], psdparam.θr_Psd[1:N_SoilSelect]
-			
+		function PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)	
 			# Minimum and maximum value
 			θr_Min = param.hydro.θr_Min  
 			θr_Max = param.hydro.θr_Max + 0.05
@@ -108,6 +118,7 @@ module plot
 			θr_Sim = Winston.Points(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size], hydro.θr[1:N_SoilSelect], color="violet")   
 			Winston.setattr(θr_Sim, label="θ_{r}")
 			θrPsd = Winston.Curve(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size], psdparam.θr_Psd[1:N_SoilSelect], color="cyan")
+			
 			Winston.setattr(θrPsd, label="θ_{r psd}")
 			legend_θr_Clay = Winston.Legend(0.8, 0.15, [θr_Sim, θrPsd])
 			θr_Clay = Winston.add(Plot_θr_Clay, θr_Sim, θrPsd, legend_θr_Clay) 
