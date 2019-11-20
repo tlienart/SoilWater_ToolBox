@@ -140,6 +140,7 @@ module plot
 			Winston.setattr(θrPsd, label="θ_{r psd}")
 			legend_θr_Clay = Winston.Legend(0.8, 0.15, [θr_Sim, θrPsd])
 			θr_Clay = Winston.add(Plot_θr_Clay, θr_Sim, θrPsd, legend_θr_Clay) 
+			MultiPlots[1,1] = Plot_θr_Clay
 		   
 			# Plot θr_Psd(θr)
 			Plot_θrPsd_θrSim = Winston.FramedPlot(aspect_ratio=1)  
@@ -148,9 +149,8 @@ module plot
 			θrPsd_θrSim = Winston.Points(θr, θr_Psd, color="teal")
 			s = Winston.Slope(1, (0,0), kind="dotted")
 			θrPsd_θrSim = Winston.add(Plot_θrPsd_θrSim, θrPsd_θrSim, s)
-			
-			MultiPlots[1,1] = Plot_θr_Clay
 			MultiPlots[1,2] = Plot_θrPsd_θrSim
+			
 			Path = path.Plots_Psd_ThetaR
 			println("		== Plotting θr == ")
 			Winston.savefig(MultiPlots, Path)
