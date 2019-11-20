@@ -71,13 +71,15 @@ module plot
 					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue")
 					Winston.setattr(Sim_θ_Ψ, label="Sim")
 
-					# TODO only if option = true
-					Plot_Psd = Winston.Points( Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="green")
-					Winston.setattr(Plot_Psd, label="Psd")
-
-					legend_θ_Ψ = Winston.Legend(0.15, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ])
-
-					θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Plot_Psd, legend_θ_Ψ) 
+					if option.psd.Plot_Psd_θ_Ψ
+						Psd_θ_Ψ = Winston.Points(Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="green")
+						Winston.setattr(Psd_θ_Ψ, label="Psd")
+						legend_θ_Ψ = Winston.Legend(0.15, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ])
+						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ, legend_θ_Ψ)
+					else
+						legend_θ_Ψ = Winston.Legend(0.15, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ])
+						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, legend_θ_Ψ)
+					end
 
 					MultiPlots[1,1] = Plot_θ_Ψ
 				
@@ -96,7 +98,6 @@ module plot
 					legend_K_Ψ = Winston.Legend(0.8, 0.9, [Obs_K_Ψ, Sim_K_Ψ])
 
 					K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ)
-
 
 					MultiPlots[1,2] = Plot_K_Ψ
 				 end # if option.hydro.KunsatΨ
