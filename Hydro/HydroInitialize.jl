@@ -43,7 +43,7 @@ module hydroInitialize
 					θ_Min[iSoil] = minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Smallest measure θ
 					θ_Max[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Greatest measure θ
 
-					if option.KunsatΨ
+					if option.hydro.KunsatΨ
 						K_KΨ_Max[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]]) 	# Greatest measure of Kunsat
 					end
 
@@ -78,13 +78,13 @@ module hydroInitialize
 
 
 				# DERIVING Ks FROM DATA IF REQUESTED
-					if option.hydro.KsOpt == "Data" && option.KunsatΨ
+					if option.hydro.KsOpt == "Data" && option.hydro.KunsatΨ
 						hydro.Ks[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = false
-					elseif option.hydro.KsOpt == "Opt" && option.KunsatΨ
+					elseif option.hydro.KsOpt == "Opt" && option.hydro.KunsatΨ
 						Ks_Min[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = true
-					end # option.KunsatΨ
+					end # option.hydro.KunsatΨ
 			end  # for iSoil=1:N_SoilSelect
 
 	# DETERMENING THE NUMBER OF PARAMETERS TO BE OPTIMIZED

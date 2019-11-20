@@ -24,12 +24,12 @@ using Suppressor
 	include("Hydro\\ObjectiveFunction_Hydro.jl")
 	include("Hydro\\START_HydroParam.jl")
 	include("Hydro\\HydroRelation.jl")
-	if option.Infiltration
+	if option.Infilt
 		include("Infilt\\Diffusivity.jl")
 		include("Infilt\\Sorptivity.jl")
 		include("Infilt\\Best.jl")
 		include("Infilt\\OptInfilt.jl")
-		include("Infilt\\MAIN_Infilt.jl")
+		include("Infilt\\START_Infilt.jl")
 	end
 
 	include("Psd\\PsdStruct.jl")
@@ -57,7 +57,7 @@ function START_TOOLBOX()
 			θ_θΨ, Ψ_θΨ, N_θΨ = read.θΨ(Id_Select, N_SoilSelect)
 		end
 
-		if option.KunsatΨ
+		if option.hydro.KunsatΨ
 			K_KΨ, Ψ_KΨ, N_KΨ = read.KUNSATΨ(Id_Select, N_SoilSelect)
 		else
 			K_KΨ = zeros(Float64, N_SoilSelect,1)
@@ -71,7 +71,7 @@ function START_TOOLBOX()
 			∑Psd = zeros(Float64, N_SoilSelect,1)
 		end
 		
-		if option.Infiltration
+		if option.Infilt
 			Tinfilt, ∑Infilt, N_Infilt, infilt  = read.INFILTRATION(Id_Select, N_SoilSelect)
 		end
 
@@ -99,9 +99,9 @@ function START_TOOLBOX()
 	end
 
 	
-	if option.Infiltration
+	if option.Infilt
 		println("=== START: INFILTRATION  ===")
-			∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs = mainInfilt.MAIN_INFILT(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
+			∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs = mainInfilt.START_INFILT(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -117,26 +117,26 @@ function START_TOOLBOX()
 
 	if option.Plot
 		println("=== START: PLOTTING  ===")
-			if option.Plot && option.Plot_WaterRetentionCurve  && option.θΨ ≠ "No"
-				plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro)
-			end # option.Plot_WaterRetentionCurve
 
-			if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infiltration.OptimizeRun == "Run" ||  option.infiltration.OptimizeRun == "RunOpt") && option.infiltration.Model=="Simplified" && option.infiltration.SeIni_Range	
+		if option.θΨ ≠ "No" && option.hydro.Plot_θΨ
+			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro)
+		end # option.Plot_WaterRetentionCurve
 
-				# plot.BEST_LAB_SEINIRANGE(Id_Select, ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
+		if option.Psd && option.psd.Plot_θr
+			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)
+		end
 
-			end # option.Plot_BestLab
+		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.SeIni_Range	
 
-			if option.Plot_BestLab && option.θΨ ≠ "No" && option.infiltration.OptimizeRun  == "Run" || option.infiltration.OptimizeRun  == "RunOpt" 
-				# plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
-			end
-		
-			if option.Psd
-				plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)
-			end
+		# 	# plot.BEST_LAB_SEINIRANGE(Id_Select, ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
+		# end # option.Plot_BestLab
+
+		# if option.Plot_BestLab && option.θΨ ≠ "No" && option.infilt.OptimizeRun  == "Run" || option.infilt.OptimizeRun  == "RunOpt" 
+		# 	# plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
+		# end
+	
 		println("=== END: PLOTTING  === \n")
-		return
-	end
+	end # if option.Plot
 		
 end  # function: START_TOOLBOX
 

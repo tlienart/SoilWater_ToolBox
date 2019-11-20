@@ -3,29 +3,30 @@
 # =============================================================
 module plot
 	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar
-	using PGFPlots, Winston
-	export HYDROPARAM, BEST_LAB_SEINIRANGE, BEST_LAB
+	using Winston
+	export HYDROPARAM
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROPARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro; N_Se = 100)
+		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro; N_Se = 500)
 
 			θ_Sim = Array{Float64}(undef, (N_Se))
 			Kunsat_Sim = Array{Float64}(undef, (N_Se))
-			
 			for iSoil = 1:N_SoilSelect
 				
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]]) * 10.0
 
-				Ψ_Sim = 1.0 .+ 10.0 .^ range(log(10.0 ^ -2.0), stop=log(Ψ_θΨ_Max), length=N_Se)
+				Ψ_Sim = 10.0 .^ range(log(10.0 ^ -4.0), stop=log(Ψ_θΨ_Max), length=N_Se)
 
 				θ_θΨ_Max = maximum(θ_θΨ[iSoil,1:N_θΨ[iSoil]]) + 0.05
 
 				# Simulated
 				for iΨ = 1:N_Se
 					θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iSoil, hydro)
-					Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)				
+					if option.hydro.KunsatΨ
+						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)	
+					end			
 				end
 
 				# println("		== Plotting Lab_ThetaH_ soil $iSoil ==")
@@ -41,7 +42,7 @@ module plot
 				# 	)
 
 				# # Plotting K(Ψ)
-				# if option.KunsatΨ == true
+				# if option.hydro.KunsatΨ == true
 				# 	push!(Plot_CharacUnsat, Axis([
 				# 		Plots.Scatter(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, mark="square", markSize=4, onlyMarks=true, style="red, very thick", legendentry=L"$Obs$"), 
 
@@ -64,20 +65,24 @@ module plot
 					Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^{3} cm^{-3}]", range=(0.0, θ_θΨ_Max))
 					
-					Obs_θ_Ψ = Winston.Points(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
+					Obs_θ_Ψ = Winston.Points(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
 					Winston.setattr(Obs_θ_Ψ, label="Obs")
 					
 					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue")
 					Winston.setattr(Sim_θ_Ψ, label="Sim")
 
+					# TODO only if option = true
 					Plot_Psd = Winston.Points( Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="green")
 					Winston.setattr(Plot_Psd, label="Psd")
 
-					legend_θ_Ψ = Winston.Legend(0.1, 0.15, [Obs_θ_Ψ, Sim_θ_Ψ])
+					legend_θ_Ψ = Winston.Legend(0.15, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ])
 
 					θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Plot_Psd, legend_θ_Ψ) 
+
+					MultiPlots[1,1] = Plot_θ_Ψ
 				
-				 # Plot K(Ψ)
+				 # Plot K(Ψ) 
+			 	if option.hydro.KunsatΨ
 				Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
 					Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
@@ -92,10 +97,11 @@ module plot
 
 					K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ)
 
-					MultiPlots[1,1] = Plot_θ_Ψ
-					MultiPlots[1,2] = Plot_K_Ψ
-					Winston.savefig(MultiPlots, Path)
 
+					MultiPlots[1,2] = Plot_K_Ψ
+				 end # if option.hydro.KunsatΨ
+
+				 Winston.savefig(MultiPlots, Path)
 			end # for iSoil
 			
 			return
@@ -146,58 +152,58 @@ module plot
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST_LAB_SEINIRANGE( ∑Infilt_Best_HydroObs_SeIniRange)
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST_LAB_SEINIRANGE(Id_Select,  ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
+		# function BEST_LAB_SEINIRANGE(Id_Select,  ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
 
-			for iSoil=1:N_SoilSelect
-				println("		== Plotting BestLab_SeIniRange_ soil= $iSoil ==")
+		# 	for iSoil=1:N_SoilSelect
+		# 		println("		== Plotting BestLab_SeIniRange_ soil= $iSoil ==")
 
-				Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
+		# 		Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
 
-				push!(Plot_BestLab, Axis([
-					Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 1, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$SeIni=0.0$"),
+		# 		push!(Plot_BestLab, Axis([
+		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 1, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$SeIni=0.0$"),
 			
-					Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 2, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, orange, very thick", legendentry=L"$SeIni=0.2$"),
+		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 2, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, orange, very thick", legendentry=L"$SeIni=0.2$"),
 
-					Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 3, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, teal, very thick", legendentry=L"$SeIni=0.4$"),
+		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 3, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, teal, very thick", legendentry=L"$SeIni=0.4$"),
 
-					Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 4, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, yellow, very thick", legendentry=L"$SeIni=0.6$"),
+		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 4, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, yellow, very thick", legendentry=L"$SeIni=0.6$"),
 
-					Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blue, very thick", legendentry=L"$SeIni=0.8$"),
-					], 
+		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blue, very thick", legendentry=L"$SeIni=0.8$"),
+		# 			], 
 
-					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
-				)
+		# 			style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
+		# 		)
 				
-				Path = path.Plots_BestLab_SeIniRange * "BestLab_SeIniRange_" *string(Id_Select[iSoil]) * ".svg"
-				save(Path, Plot_BestLab)
+		# 		Path = path.Plots_BestLab_SeIniRange * "BestLab_SeIniRange_" *string(Id_Select[iSoil]) * ".svg"
+		# 		save(Path, Plot_BestLab)
 
-			end # for
-		end  # function: BEST_LAB_SEINIRANGE( ∑Infilt_Best_HydroObs_SeIniRange)
+		# 	end # for
+		# end  # function: BEST_LAB_SEINIRANGE( ∑Infilt_Best_HydroObs_SeIniRange)
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST_LAB
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
-			for iSoil=1:N_SoilSelect
-				println("		== Plotting BestLab_ soil $iSoil ==")
+		# function BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
+		# 	for iSoil=1:N_SoilSelect
+		# 		println("		== Plotting BestLab_ soil $iSoil ==")
 
-				Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
+		# 		Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
 
-				push!(Plot_BestLab, Axis([
-					Plots.Linear(Tinfilt_Best_HydroObs[iSoil,1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs[iSoil, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$HydroParam$"),
+		# 		push!(Plot_BestLab, Axis([
+		# 			Plots.Linear(Tinfilt_Best_HydroObs[iSoil,1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs[iSoil, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$HydroParam$"),
 			
-					Plots.Scatter(Tinfilt[iSoil, 1:N_Infilt[iSoil]], ∑Infilt[iSoil, 1:N_Infilt[iSoil]], style="teal, very thick", onlyMarks=true, mark="o", markSize=4, legendentry=L"$Obs$"),
-					], 
+		# 			Plots.Scatter(Tinfilt[iSoil, 1:N_Infilt[iSoil]], ∑Infilt[iSoil, 1:N_Infilt[iSoil]], style="teal, very thick", onlyMarks=true, mark="o", markSize=4, legendentry=L"$Obs$"),
+		# 			], 
 
-					style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
-				)
+		# 			style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
+		# 		)
 
-				Path = path.Plots_BestLab * "BestLab_" *string(Id_Select[iSoil]) * ".svg"
-				save(Path, Plot_BestLab)
-			end  # for iSoil=1:N_SoilSelect
+		# 		Path = path.Plots_BestLab * "BestLab_" *string(Id_Select[iSoil]) * ".svg"
+		# 		save(Path, Plot_BestLab)
+		# 	end  # for iSoil=1:N_SoilSelect
 
-		end # function BEST_LAB
+		# end # function BEST_LAB
 
 
 end  # module plot

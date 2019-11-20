@@ -32,7 +32,7 @@ module hydroParam
 		# =============================================================
 		module kg
 			import ...ofHydro, ...param, ..option
-			import BlackBoxOptim
+			import BlackBoxOptim, Statistics
 			export HYDROPARAM_OPT
 	
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,6 +56,21 @@ module hydroParam
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[7]
 
 							hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
+
+						elseif option.hydro.UnimodalBimodal=="Bimodal" && !opt.Opt_θs && opt.Opt_θr && !opt.Opt_Ks  # This one <>=<>=<>=<>=<>
+
+								SearchRange =[(param.hydro.kg.σ_Min, param.hydro.kg.σ_Max), (log10(param.hydro.kg.Ψm_Min), log10(param.hydro.kg.Ψm_Max)), (0.0, θr_Max[iSoil]), (param.hydro.kg.∇_θsMat_Min, param.hydro.kg.∇_θsMat_Max), (param.hydro.kg.σMac_Min, param.hydro.kg.σMac_Max), (param.hydro.kg.ΨmMac_Min, param.hydro.kg.ΨmMac_Max)]
+	
+								Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; σ=P[1], Ψm=10.0^P[2], θr=P[3], ∇_θsMat=P[4], σMac=P[5], ΨmMac=10.0^P[6])[1]; SearchRange = SearchRange, NumDimensions=opt.N_ParamOpt, TraceMode=:silent)
+			
+								hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+								hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+								hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
+								∇_θsMat 			= BlackBoxOptim.best_candidate(Optimization)[4]
+								hydro.σMac[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[5]
+								hydro.ΨmMac[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[6]
+		
+								hydro.θsMat[iSoil] = ∇NORM_2_PARAMETER(∇_θsMat, hydro.θr[iSoil], hydro.θs[iSoil])
 
 						elseif option.hydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks  # <>=<>=<>=<>=<>
 
@@ -93,9 +108,18 @@ module hydroParam
 
 							hydro.Nse[iSoil] = 1.0 - Of
 							hydro.Nse_θψ[iSoil] = 1.0 - Of_θΨ
-							hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat
+
+							if option.hydro.KunsatΨ
+								hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat
+							end
 	
 					end  # for iSoil=1:N_SoilSelect
+
+					Nse = Statistics.mean(hydro.Nse[1:N_SoilSelect])
+					Nse_θψ = Statistics.mean(hydro.Nse_θψ[1:N_SoilSelect])
+					Nse_Kψ = Statistics.mean(hydro.Nse_Kψ[1:N_SoilSelect])
+					
+					println("    ~ Nse_θψK = $(round(Nse,digits=3)),  Nse_θψ = $(round(Nse_θψ,digits=3)),  Nse_Kψ = $(round(Nse_Kψ,digits=3))  ~")
 					
 					return hydro
 				end  # function: HYDROPARAM_OPT
@@ -213,9 +237,16 @@ module hydroParam
 
 						hydro.Nse[iSoil] = 1.0 - Of
 						hydro.Nse_θψ[iSoil] = 1.0 - Of_θΨ
-						hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat
 
+						if option.hydro.KunsatΨ
+							hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat
+						end
 				end  # for iSoil=1:N_SoilSelect
+				Nse = Statistics.mean(hydro.Nse[1:N_SoilSelect])
+				Nse_θψ = Statistics.mean(hydro.Nse_θψ[1:N_SoilSelect])
+				Nse_Kψ = Statistics.mean(hydro.Nse_Kψ[1:N_SoilSelect])
+				
+				println("    ~ Nse_θψK = $(round(Nse,digits=3)),  Nse_θψ = $(round(Nse_θψ,digits=3)),  Nse_Kψ = $(round(Nse_Kψ,digits=3))  ~")
 				
 				return hydro
 			end  # function: HYDROPARAM_OPT

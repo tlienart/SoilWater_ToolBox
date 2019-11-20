@@ -17,7 +17,8 @@ module ofHydro
 
 
 		 # === OF Kunsat ====
-			if option.KunsatΨ
+		 	Of_Kunsat = 0.0
+			if option.hydro.KunsatΨ
 				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				for iΨ = 1:N_KΨ[iSoil]
@@ -27,9 +28,13 @@ module ofHydro
 				end # for iΨ in 1:N_KΨ[iSoil]
 
 				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln, Kunsat_Sim_Ln)
-			end #  option.KunsatΨ
 
-			Of = Wof * Of_θΨ + (1.0 - Wof) * Of_Kunsat
+				Of = Wof * Of_θΨ + (1.0 - Wof) * Of_Kunsat
+			else
+				Of = Of_θΨ
+			end #  option.hydro.KunsatΨ
+
+
 
 		 return Of, Of_θΨ, Of_Kunsat
 

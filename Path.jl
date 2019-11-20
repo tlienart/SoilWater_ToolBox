@@ -5,7 +5,7 @@ module path
 	import ..option
 
 	# NAME OF FILE
-		Name = "SFF_"
+		Name = "PAF_"
 
 	# INPUT PATH
 		Id_Select 			= "Id_Select.csv"
@@ -34,13 +34,13 @@ module path
 		Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
 		PsdΦ = Home * "//INPUT//" * Name * PsdΦ
 
-		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name * "_" * option.hydro.HydroModel * "_" * Table_θΨK
-		Table_Psd					= Home * "//OUTPUT//Table//" * Name * "_" * option.psd.Model * "_" * Table_Psd
-		Table_θr					= Home * "//OUTPUT//Table//" * Name * "_" * Table_θr
+		Table_θΨK 					= Home * "//OUTPUT//Table//" * Name *  option.hydro.HydroModel * "_" * Table_θΨK
+		Table_Psd					= Home * "//OUTPUT//Table//" * Name * option.psd.Model * "_" * Table_Psd
+		Table_θr					= Home * "//OUTPUT//Table//" * Name * Table_θr
 		Plots_θΨK 					= Home * "//OUTPUT//Plots//Lab//" * Name
 		Plots_BestLab 				= Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
 		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
-		Plots_Psd 					= Home * "//OUTPUT//Plots//Psd//"
+		Plots_Psd 					= Home * "//OUTPUT//Plots//Psd//" * Name
 		Plots_Psd_ThetaR			= Home * "//OUTPUT//Plots//Psd//ThetaR//" * Name * "_Plot_ThetaR.svg"
 end  # module path
 # ............................................................
