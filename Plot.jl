@@ -16,6 +16,7 @@ module plot
 			for iSoil = 1:N_SoilSelect
 				
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]]) * 2.0
+				Ψ_θΨ_Min = 0.9 # [mm]
 
 				Ψ_Sim = 10.0 .^ range(log(10.0 ^ -4.0), stop=log(Ψ_θΨ_Max), length=N_Se)
 
@@ -62,7 +63,7 @@ module plot
 				 # Plot Ψ(θ)
 				Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)
 
-					Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(0.09, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
+					Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^{3} cm^{-3}]", range=(0.0, θ_θΨ_Max))
 					
 					Obs_θ_Ψ = Winston.Points(0.1 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
@@ -86,10 +87,10 @@ module plot
 				 # Plot K(Ψ) 
 			 	if option.hydro.KunsatΨ
 				Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
-					Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(0.1, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
+					Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
 					
-					Obs_K_Ψ = Winston.Points(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
+					Obs_K_Ψ = Winston.Points(0.1 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
 					Winston.setattr(Obs_K_Ψ, label="Obs")
 
 					Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue")
