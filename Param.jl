@@ -18,7 +18,7 @@ module param
 				Psd_2_θr_α1_Max = 100.0
 			Psd_2_θr_α2    = 2.013125380534685 # α2  
 				Psd_2_θr_α2_Min = 0.001
-				Psd_2_θr_α2_Max = 5.0
+				Psd_2_θr_α2_Max = 10.0#5.0 we were using 10.0 in the IMP version!!!!!!!!!!!!
 
 			Psd_2_θr_Size   = 1  # size of particle size corresponding to clay fraction
 

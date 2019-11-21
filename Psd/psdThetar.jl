@@ -73,7 +73,7 @@ module psdThetar
 					for iSoil=1:N_SoilSelect
 						θr_Psd = PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1=Psd_2_θr_α1, Psd_2_θr_α2=Psd_2_θr_α2)
 
-						∑Rmse = abs(hydro.θr[iSoil] - θr_Psd) ^ Power
+						∑Rmse += abs(hydro.θr[iSoil] - θr_Psd) ^ 2#Power!!!!!!!!!!!!!!
 					end
 				
 					return ∑Rmse

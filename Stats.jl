@@ -6,7 +6,7 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=2)
+		function NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=2.0)
 			N = length(Obs)
 			Obs_Mean = Statistics.mean(Obs[1:N])
 			Obs_Mean_Err = Statistics.sum(abs.(Obs_Mean .- Obs[1:N]) .^ Power)
