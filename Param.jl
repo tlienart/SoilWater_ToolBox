@@ -79,7 +79,7 @@ module param
 		Ks_Max = 0.12 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
 		# Coeff_Φ_2_θs
-			Coeff_Φ_2_θs = 1.0
+			Coeff_Φ_2_θs = 1.0 # 0.95
 			Coeff_θs_Max = 1.2 # Maximum value of θs when optimized
 
 		# If constant
