@@ -31,7 +31,7 @@ module option
 
             const KunsatΨ         = true 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
 
-            const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction
+            const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
 
             const θrOpt           = "Opt"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Psd> uses α1 and α1 from parameters in Param.jl
 
