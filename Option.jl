@@ -63,8 +63,9 @@ module option
 				const ∑Psd_2_ξ1 = true  # optimize ξ1
 		
 			# PLOTTING
-				const Plot_Psd_θ_Ψ = true # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
-				const Plot_θr 	   = true # plot θr data and model from Psd 
+				const Plot_Psd_θ_Ψ 	 = true # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
+				const Plot_θr 	   	 = true # plot θr data and model from Psd 
+				const Plot_IMP_model = true # plot IMP model results for publication
 						
 			if OptimizePsd == "Single" 
 				const SubclayOpt = false # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
