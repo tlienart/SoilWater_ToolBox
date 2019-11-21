@@ -7,13 +7,17 @@ module ofHydro
 		 # === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])
 			θ_Sim = Array{Float64}(undef, N_θΨ[iSoil])
+
+			# Not to include θs in observations
+				iθ_θΨ_Start = 2
+
 			
-			for iΨ = 1:N_θΨ[iSoil]
+			for iΨ = iθ_θΨ_Start:N_θΨ[iSoil]
 				θ_Obs[iΨ] = θ_θΨ[iSoil,iΨ]
 				θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_θΨ[iSoil,iΨ], iSoil, hydro)
 			end # for iΨ in 1:N_θΨ[iSoil]
 
-			Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs, θ_Sim)
+			Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[iθ_θΨ_Start:N_θΨ[iSoil]], θ_Sim[iθ_θΨ_Start:N_θΨ[iSoil]])
 
 
 		 # === OF Kunsat ====

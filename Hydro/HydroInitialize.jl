@@ -68,11 +68,12 @@ module hydroInitialize
 						hydro.θs[iSoil] = θ_Max[iSoil]
 						opt.Opt_θs = false # No need to optimize θs
 					elseif option.hydro.θsOpt == "Φ"
-						hydro.θs[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_θΨ[iSoil, 2] )
+						hydro.θs[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_θΨ[iSoil, 2] + 0.005) # So that monotically increasing
 						opt.Opt_θs = false
+
 					elseif option.hydro.θsOpt == "Opt"
-						θs_Min[iSoil] = θ_Max[iSoil]
-						θs_Max[iSoil] = θ_Max[iSoil] * param.hydro.Coeff_θs_Max
+						θs_Min[iSoil] = θ_θΨ[iSoil, 2] + 0.005
+						θs_Max[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_θs_Max, θ_θΨ[iSoil, 2] + 0.005)
 						opt.Opt_θs = true
 					end # option.hydro.θsOpt
 
