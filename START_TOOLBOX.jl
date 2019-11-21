@@ -126,6 +126,9 @@ function START_TOOLBOX()
 			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)
 		end
 
+		if option.Psd && option.psd.Plot_IMP_model
+			plot.PLOT_IMP_model(∑Psd, N_SoilSelect, hydro, psdparam)
+		end
 		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.SeIni_Range	
 
 		# 	# plot.BEST_LAB_SEINIRANGE(Id_Select, ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
