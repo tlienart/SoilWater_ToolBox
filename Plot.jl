@@ -13,10 +13,15 @@ module plot
 
 			θ_Sim = Array{Float64}(undef, (N_Se))
 			Kunsat_Sim = Array{Float64}(undef, (N_Se))
+
+			# INJECTING Ψ=0 to be seen on plot using logarithmic scale to include θs 
+			Ψ_θΨ_4plot    = replace(Ψ_θΨ, 0.0=>1.0)    # replacement in [mm]
+			Ψ_Rpart_4plot = replace(Ψ_Rpart, 0.0=>1.0) # replacement in [mm]
+
 			for iSoil = 1:N_SoilSelect
 				
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]]) * 2.0
-				Ψ_θΨ_Min = 0.9 # [mm]
+				Ψ_θΨ_Min = 0.8 # [mm]
 
 				Ψ_Sim = 10.0 .^ range(log(10.0 ^ -4.0), stop=log(Ψ_θΨ_Max), length=N_Se)
 
@@ -30,79 +35,51 @@ module plot
 					end			
 				end
 
-				# println("		== Plotting Lab_ThetaH_ soil $iSoil ==")
-				# Plot_CharacUnsat = GroupPlot(2, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
-
-				# # Plotting Ψ(θ) 
-				# 	push!(Plot_CharacUnsat, Axis([
-				# 		Plots.Scatter(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], mark="square", markSize=4, onlyMarks=true, style="red, very thick", legendentry=L"$Obs$"),
-
-				# 		Plots.Linear(Ψ_Sim .* cst.mm_2_cm, θ_Sim, mark="none", style="smooth, blue, very thick", legendentry=L"$Sim$"),
-				# 		], 
-				# 		style="width=8cm, height=8cm", xlabel=L"$\psi \ [cm]$", ylabel=L"$\theta \ [cm^3 \ cm^{-3}]$", xmin=0.1, xmax=Ψ_θΨ_Max*cst.mm_2_cm, ymin=0.0, ymax=θ_θΨ_Max, xmode="log", legendPos="south west")
-				# 	)
-
-				# # Plotting K(Ψ)
-				# if option.hydro.KunsatΨ == true
-				# 	push!(Plot_CharacUnsat, Axis([
-				# 		Plots.Scatter(1.0 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, mark="square", markSize=4, onlyMarks=true, style="red, very thick", legendentry=L"$Obs$"), 
-
-				# 		Plots.Linear(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, mark="none", style="smooth, blue, very thick", legendentry=L"$Sim$"),
-				# 		], 
-				# 		style="width=8cm, height=8cm", xlabel=L"$\psi \ [cm]$", ylabel=L"$K(\psi) \ [cm \ h^{-1}]$", xmin=0.1, xmax=Ψ_θΨ_Max * cst.mm_2_cm, xmode="log", legendPos="north east") 
-				# 	)
-				# end
-
-				 Path = path.Plots_θΨK * "Lab_ThetaH_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"	
-				# PGFPlots.save(Path, Plot_CharacUnsat)
+						
+				MultiPlots = Winston.Table(1,2)
 				
-				 MultiPlots = Winston.Table(1,2)
-				
-				# θ_Ψ=Winston.semilogx(1.0 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], "g^", Ψ_Sim .* cst.mm_2_cm, θ_Sim, "b-o")
-
-				 # Plot Ψ(θ)
+				# Plot Ψ(θ)
 				Plot_θ_Ψ = Winston.FramedPlot(aspect_ratio=1)
-
 					Winston.setattr(Plot_θ_Ψ.x1, label="Ψ [cm]", range=(Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_θ_Ψ.y1, label="θ [cm^{3} cm^{-3}]", range=(0.0, θ_θΨ_Max))
 					
-					Obs_θ_Ψ = Winston.Points(0.1 .+ Ψ_θΨ[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red")
+					Obs_θ_Ψ = Winston.Points(Ψ_θΨ_4plot[iSoil,1:N_θΨ[iSoil]] .* cst.mm_2_cm, θ_θΨ[iSoil,1:N_θΨ[iSoil]], color="red", kind="square", size=1.5)
 					Winston.setattr(Obs_θ_Ψ, label="Obs")
 					
-					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue")
+					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="red", linewidth=5)
 					Winston.setattr(Sim_θ_Ψ, label="Sim")
 
 					if option.psd.Plot_Psd_θ_Ψ
-						Psd_θ_Ψ = Winston.Points(Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="green")
+						Psd_θ_Ψ = Winston.Points(Ψ_Rpart_4plot[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="blue", kind="circle", size=1.5)
 						Winston.setattr(Psd_θ_Ψ, label="Psd")
-						legend_θ_Ψ = Winston.Legend(0.15, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ])
+						legend_θ_Ψ = Winston.Legend(0.1, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ])
 						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ, legend_θ_Ψ)
 					else
-						legend_θ_Ψ = Winston.Legend(0.15, 0.2, [Obs_θ_Ψ, Sim_θ_Ψ])
+						legend_θ_Ψ = Winston.Legend(0.1, 0.1, [Obs_θ_Ψ, Sim_θ_Ψ])
 						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, legend_θ_Ψ)
 					end
 
 					MultiPlots[1,1] = Plot_θ_Ψ
 				
-				 # Plot K(Ψ) 
+				# Plot K(Ψ) 
 			 	if option.hydro.KunsatΨ
-				Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
+				 Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
 					Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
 					
-					Obs_K_Ψ = Winston.Points(0.1 .+ Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red")
+					Obs_K_Ψ = Winston.Points(Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red", kind="square", size=1.5)
 					Winston.setattr(Obs_K_Ψ, label="Obs")
 
-					Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue")
+					Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="red", linewidth=5)
 					Winston.setattr(Sim_K_Ψ, label="Sim")
 
 					legend_K_Ψ = Winston.Legend(0.8, 0.9, [Obs_K_Ψ, Sim_K_Ψ])
-
 					K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ)
 
 					MultiPlots[1,2] = Plot_K_Ψ
-				 end # if option.hydro.KunsatΨ
+				end # if option.hydro.KunsatΨ
 
+				 Path = path.Plots_θΨK * "Lab_ThetaH_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"
 				 Winston.savefig(MultiPlots, Path)
 			end # for iSoil
 			
