@@ -14,12 +14,11 @@ module param
 			θr_Cst = 0.0 # 0.14515925     # If option.Psd_2_θr = <false> then θr keep constant during the model
 
 			Psd_2_θr_α1    = 16.01602133125399 # α1
-				Psd_2_θr_α1_Min = 10.0
+				Psd_2_θr_α1_Min = 0.01
 				Psd_2_θr_α1_Max = 100.0
 			Psd_2_θr_α2    = 2.013125380534685 # α2  
 				Psd_2_θr_α2_Min = 0.001
-				Psd_2_θr_α2_Max = 10.0#5.0 we were using 10.0 in the IMP version!!!!!!!!!!!!
-
+				Psd_2_θr_α2_Max = 10.0
 			Psd_2_θr_Size   = 1  # size of particle size corresponding to clay fraction
 
 		# =============================================================
@@ -80,7 +79,7 @@ module param
 		Ks_Max = 0.12 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
 		# Coeff_Φ_2_θs
-			Coeff_Φ_2_θs = 0.95
+			Coeff_Φ_2_θs = 1.0
 			Coeff_θs_Max = 1.2 # Maximum value of θs when optimized
 
 		# If constant

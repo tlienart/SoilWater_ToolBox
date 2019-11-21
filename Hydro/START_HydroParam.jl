@@ -106,8 +106,8 @@ module hydroParam
 						# STATISTICS OF THE OPTIMIZATION
 							Of, Of_θΨ, Of_Kunsat = ofHydro.OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro) 
 
-							hydro.Nse[iSoil] = 1.0 - Of
-							hydro.Nse_θψ[iSoil] = 1.0 - Of_θΨ
+                            hydro.Nse[iSoil]    = 1.0 - Of
+                            hydro.Nse_θψ[iSoil] = 1.0 - Of_θΨ
 
 							if option.hydro.KunsatΨ
 								hydro.Nse_Kψ[iSoil] = 1.0 - Of_Kunsat
@@ -115,11 +115,11 @@ module hydroParam
 	
 					end  # for iSoil=1:N_SoilSelect
 
-					Nse = Statistics.mean(hydro.Nse[1:N_SoilSelect])
-					Nse_θψ = Statistics.mean(hydro.Nse_θψ[1:N_SoilSelect])
-					Nse_Kψ = Statistics.mean(hydro.Nse_Kψ[1:N_SoilSelect])
+                    Nse    = Statistics.mean(hydro.Nse[1:N_SoilSelect])
+                    Nse_θψ = Statistics.mean(hydro.Nse_θψ[1:N_SoilSelect])
+                    Nse_Kψ = Statistics.mean(hydro.Nse_Kψ[1:N_SoilSelect])
 					
-					println("    ~ Nse_θψK = $(round(Nse,digits=3)),  Nse_θψ = $(round(Nse_θψ,digits=3)),  Nse_Kψ = $(round(Nse_Kψ,digits=3))  ~")
+					println("    ~ Nse = $(round(Nse,digits=3)), Nse_θψ = $(round(Nse_θψ,digits=3)),  Nse	_Kψ = $(round(Nse_Kψ,digits=3))  ~")
 					
 					return hydro
 				end  # function: HYDROPARAM_OPT
