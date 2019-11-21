@@ -66,14 +66,14 @@ module psdThetar
 		# =========================================
 		#       OPTIMIZE_PSD_2_θr 
 		# =========================================
-			function OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdparam; Power=4)
+			function OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdparam; Power=2)
 				
 				function OF(Psd_2_θr_α1, Psd_2_θr_α2, N_SoilSelect, ∑Psd, hydro)
 					∑Rmse = 0.0
 					for iSoil=1:N_SoilSelect
 						θr_Psd = PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1=Psd_2_θr_α1, Psd_2_θr_α2=Psd_2_θr_α2)
 
-						∑Rmse = abs(hydro.θr[iSoil] - θr_Psd) ^ Power
+						∑Rmse += abs(hydro.θr[iSoil] - θr_Psd) ^ Power
 					end
 				
 					return ∑Rmse

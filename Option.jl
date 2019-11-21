@@ -58,7 +58,7 @@ module option
 		module psd
 			const Model       = "IMP" # <IMP> Intergranular Mixing Model OR <Chang2019Model>
 			const OptimizePsd = "OptAllSoil" # <OptSingleSoil> or <OptAllSoil> or <Run>
-			const Psd_2_θr    = "Opt" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl  
+			const Psd_2_θr    = "Param" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl  
 			const HydroParam  = false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
 			
 			# For OptimizePsd = "Single"
