@@ -135,7 +135,7 @@ function START_TOOLBOX()
 		println("=== START: PLOTTING  ===")
 
 		if option.θΨ ≠ "No" && option.hydro.Plot_θΨ
-			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro)
+			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, psdHydro)
 		end # option.Plot_WaterRetentionCurve
 
 		if option.Psd && option.psd.Plot_θr
