@@ -151,50 +151,55 @@ module plot
 				IntergranularMixing = zeros(Float64, N_Psd[iSoil])
 				
 				for iRpart = 1:N_Psd[iSoil]
-					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], psdparam.ξ1[iSoil], psdparam.ξ2[iSoil])
-					println(IntergranularMixing[iRpart])
-				end
+					ξ2 = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iSoil, iRpart]; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
 
+					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], psdparam.ξ1[iSoil], ξ2)
+				end
 
 				MultiPlots = Winston.Table(1,3)
 				
 				
 				Plot_∑Psd_Rpart = Winston.FramedPlot(aspect_ratio=1)
-				Winston.setattr(Plot_∑Psd_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
-				Winston.setattr(Plot_∑Psd_Rpart.y1, label="∑PSD") #, range=(∑Psd_Min, ∑Psd_Max))
-				∑Psd_Rpart_points = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], color="teal", kind="square", size=1.5)
-				∑Psd_Rpart_curve = Winston.Curve(Rpart[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], color="teal", linewidth=5) #TODO try to make it smooth 
-				∑Psd_Rpart = Winston.add(Plot_∑Psd_Rpart, ∑Psd_Rpart_points, ∑Psd_Rpart_curve)
-				MultiPlots[1,1] = Plot_∑Psd_Rpart
+					Winston.setattr(Plot_∑Psd_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
+					Winston.setattr(Plot_∑Psd_Rpart.y1, label="∑PSD") #, range=(∑Psd_Min, ∑Psd_Max))
+					
+					∑Psd_Rpart_points = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], color="teal", kind="square", size=1.5)
+					
+					∑Psd_Rpart_curve = Winston.Curve(Rpart[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], color="teal", linewidth=5) #TODO try to make it smooth 
+					
+					∑Psd_Rpart = Winston.add(Plot_∑Psd_Rpart, ∑Psd_Rpart_points, ∑Psd_Rpart_curve)
+					MultiPlots[1,1] = Plot_∑Psd_Rpart
 
 				Plot_Psd_Rpart = Winston.FramedPlot(aspect_ratio=1)
-				Winston.setattr(Plot_Psd_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
-				Winston.setattr(Plot_Psd_Rpart.y1, label="PSD", range=(0.0, 0.5))
-				Psd_Rpart_points = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], Psd[iSoil,1:N_Psd[iSoil]], color="cyan", kind="square", size=1.5)
-				Psd_Rpart_curve = Winston.Curve(Rpart[iSoil,1:N_Psd[iSoil]], Psd[iSoil,1:N_Psd[iSoil]], color="cyan", linewidth=5) #TODO try to make it smooth 
-				Psd_Rpart = Winston.add(Plot_Psd_Rpart, Psd_Rpart_points, Psd_Rpart_curve)
-				MultiPlots[1,2] = Plot_Psd_Rpart
+					Winston.setattr(Plot_Psd_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
+					Winston.setattr(Plot_Psd_Rpart.y1, label="PSD", range=(0.0, 0.5))
+					Psd_Rpart_points = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], Psd[iSoil,1:N_Psd[iSoil]], color="cyan", kind="square", size=1.5)
+					Psd_Rpart_curve = Winston.Curve(Rpart[iSoil,1:N_Psd[iSoil]], Psd[iSoil,1:N_Psd[iSoil]], color="cyan", linewidth=5) #TODO try to make it smooth 
+
+					Psd_Rpart = Winston.add(Plot_Psd_Rpart, Psd_Rpart_points, Psd_Rpart_curve)
+				
+					MultiPlots[1,2] = Plot_Psd_Rpart
+				
+				# Plot_NormMixing_Rpart = Winston.FramedPlot(aspect_ratio=1)
+				# 	Winston.setattr(Plot_NormMixing_Rpart.x1, label="R_{part} [mm]", range=(0.0005, 0.5), log=true)
+				# 	Winston.setattr(Plot_NormMixing_Rpart.y1, label="Normalised R_{part}^{-ξ(R_{Part})}", range=(0.0, 0.5))
+				# 	NormMixing_Rpart_line = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], IntergranularMixing[1:N_Psd[iSoil]], color="purple", kind="-", size=1.5)
+
+				# 	NormMixing_Rpart = Winston.add(Plot_NormMixing_Rpart, NormMixing_Rpart_line)
+
+				# 	MultiPlots[1,3] = Plot_NormMixing_Rpart
 
 				Plot_NormMixing_Rpart = Winston.FramedPlot(aspect_ratio=1)
-				Winston.setattr(Plot_Psd_Rpart.x1, label="R_{part} [mm]", range=(0.0005, 0.5), log=true)
-				Winston.setattr(Plot_Psd_Rpart.y1, label="Normalised R_{part}^{-ξ(R_{Part})}", range=(0.0, 0.5))
-				NormMixing_Rpart_line = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], IntergranularMixing[1:N_Psd[iSoil]], color="purple", kind="-", size=1.5)
-				NormMixing_Rpart = Winston.add(Plot_NormMixing_Rpart, NormMixing_Rpart_line)
-				MultiPlots[1,3] = Plot_NormMixing_Rpart
+					Winston.setattr(Plot_NormMixing_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
+					Winston.setattr(Plot_NormMixing_Rpart.y1, label="Intergranular")
+					
+					Psd_Rpart_curve = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], IntergranularMixing[1:N_Psd[iSoil]], color="cyan", linewidth=5) #TODO try to make it smooth 
 
-
-				# if option.Plot_IntergranularMixing 
-				# 	push!(Plot_CharacUnsat, Axis([
-				# 		Plots.Linear(Rpart, (Rpart .^ -ξ) ./ maximum(Rpart .^ -ξ), style="smooth, violet, very thick", mark="none"),
-				# 		], 
-				# 		style="width=8cm, height=8cm", xmin=0.0005, xmax=0.5, xlabel=L"$R_{part} \ [mm]$", xmode="log", ylabel=L"$Normalised \ R_{part}^{-\xi(R_{Part})} $")
-				# 	)
-				# end
-		
-
-
-
+					Psd_Rpart = Winston.add(Plot_NormMixing_Rpart,Psd_Rpart_curve)
 				
+					MultiPlots[1,3] = Plot_NormMixing_Rpart
+
+		
 				Path = path.Plots_IMP_model * "IMP_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"
 				Winston.savefig(MultiPlots, Path)
 
