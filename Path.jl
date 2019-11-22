@@ -42,5 +42,8 @@ module path
 		Plots_BestLab_SeIniRange 	= Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
 		Plots_Psd 					= Home * "//OUTPUT//Plots//Psd//" * Name
 		Plots_Psd_ThetaR			= Home * "//OUTPUT//Plots//Psd//ThetaR//" * Name * "_Plot_ThetaR.svg"
+		Plots_IMP_model				= Home * "//OUTPUT//Plots//Psd//IMP_results//" * Name 
+
+
 end  # module path
 # ............................................................

@@ -91,7 +91,7 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psdparam, N_Psd, θ_Rpart, Ψ_Rpart = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
+			psdparam, N_Psd, θ_Rpart, Ψ_Rpart, Psd = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
 		println("=== END  : PSD MODEL  === \n")
 	else
 		θ_Rpart = zeros(Float64, N_SoilSelect,1)
@@ -127,7 +127,7 @@ function START_TOOLBOX()
 		end
 
 		if option.Psd && option.psd.Plot_IMP_model
-			plot.PLOT_IMP_model(∑Psd, N_SoilSelect, hydro, psdparam)
+			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdparam) 
 		end
 		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.SeIni_Range	
 

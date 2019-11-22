@@ -55,7 +55,7 @@ module psd
      		error("  $(option.psd.OptimizePsd) not found ")
 		end # option.psd.OptimizePsd
 
-		return psdparam, N_Psd, θ_Rpart, Ψ_Rpart
+		return psdparam, N_Psd, θ_Rpart, Ψ_Rpart, Psd
 		  	
 	end # function START_PSD
 

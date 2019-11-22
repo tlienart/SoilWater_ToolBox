@@ -38,7 +38,7 @@ module option
             const KsOpt           = "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
 			# PLOTTING
-				const Plot_θΨ = true
+				const Plot_θΨ = false
 			
 			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
 				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
