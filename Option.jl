@@ -4,10 +4,12 @@
 module option
 	# MODELS RUN
         const Id_Select = true 	# <true>* Select Id from the data OR <false> use all the data
-        const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
+		
+		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
         const Psd       = true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
-        const Infilt    = false 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
+		
+		const Infilt    = false 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
      	
 	# DOWNLAOD PACKAGES
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
@@ -15,7 +17,6 @@ module option
 	# PLOTTING
 		const Plot = true # <true>* plot or <false> no plotting
 
-	
 			
 		# =============================================================
 		#		MODULE: hydro
@@ -37,7 +38,7 @@ module option
             const KsOpt           = "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
 			# PLOTTING
-				const Plot_θΨ = false
+				const Plot_θΨ = true
 			
 			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
 				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
@@ -58,16 +59,16 @@ module option
 			const Psd_2_θr    = "Opt" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl 
 			
 			# FITTING THE PSD FUNCTION TO A HYDRAULIC MODEL
-			const HydroParam  = false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
+			const HydroParam  = true # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
 				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 
 				const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
 
 				const KunsatΨ         = false 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
 
-				const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
+				const θsOpt           = "Known" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs OR <Known> all ready computed
 
-				const θrOpt           = "Psd"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Psd> uses α1 and α1 from parameters in Param.jl
+				const θrOpt           = "Known"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Psd> uses α1 and α1 from parameters in Param.jl OR <Known> all ready computed
 
 				const KsOpt           = "Data" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
@@ -77,7 +78,7 @@ module option
 			# PLOTTING
 				const Plot_Psd_θ_Ψ 	 = true # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
 				const Plot_θr 	   	 = true # plot θr data and model from Psd 
-				const Plot_IMP_model = true # plot IMP model results for publication
+				const Plot_IMP_model = false # plot IMP model results for publication
 						
 			if OptimizePsd == "Single" 
 				const SubclayOpt = false # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay

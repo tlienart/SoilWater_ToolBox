@@ -87,11 +87,11 @@ module plot
 		end  # function: HYDROPARAM
 
 
-		function PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)	
+		function PLOT_θr(∑Psd, N_SoilSelect, hydro, psdParam)	
 			# Sorting ascending order with clay fraction
 			Array = zeros(Float64, 3, length(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]))
 			Array[1,:] =∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size] # Clay fraction
-			Array[2,:] = psdparam.θr_Psd[1:N_SoilSelect]
+			Array[2,:] = psdParam.θr_Psd[1:N_SoilSelect]
 			Array[3,:] = hydro.θr[1:N_SoilSelect]
 			Array = sortslices(Array, dims=2)
 			Clay = Array[1,:] # Clay fraction
@@ -138,7 +138,7 @@ module plot
 
 
 
-		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdparam)
+		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdParam)
 			
 					
 			for iSoil = 1:N_SoilSelect
@@ -153,7 +153,7 @@ module plot
 				for iRpart = 1:N_Psd[iSoil]
 					ξ2 = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iSoil, iRpart]; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
 
-					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], psdparam.ξ1[iSoil], ξ2)
+					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], psdParam.ξ1[iSoil], ξ2)
 				end
 
 				MultiPlots = Winston.Table(1,3)

@@ -8,10 +8,11 @@ module hydroParam
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_HYDROPARAM()
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function START_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; optionHydro=option.hydro)
+		function START_HYDROPARAM(;N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ=[0], Ψ_KΨ=[0], N_KΨ=1, hydro, optionHydro)
 
 			# INITIALIZATION
-				opt, θr_Max, θs_Min, θs_Max, Ks_Min = hydroInitialize.HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, optionHydro)
+				opt, θr_Max, θs_Min, θs_Max, Ks_Min, hydro = hydroInitialize.HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro)
+
 			
 			# OPTIMIZATION HYDRAULIC PARAMETERS
 				if optionHydro.HydroModel == "Kosugi" # <>=<>=<>=<>=<>
@@ -95,6 +96,17 @@ module hydroParam
 							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 							hydro.θr[iSoil] 	= BlackBoxOptim.best_candidate(Optimization)[3]
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[4]
+							hydro.θsMat[iSoil] = hydro.θs[iSoil]
+							hydro.ΨmMac[iSoil] = hydro.Ψm[iSoil]
+							hydro.σMac[iSoil]  = hydro.σ[iSoil]
+
+						elseif optionHydro.UnimodalBimodal=="Unimodal" && !(opt.Opt_θs) && !(opt.Opt_θr) && !(opt.Opt_Ks)  # <>=<>=<>=<>=<>
+							SearchRange =[(param.hydro.kg.σ_Min, param.hydro.kg.σ_Max), (log10(param.hydro.kg.Ψm_Min), log10(param.hydro.kg.Ψm_Max))]
+
+							Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro; σ=P[1], Ψm=10.0^P[2])[1]; SearchRange=SearchRange, NumDimensions=opt.N_ParamOpt, TraceMode=:silent)
+		
+							hydro.σ[iSoil] 		= BlackBoxOptim.best_candidate(Optimization)[1]
+							hydro.Ψm[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 							hydro.θsMat[iSoil] = hydro.θs[iSoil]
 							hydro.ΨmMac[iSoil] = hydro.Ψm[iSoil]
 							hydro.σMac[iSoil]  = hydro.σ[iSoil]

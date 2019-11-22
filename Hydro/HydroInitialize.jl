@@ -16,7 +16,7 @@ module hydroInitialize
         N_ParamOpt :: Int
 	end # struct 
 
-	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, optionHydro)
+	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro)
 
 		# INITIALIZING
 			θ_Max 		=  Array{Float64}(undef, (N_SoilSelect))
@@ -57,6 +57,8 @@ module hydroInitialize
 					elseif optionHydro.θrOpt == "Opt" # <>=<>=<>=<>=<>
 						θr_Max[iSoil] = max( min(θ_Min[iSoil]-0.005, param.hydro.θr_Max), 0.0 ) # Maximum value of θr
 						opt.Opt_θr = true
+					elseif optionHydro.θrOpt == "Known" # <>=<>=<>=<>=<>
+						opt.Opt_θr = false
 					end # optionHydro.θrOpt == "Psd"
 
 
@@ -72,6 +74,8 @@ module hydroInitialize
 						θs_Min[iSoil] = θ_θΨ[iSoil, 2] + 0.005
 						θs_Max[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_θs_Max, θ_θΨ[iSoil, 2] + 0.005)
 						opt.Opt_θs = true
+					elseif optionHydro.θsOpt == "Known" # <>=<>=<>=<>=<>
+						opt.Opt_θs = false
 					end # optionHydro.θsOpt
 
 
@@ -82,6 +86,8 @@ module hydroInitialize
 					elseif optionHydro.KsOpt == "Opt" && optionHydro.KunsatΨ
 						Ks_Min[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = true
+					else !(optionHydro.KunsatΨ)
+						opt.Opt_Ks = false
 					end # optionHydro.KunsatΨ
 			end  # for iSoil=1:N_SoilSelect
 
@@ -102,7 +108,7 @@ module hydroInitialize
 		end 
 		println("    ~ Optimizing  $(opt.N_ParamOpt)  hydraulic parameters  ~")  
 		
-		return opt, θr_Max, θs_Min, θs_Max, Ks_Min
+		return opt, θr_Max, θs_Min, θs_Max, Ks_Min, hydro
 	end  # function: HYDRO_INITIALIZE
 	
 end  # module hydroInitialize

@@ -59,10 +59,6 @@ function START_TOOLBOX()
 
 		if option.hydro.KunsatΨ
 			K_KΨ, Ψ_KΨ, N_KΨ = read.KUNSATΨ(Id_Select, N_SoilSelect)
-		else
-			K_KΨ = zeros(Float64, N_SoilSelect,1)
-			Ψ_KΨ = zeros(Float64, N_SoilSelect,1)
-			N_KΨ = zeros(Float64, N_SoilSelect,1)
 		end
 
 		if option.Psd
@@ -84,7 +80,13 @@ function START_TOOLBOX()
 		println("=== START: DERIVING HYDRO PARAMETERS  ===")
 			# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
 			hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
-			hydro = hydroParam.START_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; optionHydro=option.hydro)
+
+			if option.hydro.KunsatΨ
+				# Structure of hydro
+				hydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd,  θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, optionHydro=option.hydro)
+			else
+				hydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd,  θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, optionHydro=option.hydro)
+			end
 		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
 	else
 		hydro = []
@@ -93,7 +95,15 @@ function START_TOOLBOX()
 
 	if option.Psd
 		println("=== START: PSD MODEL  ===")
-			psdparam, N_Psd, θ_Rpart, Ψ_Rpart, Psd = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro)
+			# Structure of psdHydro
+			psdHydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+
+			psdParam, N_Psd, θ_Rpart, Ψ_Rpart, Psd, psdHydro = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro, psdHydro)
+
+		if  option.psd.HydroParam
+			psdHydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_Rpart, Ψ_θΨ=Ψ_Rpart, N_θΨ=N_Psd, hydro=psdHydro, optionHydro=option.psd) # TODO fit  the Kosugi hydraulic parameters
+		end
+
 		println("=== END  : PSD MODEL  === \n")
 	else
 		θ_Rpart = zeros(Float64, N_SoilSelect,1)
@@ -112,7 +122,11 @@ function START_TOOLBOX()
 			table.hydroParam.θΨK(Id_Select[1:N_SoilSelect], N_SoilSelect, hydro)
 		end
 		if option.Psd
-			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, psdparam)
+			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, psdParam)
+
+			if option.psd.HydroParam
+				table.psd.θΨK_PSD(Id_Select, N_SoilSelect, psdHydro)
+			end
 		end  # if: name
 	println("=== END  : WRITING TABLE  === \n")
 
@@ -125,11 +139,11 @@ function START_TOOLBOX()
 		end # option.Plot_WaterRetentionCurve
 
 		if option.Psd && option.psd.Plot_θr
-			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdparam)
+			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, psdParam)
 		end
 
 		if option.Psd && option.psd.Plot_IMP_model
-			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdparam) 
+			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdParam) 
 		end
 		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.SeIni_Range	
 
