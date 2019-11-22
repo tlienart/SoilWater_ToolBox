@@ -82,7 +82,9 @@ function START_TOOLBOX()
 
 	if option.θΨ ≠ "No"
 		println("=== START: DERIVING HYDRO PARAMETERS  ===")
-			hydro = hydroParam.START_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
+			# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
+			hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+			hydro = hydroParam.START_HYDROPARAM(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; optionHydro=option.hydro)
 		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
 	else
 		hydro = []

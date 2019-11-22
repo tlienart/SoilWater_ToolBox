@@ -2,7 +2,7 @@ module ofHydro
 	import ..option, ...stats, ..wrc, ..kunsat
 	export  WRC_KUNSAT
 	  
-	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro; Wof = 0.5) 
+	function OF_WRC_KUNSAT(iSoil, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro; Wof = 0.5) 
 
 		 # === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iSoil])
@@ -11,7 +11,6 @@ module ofHydro
 			# Not to include θs in observations
 				iθ_θΨ_Start = 2
 
-			
 			for iΨ = iθ_θΨ_Start:N_θΨ[iSoil]
 				θ_Obs[iΨ] = θ_θΨ[iSoil,iΨ]
 				θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_θΨ[iSoil,iΨ], iSoil, hydro)
@@ -22,7 +21,7 @@ module ofHydro
 
 		 # === OF Kunsat ====
 		 	Of_Kunsat = 0.0
-			if option.hydro.KunsatΨ
+			if optionHydro.KunsatΨ
 				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iSoil])
 				for iΨ = 1:N_KΨ[iSoil]
@@ -36,7 +35,7 @@ module ofHydro
 				Of = Wof * Of_θΨ + (1.0 - Wof) * Of_Kunsat
 			else
 				Of = Of_θΨ
-			end #  option.hydro.KunsatΨ
+			end #  optionHydro.KunsatΨ
 
 		 return Of, Of_θΨ, Of_Kunsat
 

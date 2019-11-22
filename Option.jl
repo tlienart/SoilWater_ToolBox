@@ -8,8 +8,7 @@ module option
       
         const Psd       = true 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Psd OR <false>
         const Infilt    = false 	# <true>* Derive θ(ψ) and/OR hydraulic parameters from Infiltration OR <false>
-     
-			
+     	
 	# DOWNLAOD PACKAGES
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
@@ -56,10 +55,23 @@ module option
 		module psd
 			const Model       = "IMP" # <IMP> Intergranular Mixing Model OR <Chang2019Model>
 			const OptimizePsd = "OptAllSoil" # <OptSingleSoil> or <OptAllSoil> or <Run>
-			const Psd_2_θr    = "Opt" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl  
-			const HydroParam  = false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
+			const Psd_2_θr    = "Opt" # <Opt> optimises parameters α1 and α1; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl 
 			
-			# For OptimizePsd = "Single"
+			# FITTING THE PSD FUNCTION TO A HYDRAULIC MODEL
+			const HydroParam  = false # <true> Optimize the hydraulic parameters from θ(ψ)psd OR <false>
+				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
+
+				const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
+
+				const KunsatΨ         = false 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
+
+				const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
+
+				const θrOpt           = "Psd"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Psd> uses α1 and α1 from parameters in Param.jl
+
+				const KsOpt           = "Data" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
+
+			# FOR OPTIMIZEPSD = "Single"
 				const ∑Psd_2_ξ1 = true  # optimize ξ1
 		
 			# PLOTTING

@@ -16,7 +16,7 @@ module hydroInitialize
         N_ParamOpt :: Int
 	end # struct 
 
-	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ)
+	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, optionHydro)
 
 		# INITIALIZING
 			θ_Max 		=  Array{Float64}(undef, (N_SoilSelect))
@@ -34,66 +34,63 @@ module hydroInitialize
 
 			opt = OPTIMIZE(Opt_θs, Opt_θr, Opt_Ks, N_ParamOpt)
 
-		# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
-			hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
-
 		# LOOPING FOR ERVERY SOIL
 			for iSoil=1:N_SoilSelect
 				# LIMITS
 					θ_Min[iSoil] = minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Smallest measure θ
 					θ_Max[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Greatest measure θ
 
-					if option.hydro.KunsatΨ
+					if optionHydro.KunsatΨ
 						K_KΨ_Max[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]]) 	# Greatest measure of Kunsat
 					end
 
 				# DERIVING θr FROM DATA IF REQUESTED
 					# Derive θr frpm PSD
-					if (option.hydro.θrOpt == "Psd") && (option.Psd) 
+					if (optionHydro.θrOpt == "Psd") && (option.Psd) 
 						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd), θ_Min[iSoil]-0.005 )
 						opt.Opt_θr = false # No need to optimize θr
 					# Keep θr = Cst
-					elseif option.hydro.θrOpt == "Cst" # <>=<>=<>=<>=<>
+					elseif optionHydro.θrOpt == "Cst" # <>=<>=<>=<>=<>
 						hydro.θr[iSoil] = param.hydro.θr
 						opt.Opt_θr = false
 					# If optimised than maximum value of θr
-					elseif option.hydro.θrOpt == "Opt" # <>=<>=<>=<>=<>
+					elseif optionHydro.θrOpt == "Opt" # <>=<>=<>=<>=<>
 						θr_Max[iSoil] = max( min(θ_Min[iSoil]-0.005, param.hydro.θr_Max), 0.0 ) # Maximum value of θr
 						opt.Opt_θr = true
-					end # option.hydro.θrOpt == "Psd"
+					end # optionHydro.θrOpt == "Psd"
 
 
 				# DERIVING θs FROM DATA IF REQUESTED
-					if option.hydro.θsOpt == "Data" # TODO need to derive from bulk density 
+					if optionHydro.θsOpt == "Data" # TODO need to derive from bulk density 
 						hydro.θs[iSoil] = θ_Max[iSoil]
 						opt.Opt_θs = false # No need to optimize θs
-					elseif option.hydro.θsOpt == "Φ"
+					elseif optionHydro.θsOpt == "Φ"
 						hydro.θs[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_θΨ[iSoil, 2] + 0.005) # So that monotically increasing
 						opt.Opt_θs = false
 
-					elseif option.hydro.θsOpt == "Opt"
+					elseif optionHydro.θsOpt == "Opt"
 						θs_Min[iSoil] = θ_θΨ[iSoil, 2] + 0.005
 						θs_Max[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_θs_Max, θ_θΨ[iSoil, 2] + 0.005)
 						opt.Opt_θs = true
-					end # option.hydro.θsOpt
+					end # optionHydro.θsOpt
 
 
 				# DERIVING Ks FROM DATA IF REQUESTED
-					if option.hydro.KsOpt == "Data" && option.hydro.KunsatΨ
+					if optionHydro.KsOpt == "Data" && optionHydro.KunsatΨ
 						hydro.Ks[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = false
-					elseif option.hydro.KsOpt == "Opt" && option.hydro.KunsatΨ
+					elseif optionHydro.KsOpt == "Opt" && optionHydro.KunsatΨ
 						Ks_Min[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = true
-					end # option.hydro.KunsatΨ
+					end # optionHydro.KunsatΨ
 			end  # for iSoil=1:N_SoilSelect
 
 	# DETERMENING THE NUMBER OF PARAMETERS TO BE OPTIMIZED
-		if option.hydro.UnimodalBimodal == "Unimodal"
+		if optionHydro.UnimodalBimodal == "Unimodal"
 			opt.N_ParamOpt = 5 	# Number of parameters to be optimized (will change)
-		elseif option.hydro.UnimodalBimodal == "Bimodal"
+		elseif optionHydro.UnimodalBimodal == "Bimodal"
 			opt.N_ParamOpt = 8 	# Number of parameters to be optimized (will change)
-		end  # if: option.hydro.UnimodalBimodal
+		end  # if: optionHydro.UnimodalBimodal
 		if !opt.Opt_θr
 			opt.N_ParamOpt -= 1
 		end
@@ -105,7 +102,7 @@ module hydroInitialize
 		end 
 		println("    ~ Optimizing  $(opt.N_ParamOpt)  hydraulic parameters  ~")  
 		
-		return opt, θr_Max, θs_Min, θs_Max, Ks_Min, hydro
+		return opt, θr_Max, θs_Min, θs_Max, Ks_Min
 	end  # function: HYDRO_INITIALIZE
 	
 end  # module hydroInitialize
