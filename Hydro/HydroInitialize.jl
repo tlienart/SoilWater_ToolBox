@@ -102,8 +102,6 @@ module hydroInitialize
 					end # optionHydro.KunsatΨ
 			end  # for iSoil=1:N_SoilSelect
 
-			println("$(opt.Opt_θr) $(opt.Opt_θs) $(opt.Opt_Ks)")
-
 	# DETERMENING THE NUMBER OF PARAMETERS TO BE OPTIMIZED
 		if optionHydro.UnimodalBimodal == "Unimodal"
 			opt.N_ParamOpt = 5 	# Number of parameters to be optimized (will change)
