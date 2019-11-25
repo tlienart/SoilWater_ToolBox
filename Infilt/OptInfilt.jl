@@ -14,7 +14,7 @@ module optInfilt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPT_INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OPT_INFILTRATION_BEST(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt; N_Point_Max=500)
+		function OPT_INFILTRATION_BEST(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam; N_Point_Max=500)
 
 			 ∑Infilt_Best_HydroObs_SeIniRange = Array{Float64}(undef, (N_SoilSelect, N_Point_Max))
 
@@ -26,7 +26,7 @@ module optInfilt
 			for iSoil=1:N_SoilSelect
 
 				# Deriving θs from measurements
-				hydroBest.θs[iSoil] = infilt.θs[iSoil]
+				hydroBest.θs[iSoil] = infiltParam.θs[iSoil]
 
 				# Deriving θr from Psd if available
 				if (option.hydro.θrOpt == "Psd") && (option.Psd)

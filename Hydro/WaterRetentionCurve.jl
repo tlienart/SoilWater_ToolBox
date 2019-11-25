@@ -3,7 +3,7 @@
 # =============================================================
 module wrc
   	import ..option
-	export Ψ_2_θDual, ∂Ψ∂θ, Ψ_2_SeDual, θ_2_ΨDual, θ_2_Se, Se_2_θ
+	export Ψ_2_θDual, ∂θ∂Ψ, Ψ_2_SeDual, θ_2_ΨDual, θ_2_Se, Se_2_θ
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_2_θDual
@@ -60,15 +60,15 @@ module wrc
 
 		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION :  ∂Ψ∂θ
+	#		FUNCTION :  ∂θ∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂Ψ∂θ(Ψ, iSoil::Int, hydro)	
+		function ∂θ∂Ψ(Ψ, iSoil::Int, hydro)	
 			if option.hydro.HydroModel == "Kosugi"
-				return ∂Ψ∂θ = wrc.kg. ∂Ψ∂θ(Ψ, iSoil::Int, hydro)
+				return ∂θ∂Ψ = wrc.kg. ∂θ∂Ψ(Ψ, iSoil::Int, hydro)
 			elseif option.hydro.HydroModel == "Vangenuchten"
-				return ∂Ψ∂θ = wrc.vg. ∂Ψ∂θ(Ψ, iSoil::Int, hydro)
+				return ∂θ∂Ψ = wrc.vg. ∂θ∂Ψ(Ψ, iSoil::Int, hydro)
 			end
-		end # function ∂Ψ∂θ
+		end # function ∂θ∂Ψ
 
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -81,7 +81,7 @@ module wrc
 		import SpecialFunctions: erfc, erfcinv
 		import Optim
 		import ..wrc
-		export Ψ_2_θDual, ∂Ψ∂θ, Ψ_2_SeDual, θ_2_ΨDual
+		export Ψ_2_θDual, ∂θ∂Ψ, Ψ_2_SeDual, θ_2_ΨDual
 	
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_θDual
@@ -127,9 +127,9 @@ module wrc
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : ∂Ψ∂θ
+		#		FUNCTION : ∂θ∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Ψ∂θ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψm=hydro.Ψm[iSoil], σ=hydro.σ[iSoil], θsMat=hydro.θsMat[iSoil], ΨmMac=hydro.ΨmMac[iSoil], σMac=hydro.σMac[iSoil]) 
+			function ∂θ∂Ψ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψm=hydro.Ψm[iSoil], σ=hydro.σ[iSoil], θsMat=hydro.θsMat[iSoil], ΨmMac=hydro.ΨmMac[iSoil], σMac=hydro.σMac[iSoil]) 
 
 				# If Ψ is positive than ∂θ∂Ψ_Mat should be positive
 				∂θ∂Ψ_Mat = (θsMat - θr) * exp( -((log(Ψ / Ψm)) ^ 2.0) / (2.0 * σ ^ 2.0)) / (Ψ * σ * sqrt(π * 2.0))
@@ -137,7 +137,7 @@ module wrc
 				∂θ∂Ψ_Mac = (θs - θsMat) * exp( -((log(Ψ / ΨmMac)) ^ 2.0) / (2.0 * σMac^2.0)) / (Ψ * σMac * sqrt(π * 2.0))
 
 				return ∂θ∂Ψ_Mat + ∂θ∂Ψ_Mac
-			end # function ∂Ψ∂θ
+			end # function ∂θ∂Ψ
 	 
 	end # module kg # ...............................................
  
@@ -148,7 +148,7 @@ module wrc
 	# ===============================================================================================
 	module vg
 		import ..wrc
-		export Ψ_2_θ, ∂Ψ∂θ
+		export Ψ_2_θ, ∂θ∂Ψ
 	
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		vg FUNCTION : Ψ_2_θ
@@ -183,12 +183,12 @@ module wrc
 
 		
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		vg FUNCTION : ∂Ψ∂θ
+		#		vg FUNCTION : ∂θ∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Ψ∂θ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) 
+			function ∂θ∂Ψ(Ψ, iSoil, hydro; θs=hydro.θs[iSoil], θr=hydro.θr[iSoil], Ψvg=hydro.Ψvg[iSoil], N=hydro.N[iSoil], Km=1.) 
 				M = 1.0 - Km/N # van Genuchten
 				return M * (θs-θr) / ( Ψvg*(1-M)) * ((Ψ/Ψvg) .^ (N * M)) .* (1.0 + (Ψ/Ψvg) .^ N) .^ (-M-1.)
-			end #  function ∂Ψ∂θ
+			end #  function ∂θ∂Ψ
 
 	end # module vg # ...............................................
 

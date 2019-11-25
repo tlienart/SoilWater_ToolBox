@@ -24,20 +24,22 @@ using Suppressor
 	include("Hydro\\ObjectiveFunction_Hydro.jl")
 	include("Hydro\\START_HydroParam.jl")
 	include("Hydro\\HydroRelation.jl")
-	if option.Infilt
-		include("Infilt\\Diffusivity.jl")
-		include("Infilt\\Sorptivity.jl")
-		include("Infilt\\Best.jl")
-		include("Infilt\\OptInfilt.jl")
-		include("Infilt\\START_Infilt.jl")
-	end
-
-	include("Psd\\PsdStruct.jl")
-	include("Psd\\PsdInitialize.jl")
+		if option.Infilt
+			include("Infilt\\Sorptivity.jl")
+			include("Infilt\\Best.jl")
+			include("Infilt\\OptInfilt.jl")
+			include("Infilt\\START_Infilt.jl")
+		end
+		if option.Psd
+			include("Psd\\PsdStruct.jl")
+			include("Psd\\PsdInitialize.jl")
+		end
 	include("Psd\\PsdThetar.jl")
-	include("Psd\\PsdFunc.jl")
-	include("Psd\\PsdOpt.jl")
-	include("Psd\\START_PSD.jl")
+		if option.Psd
+			include("Psd\\PsdFunc.jl")
+			include("Psd\\PsdOpt.jl")
+			include("Psd\\START_PSD.jl")
+		end
 	include("Table.jl")
 	include("Plot.jl")
 end
@@ -68,7 +70,7 @@ function START_TOOLBOX()
 		end
 		
 		if option.Infilt
-			Tinfilt, ∑Infilt, N_Infilt, infilt  = read.INFILTRATION(Id_Select, N_SoilSelect)
+			Tinfilt, ∑Infilt, N_Infilt, infiltParam  = read.INFILTRATION(Id_Select, N_SoilSelect)
 		end
 
 		# Reinforcing the maximum of iSoil to simulate
@@ -113,7 +115,8 @@ function START_TOOLBOX()
 	
 	if option.Infilt
 		println("=== START: INFILTRATION  ===")
-			∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs = mainInfilt.START_INFILT(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infilt, hydro)
+		# ∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs =
+		 infilt.START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -145,7 +148,7 @@ function START_TOOLBOX()
 		if option.Psd && option.psd.Plot_IMP_model
 			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdParam) 
 		end
-		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.SeIni_Range	
+		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.Plot_SeIni_Range	
 
 		# 	# plot.BEST_LAB_SEINIRANGE(Id_Select, ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
 		# end # option.Plot_BestLab
@@ -161,7 +164,5 @@ end  # function: START_TOOLBOX
 
 
 println("\n\n===== START SOIL WATER TOOLBOX ==== \n")
-	
-		@time START_TOOLBOX()
-
+	@time START_TOOLBOX()
 println("==== END SOIL WATER TOOLBOX ===")

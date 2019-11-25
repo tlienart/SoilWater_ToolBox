@@ -7,9 +7,9 @@ module quasiExact
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILT3D_2_INFILT1D
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILT3D_2_INFILT1D(iSoil, Infilt_3D, Sorptivity, Tinfilt, infilt, hydro)
+		function INFILT3D_2_INFILT1D(iSoil, Infilt_3D, Sorptivity, Tinfilt, infiltParam, hydro)
 			Δθ = hydro.θs[iSoil] - hydro.θr[iSoil]
-			return max(Infilt_3D - ( Tinfilt * infilt.γ[iSoil] * Sorptivity ^ 2.0) / (infilt.RingRadius[iSoil] * Δθ), eps())
+			return max(Infilt_3D - ( Tinfilt * infiltParam.γ[iSoil] * Sorptivity ^ 2.0) / (infiltParam.RingRadius[iSoil] * Δθ), eps())
 		end  # function: INFILT3D_2_INFILT1D
 
 

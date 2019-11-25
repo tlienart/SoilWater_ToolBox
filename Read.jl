@@ -69,9 +69,9 @@ module read
 			γ , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Lambda[-]", Id_True, N_SoilSelect, N_Point_Max=1)
 			β , ~ 			=  READ_ROW_SELECT(path.Infiltration_Param, "Beta[-]", Id_True, N_SoilSelect, N_Point_Max=1)
 
-			infilt = INFILT(RingRadius, θ_Ini, θs, γ, β)
+			infiltParam = INFILT(RingRadius, θ_Ini, θs, γ, β)
 
-			return Tinfilt, ∑Infilt, N_Infilt, infilt
+			return Tinfilt, ∑Infilt, N_Infilt, infiltParam
 		end  # function: INFILTRATION
 
 
