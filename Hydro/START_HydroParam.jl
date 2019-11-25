@@ -193,7 +193,7 @@ module hydroParam
 				for iSoil=1:N_SoilSelect
 
 					# it is to be noted that option Opt_Ks is not needed since it is regulated by opt.N_ParamOpt
-					if optionHydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr  # <>=<>=<>=<>=<>
+					if optionHydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && opt.Opt_θr && opt.Opt_Ks # <>=<>=<>=<>=<>
 
 							SearchRange =[(param.hydro.vg.N_Min, param.hydro.vg.N_Max), (log10(param.hydro.vg.Ψvg_Min), log10(param.hydro.vg.Ψvg_Max)), (0.0, θr_Max[iSoil]), (θs_Min[iSoil], θs_Max[iSoil]), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
 
@@ -206,7 +206,7 @@ module hydroParam
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[5]
 
 
-						elseif optionHydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr  # <>=<>=<>=<>=<>
+						elseif optionHydro.UnimodalBimodal=="Unimodal" && opt.Opt_θs && !opt.Opt_θr  && opt.Opt_Ks  # <>=<>=<>=<>=<>
 
 							SearchRange =[(param.hydro.vg.N_Min, param.hydro.vg.N_Max), (log10(param.hydro.vg.Ψvg_Min), log10(param.hydro.vg.Ψvg_Max)), (θs_Min[iSoil], θs_Max[iSoil]), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
 
@@ -218,7 +218,7 @@ module hydroParam
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[4]
 
 
-						elseif optionHydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr  # test <>=<>=<>=<>=<>
+						elseif optionHydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && opt.Opt_θr  && opt.Opt_Ks  # test <>=<>=<>=<>=<>
 
 							SearchRange =[(param.hydro.vg.N_Min, param.hydro.vg.N_Max), (log10(param.hydro.vg.Ψvg_Min), log10(param.hydro.vg.Ψvg_Max)), (0.0, θr_Max[iSoil]), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
 
@@ -230,7 +230,7 @@ module hydroParam
 							hydro.Ks[iSoil] 	= 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[4]
 
 
-						elseif optionHydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr  # <>=<>=<>=<>=<>
+						elseif optionHydro.UnimodalBimodal=="Unimodal" && !opt.Opt_θs && !opt.Opt_θr && opt.Opt_Ks # <>=<>=<>=<>=<>
 
 							SearchRange =[(param.hydro.vg.N_Min, param.hydro.vg.N_Max), (log10(param.hydro.vg.Ψvg_Min), log10(param.hydro.vg.Ψvg_Max)), (log10(Ks_Min[iSoil]), log10(param.hydro.Ks_Max))]
 

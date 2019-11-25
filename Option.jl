@@ -7,15 +7,15 @@ module option
 		
 		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
-        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
+        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
-		const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
+		const Infilt    = false # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
 	# DOWNLAOD PACKAGES
 		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = false # <true>* plot or <false> no plotting
+		const Plot = true # <true>* plot or <false> no plotting
 
 			
 		# =============================================================
@@ -31,7 +31,7 @@ module option
 
             const KunsatΨ         = true 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
 
-            const θsOpt           = "Opt" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
+            const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
 
             const θrOpt           = "Opt"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl
 
@@ -40,11 +40,11 @@ module option
 			# PLOTTING
 				const Plot_θΨ = true
 			
-			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
-				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
-				println("AUTO CORRECT: option.hydro.θsOpt = Data \n")
-				θsOpt = "Data"
-			end 
+			# if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
+			# 	println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
+			# 	println("AUTO CORRECT: option.hydro.θsOpt = Data \n")
+			# 	θsOpt = "Data"
+			# end 
 		end  # module hydro
 		# ............................................................
 
@@ -68,11 +68,11 @@ module option
 
 					const KunsatΨ         = false 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
 
-					const θsOpt           = "Known" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs OR <Known> all ready computed
+					const θsOpt           = "Known" # <Known>  Not to change
 
-					const θrOpt           = "Known"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl OR <Known> all ready computed
+					const θrOpt           = "Known" #  <Known>  Not to change
 
-					const KsOpt           = "Data" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
+					const KsOpt           = "Known" # <Known>  Not to change
 
 				# FOR OPTIMIZEPSD = "Single"
 					const ∑Psd_2_ξ1 = true  # optimize ξ1

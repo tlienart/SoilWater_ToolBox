@@ -10,7 +10,7 @@ module sorptivity
 	#		FUNCTION : SORPTIVITY
 			# https://juliamath.github.io/QuadGK.jl/latest/
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY(θ_Ini, ∂θ∂Ψ_Max, iSoil, hydro; Rtol=10^-6.0)
+		function SORPTIVITY(θ_Ini, ∂θ∂Ψ_Max, iSoil, hydro; Rtol=10^-4.0)
 
 			function SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro)
 

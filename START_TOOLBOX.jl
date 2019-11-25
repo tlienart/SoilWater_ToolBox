@@ -103,7 +103,11 @@ function START_TOOLBOX()
 			psdParam, N_Psd, θ_Rpart, Ψ_Rpart, Psd, psdHydro = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro, psdHydro)
 
 		if  option.psd.HydroParam
-			psdHydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_Rpart, Ψ_θΨ=Ψ_Rpart, N_θΨ=N_Psd, hydro=psdHydro, optionHydro=option.psd) # TODO fit  the Kosugi hydraulic parameters
+			psdHydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_Rpart, Ψ_θΨ=Ψ_Rpart, N_θΨ=N_Psd, hydro=psdHydro, optionHydro=option.psd)
+		end
+
+		for iSoil=1:N_SoilSelect
+			println("$iSoil, $(psdHydro.θs[iSoil]) $(hydro.θs[iSoil])")
 		end
 
 		println("=== END  : PSD MODEL  === \n")

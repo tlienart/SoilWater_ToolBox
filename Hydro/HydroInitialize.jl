@@ -45,20 +45,22 @@ module hydroInitialize
 					end
 
 				# DERIVING θr FROM DATA IF REQUESTED
-					# Derive θr frpm PSD
-					if (optionHydro.θrOpt == "Psd") && (option.Psd) 
+					
+					if (optionHydro.θrOpt == "Psd") && (option.Psd) # Derive θr frpm PSD
 						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd), θ_Min[iSoil]-0.005 )
 						opt.Opt_θr = false # No need to optimize θr
-					# Keep θr = Cst
-					elseif optionHydro.θrOpt == "Cst" # <>=<>=<>=<>=<>
+				
+					elseif optionHydro.θrOpt == "Cst" # Keep θr = Cst<>=<>=<>=<>=<>
 						hydro.θr[iSoil] = param.hydro.θr
 						opt.Opt_θr = false
-					# If optimised than maximum value of θr
+			
 					elseif optionHydro.θrOpt == "Opt" # <>=<>=<>=<>=<>
 						θr_Max[iSoil] = max( min(θ_Min[iSoil]-0.005, param.hydro.θr_Max), 0.0 ) # Maximum value of θr
 						opt.Opt_θr = true
+
 					elseif optionHydro.θrOpt == "Known" # <>=<>=<>=<>=<>
 						opt.Opt_θr = false
+
 					end # optionHydro.θrOpt == "Psd"
 
 
@@ -66,30 +68,41 @@ module hydroInitialize
 					if optionHydro.θsOpt == "Data" # TODO need to derive from bulk density 
 						hydro.θs[iSoil] = θ_Max[iSoil]
 						opt.Opt_θs = false # No need to optimize θs
-					elseif optionHydro.θsOpt == "Φ"
+					
+					elseif optionHydro.θsOpt == "Φ" # <>=<>=<>=<>=<>
 						hydro.θs[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_θΨ[iSoil, 2] + 0.005) # So that monotically increasing
 						opt.Opt_θs = false
 
-					elseif optionHydro.θsOpt == "Opt"
+					elseif optionHydro.θsOpt == "Opt" # <>=<>=<>=<>=<>
 						θs_Min[iSoil] = θ_θΨ[iSoil, 2] + 0.005
 						θs_Max[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_θs_Max, θ_θΨ[iSoil, 2] + 0.005)
 						opt.Opt_θs = true
+
 					elseif optionHydro.θsOpt == "Known" # <>=<>=<>=<>=<>
 						opt.Opt_θs = false
+
 					end # optionHydro.θsOpt
 
 
 				# DERIVING Ks FROM DATA IF REQUESTED
-					if optionHydro.KsOpt == "Data" && optionHydro.KunsatΨ
+					if !(optionHydro.KunsatΨ)
+						opt.Opt_Ks = false
+
+					elseif optionHydro.KsOpt == "Data" && optionHydro.KunsatΨ
 						hydro.Ks[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = false
-					elseif optionHydro.KsOpt == "Opt" && optionHydro.KunsatΨ
+
+					elseif optionHydro.KsOpt == "Opt" && optionHydro.KunsatΨ  # <>=<>=<>=<>=<>
 						Ks_Min[iSoil] = K_KΨ_Max[iSoil]
 						opt.Opt_Ks = true
-					else !(optionHydro.KunsatΨ)
+
+					elseif optionHydro.KsOpt == "Known" # <>=<>=<>=<>=<>
 						opt.Opt_Ks = false
+
 					end # optionHydro.KunsatΨ
 			end  # for iSoil=1:N_SoilSelect
+
+			println("$(opt.Opt_θr) $(opt.Opt_θs) $(opt.Opt_Ks)")
 
 	# DETERMENING THE NUMBER OF PARAMETERS TO BE OPTIMIZED
 		if optionHydro.UnimodalBimodal == "Unimodal"
