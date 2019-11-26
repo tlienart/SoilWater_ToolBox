@@ -24,9 +24,11 @@ using Suppressor
 	include("Hydro\\ObjectiveFunction_Hydro.jl")
 	include("Hydro\\START_HydroParam.jl")
 	include("Hydro\\HydroRelation.jl")
+	include("Psd\\PsdThetar.jl")
 		if option.Infilt
+			include("Infilt\\InfiltInitialize.jl")
 			include("Infilt\\Sorptivity.jl")
-			include("Infilt\\Best.jl")
+			include("Infilt\\Best_Univ.jl")
 			include("Infilt\\OptInfilt.jl")
 			include("Infilt\\START_Infilt.jl")
 		end
@@ -34,7 +36,6 @@ using Suppressor
 			include("Psd\\PsdStruct.jl")
 			include("Psd\\PsdInitialize.jl")
 		end
-	include("Psd\\PsdThetar.jl")
 		if option.Psd
 			include("Psd\\PsdFunc.jl")
 			include("Psd\\PsdOpt.jl")
@@ -51,7 +52,6 @@ end
 function START_TOOLBOX()
 
 	println("=== START: READING ===")
-
 		# Selecting soils of interest 
 		Id_Select, Id_True, N_SoilSelect = read.ID()
 

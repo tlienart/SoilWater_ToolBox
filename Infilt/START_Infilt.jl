@@ -2,7 +2,7 @@
 #		MODULE: infiltration
 # =============================================================
 module infilt
-	import ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ...opt
+	import ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize
 	export START_INFILTRATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,19 +10,19 @@ module infilt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam, hydro)
 
-		Sorptivity_Sum = 0.0
-		for iSoil=1:N_SoilSelect
-			hydro.θr[iSoil] =  min(hydro.θr[iSoil] , infiltParam.θ_Ini[iSoil])
+		infiltHydro, Tinfilt_Flux = infiltInitialize.INFILT_INITIALIZE(N_SoilSelect, ∑Psd, infiltParam, Tinfilt,  N_Infilt)
 
-			∂θ∂Ψ_Max = wrc.∂θ∂Ψ(hydro.Ψm[iSoil], iSoil, hydro)
+		# Sorptivity_Sum = 0.0
+		# for iSoil=1:N_SoilSelect
+		# 	
 
-			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], ∂θ∂Ψ_Max, iSoil,  hydro)
-			println(iSoil," " ,Sorptivity)
+		# 	Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil,  hydro)
+		# 	println(iSoil," " ,Sorptivity)
 
-			Sorptivity_Sum += Sorptivity
+		# 	Sorptivity_Sum += Sorptivity
 
-		end
-		println("Sum = $Sorptivity_Sum")
+		# end
+		# println("Sum = $Sorptivity_Sum")
 
 		# # COMPUTING INFILTRATION FROM PHYSICAL HYDRAULIC PARAMETERS
 		# 	if option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && option.infilt.Model=="Best_Univ" && option.infilt.Plot_SeIni_Range 
@@ -134,4 +134,3 @@ module infilt
 		end  # function: RUN_BEST_SeIni_RANGE
 
 end  # module infiltration
-# ............................................................

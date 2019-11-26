@@ -5,7 +5,7 @@ module path
 	import ..option
 
 	# NAME OF FILE
-		Name = "SFF_"
+		Name = "PAF_"
 
 	# INPUT PATH
 		Id_Select 			= "Id_Select.csv"
@@ -25,7 +25,6 @@ module path
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
 	# PROCESSING 
-	
 		Home = @__DIR__
 		Id_Select = Home * "//INPUT//" * Name * Id_Select
 		Kunsat = Home * "//INPUT//" * Name * Kunsat

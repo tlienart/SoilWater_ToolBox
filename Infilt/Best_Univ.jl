@@ -8,7 +8,7 @@ module best
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST(iSoil, Dimension, Sorptivity, Tinfilt, θ_Ini, hydro,  infiltParam)
+		function BEST(iSoil, Dimension, Sorptivity, Tinfilt, θ_Ini, hydro, infiltParam)
 
 			# Required data
 				Se_Ini = wrc.θ_2_Se(θ_Ini, iSoil, hydro)
@@ -18,7 +18,7 @@ module best
 			# Best parameters
 				A = best.A(θ_Ini, hydro.θs[iSoil], iSoil,  infiltParam)
 
-				B = best.B(iSoil, Kr_θini,  infiltParam)
+				B = best.B(iSoil, Kr_θini, infiltParam)
 
 				Time_TransStead = TIME_TRANS_STEADY(B, hydro.Ks[iSoil], Sorptivity)
 

@@ -1,5 +1,5 @@
 module psd
-	import ..option, ..param, ..stats, ..psdInitialize, ..psdThetar, ..psdStruct, ..psdOpt, ..psdFunc
+	import ..option, ..param, ..stats, ..psdInitialize, ..psdOpt, ..psdFunc
 
 	# ======================================================================================
 	#          PSD_START Slow initialization
@@ -7,22 +7,7 @@ module psd
 	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro, psdHydro)
 
 		# INITIATING THE PSD DATA		
-			 N_Psd, N_Psd_Max, Psd = psdInitialize.PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd)
-
-		# DERIVING THE STRUCTURE PARAMETERS
-			psdParam = psdStruct.PSDSTRUCT(N_SoilSelect)
-
-		# COMPUTING θr FROM PSD DATA
-			psdParam = psdThetar.PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdParam)
-			
-		# COMPUTING θs FROM TOTAL POROSITY
-			θs_Psd = Array{Float64}(undef, N_SoilSelect)
-			for iSoil=1:N_SoilSelect
-				θs_Psd[iSoil] = param.hydro.Coeff_Φ_2_θs * Φ_Psd[iSoil]
-				psdHydro.θs[iSoil] = θs_Psd[iSoil]
-				psdHydro.θr[iSoil] = psdParam.θr_Psd[iSoil]
-			end 
-
+		N_Psd, N_Psd_Max, Psd, θs_Psd, psdHydro, psdParam = psdInitialize.PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd, Φ_Psd, hydro, psdHydro)
 
 		if option.psd.OptimizePsd == "Run"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, psdParam.θr_Psd, psdParam, hydro)

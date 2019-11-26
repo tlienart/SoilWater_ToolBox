@@ -19,13 +19,13 @@ module hydroInitialize
 	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro)
 
 		# INITIALIZING
-			θ_Max 		=  Array{Float64}(undef, (N_SoilSelect))
-			θ_Min 		=  Array{Float64}(undef, (N_SoilSelect))
-			θr_Max 		=  Array{Float64}(undef, (N_SoilSelect)) 
-			θs_Min 		=  Array{Float64}(undef, (N_SoilSelect))
-			θs_Max 		= Array{Float64}(undef, (N_SoilSelect))
-			K_KΨ_Max 	= zeros(Float64, N_SoilSelect)
-			Ks_Min 		= zeros(Float64, N_SoilSelect)
+            θ_Max    = Array{Float64}(undef, (N_SoilSelect))
+            θ_Min    = Array{Float64}(undef, (N_SoilSelect))
+            θr_Max   = Array{Float64}(undef, (N_SoilSelect))
+            θs_Min   = Array{Float64}(undef, (N_SoilSelect))
+            θs_Max   = Array{Float64}(undef, (N_SoilSelect))
+            K_KΨ_Max = zeros(Float64, N_SoilSelect)
+            Ks_Min   = zeros(Float64, N_SoilSelect)
 
 			Opt_θs 		= true
 			Opt_θr 		= true
@@ -45,7 +45,6 @@ module hydroInitialize
 					end
 
 				# DERIVING θr FROM DATA IF REQUESTED
-					
 					if (optionHydro.θrOpt == "Psd") && (option.Psd) # Derive θr frpm PSD
 						hydro.θr[iSoil] = min( psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd), θ_Min[iSoil]-0.005 )
 						opt.Opt_θr = false # No need to optimize θr

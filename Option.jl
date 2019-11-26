@@ -5,17 +5,17 @@ module option
 	# MODELS RUN
         const Id_Select = true 	# <true>* Select Id from the data OR <false> use all the data
 		
-		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
+        const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
         const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
-		const Infilt    = false # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
+        const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
 	# DOWNLAOD PACKAGES
-		const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
+        const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = true # <true>* plot or <false> no plotting
+		const Plot = false # <true>* plot or <false> no plotting
 
 			
 		# =============================================================
@@ -25,26 +25,26 @@ module option
 			import ..option
 		
 		# HYDRAULIC MODEL
-            const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
+            const HydroModel      = "Kosugi" # <"Kosugi">* OR  <"Vangenuchten">
 
-            const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
+            const UnimodalBimodal = "Unimodal" # <"Unimodal" OR <"Bimodal>
 
-            const KunsatΨ         = true 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
+            const KunsatΨ         = true #  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
 
             const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
 
-            const θrOpt           = "Opt"  # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl
+            const θrOpt           = "Opt" # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl
 
-            const KsOpt           = "Opt" #  <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
+            const KsOpt           = "Opt" # <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
 			# PLOTTING
 				const Plot_θΨ = true
 			
-			# if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
-			# 	println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
-			# 	println("AUTO CORRECT: option.hydro.θsOpt = Data \n")
-			# 	θsOpt = "Data"
-			# end 
+			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
+				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
+				println("AUTO CORRECT: option.hydro.θsOpt = Data \n")
+				θsOpt = "Data"
+			end 
 		end  # module hydro
 		# ............................................................
 
@@ -66,13 +66,10 @@ module option
 
 					const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
 
-					const KunsatΨ         = false 	#  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
-
-					const θsOpt           = "Known" # <Known>  Not to change
-
-					const θrOpt           = "Known" #  <Known>  Not to change
-
-					const KsOpt           = "Known" # <Known>  Not to change
+                    const KunsatΨ = false 	# <false>  Not to change
+                    const θsOpt   = "Known" # <Known>  Not to change
+                    const θrOpt   = "Known" # <Known>  Not to change
+                    const KsOpt   = "Known" # <Known>  Not to change
 
 				# FOR OPTIMIZEPSD = "Single"
 					const ∑Psd_2_ξ1 = true  # optimize ξ1
@@ -105,12 +102,20 @@ module option
 				
                 const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
 				
-                const θrOpt            = "Known"  # <"Opt"> optimises; <"Cst"> uses θr = param.θr_Cst; <"Param"> uses α1 and α1 from parameters in Param.jl OR <"Known"> all ready computed
+    
 				
                 const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
 
-                const Psd              = false # <true> constrain the opt hydraulic param with PSD <false> ...
-				
+				const Psd              = false # <true> constrain the opt hydraulic param with PSD <false> ...
+			# HYDRAULIC MODEL
+				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
+
+				const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
+
+				const KunsatΨ = false 	# <false>  Not to change
+				const θsOpt   = "Known" # <Known>  Not to change
+				const θrOpt   = "Known" # <Known>  Not to change
+				const KsOpt   = "Known" # <Known>  Not to change 
 				
 			# OUTPUT
                 const OutputDimension = "1D" # <"1D"> such as by using single ring of <"3D"> by using double ring
