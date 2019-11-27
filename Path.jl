@@ -40,7 +40,8 @@ module path
         Table_θΨK_Psd            = Home * "//OUTPUT//Table//" * Name * option.psd.HydroModel * "_" * Table_θΨK_Psd
         Plots_θΨK                = Home * "//OUTPUT//Plots//Lab//" * Name
         Plots_BestLab            = Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
-        Plots_BestLab_SeIniRange = Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
+		Plots_BestLab_SeIniRange = Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
+		Plots_∑infilt_Tinfilt	 = Home * "//OUTPUT//Plots//Infiltration//" * Name 
         Plots_Psd                = Home * "//OUTPUT//Plots//Psd//" * Name
         Plots_Psd_ThetaR         = Home * "//OUTPUT//Plots//Psd//ThetaR//" * Name * "_Plot_ThetaR.svg"
         Plots_IMP_model          = Home * "//OUTPUT//Plots//Psd//IMP_results//" * Name

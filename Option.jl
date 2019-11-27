@@ -123,7 +123,9 @@ module option
 			# PLOTTING
                 const Plot_Sorptivity  = true # <true> or <false>
 				
-                const Plot_SeIni_Range = true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
+				const Plot_SeIni_Range = true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
+				
+				const Plot_∑Infilt = true # <true> plots cumulative infiltration curves for experimental and derived data <false> no plots
 
 		end  # module infilt
 		# ............................................................

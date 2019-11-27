@@ -156,7 +156,17 @@ function START_TOOLBOX()
 		# if option.Plot_BestLab && option.θΨ ≠ "No" && option.infilt.OptimizeRun  == "Run" || option.infilt.OptimizeRun  == "RunOpt" 
 		# 	# plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
 		# end
-	
+		
+
+
+
+		if option.Plot_∑Infilt
+			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt)
+		end
+
+
+
+
 		println("=== END: PLOTTING  === \n")
 	end # if option.Plot
 		

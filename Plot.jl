@@ -263,7 +263,33 @@ module plot
 		# 	end  # for iSoil=1:N_SoilSelect
 
 		# end # function BEST_LAB
+		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt)
+			# Tinfilt, ∑Infilt_Obs, ∑Infilt
+			
+			# Array = zeros(Float64, N_SoilSelect, 2+N_Infilt) 
+			# Array[1,:] = Tinfilt[1:N_Infilt] 
+			# Array[2,:] = ∑Infilt_Obs[1:N_Infilt]
+			# Array[3,:] = ∑Infilt[1:N_Infilt]
 
+
+
+			# for iSoil=1:N_SoilSelect
+			# 	Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
+			# 		Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
+			# 		Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="Cumulative infiltration [mm]")
+			# 		∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt], ∑Infilt_Obs[iSoil,1:N_Infilt], color="violet")   
+			# 		Winston.setattr(∑infilt_Obs, label="Obs")
+			# 		∑Infilt_Sim = Winston.Curve(Tinfilt[iSoil,1:N_Infilt], ∑Infilt[iSoil,1:N_Infilt], color="cyan")
+			# 		Winston.setattr(∑Infilt_Sim, label="Sim")
+			# 		legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim])
+			# 		∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, ∑Infilt_Sim, legend_∑infilt_Tinfilt) 
+				
+			# 	Path = path.Plots_∑infilt_Tinfilt * "INFIL_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"
+			# 	Winston.savefig(∑infilt_Tinfilt, Path)
+			# end # for iSoil
+			
+			return
+		end # PLOT_∑INFILT
 
 end  # module plot
 # ............................................................
