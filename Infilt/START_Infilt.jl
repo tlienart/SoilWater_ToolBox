@@ -2,15 +2,76 @@
 #		MODULE: infiltration
 # =============================================================
 module infilt
-	import ..option, ..sorptivity, ..best, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize
+	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv
 	export START_INFILTRATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_INFILT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam, hydro)
+	function START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt_Obs, ∑Psd, N_Infilt, infiltParam, hydro)
 
-		infiltHydro, Tinfilt_Flux = infiltInitialize.INFILT_INITIALIZE(N_SoilSelect, ∑Psd, infiltParam, Tinfilt,  N_Infilt)
+		# INITIALIZE
+			∑Infilt, T, hydroInfilt = infiltInitialize.INFILT_INITIALIZE(N_SoilSelect, ∑Psd, infiltParam, Tinfilt, N_Infilt)
+
+		# OPTIONS
+			for iSoil=1:N_SoilSelect
+
+				# No optimization required running from hydro
+				if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No"
+					
+					hydro.θr[iSoil] = min(hydro.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
+					∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydro)
+				end # OptimizeRun = "Run"	
+			end
+
+		# CONVERTING DIMENSIONS
+			∑Infilt = CONVERT_INFILT_DIMENSIONS(hydro, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
+
+		return ∑Infilt
+	end  # function: START_INFILTRATION
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : INFILTRATION_MODEL
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+			if option.infilt.Model == "Best_Univ" # <>=<>=<>=<>=<>
+				bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)		
+
+			elseif option.infilt.Model == "QuasiExact" # <>=<>=<>=<>=<>
+				# quasiExact.QUASIEXACT()
+
+			end #  option.infilt.Model
+			
+			return ∑Infilt
+		end  # function: INFILTRATION_MODEL
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : CONVERT_INFILT_DIMENSIONS
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+			function CONVERT_INFILT_DIMENSIONS(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
+				if option.infilt.Model == "Best_Univ" && option.infilt.SingleDoubleRing == "Double" && option.infilt.OutputDimension == "1D" # <>=<>=<>=<>=<>
+
+					println("    ~ Converting $(option.infilt.Model) Infilt_3D => Infilt_1D ~")
+
+					∑Infilt = bestUniv.CONVERT_3D_2_1D(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
+
+					println(∑Infilt)
+
+				elseif option.infilt.Model == "Best_Univ" && option.infilt.SingleDoubleRing == "Single" && option.infilt.OutputDimension == "3D" # <>=<>=<>=<>=<>
+
+					println("    ~ Converting $(option.infilt.Model) Infilt_1D => Infilt_3D ~")
+
+					∑Infilt = bestUniv.CONVERT_3D_2_1D(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
+
+
+				elseif option.infilt.Model == "QuasiExact" # <>=<>=<>=<>=<>
+					return
+					# quasiExact.QUASIEXACT()
+
+				end #  option.infilt
+			end  # function: CONVERT_INFILT_DIMENSIONS
 
 		# Sorptivity_Sum = 0.0
 		# for iSoil=1:N_SoilSelect
@@ -49,47 +110,13 @@ module infilt
 		# 	end
 
 		# return   ∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs
-	end  # function: START_INFILT
+
 
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>		
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : RUN_BEST
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RUN_BEST(N_SoilSelect, Tinfilt, N_Infilt, infiltParam, hydro)
-
-			Tinfilt_Best_HydroObs = zeros(Float64, (N_SoilSelect, param.infilt.Npoint_Infilt))
-			∑Infilt_Best_HydroObs = zeros(Float64, (N_SoilSelect, param.infilt.Npoint_Infilt) )
-		
-			# For ever soil
-			for iSoil=1:N_SoilSelect
-				# TIME CONTROL
-					T_End = maximum(Tinfilt[iSoil,1:N_Infilt[iSoil]])
-	
-					ΔT = T_End / param.infilt.Npoint_Infilt # Time step
-
-					# Cumulating time
-					Tinfilt_Best_HydroObs[1] = ΔT
-					for iT = 2:param.infilt.Npoint_Infilt
-						Tinfilt_Best_HydroObs[iSoil,iT] = Tinfilt_Best_HydroObs[iSoil,iT-1] + ΔT
-					end
-
-				# SORPTIVITY
-					Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydro)
-				
-				# looping
-					for iT = 1:param.infilt.Npoint_Infilt
-						 ∑Infilt_Best_HydroObs[iSoil,iT] = best.BEST(iSoil, option.Infilt.SingleDoubleRing, Sorptivity, Tinfilt_Best_HydroObs[iSoil,iT], infiltParam.θ_Ini[iSoil], hydro, infiltParam)
-					end  # for iT=N_\Delta	
-			end  # for iSoil=1:N_SoilSelect
-				
-			return  ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs
-		end # function: RUN_BEST
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RUN_BEST_SeIni_RANGE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RUN_BEST_SeIni_RANGE(N_SoilSelect, infiltParam, hydro)

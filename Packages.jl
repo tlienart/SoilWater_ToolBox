@@ -20,16 +20,14 @@ function PACKAGES(Option_PackageUpdate)
 		PACKAGE_MANAGER("Statistics")
 		PACKAGE_MANAGER("QuadGK")
 		PACKAGE_MANAGER("Suppressor")
-		PACKAGE_MANAGER("Compact")
-		PACKAGE_MANAGER("Compat")
 		PACKAGE_MANAGER("Distributed")
+		PACKAGE_MANAGER("Winston")
 		# PACKAGE_MANAGER("PGFPlots")
 
 			if Option_PackageUpdate
 				println("Updating metdata...")
 				Pkg.update()
 			end
-
 end # PACKAGES
 
 PACKAGES(false)

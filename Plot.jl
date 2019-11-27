@@ -9,7 +9,7 @@ module plot
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROPARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, psdHydro; N_Se = 500)
+		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, hydroPsd; N_Se = 500)
 
 			θ_Sim 	   = Array{Float64}(undef, (N_Se))
 			Kunsat_Sim = Array{Float64}(undef, (N_Se))
@@ -31,7 +31,7 @@ module plot
 				# Simulated 
 				for iΨ = 1:N_Se
 					θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iSoil, hydro)
-					θ_Sim_Psd[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iSoil, psdHydro)
+					θ_Sim_Psd[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iSoil, hydroPsd)
 					if option.hydro.KunsatΨ
 						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)	
 					end	
@@ -91,11 +91,11 @@ module plot
 		end  # function: HYDROPARAM
 
 
-		function PLOT_θr(∑Psd, N_SoilSelect, hydro, psdParam)	
+		function PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)	
 			# Sorting ascending order with clay fraction
 			Array = zeros(Float64, 3, length(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]))
 			Array[1,:] =∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size] # Clay fraction
-			Array[2,:] = psdParam.θr_Psd[1:N_SoilSelect]
+			Array[2,:] = paramPsd.θr_Psd[1:N_SoilSelect]
 			Array[3,:] = hydro.θr[1:N_SoilSelect]
 			Array = sortslices(Array, dims=2)
 			Clay = Array[1,:] # Clay fraction
@@ -132,14 +132,13 @@ module plot
 				MultiPlots[1,2] = Plot_θrPsd_θrSim
 			
 			Path = path.Plots_Psd_ThetaR
-			println("		== Plotting θr == ")
 			Winston.savefig(MultiPlots, Path)
 			return
 		end # function: PLOT_θr
 
 
 
-		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, psdParam)
+		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)
 			
 					
 			for iSoil = 1:N_SoilSelect
@@ -154,7 +153,7 @@ module plot
 				for iRpart = 1:N_Psd[iSoil]
 					ξ2 = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iSoil, iRpart]; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
 
-					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], psdParam.ξ1[iSoil], ξ2)
+					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], paramPsd.ξ1[iSoil], ξ2)
 				end
 
 				MultiPlots = Winston.Table(1,3)

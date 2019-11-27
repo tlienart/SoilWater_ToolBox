@@ -1,5 +1,5 @@
 # =============================================================
-#		MODULE: name
+#		MODULE: hydroParam
 # =============================================================
 module hydroParam
 	import ..option, ..param, ..hydroInitialize

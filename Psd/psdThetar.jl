@@ -9,36 +9,36 @@ module psdThetar
 		# =========================================
 		#       MAIN PSD -> θr 
 		# =========================================
-			function PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdParam)
+			function PSD_2_θr(N_SoilSelect, ∑Psd, hydro, paramPsd)
 
 				Err_θr_Psd = zeros(Float64, N_SoilSelect)
 
 				if option.psd.Psd_2_θr == "Opt" && option.θΨ ≠ "No"
-					psdParam = OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdParam)
+					paramPsd = OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, paramPsd)
 		
 				elseif option.psd.Psd_2_θr == "Cst" # <>=<>=<>=<>=<>
 					θr_Psd =  Array{Float64}(undef, N_SoilSelect)
-					fill!(psdParam.θr_Psd, param.psd.θr_Cst)
-					fill!(psdParam.Psd_2_θr_α1, 0.0) 
-					fill!(psdParam.Psd_2_θr_α2, 0.0)
+					fill!(paramPsd.θr_Psd, param.psd.θr_Cst)
+					fill!(paramPsd.Psd_2_θr_α1, 0.0) 
+					fill!(paramPsd.Psd_2_θr_α2, 0.0)
 					
 				elseif option.psd.Psd_2_θr == "Param" # <>=<>=<>=<>=<>
 					θr_Psd =  Array{Float64}(undef, N_SoilSelect)
 					for iSoil=1:N_SoilSelect
-						psdParam.θr_Psd[iSoil] = PSD_2_θr_FUNC(iSoil, ∑Psd)
+						paramPsd.θr_Psd[iSoil] = PSD_2_θr_FUNC(iSoil, ∑Psd)
 					end
-					# Putting the values Psd_2_θr_α1 & Psd_2_θr_α2 into psdParam
-					fill!(psdParam.Psd_2_θr_α1, param.psd.Psd_2_θr_α1) 
-					fill!(psdParam.Psd_2_θr_α2, param.psd.Psd_2_θr_α2)
+					# Putting the values Psd_2_θr_α1 & Psd_2_θr_α2 into paramPsd
+					fill!(paramPsd.Psd_2_θr_α1, param.psd.Psd_2_θr_α1) 
+					fill!(paramPsd.Psd_2_θr_α2, param.psd.Psd_2_θr_α2)
 
 					# STATISTICS
 					if option.θΨ ≠ "No"
-						Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_SoilSelect], Sim=psdParam.θr_Psd[1:N_SoilSelect])
+						Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_SoilSelect], Sim=paramPsd.θr_Psd[1:N_SoilSelect])
 
 						println("    ~ Nse_θr_Psd = $(round(Nse_θr_Psd,digits=3)) ~")
 
 						for iSoil=1:N_SoilSelect
-							psdParam.Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=psdParam.θr_Psd[iSoil])
+							paramPsd.Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=paramPsd.θr_Psd[iSoil])
 						end
 					end
 				
@@ -46,7 +46,7 @@ module psdThetar
 					error("option.psd.Psd_2_θr = $option.psd.Psd_2_θr  not allowed option.psd.Psd_2_θr must be either (1)'Opt' or (2) 'Cst' or (3) 'Param' ")
 				end # if option.psd.Psd_2_θr	
 
-				return psdParam
+				return paramPsd
 			end # function PSD_2_θr(N_SoilSelect, ∑Psd, hydro)
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -66,7 +66,7 @@ module psdThetar
 		# =========================================
 		#       OPTIMIZE_PSD_2_θr 
 		# =========================================
-			function OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, psdParam; Power=2)
+			function OPTIMIZE_PSD_2_θr(N_SoilSelect, ∑Psd, hydro, paramPsd; Power=2)
 				
 				function OF(Psd_2_θr_α1, Psd_2_θr_α2, N_SoilSelect, ∑Psd, hydro)
 					∑Rmse = 0.0
@@ -86,25 +86,25 @@ module psdThetar
 				Psd_2_θr_α1 = BlackBoxOptim.best_candidate(Optimization)[1]
 				Psd_2_θr_α2 = BlackBoxOptim.best_candidate(Optimization)[2]
 
-				# Writing the values into psdParam
-				fill!(psdParam.Psd_2_θr_α1, Psd_2_θr_α1) 
-				fill!(psdParam.Psd_2_θr_α2, Psd_2_θr_α2)
+				# Writing the values into paramPsd
+				fill!(paramPsd.Psd_2_θr_α1, Psd_2_θr_α1) 
+				fill!(paramPsd.Psd_2_θr_α2, Psd_2_θr_α2)
 
 				# COMPUTING THE OPTIMAL VALUE
 					for iSoil=1:N_SoilSelect
-						psdParam.θr_Psd[iSoil] = PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1=psdParam.Psd_2_θr_α1[iSoil], Psd_2_θr_α2=psdParam.Psd_2_θr_α2[iSoil])
+						paramPsd.θr_Psd[iSoil] = PSD_2_θr_FUNC(iSoil, ∑Psd; Psd_2_θr_α1=paramPsd.Psd_2_θr_α1[iSoil], Psd_2_θr_α2=paramPsd.Psd_2_θr_α2[iSoil])
 					end
 
 				# STATISTICS
-					Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_SoilSelect], Sim=psdParam.θr_Psd[1:N_SoilSelect])
+					Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_SoilSelect], Sim=paramPsd.θr_Psd[1:N_SoilSelect])
 
 					for iSoil=1:N_SoilSelect
-						psdParam.Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=psdParam.θr_Psd[iSoil])
+						paramPsd.Err_θr_Psd[iSoil] = stats.RELATIVE_ERR(;Obs=hydro.θr[iSoil], Sim=paramPsd.θr_Psd[iSoil])
 					end
 					
 					println("    ~ Psd_2_θr_α1 = $(round(Psd_2_θr_α1,digits=3)) ;  Psd_2_θr_α2 = $(round(Psd_2_θr_α2,digits=3)) ;  Nse_θr_Psd = $(round(Nse_θr_Psd,digits=3)) ~")
 
-				return psdParam
+				return paramPsd
 			end # function OPTIMIZE_PSD_2_θr
 	
 end  # module psdThetar

@@ -63,9 +63,9 @@ module psdStruct
 				∑Psd_2_ξ2_Size[iSoil] 	= param.psd.imp.∑Psd_2_ξ2_Size
 			end
 			
-			psdParam = IMP(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, ∑Psd_2_ξ2_Size, Subclay, Psd_2_θr_α1, Psd_2_θr_α2, Err_θr_Psd, Nse, θr_Psd, FieldName)
+			paramPsd = IMP(ξ1, ∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2, ∑Psd_2_ξ2_Size, Subclay, Psd_2_θr_α1, Psd_2_θr_α2, Err_θr_Psd, Nse, θr_Psd, FieldName)
 
-			return psdParam = tool.readWrite.FIELDNAME_2_STRUCT(IMP, psdParam) # Saving the FieldNames
+			return paramPsd = tool.readWrite.FIELDNAME_2_STRUCT(IMP, paramPsd) # Saving the FieldNames
 	
 		elseif option.psd.Model == "Chang2019Model"
 			ξ1		= zeros(Float64, N_SoilSelect)
@@ -75,9 +75,9 @@ module psdStruct
 				ξ1[iSoil] = param.psd.chan.ξ1
 			end
 
-			psdParam = CHANG(ξ1, Psd_2_θr_α1, Psd_2_θr_α2, θr_Psd, Err_θr_Psd, Nse, FieldName)
+			paramPsd = CHANG(ξ1, Psd_2_θr_α1, Psd_2_θr_α2, θr_Psd, Err_θr_Psd, Nse, FieldName)
 
-			return psdParam = tool.readWrite.FIELDNAME_2_STRUCT(CHANG, psdParam) # Saving the FieldNames
+			return paramPsd = tool.readWrite.FIELDNAME_2_STRUCT(CHANG, paramPsd) # Saving the FieldNames
 		end # option.hydro.HydroModel
 	end #  function HYDROSTRUCT
 	

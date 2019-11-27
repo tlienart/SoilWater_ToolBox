@@ -43,8 +43,8 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD(Id_Select, N_SoilSelect, psdParam)
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect,  psdParam)
+			function PSD(Id_Select, N_SoilSelect, paramPsd)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect,  paramPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
@@ -59,8 +59,8 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK_PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK_PSD(Id_Select, N_SoilSelect, psdHydro)
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, psdHydro)
+			function θΨK_PSD(Id_Select, N_SoilSelect, hydroPsd)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 				Matrix =  round.(Matrix, digits=3)

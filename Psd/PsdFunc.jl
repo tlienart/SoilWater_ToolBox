@@ -7,24 +7,24 @@ module psdFunc
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function PSD_MODEL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, psdParam)
+		function PSD_MODEL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd)
  		
 			if option.psd.Model == "IMP"
 				# Correction for the small PSD
-				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, psdParam.Subclay[iSoil], N_Psd)  		
+				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, paramPsd.Subclay[iSoil], N_Psd)  		
 
 				# Computing ξ2 from Psd
-					ξ2 = imp.∑PSD_2_ξ2(∑Psd[psdParam.∑Psd_2_ξ2_Size[iSoil]]; ∑Psd_2_ξ2_β1=psdParam.∑Psd_2_ξ2_β1[iSoil], ∑Psd_2_ξ2_β2=psdParam.∑Psd_2_ξ2_β2[iSoil])
+					ξ2 = imp.∑PSD_2_ξ2(∑Psd[paramPsd.∑Psd_2_ξ2_Size[iSoil]]; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iSoil], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iSoil])
 
 				# Computing θ from Psd
-					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, psdParam.ξ1[iSoil], ξ2) 
+					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iSoil], ξ2) 
 					
 				# Computing ψ from Psd
 					Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd) 	# Computing  from Psd
 	
 			elseif option.psd.Model == "Chang2019Model"
 				# Computing θ from Psd
-					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, psdParam.ξ1[iSoil]) 
+					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iSoil]) 
 				
 				# Computing ψ from Psd
 					Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, N_Psd)

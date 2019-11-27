@@ -94,7 +94,6 @@ module option
 		#		MODULE: infiltration
 		# =============================================================
 		module infilt
-
 			# MODEL USED
                 const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
 
@@ -102,11 +101,10 @@ module option
 				
                 const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
 				
-    
-				
                 const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
 
 				const Psd              = false # <true> constrain the opt hydraulic param with PSD <false> ...
+
 			# HYDRAULIC MODEL
 				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 
