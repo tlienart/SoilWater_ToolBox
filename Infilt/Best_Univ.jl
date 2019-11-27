@@ -36,14 +36,14 @@ module bestUniv
 	#		FUNCTION : BEST_UNIVERSAL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function BEST_UNIVERSAL(iSoil, A, B, Sorptivity, T, Time_TransStead, hydroInfilt, infiltParam)
-			if option.infilt.SingleDoubleRing == "Double" #<>=<>=<>=<>=<>
+			if option.infilt.SingleDoubleRing == "Single" #<>=<>=<>=<>=<>
 				if T <= Time_TransStead 
 					return ∑Infilt = bestUniv.INFILTRATION_3D_TRANSIT(A, B, hydroInfilt.Ks[iSoil], Sorptivity, T)
 				else
 					return ∑Infilt = bestUniv.INFILTRATION_3D_STEADY(A, B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T,  infiltParam)
 				end # T <= Time_TransStead 
 
-			elseif option.infilt.SingleDoubleRing == "Single"  #<>=<>=<>=<>=<>
+			elseif option.infilt.SingleDoubleRing == "Double"  #<>=<>=<>=<>=<>
 				if T <= Time_TransStead 
 					return ∑Infilt = bestUniv.INFILTRATION_1D_TRANSIT(B, hydroInfilt.Ks[iSoil], Sorptivity, T)
 				else
@@ -73,7 +73,7 @@ module bestUniv
 	#		FUNCTION : INFILTRATION_3D_STEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function INFILTRATION_3D_STEADY(A, B, iSoil, Ks, Sorptivity, T,  infiltParam)
-		return (A * (Sorptivity ^ 2.0) + Ks) * T + C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
+		return (A * (Sorptivity ^ 2.0) + Ks) * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
 	end  # function: INFILTRATION_3D_STEADY
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,7 +131,7 @@ module bestUniv
 
 		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : TIME_TRANS_STEADY
+	#		FUNCTION : TIME_TRANS_STEADY_INDEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function TIME_TRANS_STEADY_INDEP(iSoil, θ_Ini, hydroInfilt, infiltParam)
 			Kr_θini = (kunsat.θ_2_KUNSAT(θ_Ini, iSoil, hydroInfilt)) / hydroInfilt.Ks[iSoil]
@@ -141,14 +141,14 @@ module bestUniv
 			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iSoil, hydroInfilt)
 
 			return ( Sorptivity / (hydroInfilt.Ks[iSoil] * 2.0 * (1.0 - B)) ) ^ 2.0
-		end # function: TIME_TRANS_STEADY
+		end # function: TIME_TRANS_STEADY_INDEP
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : A
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function A(θ_Ini, θs, iSoil, infiltParam)
-			return  infiltParam.γ[iSoil] / ( infiltParam.RingRadius[iSoil] * (θs - θ_Ini)) # Units (mm-1)
+			return  infiltParam.γ[iSoil] / ( infiltParam.RingRadius[iSoil] * (θs - θ_Ini)) # Units [mm-1]
 		end  # function: A
 	
 
