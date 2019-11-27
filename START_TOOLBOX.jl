@@ -116,7 +116,7 @@ function START_TOOLBOX()
 	if option.Infilt
 		println("=== START: INFILTRATION  ===")
 		# ∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs =
-		 Infilt = infilt.START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam, hydro)
+		 Infilt, hydroInfilt = infilt.START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
