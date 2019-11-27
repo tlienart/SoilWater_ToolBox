@@ -271,9 +271,20 @@ module plot
 			# Array[2,:] = ∑Infilt_Obs[1:N_Infilt]
 			# Array[3,:] = ∑Infilt[1:N_Infilt]
 
+			# Time              = Array{Float64}(undef, N_Infilt)
+            # ∑Infiltration_Obs = Array{Float64}(undef, N_Infilt)
+			# ∑Infiltration_Sim = Array{Float64}(undef, N_Infilt)
+			
 
 
+
+
+						
 			# for iSoil=1:N_SoilSelect
+			
+			# Time[iSoil,:] =  Tinfilt[] 
+			
+			
 			# 	Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
 			# 		Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
 			# 		Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="Cumulative infiltration [mm]")
