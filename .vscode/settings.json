@@ -94,6 +94,7 @@
 
 "window.openFilesInNewWindow": "default",
 
-"workbench.editor.showTabs": true
+"workbench.editor.showTabs": true,
+"julia.environmentPath": "C:\\Users\\GalvezJ\\.julia\\environments\\v1.3"
 
 }
