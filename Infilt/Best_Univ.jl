@@ -163,7 +163,7 @@ module bestUniv
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : C
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function C(B,  infiltParam, iSoil)
+		function C(B, infiltParam, iSoil)
 			return log(1.0 /  infiltParam.β[iSoil]) * (1.0 +  infiltParam.β[iSoil]) / (6.0 * (1.0 -  infiltParam.β[iSoil]) * (1.0 - B) )
 		end # function: C
 
