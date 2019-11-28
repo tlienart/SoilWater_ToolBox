@@ -16,14 +16,14 @@ module infilt
 
 		# OPTIONS
 			# For every soils
-			hydroInfilt = hydro
+			hydroInfilt = deepcopy(hydro)
 			for iSoil=1:N_SoilSelect
 				println( iSoil)
 
 				# No optimization required running from hydro derived from laboratory
 				if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No" #<>=<>=<>=<>=<>
 					# Derive from laboratory
-					hydroInfilt = hydro
+					hydroInfilt = copy(hydro)
 
 					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
 
@@ -42,7 +42,6 @@ module infilt
 
 						∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 
-						println("$(hydro.Ks[iSoil]), $(hydroInfilt.Ks[iSoil])")
 				end # OptimizeRun = "Run"	
 			end # iSoil
 
