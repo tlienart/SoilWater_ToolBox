@@ -2,7 +2,7 @@
 #		MODULE: param
 # =============================================================
 module param
-	N_iSoil_Simulations = 5 # maximum number of soils to be simulated (good for testing)
+	N_iSoil_Simulations = 5000 # maximum number of soils to be simulated (good for testing)
 
 	# =============================================================
 	#		MODULE:  θr FROM PSD
@@ -75,8 +75,8 @@ module param
 			θr_Min = 0.0     # 0.2 or 0.25
 			θr_Max = 0.25     # 0.2 or 0.25
 
-		Ks_Min = 10.0 ^ -5.0  	# 0.000555556 wei [mm/s]
-		Ks_Max = 0.12 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
+		Ks_Min = 10.0 ^ -3.0  	# 0.000555556 wei [mm/s]
+		Ks_Max = 0.8 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
 		# Coeff_Φ_2_θs
 			Coeff_Φ_2_θs = 0.95 # 0.95

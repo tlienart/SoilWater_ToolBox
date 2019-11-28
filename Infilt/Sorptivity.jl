@@ -10,7 +10,7 @@ module sorptivity
 	#		FUNCTION : SORPTIVITY
 			# https://juliamath.github.io/QuadGK.jl/latest/
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY(θ_Ini, iSoil, hydro; Rtol=10^-4.0)
+		function SORPTIVITY(θ_Ini, iSoil, hydro; Rtol=10^-4.0) #-4
 
 			function SORPTIVITY_FUNC(θ, θ_Ini, iSoil, hydro)
 
@@ -40,7 +40,7 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DIFFUSIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DIFFUSIVITY(θ, iSoil, hydro; Diffusivity_Min = 10^-5.0)		
+		function DIFFUSIVITY(θ, iSoil, hydro; Diffusivity_Min = 10^-4.0) #-5		
 			Kunsat = kunsat.θ_2_KUNSAT(θ, iSoil, hydro)
 			
 			Ψ = wrc.θ_2_ΨDual(θ, iSoil, hydro)

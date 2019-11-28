@@ -18,6 +18,7 @@ module infilt
 			# For every soils
 			hydroInfilt = hydro
 			for iSoil=1:N_SoilSelect
+				println( iSoil)
 
 				# No optimization required running from hydro derived from laboratory
 				if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No" #<>=<>=<>=<>=<>
@@ -40,6 +41,8 @@ module infilt
 						hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
 						∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+
+						println("$(hydro.Ks[iSoil]), $(hydroInfilt.Ks[iSoil])")
 				end # OptimizeRun = "Run"	
 			end # iSoil
 

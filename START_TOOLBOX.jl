@@ -133,7 +133,7 @@ function START_TOOLBOX()
 		end
 
 		if option.Infilt
-			# table.infilt.HYDRO_INFILT(Id_Select, N_SoilSelect, hydroInfilt)
+			table.infilt.HYDRO_INFILT(Id_Select, N_SoilSelect, hydroInfilt)
 		end
 
 

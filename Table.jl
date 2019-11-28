@@ -87,20 +87,18 @@ module table
 		#		FUNCTION : HYDRO_INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function HYDRO_INFILT(Id_Select, N_SoilSelect, hydroInfilt)
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroInfilt)
 
-				println(FieldName_String)
-				println(Matrix)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroInfilt)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
-				
+
 				Matrix =  round.(Matrix, digits=3)
 				open(path.Table_HydroInfilt, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
-				end 
-				
-			end  # function:  HYDRO_INFILT
+				end
+				return
+			end  # function:  θΨK
 		
 	end  # module: infilt
 	# ............................................................
