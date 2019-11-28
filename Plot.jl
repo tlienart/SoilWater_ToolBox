@@ -4,7 +4,7 @@
 module plot
 	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar, ..psdFunc
 	using Winston
-	export HYDROPARAM
+	export HYDROPARAM, PLOT_∑INFILT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROPARAM
@@ -139,8 +139,7 @@ module plot
 
 
 		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)
-			
-					
+							
 			for iSoil = 1:N_SoilSelect
 				Rpart_Min = minimum(Rpart[iSoil,1:N_Psd[iSoil]])
 				Rpart_Max = maximum(Rpart[iSoil,1:N_Psd[iSoil]])
@@ -209,95 +208,30 @@ module plot
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : BEST_LAB_SEINIRANGE( ∑Infilt_Best_HydroObs_SeIniRange)
+	#		FUNCTION : PLOT_∑INFILT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function BEST_LAB_SEINIRANGE(Id_Select,  ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
-
-		# 	for iSoil=1:N_SoilSelect
-		# 		println("		== Plotting BestLab_SeIniRange_ soil= $iSoil ==")
-
-		# 		Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
-
-		# 		push!(Plot_BestLab, Axis([
-		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 1, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$SeIni=0.0$"),
-			
-		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 2, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, orange, very thick", legendentry=L"$SeIni=0.2$"),
-
-		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 3, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, teal, very thick", legendentry=L"$SeIni=0.4$"),
-
-		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 4, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, yellow, very thick", legendentry=L"$SeIni=0.6$"),
-
-		# 			Plots.Linear(T_Best_HydroObs_SeIniRange[1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs_SeIniRange[iSoil, 5, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, blue, very thick", legendentry=L"$SeIni=0.8$"),
-		# 			], 
-
-		# 			style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
-		# 		)
-				
-		# 		Path = path.Plots_BestLab_SeIniRange * "BestLab_SeIniRange_" *string(Id_Select[iSoil]) * ".svg"
-		# 		save(Path, Plot_BestLab)
-
-		# 	end # for
-		# end  # function: BEST_LAB_SEINIRANGE( ∑Infilt_Best_HydroObs_SeIniRange)
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : BEST_LAB
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
-		# 	for iSoil=1:N_SoilSelect
-		# 		println("		== Plotting BestLab_ soil $iSoil ==")
-
-		# 		Plot_BestLab = GroupPlot(1, 1, groupStyle = "horizontal sep = 2.5cm, vertical sep = 1.5cm")
-
-		# 		push!(Plot_BestLab, Axis([
-		# 			Plots.Linear(Tinfilt_Best_HydroObs[iSoil,1:param.infilt.Npoint_Infilt],  ∑Infilt_Best_HydroObs[iSoil, 1:param.infilt.Npoint_Infilt],  mark="none", style="smooth, red, very thick", legendentry=L"$HydroParam$"),
-			
-		# 			Plots.Scatter(Tinfilt[iSoil, 1:N_Infilt[iSoil]], ∑Infilt[iSoil, 1:N_Infilt[iSoil]], style="teal, very thick", onlyMarks=true, mark="o", markSize=4, legendentry=L"$Obs$"),
-		# 			], 
-
-		# 			style="width=10.4cm, height=6.4cm", xlabel=L"$Time \ [s]$", ylabel=L"$Infiltration \ [mm]$", legendPos="north west")
-		# 		)
-
-		# 		Path = path.Plots_BestLab * "BestLab_" *string(Id_Select[iSoil]) * ".svg"
-		# 		save(Path, Plot_BestLab)
-		# 	end  # for iSoil=1:N_SoilSelect
-
-		# end # function BEST_LAB
 		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt)
-			# Tinfilt, ∑Infilt_Obs, ∑Infilt
-			
-			# Array = zeros(Float64, N_SoilSelect, 2+N_Infilt) 
-			# Array[1,:] = Tinfilt[1:N_Infilt] 
-			# Array[2,:] = ∑Infilt_Obs[1:N_Infilt]
-			# Array[3,:] = ∑Infilt[1:N_Infilt]
-
-			# Time              = Array{Float64}(undef, N_Infilt)
-            # ∑Infiltration_Obs = Array{Float64}(undef, N_Infilt)
-			# ∑Infiltration_Sim = Array{Float64}(undef, N_Infilt)
-			
-
-
-
-
-						
-			# for iSoil=1:N_SoilSelect
-			
-			# Time[iSoil,:] =  Tinfilt[] 
-			
-			
-			# 	Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
-			# 		Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
-			# 		Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="Cumulative infiltration [mm]")
-			# 		∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt], ∑Infilt_Obs[iSoil,1:N_Infilt], color="violet")   
-			# 		Winston.setattr(∑infilt_Obs, label="Obs")
-			# 		∑Infilt_Sim = Winston.Curve(Tinfilt[iSoil,1:N_Infilt], ∑Infilt[iSoil,1:N_Infilt], color="cyan")
-			# 		Winston.setattr(∑Infilt_Sim, label="Sim")
-			# 		legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim])
-			# 		∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, ∑Infilt_Sim, legend_∑infilt_Tinfilt) 
+		
+			for iSoil=1:N_SoilSelect
 				
-			# 	Path = path.Plots_∑infilt_Tinfilt * "INFIL_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"
-			# 	Winston.savefig(∑infilt_Tinfilt, Path)
-			# end # for iSoil
+				Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
+					Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
+					Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="∑infiltration [mm]")
+
+					∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt_Obs[iSoil,1:N_Infilt[iSoil]], color="violet")   
+					Winston.setattr(∑infilt_Obs, label = "Obs")
+
+					∑Infilt_Sim = Winston.Curve(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt[iSoil,1:N_Infilt[iSoil]], color="cyan")
+					Winston.setattr(∑Infilt_Sim, label="Sim")
+					
+					legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim])
+					∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, ∑Infilt_Sim, legend_∑infilt_Tinfilt) 
+					
+					Path = path.Plots_∑infilt_Tinfilt * "INFIL_" * option.infilt.Model * "_" * option.infilt.OutputDimension *  "_" * string(Id_Select[iSoil]) *  ".svg"
+
+				Winston.savefig(∑infilt_Tinfilt, Path)
+
+			end # for iSoil
 			
 			return
 		end # PLOT_∑INFILT

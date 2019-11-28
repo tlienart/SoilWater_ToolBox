@@ -61,7 +61,7 @@ module read
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function INFILTRATION(Id_True, N_SoilSelect)
 			Tinfilt, N_Infilt 	= READ_ROW_SELECT(path.Infiltration, "Tinfilt[s]", Id_True, N_SoilSelect)
-			∑Infilt , ~ 		= READ_ROW_SELECT(path.Infiltration, "Cumul_Infiltration[mm]", Id_True, N_SoilSelect)
+			∑Infilt_Obs , ~ 		= READ_ROW_SELECT(path.Infiltration, "Cumul_Infiltration[mm]", Id_True, N_SoilSelect)
 
 			RingRadius , ~ 	=  READ_ROW_SELECT(path.Infiltration_Param, "RingRadius[mm]", Id_True, N_SoilSelect, N_Point_Max=1)
 			θ_Ini , ~ 		=  READ_ROW_SELECT(path.Infiltration_Param, "Theta_Ini[-]", Id_True, N_SoilSelect, N_Point_Max=1)
@@ -71,7 +71,7 @@ module read
 
 			infiltParam = INFILT(RingRadius, θ_Ini, Φ, γ, β)
 
-			return Tinfilt, ∑Infilt, N_Infilt, infiltParam
+			return Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam
 		end  # function: INFILTRATION
 
 

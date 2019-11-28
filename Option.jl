@@ -7,7 +7,7 @@ module option
 		
         const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
-        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
+        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
         const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
@@ -15,7 +15,7 @@ module option
         const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = false # <true>* plot or <false> no plotting
+		const Plot = true # <true>* plot or <false> no plotting
 
 			
 		# =============================================================
@@ -38,7 +38,7 @@ module option
             const KsOpt           = "Opt" # <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
 			# PLOTTING
-				const Plot_θΨ = true
+				const Plot_θΨ = false
 			
 			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
 				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
@@ -75,8 +75,8 @@ module option
 					const ∑Psd_2_ξ1 = true  # optimize ξ1
 			
 				# PLOTTING
-					const Plot_Psd_θ_Ψ 	 = true # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
-					const Plot_θr 	   	 = true # plot θr data and model from Psd 
+					const Plot_Psd_θ_Ψ 	 = false # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
+					const Plot_θr 	   	 = false # plot θr data and model from Psd 
 					
 					const Plot_IMP_model = false # plot IMP model results for publication
 							
@@ -116,7 +116,7 @@ module option
 				const KsOpt   = "Known" # <Known>  Not to change 
 				
 			# OUTPUT
-                const OutputDimension = "1D" # <"1D"> such as by using single ring of <"3D"> by using double ring
+                const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
 
                 const OptimizeRun     = "Run" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
 			

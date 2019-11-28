@@ -70,20 +70,17 @@ module infilt
 
 				∑Infilt = bestUniv.CONVERT_3D_2_1D(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
 
-				println(∑Infilt)
-
 			elseif option.infilt.Model == "Best_Univ" && option.infilt.SingleDoubleRing == "Single" && option.infilt.OutputDimension == "3D" # <>=<>=<>=<>=<>
 
 				println("    ~ Converting $(option.infilt.Model) Infilt_1D => Infilt_3D ~")
 
 				∑Infilt = bestUniv.CONVERT_3D_2_1D(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
 
-
 			elseif option.infilt.Model == "QuasiExact" # <>=<>=<>=<>=<>
-				return
 				# quasiExact.QUASIEXACT()
-
 			end #  option.infilt
+
+			return  ∑Infilt
 		end  # function: CONVERT_INFILT_DIMENSIONS
 
 	

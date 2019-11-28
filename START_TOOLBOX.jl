@@ -70,7 +70,7 @@ function START_TOOLBOX()
 		end
 		
 		if option.Infilt
-			Tinfilt, ∑Infilt, N_Infilt, infiltParam  = read.INFILTRATION(Id_Select, N_SoilSelect)
+			Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = read.INFILTRATION(Id_Select, N_SoilSelect)
 		end
 
 		# Reinforcing the maximum of iSoil to simulate
@@ -115,8 +115,7 @@ function START_TOOLBOX()
 	
 	if option.Infilt
 		println("=== START: INFILTRATION  ===")
-		# ∑Infilt_Best_HydroObs, ∑Infilt_Best_HydroObs_SeIniRange, T_Best_HydroObs_SeIniRange, Tinfilt_Best_HydroObs =
-		 Infilt, hydroInfilt = infilt.START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt, ∑Psd, N_Infilt, infiltParam, hydro)
+			∑Infilt, hydroInfilt = infilt.START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt_Obs, ∑Psd, N_Infilt, infiltParam, hydro)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -135,8 +134,7 @@ function START_TOOLBOX()
 
 
 	if option.Plot
-		println("=== START: PLOTTING  ===")
-
+	println("=== START: PLOTTING  ===")
 		if option.θΨ ≠ "No" && option.hydro.Plot_θΨ
 			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, hydroPsd)
 		end # option.Plot_WaterRetentionCurve
@@ -148,26 +146,12 @@ function START_TOOLBOX()
 		if option.Psd && option.psd.Plot_IMP_model
 			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd) 
 		end
-		# if option.Plot_BestLab && option.θΨ ≠ "No" && (option.infilt.OptimizeRun == "Run" ||  option.infilt.OptimizeRun == "RunOpt") && optiotestn.infiltration.Model=="Simplified" && option.infilt.Plot_SeIni_Range	
 
-		# 	# plot.BEST_LAB_SEINIRANGE(Id_Select, ∑Infilt_Best_HydroObs_SeIniRange, N_SoilSelect, T_Best_HydroObs_SeIniRange)
-		# end # option.Plot_BestLab
-
-		# if option.Plot_BestLab && option.θΨ ≠ "No" && option.infilt.OptimizeRun  == "Run" || option.infilt.OptimizeRun  == "RunOpt" 
-		# 	# plot.BEST_LAB(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Best_HydroObs, Tinfilt_Best_HydroObs, Tinfilt, ∑Infilt)
-		# end
-		
-
-
-
-		if option.Plot_∑Infilt
+		if option.infilt.Plot_∑Infilt
 			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt)
 		end
 
-
-
-
-		println("=== END: PLOTTING  === \n")
+	println("=== END: PLOTTING  === \n")
 	end # if option.Plot
 		
 end  # function: START_TOOLBOX
