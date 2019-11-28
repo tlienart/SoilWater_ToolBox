@@ -3,6 +3,7 @@
 # =============================================================
 module infilt
 	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv
+	import BlackBoxOptim
 	export START_INFILTRATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,24 +16,32 @@ module infilt
 
 		# OPTIONS
 			# For every soils
+			hydroInfilt = hydro
 			for iSoil=1:N_SoilSelect
 
-				# No optimization required running from hydro
-				if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No"
+				# No optimization required running from hydro derived from laboratory
+				if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No" #<>=<>=<>=<>=<>
+					# Derive from laboratory
 					hydroInfilt = hydro
 
 					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
 
 					∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 
-				elseif	option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"
-					hydroInfilt = hydro
-
+				elseif	option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"  #<>=<>=<>=<>=<>
+					# Derive from laboratory
+				
+					SearchRange =[(log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
+					
 					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
 
-					∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+					Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
+		
+						hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
+
+						∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 				end # OptimizeRun = "Run"	
-			end
+			end # iSoil
 
 		# CONVERTING DIMENSIONS
 			∑Infilt = CONVERT_INFILT_DIMENSIONS(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
@@ -84,7 +93,31 @@ module infilt
 		end  # function: CONVERT_INFILT_DIMENSIONS
 
 	
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : HYDRO_PROCESS
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil])
 
+				hydroInfilt.θs[iSoil] = θs
+				hydroInfilt.θr[iSoil] = θr
+				hydroInfilt.Ks[iSoil] = Ks
+				hydroInfilt.σ[iSoil] = σ
+				hydroInfilt.Ψm[iSoil] = Ψm
+
+				hydroInfilt.θsMat[iSoil] = θs
+				hydroInfilt.ΨmMac[iSoil] = Ψm
+				hydroInfilt.σMac[iSoil] = σ
+
+
+				∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+				
+				∑Of = 0
+				for iT=1:N_Infilt[iSoil]
+					∑Of += (∑Infilt[iSoil,iT] - ∑Infilt_Obs[iSoil,iT]) ^ 2.0					
+				end
+
+				return ∑Of
+			end  # function: HYDRO_PROCESS
 	
 
 end  # module infiltration

@@ -63,6 +63,7 @@ module table
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
+
 				Matrix =  round.(Matrix, digits=3)
 				open(path.Table_θΨK_Psd, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
@@ -72,6 +73,36 @@ module table
 			end  # function:  θΨK
 		
 	end  # module psd
+	# ............................................................
+
+	# =============================================================
+	#		MODULE: infilt
+	# =============================================================
+	module infilt
+		import ...path, ...tool
+		import DelimitedFiles
+		export HYDRO_INFILT
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : HYDRO_INFILT
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function HYDRO_INFILT(Id_Select, N_SoilSelect, hydroInfilt)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroInfilt)
+
+				println(FieldName_String)
+				println(Matrix)
+				
+				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
+				
+				Matrix =  round.(Matrix, digits=3)
+				open(path.Table_HydroInfilt, "w") do io
+					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
+				end 
+				
+			end  # function:  HYDRO_INFILT
+		
+	end  # module: infilt
 	# ............................................................
 	
 end  # module table
