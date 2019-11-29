@@ -353,10 +353,11 @@ MigrationBackup/
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
-*.vscode
+
+.vscode
 deps/deps.jl
 /OUTPUT
 /OUTPUT/Plots
 /OUTPUT/Table
 /README
-SoilWater.code-workspace
+*.code-workspace
