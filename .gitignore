@@ -359,3 +359,4 @@ deps/deps.jl
 /OUTPUT/Plots
 /OUTPUT/Table
 /README
+*.code-workspace
