@@ -2,7 +2,7 @@
 #		MODULE: infiltration
 # =============================================================
 module infilt
-	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv
+	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv, ..stats, ..tool
 	import BlackBoxOptim
 	export START_INFILTRATION
 
@@ -27,7 +27,7 @@ module infilt
 
 					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
 
-					∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+					∑Infilt, Time_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 
 				elseif	option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"  #<>=<>=<>=<>=<>
 					# Derive from laboratory
@@ -40,7 +40,7 @@ module infilt
 		
 						hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
-						∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+						∑Infilt, Time_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 
 				end # OptimizeRun = "Run"	
 			end # iSoil
@@ -60,14 +60,15 @@ module infilt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 			if option.infilt.Model == "Best_Univ" # <>=<>=<>=<>=<>
-				bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)		
+
+				∑Infilt, Time_TransStead = bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)		
 
 			elseif option.infilt.Model == "QuasiExact" # <>=<>=<>=<>=<>
 				# quasiExact.QUASIEXACT()
 
 			end #  option.infilt.Model
 			
-			return ∑Infilt
+			return ∑Infilt, Time_TransStead
 		end  # function: INFILTRATION_MODEL
 
 
@@ -98,7 +99,7 @@ module infilt
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : HYDRO_PROCESS
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil])
+			function OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil], W=0.2)
 
 				hydroInfilt.θs[iSoil] = θs
 				hydroInfilt.θr[iSoil] = θr
@@ -110,15 +111,20 @@ module infilt
 				hydroInfilt.ΨmMac[iSoil] = Ψm
 				hydroInfilt.σMac[iSoil] = σ
 
+				∑Infilt, Time_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
 
-				∑Infilt = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)
+				# Computing the index of Time_TransStead
+				iTime_TransStead = min(sum(T[iSoil,1:N_Infilt[iSoil]] .≤ Time_TransStead)+1, N_Infilt[iSoil])
 				
-				∑Of = 0
-				for iT=1:N_Infilt[iSoil]
-					∑Of += (∑Infilt[iSoil,iT] - ∑Infilt_Obs[iSoil,iT]) ^ 2.0					
-				end
+				iTime_TransStead = 5 # Need to find alternative methods
 
-				return ∑Of
+				∑Of_Transit = stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iTime_TransStead], ∑Infilt[iSoil,1:iTime_TransStead]; Power=2.0)
+
+				∑Of_Steady = stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iTime_TransStead:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iTime_TransStead:N_Infilt[iSoil]]); Power=2.0)
+
+				Of = W * ∑Of_Steady + (1.0 - W) * ∑Of_Transit
+
+				return Of
 			end  # function: HYDRO_PROCESS
 	
 

@@ -26,7 +26,7 @@ module bestUniv
 					∑Infilt[iSoil, iT] = BEST_UNIVERSAL(iSoil, A, B, Sorptivity, T[iSoil,iT], Time_TransStead, hydroInfilt, infiltParam)
 				end  # for iT=1:N_Infilt[iSoil]
 
-				return ∑Infilt				
+				return ∑Infilt, Time_TransStead 			
 		end # function: BEST_UNIVERSAL_START
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -130,18 +130,18 @@ module bestUniv
 		end # function: TIME_TRANS_STEADY
 
 		
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : TIME_TRANS_STEADY_INDEP
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIME_TRANS_STEADY_INDEP(iSoil, θ_Ini, hydroInfilt, infiltParam)
-			Kr_θini = (kunsat.θ_2_KUNSAT(θ_Ini, iSoil, hydroInfilt)) / hydroInfilt.Ks[iSoil]
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# #		FUNCTION : TIME_TRANS_STEADY_INDEP
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# 	function TIME_TRANS_STEADY_INDEP(iSoil, θ_Ini, hydroInfilt, infiltParam)
+	# 		Kr_θini = (kunsat.θ_2_KUNSAT(θ_Ini, iSoil, hydroInfilt)) / hydroInfilt.Ks[iSoil]
 			
-			B = bestUniv.B(iSoil, Kr_θini, infiltParam)
+	# 		B = bestUniv.B(iSoil, Kr_θini, infiltParam)
 
-			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iSoil, hydroInfilt)
+	# 		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iSoil, hydroInfilt)
 
-			return ( Sorptivity / (hydroInfilt.Ks[iSoil] * 2.0 * (1.0 - B)) ) ^ 2.0
-		end # function: TIME_TRANS_STEADY_INDEP
+	# 		return ( Sorptivity / (hydroInfilt.Ks[iSoil] * 2.0 * (1.0 - B)) ) ^ 2.0
+	# 	end # function: TIME_TRANS_STEADY_INDEP
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -4,6 +4,31 @@
 module tool
 
 	# =============================================================
+	#		MODULE: array
+	# =============================================================
+	module array
+		function SEARCH_INDEX(Array, SearchValue)
+			N = length(Array)
+			iSearchValue = 1
+			Value_SearchValue=1.
+			Err_2 = 100000000000000.
+			
+			for i in 1:N
+				Err_1 = abs(Array[i] - SearchValue)
+			
+				if Err_1 < Err_2
+					iSearchValue = i
+					Value_SearchValue = Array[i]
+					Err_2 = Err_1
+				end
+			end
+			return iSearchValue
+		end # function SEARCH_INDEX
+	end  # module: array
+	# ............................................................
+
+
+	# =============================================================
 	#		MODULE: readWrite
 	# =============================================================
 	module readWrite
