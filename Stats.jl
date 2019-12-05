@@ -1,6 +1,6 @@
 module stats
 	import ..wrc, ..param
-	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY
+	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,8 +56,18 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RELATIVE_ERR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RELATIVE_ERR(;Obs=Obs, Sim=Sim)
+		function RELATIVE_ERR(Obs, Sim)
 			return Err = 1.0 - abs(Obs - Sim) / Obs
 		end
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : LINEAR_REGRESSION
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function LINEAR_REGRESSION(Xdata, Ydata)
+		X = hcat(ones(length(Xdata)),Xdata)
+		Y = Ydata
+		return Intercept, Slope = inv(X'*X)*(X'*Y)
+	end # function LINEAR_REGRESSION		function RELATIVE_ERR(;Obs=Obs, Sim=Sim)
 
 end # module

@@ -4,8 +4,8 @@
 module option
 	# MODELS RUN
         const Id_Select = true 	# <true>* Select Id from the data OR <false> use all the data
-		
-        const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
+
+		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
         const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		

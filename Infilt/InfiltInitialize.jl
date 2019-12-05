@@ -3,13 +3,13 @@
 # =============================================================
 module infiltInitialize
 
-	import ..hydroStruct, ...psdThetar, ..param
+	import ..hydroStruct, ...psdThetar, ..param, ..timeTransSteady
 	export INFILT_INITIALIZE
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILT_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILT_INITIALIZE(N_SoilSelect, ∑Psd, infiltParam, Tinfilt, N_Infilt)
+		function INFILT_INITIALIZE(Tinfilt, N_SoilSelect, N_Infilt, infiltParam, ∑Psd, ∑Infilt_Obs)
 
 			# DERIVING THE STRUCTURE PARAMETERS
 				hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
@@ -37,14 +37,14 @@ module infiltInitialize
 					end	
 				end #  iSoil=1:N_SoilSelect
 
+
+				iT_TransStead_Data, T_TransStead_Data = timeTransSteady. ∑INFIlT_2_TIMETRANSSTEADY(N_SoilSelect, N_Infilt, Tinfilt_Flux, ∑Infilt_Obs) 
+
 			# Initializing Infilt		
 				Infilt = Array{Float64}(undef, (N_SoilSelect, N_Infilt_Max))
 
 			return Infilt, Tinfilt_Flux, hydroInfilt 
 		end  # function: INFILT_INITIALIZE
-
-
-
 
 
 end # module hydroInitialize

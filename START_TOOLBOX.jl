@@ -28,6 +28,7 @@ using Suppressor
 		if option.Infilt
 			include("Infilt\\Sorptivity.jl")
 			include("Infilt\\Best_Univ.jl")
+			include("Infilt\\TimeTransSteady.jl")
 			include("Infilt\\InfiltInitialize.jl")
 			include("Infilt\\START_Infilt.jl")
 			include("Infilt\\OptInfilt.jl")
