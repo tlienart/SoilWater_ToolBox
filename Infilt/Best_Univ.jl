@@ -8,11 +8,11 @@ module bestUniv
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt)		
+		function BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 			# Initializing
 				Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt)
 
-				Kr_θini= (kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydroInfilt)) / hydroInfilt.Ks[iSoil]
+				Kr_θini = (kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydroInfilt)) / hydroInfilt.Ks[iSoil]
 
 				Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt)
 
@@ -20,13 +20,15 @@ module bestUniv
 
 				B = bestUniv.B(iSoil, Kr_θini, infiltParam)
 
-				Time_TransStead = TIME_TRANS_STEADY(B, hydroInfilt.Ks[iSoil], Sorptivity)
+				T_TransSteady = TIME_TRANS_STEADY(B, hydroInfilt.Ks[iSoil], Sorptivity)
+
+# 				T_TransSteady =   infiltOutput.T_TransSteady_Data[iSoil]
 
 				for iT = 1:N_Infilt[iSoil]
-					∑Infilt[iSoil, iT] = BEST_UNIVERSAL(iSoil, A, B, Sorptivity, T[iSoil,iT], Time_TransStead, hydroInfilt, infiltParam)
+					∑Infilt[iSoil, iT] = BEST_UNIVERSAL(iSoil, A, B, Sorptivity, T[iSoil,iT], T_TransSteady, hydroInfilt, infiltParam)
 				end  # for iT=1:N_Infilt[iSoil]
 
-				return ∑Infilt, Time_TransStead 			
+				return ∑Infilt, T_TransSteady
 		end # function: BEST_UNIVERSAL_START
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -35,20 +37,20 @@ module bestUniv
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST_UNIVERSAL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST_UNIVERSAL(iSoil, A, B, Sorptivity, T, Time_TransStead, hydroInfilt, infiltParam)
+		function BEST_UNIVERSAL(iSoil, A, B, Sorptivity, T, T_TransSteady, hydroInfilt, infiltParam)
 			if option.infilt.SingleDoubleRing == "Single" #<>=<>=<>=<>=<>
-				if T <= Time_TransStead 
+				if T <= T_TransSteady
 					return ∑Infilt = bestUniv.INFILTRATION_3D_TRANSIT(A, B, hydroInfilt.Ks[iSoil], Sorptivity, T)
 				else
-					return ∑Infilt = bestUniv.INFILTRATION_3D_STEADY(A, B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T,  infiltParam)
-				end # T <= Time_TransStead 
+					return ∑Infilt = bestUniv.INFILTRATION_3D_STEADY(A, B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T,  infiltParam, T_TransSteady)
+				end # T <= T_TransSteady
 
 			elseif option.infilt.SingleDoubleRing == "Double"  #<>=<>=<>=<>=<>
-				if T <= Time_TransStead 
+				if T <= T_TransSteady
 					return ∑Infilt = bestUniv.INFILTRATION_1D_TRANSIT(B, hydroInfilt.Ks[iSoil], Sorptivity, T)
 				else
-					return ∑Infilt = bestUniv.INFILTRATION_1D_STEADY(B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T,  infiltParam)
-				end # T <= Time_TransStead 
+					return ∑Infilt = bestUniv.INFILTRATION_1D_STEADY(B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T, infiltParam, T_TransSteady)
+				end # T <= T_TransSteady
 			end # option.∑Infilt.Dimension
 		end  # function: BEST_UNIVERSAL
 
@@ -72,15 +74,23 @@ module bestUniv
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION_3D_STEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function INFILTRATION_3D_STEADY(A, B, iSoil, Ks, Sorptivity, T,  infiltParam)
-		return (A * (Sorptivity ^ 2.0) + Ks) * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
+	function INFILTRATION_3D_STEADY(A, B, iSoil, Ks, Sorptivity, T,  infiltParam, T_TransSteady)
+		if option.infilt.bestUniv.Continous == true
+			return bestUniv.INFILTRATION_3D_TRANSIT(A, B, Ks, Sorptivity, T_TransSteady)  + (A * (Sorptivity ^ 2.0) + Ks)*(T - T_TransSteady)
+		elseif option.infilt.bestUniv.Continous  == false
+			return (A * (Sorptivity ^ 2.0) + Ks) * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
+		end
 	end  # function: INFILTRATION_3D_STEADY
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION_1D_STEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION_1D_STEADY(B, iSoil, Ks, Sorptivity, T,  infiltParam)
-			return Ks * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
+		function INFILTRATION_1D_STEADY(B, iSoil, Ks, Sorptivity, T, infiltParam, T_TransSteady)
+			if option.infilt.bestUniv.Continous == true
+				return bestUniv.INFILTRATION_1D_TRANSIT(B, Ks, Sorptivity, T_TransSteady)  + Ks * (T - T_TransSteady)
+			elseif option.infilt.bestUniv.Continous == false
+				return Ks * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
+			end
 		end  # function: INFILTRATION_1D_STEADY
 
 
@@ -128,21 +138,6 @@ module bestUniv
 		function TIME_TRANS_STEADY(B, Ks, Sorptivity)
 			return ( Sorptivity / (Ks * 2.0 * (1.0 - B)) ) ^ 2.0
 		end # function: TIME_TRANS_STEADY
-
-		
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# #		FUNCTION : TIME_TRANS_STEADY_INDEP
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function TIME_TRANS_STEADY_INDEP(iSoil, θ_Ini, hydroInfilt, infiltParam)
-	# 		Kr_θini = (kunsat.θ_2_KUNSAT(θ_Ini, iSoil, hydroInfilt)) / hydroInfilt.Ks[iSoil]
-			
-	# 		B = bestUniv.B(iSoil, Kr_θini, infiltParam)
-
-	# 		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iSoil, hydroInfilt)
-
-	# 		return ( Sorptivity / (hydroInfilt.Ks[iSoil] * 2.0 * (1.0 - B)) ) ^ 2.0
-	# 	end # function: TIME_TRANS_STEADY_INDEP
-
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : A

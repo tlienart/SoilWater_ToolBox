@@ -97,7 +97,7 @@ module option
 			# MODEL USED
                 const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
 
-                const SingleDoubleRing = "Double"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
+                const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
 				
                 const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
 				
@@ -126,6 +126,16 @@ module option
 				const Plot_SeIni_Range = true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
 				
 				const Plot_∑Infilt = true # <true> plots cumulative infiltration curves for experimental and derived data <false> no plots
+
+				# =============================================================
+				#		MODULE: besUniv
+				# ==========================================================
+		
+				module bestUniv
+					Continous = true # <true> this is the continous form derived by Joseph <false> Traditional non continous
+				end  # module: besUniv
+
+				# ............................................................
 
 		end  # module infilt
 		# ............................................................

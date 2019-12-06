@@ -46,7 +46,7 @@ module optInfilt
 			# P_Stead = 2.
 			# W = 0.2
 		
-			# function  OF_BEST_σmodel(Sorpt, Time, Inf_3D_Obs, iT_N, θ_Ini, θs, θr, σ, Ks, RingRadius, iT_TransStead, Time_TransStead, Flag_Best, Se_Ini, P_Stead, P_Trans)
+			# function  OF_BEST_σmodel(Sorpt, Time, Inf_3D_Obs, iT_N, θ_Ini, θs, θr, σ, Ks, RingRadius, iT_TransStead, T_TransStead, Flag_Best, Se_Ini, P_Stead, P_Trans)
 				
 			# 	Inf_Sim = zeros(iT_N)
 
@@ -72,9 +72,9 @@ module optInfilt
 			# 	return Wof
 			# end
 
-			# # Optimization = BlackBoxOptim.bboptimize(X -> OF_BEST_σmodel(Sorpt, Time[1:iT_N], Inf_3D_Obs[1:iT_N], iT_N, θ_Ini, θs, θr, X[1], Ks, RingRadius, iT_TransStead, Time_TransStead, Flag_Best, Se_Ini, P_Stead, P_Trans); SearchRange = [(param.σ_Min, param.σ_Max)], NumDimensions=1, TraceMode=:silent)
+			# # Optimization = BlackBoxOptim.bboptimize(X -> OF_BEST_σmodel(Sorpt, Time[1:iT_N], Inf_3D_Obs[1:iT_N], iT_N, θ_Ini, θs, θr, X[1], Ks, RingRadius, iT_TransStead, T_TransStead, Flag_Best, Se_Ini, P_Stead, P_Trans); SearchRange = [(param.σ_Min, param.σ_Max)], NumDimensions=1, TraceMode=:silent)
 
-			# Optimization =  Optim.optimize(σ -> OF_BEST_σmodel(Sorpt, Time[1:iT_N], Inf_3D_Obs[1:iT_N], iT_N, θ_Ini, θs, θr, σ, Ks, RingRadius, iT_TransStead, Time_TransStead, Flag_Best, Se_Ini, P_Stead, P_Trans), param.σ_Min, param.σ_Max, GoldenSection() )
+			# Optimization =  Optim.optimize(σ -> OF_BEST_σmodel(Sorpt, Time[1:iT_N], Inf_3D_Obs[1:iT_N], iT_N, θ_Ini, θs, θr, σ, Ks, RingRadius, iT_TransStead, T_TransStead, Flag_Best, Se_Ini, P_Stead, P_Trans), param.σ_Min, param.σ_Max, GoldenSection() )
 			
 			# σ = Optim.minimizer(Optimization)[1]
 

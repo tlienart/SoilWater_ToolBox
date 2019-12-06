@@ -75,7 +75,7 @@ module param
 			θr_Min = 0.0     # 0.2 or 0.25
 			θr_Max = 0.25     # 0.2 or 0.25
 
-		Ks_Min = 10.0 ^ -5.0  	# 0.000555556 wei [mm/s]
+		Ks_Min = 10.0 ^ -4.0  	# 0.000555556 wei [mm/s]
 		Ks_Max = 0.8 #0.7 # 10.0 ^ -4.0 	# 0.694444444 wei [mm/s]
 
 		# Coeff_Φ_2_θs
@@ -142,7 +142,7 @@ module param
 		const Npoint_Infilt = 300 # Number of points for generating infiltration plots
 		const Coeff_TransSteady = 2.0
 
-		const ΔErrMax_TransSteady = 0.07 #0.05 #[mm / T] Maximum error of not meeting the slope
+		const ΔErrMax_TransSteady = 0.08 #0.05 0.07#[mm / T] Maximum error of not meeting the slope
 	end  # module: infilt
 	# ............................................................
 

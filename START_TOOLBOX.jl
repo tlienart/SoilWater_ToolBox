@@ -29,6 +29,7 @@ using Suppressor
 			include("Infilt\\Sorptivity.jl")
 			include("Infilt\\Best_Univ.jl")
 			include("Infilt\\TimeTransSteady.jl")
+			include("Infilt\\InfiltStruct.jl")
 			include("Infilt\\InfiltInitialize.jl")
 			include("Infilt\\START_Infilt.jl")
 			include("Infilt\\OptInfilt.jl")
@@ -116,7 +117,7 @@ function START_TOOLBOX()
 	
 	if option.Infilt
 		println("=== START: INFILTRATION  ===")
-			∑Infilt, hydroInfilt = infilt.START_INFILTRATION(N_SoilSelect, Tinfilt, ∑Infilt_Obs, ∑Psd, N_Infilt, infiltParam, hydro)
+		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(Tinfilt, N_SoilSelect, N_Infilt, infiltParam, hydro, ∑Psd, ∑Infilt_Obs)
 		println("=== END  : INFILTRATION  === \n")
 	end
 
@@ -135,6 +136,8 @@ function START_TOOLBOX()
 
 		if option.Infilt
 			table.infilt.HYDRO_INFILT(Id_Select, N_SoilSelect, hydroInfilt)
+
+			table.infilt.INFILT(Id_Select, N_SoilSelect, infiltOutput)
 		end
 
 
@@ -156,7 +159,8 @@ function START_TOOLBOX()
 		end
 
 		if option.infilt.Plot_∑Infilt
-			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt)
+			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt,
+			infiltOutput)
 		end
 
 	println("=== END: PLOTTING  === \n")

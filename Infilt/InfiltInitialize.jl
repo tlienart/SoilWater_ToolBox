@@ -3,7 +3,7 @@
 # =============================================================
 module infiltInitialize
 
-	import ..hydroStruct, ...psdThetar, ..param, ..timeTransSteady
+	import ..hydroStruct, ...psdThetar, ..param, ..timeTransSteady, ..infiltStruct
 	export INFILT_INITIALIZE
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -37,13 +37,16 @@ module infiltInitialize
 					end	
 				end #  iSoil=1:N_SoilSelect
 
+			# STRUCTURE OF INFILTRATION
+				infiltOutput = infiltStruct.INFILTSTRUCT(N_SoilSelect)
 
-				iT_TransStead_Data, T_TransStead_Data = timeTransSteady. ∑INFIlT_2_TIMETRANSSTEADY(N_SoilSelect, N_Infilt, Tinfilt_Flux, ∑Infilt_Obs) 
+			# DERIVING WHEN STEADY STATE OCCURES
+				infiltOutput = timeTransSteady.∑INFIlT_2_TIMETRANSSTEADY(Tinfilt_Flux, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs) 
 
 			# Initializing Infilt		
-				Infilt = Array{Float64}(undef, (N_SoilSelect, N_Infilt_Max))
+				∑Infilt = Array{Float64}(undef, (N_SoilSelect, N_Infilt_Max))
 
-			return Infilt, Tinfilt_Flux, hydroInfilt 
+			return Tinfilt_Flux, infiltOutput, hydroInfilt, ∑Infilt
 		end  # function: INFILT_INITIALIZE
 
 

@@ -98,7 +98,25 @@ module table
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
 				end
 				return
-			end  # function:  θΨK
+			end  # function: HYDRO_INFILT
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : infilt
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function INFILT(Id_Select, N_SoilSelect, infiltOutput)
+
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, infiltOutput)
+				
+				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
+
+				Matrix =  round.(Matrix, digits=3)
+				open(path.Table_Infilt, "w") do io
+					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
+				end
+				return
+			end  # function: HYDRO_INFILT
 		
 	end  # module: infilt
 	# ............................................................
