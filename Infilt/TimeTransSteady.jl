@@ -5,7 +5,7 @@ module timeTransSteady
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∑INFIlT_2_TIMETRANSSTEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-		function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint_Select=3, Option_SlopeIntercept_ChangeTime = false) 
+		function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint_Select=3, Option_SlopeIntercept_ChangeTime = true) 
 
             # T_TransSteady_Data  = Array{Float64}(undef, (N_SoilSelect))
             # iT_TransSteady_Data = Array{Int64}(undef, (N_SoilSelect))
@@ -20,27 +20,28 @@ module timeTransSteady
 				# Selecting the number of last points, there need to be at least 3 points
 				N_LastInfiltPoint = min(max(N_Infilt[iSoil] - 3,3), N_LastInfiltPoint_Select)
 
-				if !Option_SlopeIntercept_ChangeTime
-					Intercept, Slope = stats.LINEAR_REGRESSION(T[N_LastInfiltPoint:N_Infilt[iSoil]], ∑Infilt_Obs[N_LastInfiltPoint:N_Infilt[iSoil]])
-				end
-				
+				Intercept, Slope = stats.LINEAR_REGRESSION(T[N_LastInfiltPoint:N_Infilt[iSoil]], ∑Infilt_Obs[N_LastInfiltPoint:N_Infilt[iSoil]])
+					
 				# Determining starting from the last points
 				for i in N_Infilt[iSoil] - N_LastInfiltPoint:-1:1
 				
-					if i-1 >= 1
-						# Determening if a linear equation is valid
-						if Option_SlopeIntercept_ChangeTime
-							Intercept, Slope = stats.LINEAR_REGRESSION(T[N_LastInfiltPoint:N_Infilt[iSoil]], ∑Infilt_Obs[N_LastInfiltPoint:N_Infilt[iSoil]])
-						end
-		
+					if i-1 >= 1	
 						∑Infilt_Model[i-1] = T[i-1] * Slope + Intercept
 
-						ΔErr[i-1] = abs( ∑Infilt_Obs[iSoil,i-1] - ∑Infilt_Model[i-1]) / (T[iSoil,i] - T[iSoil,i-1])
+						ΔErr[i-1] = 360.0 * tan(( ∑Infilt_Obs[iSoil,i-1] - ∑Infilt_Model[i-1]) / (T[iSoil,i] - T[iSoil,i-1])) / (2.0 * π)
+
+						# println("$iSoil $(ΔErr[i-1]) $( 360.0 *tan(Slope)/ (2.0 * π)), $Intercept")
 				
 						if ΔErr[i-1] >= param.infilt.ΔErrMax_TransSteady && !Flag_TransSteady # To catch only the very beginning
 							Flag_TransSteady = true
 							infiltOutput.iT_TransSteady_Data[iSoil] = i - 1
 							break
+						else
+							# Determening if a linear equation is valid
+							if Option_SlopeIntercept_ChangeTime
+								Intercept, Slope = stats.LINEAR_REGRESSION(T[i:N_Infilt[iSoil]], ∑Infilt_Obs[i:N_Infilt[iSoil]])
+								# println("$(i) $(N_Infilt[iSoil])")
+							end
 						end # ΔErr[i-1] >= param.infiltOutput.ΔErrMax_TransSteady && !Flag_TransSteady 
 					else
 						infiltOutput.iT_TransSteady_Data[iSoil] = 3
