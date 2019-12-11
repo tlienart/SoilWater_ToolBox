@@ -56,7 +56,7 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RELATIVE_ERR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RELATIVE_ERR(Obs, Sim)
+		function RELATIVE_ERR(; Obs=Obs, Sim=Sim)
 			return Err = 1.0 - abs(Obs - Sim) / Obs
 		end
 

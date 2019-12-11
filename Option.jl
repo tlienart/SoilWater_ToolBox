@@ -7,7 +7,7 @@ module option
 
 		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
-        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
+        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
         const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
@@ -15,7 +15,7 @@ module option
         const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = true # <true>* plot or <false> no plotting
+		const Plot = false # <true>* plot or <false> no plotting
 
 			
 		# =============================================================
