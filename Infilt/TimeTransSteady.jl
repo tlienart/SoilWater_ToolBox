@@ -5,59 +5,57 @@ module timeTransSteady
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∑INFIlT_2_TIMETRANSSTEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-		function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint_Select=3, Option_SlopeIntercept_ChangeTime = true) 
+		function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint_Select=3) 
 
-            # T_TransSteady_Data  = Array{Float64}(undef, (N_SoilSelect))
-            # iT_TransSteady_Data = Array{Int64}(undef, (N_SoilSelect))
-		
 			# FOR EVERy SOIL
 			for iSoil=1:N_SoilSelect
+				# Selecting the number of last points used for the steady state regression depending on the number of observations
+					N_LastInfiltPoint = min(max(N_Infilt[iSoil] - 3,3), N_LastInfiltPoint_Select)
 
-                Flag_TransSteady     = false
-                ∑Infilt_Model        = Array{Float64}(undef, (N_Infilt[iSoil]))
-				ΔErr                 = Array{Float64}(undef, (N_Infilt[iSoil]))
-				
-				# Selecting the number of last points, there need to be at least 3 points
-				N_LastInfiltPoint = min(max(N_Infilt[iSoil] - 3,3), N_LastInfiltPoint_Select)
+				# Determine when it is no longer linear
+					iStart = N_Infilt[iSoil] - N_LastInfiltPoint + 1
+					iEnd = N_Infilt[iSoil]
+					Intercept, Slope = stats.LINEAR_REGRESSION(T[iSoil,iStart:iEnd], ∑Infilt_Obs[iSoil,iStart:iEnd])
 
-				Intercept, Slope = stats.LINEAR_REGRESSION(T[N_LastInfiltPoint:N_Infilt[iSoil]], ∑Infilt_Obs[N_LastInfiltPoint:N_Infilt[iSoil]])
-					
-				# Determining starting from the last points
-				for i in N_Infilt[iSoil] - N_LastInfiltPoint:-1:1
-				
-					if i-1 >= 1	
-						∑Infilt_Model[i-1] = T[i-1] * Slope + Intercept
+				# Starting from the last soils
+				for i =1:N_Infilt[iSoil] - N_LastInfiltPoint
+					iModel = N_Infilt[iSoil] - i
+					iEnd = N_Infilt[iSoil]
 
-						ΔErr[i-1] = 360.0 * tan(( ∑Infilt_Obs[iSoil,i-1] - ∑Infilt_Model[i-1]) / (T[iSoil,i] - T[iSoil,i-1])) / (2.0 * π)
+					# Determine the linear regression
+					∑Infilt_Model = T[iSoil,iModel] * Slope + Intercept
 
-						# println("$iSoil $(ΔErr[i-1]) $( 360.0 *tan(Slope)/ (2.0 * π)), $Intercept")
-				
-						if ΔErr[i-1] >= param.infilt.ΔErrMax_TransSteady && !Flag_TransSteady # To catch only the very beginning
-							Flag_TransSteady = true
-							infiltOutput.iT_TransSteady_Data[iSoil] = i - 1
-							break
-						else
-							# Determening if a linear equation is valid
-							if Option_SlopeIntercept_ChangeTime
-								Intercept, Slope = stats.LINEAR_REGRESSION(T[i:N_Infilt[iSoil]], ∑Infilt_Obs[i:N_Infilt[iSoil]])
-								# println("$(i) $(N_Infilt[iSoil])")
-							end
-						end # ΔErr[i-1] >= param.infiltOutput.ΔErrMax_TransSteady && !Flag_TransSteady 
-					else
-						infiltOutput.iT_TransSteady_Data[iSoil] = 3
-						break	
+					# Determine if enough points for the linear regression since it must monotically decrease
+					if ∑Infilt_Model > ∑Infilt_Obs[iSoil,iModel]
+						iStart = iModel
+						iEnd = N_Infilt[iSoil]
+
+						# Recompute the slope and intercept
+						Intercept, Slope = stats.LINEAR_REGRESSION(T[iSoil,iStart:iEnd], ∑Infilt_Obs[iSoil,iStart:iEnd])
+						∑Infilt_Model = T[iSoil,iModel] * Slope + Intercept
+					end
+
+					# Compute the error of slope of not fitting the linear steady equation
+					ΔSlope_Err = abs(∑Infilt_Model - ∑Infilt_Obs[iSoil,iModel]) / (T[iSoil,iModel+1]-T[iSoil,iModel])
+					ΔSlope_Err = rad2deg(atan(abs(ΔSlope_Err)))
+
+					# println("$iSoil, $iModel, $(∑Infilt_Model[iModel]), $(∑Infilt_Obs[iSoil,iModel]), $( abs(∑Infilt_Model[iModel] - ∑Infilt_Obs[iSoil,iModel])) , $ΔSlope_Err")
+
+					if ΔSlope_Err >= 0.5 || iModel==3# To catch only the very beginning
+						infiltOutput.iT_TransSteady_Data[iSoil] = iModel
+						infiltOutput.T_TransSteady_Data[iSoil] = T[iSoil,iModel]
+						println("$iSoil, $iModel, $(T[iSoil,iModel])")
+						break
 					end # 	if i-1 >= 1
 
 				end # for i in N_Infilt[iSoil] - N_LastInfiltPoint:-1:1
-			
-				infiltOutput.T_TransSteady_Data[iSoil] = T[iSoil, infiltOutput.iT_TransSteady_Data[iSoil]]
-		
-			end # for iSoil=1:N_SoilSelect
+
+			end # for iSoil=1
 
 			return infiltOutput
 
 		end # function: INFIlTOBS_2_iTIME_TRANS_STEADy
 
-	
+
 end  # macro timeTransSteady
 

@@ -117,10 +117,6 @@ function START_TOOLBOX()
 	
 	if option.Infilt
 		println("=== START: INFILTRATION  ===")
-		Intercept, Slope = stats.LINEAR_REGRESSION([1, 2, 3, 4, 5], [2, 4, 6, 8, 10])
-		Slope_Deg = rad2deg(Slope)
-
-		println("Intercept = $Intercept Slope = $(Slope_Deg)")
 
 		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(Tinfilt, N_SoilSelect, N_Infilt, infiltParam, hydro, ∑Psd, ∑Infilt_Obs)
 		println("=== END  : INFILTRATION  === \n")

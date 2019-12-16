@@ -13,8 +13,8 @@ module infiltStruct
             iT_TransSteady_Data :: 	Vector{Int64}
             T_TransSteady_Data  :: 	Vector{Float64}
             Nse_Trans          ::	Vector{Float64}
-			Nse_Steady         ::	Vector{Float64}
-			Nse			       ::	Vector{Float64}
+				Nse_Steady         ::	Vector{Float64}
+				Nse			       ::	Vector{Float64}
 		
             FieldName          ::	Vector{Symbol} # Need to put
 		end # struct KOSUGI
