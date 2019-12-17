@@ -59,6 +59,9 @@ function START_TOOLBOX()
 
 		if option.θΨ ≠ "No"
 			θ_θΨ, Ψ_θΨ, N_θΨ = read.θΨ(Id_Select, N_SoilSelect)
+			ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ = read.ρ_Ψθ(Id_Select, N_SoilSelect)
+
+			println("$(ρb_Fine_θΨ), $(ρp_Fine_θΨ), $(ρb_Rock_θΨ), $(ρp_Rock_θΨ)")
 		end
 
 		if option.hydro.KunsatΨ

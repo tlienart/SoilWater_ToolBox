@@ -5,7 +5,7 @@ module read
 	import ..option, ..path, ..cst
 	import DelimitedFiles
 
-	export ID, KUNSATΨ, INFILTRATION, PSD, READ_ROW_SELECT
+	export ID, KUNSATΨ, INFILTRATION, PSD, READ_ROW_SELECT, ρ_Ψθ,  θΨ
 
 	mutable struct INFILT
 		RingRadius
@@ -40,10 +40,20 @@ module read
 	#		FUNCTION : θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θΨ(Id_True, N_SoilSelect)
-			Ψ_θΨ, N_θΨ 	= READ_ROW_SELECT(path.Ψθ, "H[mm]", Id_True, N_SoilSelect)
-			θ_θΨ, ~ 	= READ_ROW_SELECT(path.Ψθ, "Theta", Id_True, N_SoilSelect)
+         Ψ_θΨ, N_θΨ = READ_ROW_SELECT(path.Ψθ, "H[mm]", Id_True, N_SoilSelect)
+         θ_θΨ, ~    = READ_ROW_SELECT(path.Ψθ, "Theta", Id_True, N_SoilSelect)
 			return θ_θΨ, Ψ_θΨ, N_θΨ
 		end  # function: θΨ
+
+		function ρ_Ψθ(Id_Select, N_SoilSelect)
+         ρb_Fine_θΨ, ~ = READ_ROW_SELECT(path.Ψθ, "ρb_Fine[g_cm3]", Id_True, N_SoilSelect)
+         ρp_Fine_θΨ, ~ = READ_ROW_SELECT(path.Ψθ, "ρp_Fine[g_cm3]", Id_True, N_SoilSelect)
+
+         ρb_Rock_θΨ, ~ = READ_ROW_SELECT(path.Ψθ, "ρb_Rock[g_cm3]", Id_True, N_SoilSelect)
+         ρp_Rock_θΨ, ~ = READ_ROW_SELECT(path.Ψθ, "ρp_Rock[g_cm3]", Id_True, N_SoilSelect)
+
+			return ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ 
+		end
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

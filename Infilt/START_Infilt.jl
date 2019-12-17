@@ -29,7 +29,7 @@ module infilt
 
 					∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 
-				elseif	option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"  #<>=<>=<>=<>=<>
+				elseif option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"  #<>=<>=<>=<>=<>
 					# Derive from laboratory
 				
 					SearchRange =[(log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
