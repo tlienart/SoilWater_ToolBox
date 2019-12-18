@@ -4,10 +4,10 @@ module psd
 	# ======================================================================================
 	#          PSD_START Slow initialization
 	# ======================================================================================
-	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro, hydroPsd)
+	function START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, hydro, hydroPsd)
 
 		# INITIATING THE PSD DATA		
-		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd, Φ_Psd, hydro, hydroPsd)
+		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(N_Psd, N_SoilSelect, ∑Psd, hydro, hydroPsd)
 
 		if option.psd.OptimizePsd == "Run"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, paramPsd.θr_Psd, paramPsd, hydro)

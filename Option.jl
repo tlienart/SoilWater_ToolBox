@@ -7,9 +7,9 @@ module option
 
 		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
-        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
+        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
-        const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
+        const Infilt    = false # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
 	# DOWNLAOD PACKAGES
         const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
@@ -31,7 +31,7 @@ module option
 
             const KunsatΨ         = true #  <true>* Optimize hydraulic parameters from θ(ψ) & K(Ψ) OR <false>
 
-            const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Data>* derived from Max θ(ψ) OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
+            const θsOpt           = "Φ" #  <Opt> Optimize θs OR <Φ> which requires some correction from param.hydro.Coeff_Φ_2_θs
 
             const θrOpt           = "Opt" # <Opt> optimises; <Cst> uses θr = param.θr_Cst; <Param> uses α1 and α1 from parameters in Param.jl
 

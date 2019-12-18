@@ -16,6 +16,7 @@ using Suppressor
 	include("Param.jl")
 	include("Tool.jl")
 	include("Read.jl")
+	include("Hydro\\TotalPorosity.jl")
 	include("Hydro\\HydroStruct.jl")
 	include("Hydro\\HydroInitialize.jl")
 	include("Hydro\\WaterRetentionCurve.jl")
@@ -55,13 +56,12 @@ function START_TOOLBOX()
 
 	println("=== START: READING ===")
 		# Selecting soils of interest 
-		Id_Select, Id_True, N_SoilSelect = read.ID()
+		Id_Select, N_SoilSelect = read.ID()
 
 		if option.θΨ ≠ "No"
 			θ_θΨ, Ψ_θΨ, N_θΨ = read.θΨ(Id_Select, N_SoilSelect)
-			ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ = read.ρ_Ψθ(Id_Select, N_SoilSelect)
 
-			println("$(ρb_Fine_θΨ), $(ρp_Fine_θΨ), $(ρb_Rock_θΨ), $(ρp_Rock_θΨ)")
+			ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ = read.ρ_Ψθ(Id_Select, N_SoilSelect)
 		end
 
 		if option.hydro.KunsatΨ
@@ -69,49 +69,59 @@ function START_TOOLBOX()
 		end
 
 		if option.Psd
-			Rpart, ∑Psd, N_Psd, Φ_Psd = read.PSD(Id_Select, N_SoilSelect)
+			Rpart, ∑Psd, N_Psd = read.PSD(Id_Select, N_SoilSelect)
+
+			ρb_Fine_Psd, ρp_Fine_Psd, ρb_Rock_Psd, ρp_Rock_Psd = read.ρ_PSD(Id_Select, N_SoilSelect)
 		else
 			∑Psd = zeros(Float64, N_SoilSelect,1)
 		end
 		
 		if option.Infilt
 			Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = read.INFILTRATION(Id_Select, N_SoilSelect)
+
+			ρb_Fine_Infilt, ρp_Fine_Infilt, ρb_Rock_Infilt, ρp_Rock_Infilt = read.ρ_INFILTRATION(Id_Select, N_SoilSelect)
 		end
 
 		# Reinforcing the maximum of iSoil to simulate
-		N_SoilSelect = min(N_SoilSelect, param.N_iSoil_Simulations)
+			N_SoilSelect = min(N_SoilSelect, param.N_iSoil_Simulations)
 	println("=== END  : READING === \n")
 
 
 	if option.θΨ ≠ "No"
-		println("=== START: DERIVING HYDRO PARAMETERS  ===")
-			# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
+	println("=== START: DERIVING HYDRO PARAMETERS  ===")
+		# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
 			hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
-			if option.hydro.KunsatΨ
-				# Structure of hydro
-				hydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd,  θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, optionHydro=option.hydro)
-			else
-				hydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd,  θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, optionHydro=option.hydro)
-			end
-		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
+		# Total Porosity= Φ
+			hydro.Φ = Φ.ρB_2_Φ(N_SoilSelect, ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ)
+
+		if option.hydro.KunsatΨ
+			# Structure of hydro
+			hydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, optionHydro=option.hydro)
+		else
+			hydro = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, optionHydro=option.hydro)
+		end
+	println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
 	else
 		hydro = []
 	end
 
 
 	if option.Psd
-		println("=== START: PSD MODEL  ===")
-			# Structure of hydroPsd
+	println("=== START: PSD MODEL  ===")
+		# Structure of hydroPsd
 			hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
-			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, Φ_Psd, hydro, hydroPsd)
+		# Total Porosity= Φ
+			hydroPsd.Φ = Φ.ρB_2_Φ(N_SoilSelect, ρb_Fine_Psd, ρp_Fine_Psd, ρb_Rock_Psd, ρp_Rock_Psd)
+
+			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, hydro, hydroPsd)
 
 		if  option.psd.HydroParam
 			hydroPsd = hydroParam.START_HYDROPARAM(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_Rpart, Ψ_θΨ=Ψ_Rpart, N_θΨ=N_Psd, hydro=hydroPsd, optionHydro=option.psd)
 		end
 
-		println("=== END  : PSD MODEL  === \n")
+	println("=== END : PSD MODEL  === \n")
 	else
 		θ_Rpart = zeros(Float64, N_SoilSelect,1)
 		Ψ_Rpart = zeros(Float64, N_SoilSelect,1)
@@ -119,10 +129,17 @@ function START_TOOLBOX()
 
 	
 	if option.Infilt
-		println("=== START: INFILTRATION  ===")
+	println("=== START: INFILTRATION  ===")
 
-		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(Tinfilt, N_SoilSelect, N_Infilt, infiltParam, hydro, ∑Psd, ∑Infilt_Obs)
-		println("=== END  : INFILTRATION  === \n")
+		# Structure of hydroInfilt
+			hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+
+		# Total Porosity= Φ
+			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect, ρb_Fine_Infilt, ρp_Fine_Infilt, ρb_Rock_Infilt, ρp_Rock_Infilt)
+
+		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
+
+	println("=== END  : INFILTRATION  === \n")
 	end
 
 	println("=== START: WRITING TABLE  ===")
@@ -143,8 +160,6 @@ function START_TOOLBOX()
 
 			table.infilt.INFILT(Id_Select, N_SoilSelect, infiltOutput)
 		end
-
-
 	println("=== END  : WRITING TABLE  === \n")
 
 

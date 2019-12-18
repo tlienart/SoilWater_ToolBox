@@ -19,13 +19,13 @@ module hydroInitialize
 	function HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro)
 
 		# INITIALIZING
-            θ_Max    = Array{Float64}(undef, (N_SoilSelect))
-            θ_Min    = Array{Float64}(undef, (N_SoilSelect))
-            θr_Max   = Array{Float64}(undef, (N_SoilSelect))
-            θs_Min   = Array{Float64}(undef, (N_SoilSelect))
-            θs_Max   = Array{Float64}(undef, (N_SoilSelect))
-            K_KΨ_Max = zeros(Float64, N_SoilSelect)
-            Ks_Min   = zeros(Float64, N_SoilSelect)
+			θ_Max    = Array{Float64}(undef, (N_SoilSelect))
+			θ_Min    = Array{Float64}(undef, (N_SoilSelect))
+			θr_Max   = Array{Float64}(undef, (N_SoilSelect))
+			θs_Min   = Array{Float64}(undef, (N_SoilSelect))
+			θs_Max   = Array{Float64}(undef, (N_SoilSelect))
+			K_KΨ_Max = zeros(Float64, N_SoilSelect)
+			Ks_Min   = zeros(Float64, N_SoilSelect)
 
 			Opt_θs 		= true
 			Opt_θr 		= true
@@ -38,10 +38,10 @@ module hydroInitialize
 			for iSoil=1:N_SoilSelect
 				# LIMITS
 					θ_Min[iSoil] = minimum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Smallest measure θ
-					θ_Max[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Greatest measure θ
+					θ_Max[iSoil] = maximum(θ_θΨ[iSoil, 1:N_θΨ[iSoil]])  	# Greatest measure θ but this does not include θs
 
 					if optionHydro.KunsatΨ
-						K_KΨ_Max[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]]) 	# Greatest measure of Kunsat
+						K_KΨ_Max[iSoil] = maximum(K_KΨ[iSoil, 1:N_KΨ[iSoil]]) # Greatest measure of Kunsat
 					end
 
 				# DERIVING θr FROM DATA IF REQUESTED
@@ -63,18 +63,14 @@ module hydroInitialize
 					end # optionHydro.θrOpt == "Psd"
 
 
-				# DERIVING θs FROM DATA IF REQUESTED
-					if optionHydro.θsOpt == "Data" # TODO need to derive from bulk density 
-						hydro.θs[iSoil] = θ_Max[iSoil]
-						opt.Opt_θs = false # No need to optimize θs
-					
-					elseif optionHydro.θsOpt == "Φ" # <>=<>=<>=<>=<>
-						hydro.θs[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_θΨ[iSoil, 2] + 0.005) # So that monotically increasing
+				# DERIVING θs FROM DATA IF REQUESTED				
+					if optionHydro.θsOpt == "Φ" # <>=<>=<>=<>=<>
+						hydro.θs[iSoil] = max(hydro.Φ[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_Max[iSoil] + 0.005) # So that monotically increasing
 						opt.Opt_θs = false
 
 					elseif optionHydro.θsOpt == "Opt" # <>=<>=<>=<>=<>
-						θs_Min[iSoil] = θ_θΨ[iSoil, 2] + 0.005
-						θs_Max[iSoil] = max(θ_Max[iSoil] * param.hydro.Coeff_θs_Max, θ_θΨ[iSoil, 2] + 0.005)
+						θs_Min[iSoil] = θ_Max[iSoil] + 0.005
+						θs_Max[iSoil] = max(hydro.Φ[iSoil] * param.hydro.Coeff_Φ_2_θs, θs_Min[iSoil])
 						opt.Opt_θs = true
 
 					elseif optionHydro.θsOpt == "Known" # <>=<>=<>=<>=<>

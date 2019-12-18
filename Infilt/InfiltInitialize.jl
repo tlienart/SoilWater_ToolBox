@@ -22,7 +22,7 @@ module infiltInitialize
 						hydroInfilt.θr[iSoil] =  min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil])
 
 					# θs computation
-						hydroInfilt.θs[iSoil] = param.hydro.Coeff_Φ_2_θs *  infiltParam.Φ[iSoil]	
+						hydroInfilt.θs[iSoil] = param.hydro.Coeff_Φ_2_θs * hydroInfilt.Φ[iSoil]	
 				end  # for iSoil=1:N_SoilSelect
 
 			# TIME FLUX CORRECTION
