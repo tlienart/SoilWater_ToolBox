@@ -45,11 +45,7 @@ module sorptivity
 			
 			Ψ = wrc.θ_2_ΨDual(θ, iSoil, hydro)
 			
-			if ∂θ∂Ψ > Diffusivity_Min
-				∂θ∂Ψ = wrc.∂θ∂Ψ(Ψ, iSoil, hydro)
-			else
-				∂θ∂Ψ = 0.0
-			end
+			∂θ∂Ψ = wrc.∂θ∂Ψ(Ψ, iSoil, hydro)
 
 			if ∂θ∂Ψ >  Diffusivity_Min
 				return Diffusivity = Kunsat / ∂θ∂Ψ

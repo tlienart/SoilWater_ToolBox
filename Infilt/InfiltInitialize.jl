@@ -9,16 +9,14 @@ module infiltInitialize
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILT_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILT_INITIALIZE(Tinfilt, ∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect)
-
-			# # DERIVING THE STRUCTURE PARAMETERS
-			# 	hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+		function INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
 			# CORRECTION FOR θr & θs
 				for iSoil=1:N_SoilSelect
 					# θr computation
 						hydroInfilt.θr[iSoil] = psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd)
 
+						# θr > θ_Ini
 						hydroInfilt.θr[iSoil] =  min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil])
 
 					# θs computation

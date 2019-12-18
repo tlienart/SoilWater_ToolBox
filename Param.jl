@@ -142,7 +142,7 @@ module param
 		const Npoint_Infilt = 300 # Number of points for generating infiltration plots
 		const Coeff_TransSteady = 2.0
 
-		const ΔErrMax_TransSteady = 10.0 #0.05 0.07#[mm / T] Maximum error of not meeting the slope
+		const ΔSlope_Err_SteadyState = 0.5 #0.05 0.07#[mm / T] Maximum error of not meeting the slope
 	end  # module: infilt
 	# ............................................................
 

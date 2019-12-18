@@ -7,7 +7,7 @@ module option
 
 		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
-        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
+        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
         const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
@@ -94,33 +94,31 @@ module option
 		# =============================================================
 		module infilt
 			# MODEL USED
-                const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
+				const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
 
-                const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
-				
-                const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
-				
-                const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
+				const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
+		
+				const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
+		
+				const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
 
 				const Psd              = false # <true> constrain the opt hydraulic param with PSD <false> ...
 
 			# HYDRAULIC MODEL
 				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
-
 				const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
-
 				const KunsatΨ = false 	# <false>  Not to change
 				const θsOpt   = "Known" # <Known>  Not to change
 				const θrOpt   = "Known" # <Known>  Not to change
 				const KsOpt   = "Known" # <Known>  Not to change 
 				
 			# OUTPUT
-                const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
+				const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
 
-                const OptimizeRun     = "RunOptKs" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
+				const OptimizeRun     = "RunOptKs" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
 			
 			# PLOTTING
-                const Plot_Sorptivity  = true # <true> or <false>
+            const Plot_Sorptivity  = true # <true> or <false>
 				
 				const Plot_SeIni_Range = true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
 				

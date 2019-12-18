@@ -41,7 +41,7 @@ module timeTransSteady
 
 					# println("$iSoil, $iModel, $(∑Infilt_Model[iModel]), $(∑Infilt_Obs[iSoil,iModel]), $( abs(∑Infilt_Model[iModel] - ∑Infilt_Obs[iSoil,iModel])) , $ΔSlope_Err")
 
-					if ΔSlope_Err >= 0.5 || iModel==3# To catch only the very beginning
+					if ΔSlope_Err >= param.infilt.ΔSlope_Err_SteadyState || iModel==3# To catch only the very beginning
 						infiltOutput.iT_TransSteady_Data[iSoil] = iModel
 						infiltOutput.T_TransSteady_Data[iSoil] = T[iSoil,iModel]
 						println("$iSoil, $iModel, $(T[iSoil,iModel])")

@@ -3,57 +3,54 @@
 # =============================================================
 module infilt
 	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv, ..stats, ..tool
+	include("C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\Plot.jl")
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_INFILT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
+	function START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt, Id_Select)
 
 		# INITIALIZE
 		T, infiltOutput, hydroInfilt, ∑Infilt = infiltInitialize.INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
-		# OPTIONS
-			# For every soils
-			# hydroInfilt = deepcopy(hydro)
-			for iSoil=1:N_SoilSelect
-				println( iSoil)
+		plot.PLOT_TREANSSTEADY(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
 
-				# No optimization required running from hydro derived from laboratory
-				if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No" #<>=<>=<>=<>=<>
-					# Derive from laboratory
-					hydroInfilt = copy(hydro)
+		for iSoil=1:N_SoilSelect
+			println( iSoil)
 
-					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
+			# No optimization required running from hydro derived from laboratory
+			if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No" #<>=<>=<>=<>=<>
+				# Derive from laboratory
+				hydroInfilt = copy(hydro)
 
-					∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+				hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
 
-				elseif option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"  #<>=<>=<>=<>=<>
-					# Derive from laboratory
+				∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+
+			elseif option.infilt.OptimizeRun == "RunOptKs"  && option.θΨ ≠ "No"  #<>=<>=<>=<>=<>	
+				SearchRange =[(log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
+
+				hydroInfilt = deepcopy(hydro)
 				
-					SearchRange =[(log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
-					
-					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
+				Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
+	
+				hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
-					Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
-		
-					hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
+				# OUTPUTS
+				∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 
-					# OUTPUTS
-					∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+				# Statistics
+					iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
 
-					# Statistics
-					 iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
+				infiltOutput.Nse_Trans[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iT_TransSteady], ∑Infilt[iSoil, 1:iT_TransSteady]; Power=2.0)
 
-					infiltOutput.Nse_Trans[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iT_TransSteady], ∑Infilt[iSoil, 1:iT_TransSteady]; Power=2.0)
+				infiltOutput.Nse_Steady[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]); Power=2.0)
 
-					infiltOutput.Nse_Steady[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]); Power=2.0)
-
-					infiltOutput.Nse[iSoil] = 0.5 * infiltOutput.Nse_Trans[iSoil] + 0.5 * infiltOutput.Nse_Steady[iSoil]
-
-			end # OptimizeRun = "Run"
-		end # iSoil
+				infiltOutput.Nse[iSoil] = 0.5 * infiltOutput.Nse_Trans[iSoil] + 0.5 * infiltOutput.Nse_Steady[iSoil]
+		end # OptimizeRun = "Run"
+	end # iSoil
 
 		Nse_Trans = Statistics.mean(infiltOutput.Nse_Trans[1:N_SoilSelect])
 		Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:N_SoilSelect])

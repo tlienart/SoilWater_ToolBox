@@ -4,7 +4,7 @@
 module plot
 	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar, ..psdFunc
 	using Winston
-	export HYDROPARAM, PLOT_∑INFILT
+	export HYDROPARAM, PLOT_∑INFILT,  PLOT_TREANSSTEADY
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROPARAM
@@ -229,8 +229,6 @@ module plot
 
 					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=4)
 					Winston.setattr(TransSteady, label="TransSteady")
-
-
 					
 					legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim, TransSteady])
 					∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, ∑Infilt_Sim,TransSteady, legend_∑infilt_Tinfilt)
@@ -243,6 +241,34 @@ module plot
 			
 			return
 		end # PLOT_∑INFILT
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : PLOT_TREANSSTEADY
+		#		Temperorary
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function PLOT_TREANSSTEADY(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
+
+			for iSoil=1:N_SoilSelect
+				Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
+					Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
+					Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="∑infiltration [mm]")
+
+					∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt_Obs[iSoil,1:N_Infilt[iSoil]], color="violet")   
+					Winston.setattr(∑infilt_Obs, label = "Obs")
+
+					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=4)
+					Winston.setattr(TransSteady, label="TransSteady")
+					
+					legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, TransSteady])
+					∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, TransSteady, legend_∑infilt_Tinfilt)
+					
+					Path = "C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\OUTPUT\\Plots\\Infiltration\\" * "INFIL_" * option.infilt.Model * "_" * option.infilt.OutputDimension *  "_" * string(Id_Select[iSoil]) *  ".svg"
+
+				Winston.savefig(∑infilt_Tinfilt, Path)
+			end # for iSoil
+			
+			return
+		end  # function: PLOT_TREANSSTEADY
 
 end  # module plot
 # ............................................................

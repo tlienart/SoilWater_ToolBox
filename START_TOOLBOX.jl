@@ -72,7 +72,9 @@ function START_TOOLBOX()
 
 			RockW_Psd, ρ_Rock_Psd, ρbSoil_Psd, ρp_Fine_Psd = read.ρ_PSD(Id_Select, N_SoilSelect)
 		else
-			∑Psd = zeros(Float64, N_SoilSelect,1)
+			∑Psd = zeros(Float64, N_SoilSelect, 1)
+			Rpart = zeros(Float64, N_SoilSelect, 1)
+			N_Psd= zeros(Float64, N_SoilSelect)
 		end
 		
 		if option.Infilt
@@ -130,14 +132,13 @@ function START_TOOLBOX()
 	
 	if option.Infilt
 	println("=== START: INFILTRATION  ===")
-
 		# Structure of hydroInfilt
 			hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
 		# Total Porosity= Φ
-			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect,RockW_Infilt, ρ_Rock_Infilt, ρbSoil_Infilt, ρp_Fine_Infilt)
+			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockW_Infilt, ρ_Rock_Infilt, ρbSoil_Infilt, ρp_Fine_Infilt)
 
-		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
+		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt, Id_Select)
 
 	println("=== END  : INFILTRATION  === \n")
 	else
