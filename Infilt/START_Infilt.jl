@@ -12,7 +12,7 @@ module infilt
 	function START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
 		# INITIALIZE
-		T, infiltOutput, hydroInfilt, ∑Infilt = infiltInitialize.INFILT_INITIALIZE(Tinfilt, N_SoilSelect, N_Infilt, infiltParam, ∑Psd, ∑Infilt_Obs)
+		T, infiltOutput, hydroInfilt, ∑Infilt = infiltInitialize.INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
 		# OPTIONS
 			# For every soils

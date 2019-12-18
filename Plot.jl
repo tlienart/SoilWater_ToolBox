@@ -11,13 +11,16 @@ module plot
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, hydroPsd; N_Se = 500)
 
-			θ_Sim 	   = Array{Float64}(undef, (N_Se))
-			Kunsat_Sim = Array{Float64}(undef, (N_Se))
-			θ_Sim_Psd  = Array{Float64}(undef, (N_Se))
+         θ_Sim      = Array{Float64}(undef, (N_Se))
+         Kunsat_Sim = Array{Float64}(undef, (N_Se))
+         θ_Sim_Psd  = Array{Float64}(undef, (N_Se))
 			
 			# INJECTING Ψ=0 to be seen on plot using logarithmic scale to include θs 
-			Ψ_θΨ_4plot    = replace(Ψ_θΨ, 0.0=>1.0)    # replacement in [mm]
-			Ψ_Rpart_4plot = replace(Ψ_Rpart, 0.0=>1.0) # replacement in [mm]
+			# Ψ_θΨ_4plot    = replace(Ψ_θΨ, 0.0=>1.0)    # replacement in [mm]
+			# Ψ_Rpart_4plot = replace(Ψ_Rpart, 0.0=>1.0) # replacement in [mm]
+
+			Ψ_θΨ_4plot    = Ψ_θΨ
+			Ψ_Rpart_4plot = Ψ_Rpart
 
 			for iSoil = 1:N_SoilSelect
 				

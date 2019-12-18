@@ -9,10 +9,10 @@ module infiltInitialize
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILT_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILT_INITIALIZE(Tinfilt, N_SoilSelect, N_Infilt, infiltParam, ∑Psd, ∑Infilt_Obs)
+		function INFILT_INITIALIZE(Tinfilt, ∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect)
 
-			# DERIVING THE STRUCTURE PARAMETERS
-				hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+			# # DERIVING THE STRUCTURE PARAMETERS
+			# 	hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
 			# CORRECTION FOR θr & θs
 				for iSoil=1:N_SoilSelect

@@ -15,8 +15,7 @@ module option
         const DownloadPackage = false # <true> For first time user download packages required to run program OR <false>*
 
 	# PLOTTING
-		const Plot = false # <true>* plot or <false> no plotting
-
+		const Plot = true # <true>* plot or <false> no plotting
 			
 		# =============================================================
 		#		MODULE: hydro
@@ -38,7 +37,7 @@ module option
             const KsOpt           = "Opt" # <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
 			# PLOTTING
-				const Plot_θΨ = false
+				const Plot_θΨ = true
 			
 			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
 				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")

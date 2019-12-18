@@ -45,7 +45,6 @@ using Suppressor
 			include("Psd\\START_PSD.jl")
 		end
 	include("Table.jl")
-	# include("Plot.jl")
 end
 
 
@@ -61,7 +60,7 @@ function START_TOOLBOX()
 		if option.θΨ ≠ "No"
 			θ_θΨ, Ψ_θΨ, N_θΨ = read.θΨ(Id_Select, N_SoilSelect)
 
-			ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ = read.ρ_Ψθ(Id_Select, N_SoilSelect)
+			RockW_θΨ, ρ_Rock_θΨ, ρbSoil_θΨ, ρp_Fine_θΨ = read.ρ_Ψθ(Id_Select, N_SoilSelect)
 		end
 
 		if option.hydro.KunsatΨ
@@ -71,7 +70,7 @@ function START_TOOLBOX()
 		if option.Psd
 			Rpart, ∑Psd, N_Psd = read.PSD(Id_Select, N_SoilSelect)
 
-			ρb_Fine_Psd, ρp_Fine_Psd, ρb_Rock_Psd, ρp_Rock_Psd = read.ρ_PSD(Id_Select, N_SoilSelect)
+			RockW_Psd, ρ_Rock_Psd, ρbSoil_Psd, ρp_Fine_Psd = read.ρ_PSD(Id_Select, N_SoilSelect)
 		else
 			∑Psd = zeros(Float64, N_SoilSelect,1)
 		end
@@ -79,7 +78,7 @@ function START_TOOLBOX()
 		if option.Infilt
 			Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = read.INFILTRATION(Id_Select, N_SoilSelect)
 
-			ρb_Fine_Infilt, ρp_Fine_Infilt, ρb_Rock_Infilt, ρp_Rock_Infilt = read.ρ_INFILTRATION(Id_Select, N_SoilSelect)
+			RockW_Infilt, ρ_Rock_Infilt, ρbSoil_Infilt, ρp_Fine_Infilt = read.ρ_INFILTRATION(Id_Select, N_SoilSelect)
 		end
 
 		# Reinforcing the maximum of iSoil to simulate
@@ -93,7 +92,7 @@ function START_TOOLBOX()
 			hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
 		# Total Porosity= Φ
-			hydro.Φ = Φ.ρB_2_Φ(N_SoilSelect, ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ)
+			hydro.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockW_θΨ, ρ_Rock_θΨ, ρbSoil_θΨ, ρp_Fine_θΨ)
 
 		if option.hydro.KunsatΨ
 			# Structure of hydro
@@ -113,7 +112,7 @@ function START_TOOLBOX()
 			hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
 		# Total Porosity= Φ
-			hydroPsd.Φ = Φ.ρB_2_Φ(N_SoilSelect, ρb_Fine_Psd, ρp_Fine_Psd, ρb_Rock_Psd, ρp_Rock_Psd)
+			hydroPsd.Φ = Φ.ρB_2_Φ(N_SoilSelect,RockW_Psd, ρ_Rock_Psd, ρbSoil_Psd, ρp_Fine_Psd)
 
 			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psd.START_PSD(N_SoilSelect, Ψ_θΨ, θ_θΨ, N_θΨ, Rpart, ∑Psd, N_Psd, hydro, hydroPsd)
 
@@ -125,6 +124,7 @@ function START_TOOLBOX()
 	else
 		θ_Rpart = zeros(Float64, N_SoilSelect,1)
 		Ψ_Rpart = zeros(Float64, N_SoilSelect,1)
+		hydroPsd = []
 	end
 
 	
@@ -135,11 +135,13 @@ function START_TOOLBOX()
 			hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 
 		# Total Porosity= Φ
-			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect, ρb_Fine_Infilt, ρp_Fine_Infilt, ρb_Rock_Infilt, ρp_Rock_Infilt)
+			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect,RockW_Infilt, ρ_Rock_Infilt, ρbSoil_Infilt, ρp_Fine_Infilt)
 
 		infiltOutput, hydroInfilt, ∑Infilt = infilt.START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
 	println("=== END  : INFILTRATION  === \n")
+	else
+		hydroInfilt = []
 	end
 
 	println("=== START: WRITING TABLE  ===")
@@ -165,6 +167,8 @@ function START_TOOLBOX()
 
 	if option.Plot
 	println("=== START: PLOTTING  ===")
+		include("Plot.jl")
+
 		if option.θΨ ≠ "No" && option.hydro.Plot_θΨ
 			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, hydroPsd)
 		end # option.Plot_WaterRetentionCurve
@@ -177,7 +181,7 @@ function START_TOOLBOX()
 			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd) 
 		end
 
-		if option.infilt.Plot_∑Infilt
+		if option.infilt.Plot_∑Infilt && option.Infilt
 			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt,
 			infiltOutput)
 		end
@@ -186,7 +190,6 @@ function START_TOOLBOX()
 	end # if option.Plot
 		
 end  # function: START_TOOLBOX
-
 
 println("\n\n===== START SOIL WATER TOOLBOX ==== \n")
 	@time START_TOOLBOX()

@@ -48,15 +48,16 @@ module read
 	#		FUNCTION : ρ_Ψθ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ρ_Ψθ(Id_Select, N_SoilSelect)
-			ρb_Fine_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρb_Fine[g_cm3]", Id_Select, N_SoilSelect)
 			
-         ρp_Fine_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρp_Fine[g_cm3]", Id_Select, N_SoilSelect)
-
-			ρb_Rock_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρb_Rock[g_cm3]", Id_Select, N_SoilSelect)
+			ρbSoil_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρbSoil[g_cm-3]", Id_Select, N_SoilSelect)
 			
-         ρp_Rock_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρp_Rock[g_cm3]", Id_Select, N_SoilSelect)
+			ρp_Fine_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρp_Fine[g_cm-3]", Id_Select, N_SoilSelect)
 
-			return ρb_Fine_θΨ, ρp_Fine_θΨ, ρb_Rock_θΨ, ρp_Rock_θΨ 
+			ρ_Rock_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρ_Rock[g_cm-3]", Id_Select, N_SoilSelect)
+			
+         RockW_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "Rock%[g_g-3]", Id_Select, N_SoilSelect)
+
+			return RockW_θΨ, ρ_Rock_θΨ, ρbSoil_θΨ, ρp_Fine_θΨ
 		end # function: ρ_Ψθ
 
 
@@ -97,15 +98,16 @@ module read
 	#		FUNCTION : ρ_PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ρ_INFILTRATION(Id_Select, N_SoilSelect)
-			ρb_Fine_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Infilt, "ρb_Fine[g_cm3]", Id_Select, N_SoilSelect)
 
-			ρp_Fine_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Infilt, "ρp_Fine[g_cm3]", Id_Select, N_SoilSelect)
+			ρbSoil_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρbSoil[g_cm-3]", Id_Select, N_SoilSelect)
+			
+			ρp_Fine_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρp_Fine[g_cm-3]", Id_Select, N_SoilSelect)
 
-			ρb_Rock_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Infilt, "ρb_Rock[g_cm3]", Id_Select, N_SoilSelect)
+			ρ_Rock_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρ_Rock[g_cm-3]", Id_Select, N_SoilSelect)
+			
+         RockW_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "Rock%[g_g-3]", Id_Select, N_SoilSelect)
 
-			ρp_Rock_Infilt, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Infilt, "ρp_Rock[g_cm3]", Id_Select, N_SoilSelect)
-
-			return ρb_Fine_Infilt, ρp_Fine_Infilt, ρb_Rock_Infilt, ρp_Rock_Infilt 
+			return RockW_Infilt, ρ_Rock_Infilt, ρbSoil_Infilt, ρp_Fine_Infilt 
 		end # function: ρ_PSD
 
 
@@ -126,13 +128,16 @@ module read
 	#		FUNCTION : ρ_PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ρ_PSD(Id_Select, N_SoilSelect)
-			ρb_Fine_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Psd, "ρb_Fine[g_cm3]", Id_Select, N_SoilSelect)
-			ρp_Fine_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Psd, "ρp_Fine[g_cm3]", Id_Select, N_SoilSelect)
 
-			ρb_Rock_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Psd, "ρb_Rock[g_cm3]", Id_Select, N_SoilSelect)
-			ρp_Rock_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Psd, "ρp_Rock[g_cm3]", Id_Select, N_SoilSelect)
+			ρbSoil_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρbSoil[g_cm-3]", Id_Select, N_SoilSelect)
+			
+			ρp_Fine_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρp_Fine[g_cm-3]", Id_Select, N_SoilSelect)
 
-			return ρb_Fine_Psd, ρp_Fine_Psd, ρb_Rock_Psd, ρp_Rock_Psd 
+			ρ_Rock_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "ρ_Rock[g_cm-3]", Id_Select, N_SoilSelect)
+			
+         RockW_Psd, ~ = tool.readWrite.READ_ROW_SELECT(path.ρ_Ψθ, "Rock%[g_g-3]", Id_Select, N_SoilSelect)
+
+			return RockW_Psd, ρ_Rock_Psd, ρbSoil_Psd, ρp_Fine_Psd
 		end # function: ρ_PSD
 	
 end  # module: read
