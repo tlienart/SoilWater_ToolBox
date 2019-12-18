@@ -40,17 +40,21 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DIFFUSIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DIFFUSIVITY(θ, iSoil, hydro; Diffusivity_Min = 10^-4.0) #-5		
+		function DIFFUSIVITY(θ, iSoil, hydro; Diffusivity_Min=10^-4.0) #-5		
 			Kunsat = kunsat.θ_2_KUNSAT(θ, iSoil, hydro)
 			
 			Ψ = wrc.θ_2_ΨDual(θ, iSoil, hydro)
 			
-			∂θ∂Ψ = wrc.∂θ∂Ψ(Ψ, iSoil, hydro)
-
-			if ∂θ∂Ψ <  Diffusivity_Min
-				return Diffusivity = 0.0
+			if ∂θ∂Ψ > Diffusivity_Min
+				∂θ∂Ψ = wrc.∂θ∂Ψ(Ψ, iSoil, hydro)
 			else
+				∂θ∂Ψ = 0.0
+			end
+
+			if ∂θ∂Ψ >  Diffusivity_Min
 				return Diffusivity = Kunsat / ∂θ∂Ψ
+			else
+				return Diffusivity = 0.0
 			end
 		end  # function: DIFFUSIVITY
 
