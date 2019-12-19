@@ -26,7 +26,21 @@ module sorptivity
 
 		Sorptivity_θ = QuadGK.quadgk(θ -> SORPTIVITY_θ(θ, hydro, θ_Ini, Se_Ini), θ_Ini, θhalf, rtol=Rtol)[1]) 
 
-	end 
+
+		Ψ_Sat = 0.0
+		Ψhalf = wrc.θ_2_ΨDual(θhalf, iSoil, hydro)
+
+		function SORPTIVITY_Ψ(Ψ, hydro,  θ_Ini, Se_Ini)
+			Se = wrc.θ_2_Se(θ, iSoil, hydro)
+
+			return Sorptivity_Ψ = (2.0 * (hydro.θs[iSoil] - θ_Ini) / FLUXCONS_Se(Se, Se_Ini, Se_Sat)) * kunsat.θ_2_KUNSAT(θ, iSoil, hydro) 
+		end # SORPTIVITY_Ψ
+
+		Sorptivity_Ψ = QuadGK.quadgk(Ψ -> SORPTIVITY_Ψ(Ψ, hydro, θ_Ini, Se_Ini), Ψhalf, Ψ_Sat, rtol=Rtol)[1])
+
+
+		Sorptivity = Sorptivity_θ + Sorptivity_Ψ
+	end # SORPTIVITY
 
 	
 	function FLUXCONS_Se(Se, Se_Ini, Se_Sat)
