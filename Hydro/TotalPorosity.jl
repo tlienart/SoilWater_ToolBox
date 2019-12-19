@@ -12,8 +12,8 @@ module Φ
 			Φ = Array{Float64}(undef, (N_SoilSelect))
 
 			for iSoil=1:N_SoilSelect
-				Φ_Fine = 1.0 - ρbSoil[iSoil] / ρp_Fine[iSoil]
-
+				# Φ_Fine = 1.0 - ρbSoil[iSoil] / ρp_Fine[iSoil]
+				Φ_Fine = 1.0 - (RockW[iSoil]/ρ_Rock[iSoil]) - (1-RockW[iSoil])/((1-RockW[iSoil]/ρ_Rock)*ρp_Fine[iSoil])
 				Φ[iSoil] = Φ_Fine
 			end # for
 			
