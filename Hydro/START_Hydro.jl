@@ -12,7 +12,6 @@ module hydroParam
 
 			# INITIALIZATION
 				opt, θr_Max, θs_Min, θs_Max, Ks_Min, hydro = hydroInitialize.HYDRO_INITIALIZE(N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optionHydro)
-
 			
 			# OPTIMIZATION HYDRAULIC PARAMETERS
 				if optionHydro.HydroModel == "Kosugi" # <>=<>=<>=<>=<>

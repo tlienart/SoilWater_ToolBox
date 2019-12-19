@@ -4,12 +4,12 @@
 module plot
 	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar, ..psdFunc
 	using Winston
-	export HYDROPARAM, PLOT_∑INFILT
+	export HYDROPARAM, PLOT_∑INFILT,  PLOT_TREANSSTEADY, PLOT_θr, PLOT_IMP_model, PLOT_∑INFILT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROPARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, hydroPsd; N_Se = 500)
+		function HYDROPARAM(hydro, hydroPsd, Id_Select, K_KΨ, N_KΨ, N_Psd, N_SoilSelect, N_θΨ, θ_Rpart, θ_θΨ, Ψ_KΨ, Ψ_Rpart, Ψ_θΨ; N_Se = 500)
 
          θ_Sim      = Array{Float64}(undef, (N_Se))
          Kunsat_Sim = Array{Float64}(undef, (N_Se))
@@ -23,8 +23,8 @@ module plot
 			Ψ_Rpart_4plot = Ψ_Rpart
 
 			for iSoil = 1:N_SoilSelect
-				
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]]) * 2.0
+
 				Ψ_θΨ_Min = 0.8 # [mm]
 
 				Ψ_Sim = 10.0 .^ range(log(10.0 ^ -4.0), stop=log(Ψ_θΨ_Max), length=N_Se)
@@ -39,7 +39,6 @@ module plot
 						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)	
 					end	
 				end
-
 					
 				MultiPlots = Winston.Table(1,2)
 				
@@ -54,7 +53,7 @@ module plot
 					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="red", linewidth=5)
 					Winston.setattr(Sim_θ_Ψ, label="Sim")
 
-					if option.psd.Plot_Psd_θ_Ψ
+					if option.psd.Plot_Psd_θ_Ψ && option.Psd
 						Psd_θ_Ψ = Winston.Points(Ψ_Rpart_4plot[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="blue", kind="circle", size=1.5)
 						Winston.setattr(Psd_θ_Ψ, label="Psd")
 						Sim_Psd_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim_Psd, color="blue", linewidth=5)
@@ -96,7 +95,8 @@ module plot
 
 		function PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)	
 			# Sorting ascending order with clay fraction
-			Array = zeros(Float64, 3, length(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]))
+			# Array = zeros(Float64, 3, length(∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size]))
+			Array = zeros(Float64, (3, N_SoilSelect))
 			Array[1,:] =∑Psd[1:N_SoilSelect, param.psd.Psd_2_θr_Size] # Clay fraction
 			Array[2,:] = paramPsd.θr_Psd[1:N_SoilSelect]
 			Array[3,:] = hydro.θr[1:N_SoilSelect]
@@ -141,8 +141,7 @@ module plot
 
 
 
-		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)
-							
+		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)					
 			for iSoil = 1:N_SoilSelect
 				Rpart_Min = minimum(Rpart[iSoil,1:N_Psd[iSoil]])
 				Rpart_Max = maximum(Rpart[iSoil,1:N_Psd[iSoil]])
@@ -227,10 +226,8 @@ module plot
 					∑Infilt_Sim = Winston.Curve(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt[iSoil,1:N_Infilt[iSoil]], color="cyan")
 					Winston.setattr(∑Infilt_Sim, label="Sim")
 
-					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=4)
+					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=3)
 					Winston.setattr(TransSteady, label="TransSteady")
-
-
 					
 					legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim, TransSteady])
 					∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, ∑Infilt_Sim,TransSteady, legend_∑infilt_Tinfilt)
@@ -243,6 +240,34 @@ module plot
 			
 			return
 		end # PLOT_∑INFILT
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : PLOT_TREANSSTEADY
+		#		Temperorary
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function PLOT_TREANSSTEADY(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
+
+			for iSoil=1:N_SoilSelect
+				Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
+					Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
+					Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="∑infiltration [mm]")
+
+					∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt_Obs[iSoil,1:N_Infilt[iSoil]], color="violet")   
+					Winston.setattr(∑infilt_Obs, label = "Obs")
+
+					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=4)
+					Winston.setattr(TransSteady, label="TransSteady")
+					
+					legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, TransSteady])
+					∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, TransSteady, legend_∑infilt_Tinfilt)
+					
+					Path = "C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\OUTPUT\\Plots\\Infiltration\\" * "INFIL_" * option.infilt.Model * "_" * option.infilt.OutputDimension *  "_" * string(Id_Select[iSoil]) *  ".svg"
+
+				Winston.savefig(∑infilt_Tinfilt, Path)
+			end # for iSoil
+			
+			return
+		end  # function: PLOT_TREANSSTEADY
 
 end  # module plot
 # ............................................................

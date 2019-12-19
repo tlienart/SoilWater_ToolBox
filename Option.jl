@@ -37,7 +37,7 @@ module option
             const KsOpt           = "Opt" # <Opt> Optimize Ks (require KunsatΨ=true) OR <"Data"> from Max K(ψ)
 
 			# PLOTTING
-				const Plot_θΨ = true
+				const Plot_θΨ = false
 			
 			if θsOpt == "Opt" && option.hydro.UnimodalBimodal == "Bimodal"
 				println("\n NOT POSSIBLE: option.θsOpt == Opt && option.hydro.UnimodalBimodal = Bimodal")
@@ -74,10 +74,10 @@ module option
 					const ∑Psd_2_ξ1 = true  # optimize ξ1
 			
 				# PLOTTING
-					const Plot_Psd_θ_Ψ 	 = false # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
-					const Plot_θr 	   	 = false # plot θr data and model from Psd 
+					const Plot_Psd_θ_Ψ 	 = true # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
+					const Plot_θr 	   	 = true # plot θr data and model from Psd 
 					
-					const Plot_IMP_model = false # plot IMP model results for publication
+					const Plot_IMP_model = true # plot IMP model results for publication
 							
 			if OptimizePsd == "Single" 
 				const SubclayOpt = false # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
@@ -94,33 +94,31 @@ module option
 		# =============================================================
 		module infilt
 			# MODEL USED
-                const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
+				const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
 
-                const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
-				
-                const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
-				
-                const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
+				const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
+		
+				const SorptivityModel  = "Parlange" # TODO <"Parlange"> traditional model <"">
+		
+				const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
 
 				const Psd              = false # <true> constrain the opt hydraulic param with PSD <false> ...
 
 			# HYDRAULIC MODEL
 				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
-
 				const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
-
-				const KunsatΨ = false 	# <false>  Not to change
-				const θsOpt   = "Known" # <Known>  Not to change
-				const θrOpt   = "Known" # <Known>  Not to change
-				const KsOpt   = "Known" # <Known>  Not to change 
+				const KunsatΨ         = false 	# <false>  Not to change
+				const θsOpt           = "Known" # <Known>  Not to change
+				const θrOpt           = "Known" # <Known>  Not to change
+				const KsOpt           = "Known" # <Known>  Not to change
 				
 			# OUTPUT
-                const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
+				const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
 
-                const OptimizeRun     = "RunOptKs" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
+				const OptimizeRun     = "Opt" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
 			
 			# PLOTTING
-                const Plot_Sorptivity  = true # <true> or <false>
+            const Plot_Sorptivity  = true # <true> or <false>
 				
 				const Plot_SeIni_Range = true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
 				
