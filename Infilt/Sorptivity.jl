@@ -28,7 +28,7 @@ module sorptivity
 				elseif  option.infilt.SorptivityModel == "Option4"  # Worst <>=<>=<>=<>=<>
 					return Sorptivity = 2.0 * (  (θ - θ_Ini) / ((θ - θ_Ini) / (hydro.θs[iSoil] - θ_Ini)) ^ (2.0 - 4.0 * π) ) * Diffusivity
 
-				elseif  option.infilt.SorptivityModel == "Option5"  # <>=<>=<>=<>=<>
+				elseif  option.infilt.SorptivityModel == "Option5"  # Best <>=<>=<>=<>=<>
 					return Sorptivity = 2.0 * (  (hydro.θs[iSoil] - θ_Ini)  ) * Diffusivity
 				end # option.infilt
 			end # function: SORPTIVITY_FUNC
