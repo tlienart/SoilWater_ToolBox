@@ -226,7 +226,7 @@ module plot
 					∑Infilt_Sim = Winston.Curve(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt[iSoil,1:N_Infilt[iSoil]], color="cyan")
 					Winston.setattr(∑Infilt_Sim, label="Sim")
 
-					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=4)
+					TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=3)
 					Winston.setattr(TransSteady, label="TransSteady")
 					
 					legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim, TransSteady])

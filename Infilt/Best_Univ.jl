@@ -76,7 +76,7 @@ module bestUniv
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function INFILTRATION_3D_STEADY(A, B, iSoil, Ks, Sorptivity, T,  infiltParam, T_TransSteady)
 		if option.infilt.bestUniv.Continous == true
-			return bestUniv.INFILTRATION_3D_TRANSIT(A, B, Ks, Sorptivity, T_TransSteady)  + (A * (Sorptivity ^ 2.0) + Ks)*(T - T_TransSteady)
+			return bestUniv.INFILTRATION_3D_TRANSIT(A, B, Ks, Sorptivity, T_TransSteady)  + (A * (Sorptivity ^ 2.0) + Ks) * (T - T_TransSteady)
 		elseif option.infilt.bestUniv.Continous  == false
 			return (A * (Sorptivity ^ 2.0) + Ks) * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
 		end
