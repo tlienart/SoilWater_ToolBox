@@ -14,7 +14,7 @@ module Φ
 			for iSoil=1:N_SoilSelect
 				# Φ_Fine = 1.0 - ρbSoil[iSoil] / ρp_Fine[iSoil]
 				# [Volume Rock in soil] - [Fine earth bulk density]
-				Φ_Fine = 1.0 - (RockW[iSoil] / ρ_Rock[iSoil]) - (1.0 - RockW[iSoil]) / ((1.0 - RockW[iSoil] / ρ_Rock[iSoil]) * ρp_Fine[iSoil])
+				Φ_Fine = 1.0 - (RockW[iSoil] / ρ_Rock[iSoil]) - ((1.0 - RockW[iSoil]) *ρbSoil[iSoil]) / ((1.0 - RockW[iSoil] / ρ_Rock[iSoil]) * ρp_Fine[iSoil])
 
 
 				# Vrock = RockW[iSoil] / ρ_Rock[iSoil]
