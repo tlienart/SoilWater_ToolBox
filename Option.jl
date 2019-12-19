@@ -116,7 +116,7 @@ module option
 			# OUTPUT
 				const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
 
-				const OptimizeRun     = "RunOptKs" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
+				const OptimizeRun     = "Opt" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
 			
 			# PLOTTING
             const Plot_Sorptivity  = true # <true> or <false>
