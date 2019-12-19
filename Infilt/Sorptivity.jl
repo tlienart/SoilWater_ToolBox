@@ -16,7 +16,7 @@ module sorptivity
 
 				Diffusivity = DIFFUSIVITY(θ, iSoil, hydro)
 
-				if option.infilt.SorptivityModel == "Parlange" # <>=<>=<>=<>=<>
+				if option.infilt.SorptivityModel == "Parlange" # <>=<>=<>=<>=<> strong non-linear behaviur for diffusivity 
 					return Sorptivity = (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * Diffusivity
 
 				elseif  option.infilt.SorptivityModel == "Option2"  # <>=<>=<>=<>=<>
