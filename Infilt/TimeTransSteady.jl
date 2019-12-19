@@ -5,7 +5,7 @@ module timeTransSteady
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∑INFIlT_2_TIMETRANSSTEADY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-		function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint=4) 
+		function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint=4, CorrectLinear=true) 
 
 			# FOR EVERy SOIL
 			for iSoil=1:N_SoilSelect
@@ -32,7 +32,7 @@ module timeTransSteady
 							∑Infilt_Model = T[iSoil,iModel] * Slope + Intercept
 
 						#Determine if enough points for the linear regression since it must monotically decrease
-						if ∑Infilt_Model > ∑Infilt_Obs[iSoil,iModel]
+						if ∑Infilt_Model > ∑Infilt_Obs[iSoil,iModel] && CorrectLinear == true
 								# Recompute the slope and intercept
 							Intercept, Slope = stats.LINEAR_REGRESSION(T[iSoil,iModel:iEnd], ∑Infilt_Obs[iSoil,iModel:iEnd])
 							∑Infilt_Model = T[iSoil,iModel] * Slope + Intercept

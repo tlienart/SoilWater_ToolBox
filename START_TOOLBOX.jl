@@ -58,17 +58,18 @@ function START_TOOLBOX()
 		Id_Select, N_SoilSelect = read.ID()
 
 		# Reinforcing the maximum of iSoil to simulate
-				N_SoilSelect = min(N_SoilSelect, param.N_iSoil_Simulations)
+			N_SoilSelect = Int(min(N_SoilSelect, param.N_iSoil_Simulations))
+			Id_Select = Id_Select[1:N_SoilSelect]
 
 		if option.θΨ ≠ "No"
 			θ_θΨ, Ψ_θΨ, N_θΨ = read.θΨ(Id_Select, N_SoilSelect)
 
 			RockW_θΨ, ρ_Rock_θΨ, ρbSoil_θΨ, ρp_Fine_θΨ = read.ρ_Ψθ(Id_Select, N_SoilSelect)
-		end
+		end # option.θΨ ≠ "No"
 
 		if option.hydro.KunsatΨ
 			K_KΨ, Ψ_KΨ, N_KΨ = read.KUNSATΨ(Id_Select, N_SoilSelect)
-		end
+		end # option.hydro.KunsatΨ
 
 		if option.Psd
 			Rpart, ∑Psd, N_Psd = read.PSD(Id_Select, N_SoilSelect)
@@ -78,7 +79,7 @@ function START_TOOLBOX()
 			∑Psd = zeros(Float64, N_SoilSelect, 1)
 			Rpart = zeros(Float64, N_SoilSelect, 1)
 			N_Psd= zeros(Float64, N_SoilSelect)
-		end
+		end # option.Psd
 		
 		if option.Infilt
 			Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = read.INFILTRATION(Id_Select, N_SoilSelect)
@@ -128,7 +129,8 @@ function START_TOOLBOX()
 	else
 		θ_Rpart = zeros(Float64, N_SoilSelect,1)
 		Ψ_Rpart = zeros(Float64, N_SoilSelect,1)
-		hydroPsd = []
+		hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+		N_Psd = zeros(Float64, N_SoilSelect)
 	end
 
 	
@@ -173,7 +175,7 @@ function START_TOOLBOX()
 		include("Plot.jl")
 
 		if option.θΨ ≠ "No" && option.hydro.Plot_θΨ
-			plot.HYDROPARAM(Id_Select, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, N_SoilSelect, N_Psd, θ_Rpart, Ψ_Rpart, hydro, hydroPsd)
+			plot.HYDROPARAM(hydro, hydroPsd, Id_Select, K_KΨ, N_KΨ, N_Psd, N_SoilSelect, N_θΨ, θ_Rpart, θ_θΨ, Ψ_KΨ, Ψ_Rpart, Ψ_θΨ)
 		end # option.Plot_WaterRetentionCurve
 
 		if option.Psd && option.psd.Plot_θr
@@ -185,8 +187,7 @@ function START_TOOLBOX()
 		end
 
 		if option.infilt.Plot_∑Infilt && option.Infilt
-			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt,
-			infiltOutput)
+			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
 		end
 
 	println("=== END: PLOTTING  === \n")

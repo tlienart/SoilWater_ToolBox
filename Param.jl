@@ -2,7 +2,7 @@
 #		MODULE: param
 # =============================================================
 module param
-	N_iSoil_Simulations = 5 # maximum number of soils to be simulated (good for testing)s
+	const N_iSoil_Simulations = 2 # maximum number of soils to be simulated (good for testing)s
 
 	# =============================================================
 	#		MODULE:  θr FROM PSD

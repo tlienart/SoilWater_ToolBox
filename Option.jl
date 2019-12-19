@@ -7,7 +7,7 @@ module option
 
 		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ) OR <"File"> from save file OR <"No"> not available
       
-        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
+        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd OR <false>
 		
         const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration OR <false>
      	
@@ -74,10 +74,10 @@ module option
 					const ∑Psd_2_ξ1 = true  # optimize ξ1
 			
 				# PLOTTING
-					const Plot_Psd_θ_Ψ 	 = false # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
-					const Plot_θr 	   	 = false # plot θr data and model from Psd 
+					const Plot_Psd_θ_Ψ 	 = true # <true> include θ_Ψ values derived from IMP model or <false> only θ_Ψ experimental values and fitted curve 
+					const Plot_θr 	   	 = true # plot θr data and model from Psd 
 					
-					const Plot_IMP_model = false # plot IMP model results for publication
+					const Plot_IMP_model = true # plot IMP model results for publication
 							
 			if OptimizePsd == "Single" 
 				const SubclayOpt = false # Determine if optimize an additional fraction < 2 μm clay content or if fixed deriving from a constant value param.Subclay
@@ -107,10 +107,10 @@ module option
 			# HYDRAULIC MODEL
 				const HydroModel      = "Kosugi" 		# <"Kosugi">* OR  <"Vangenuchten">
 				const UnimodalBimodal = "Unimodal" 	# <"Unimodal" OR <"Bimodal>
-				const KunsatΨ = false 	# <false>  Not to change
-				const θsOpt   = "Known" # <Known>  Not to change
-				const θrOpt   = "Known" # <Known>  Not to change
-				const KsOpt   = "Known" # <Known>  Not to change 
+				const KunsatΨ         = false 	# <false>  Not to change
+				const θsOpt           = "Known" # <Known>  Not to change
+				const θrOpt           = "Known" # <Known>  Not to change
+				const KsOpt           = "Known" # <Known>  Not to change
 				
 			# OUTPUT
 				const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring

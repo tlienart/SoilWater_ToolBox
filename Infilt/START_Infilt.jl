@@ -3,7 +3,7 @@
 # =============================================================
 module infilt
 	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv, ..stats, ..tool
-	include("C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\Plot.jl")
+	# include("C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\Plot.jl")
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
 
@@ -22,6 +22,7 @@ module infilt
 
 			# No optimization required running from hydro derived from laboratory
 			if option.infilt.OptimizeRun == "Run" && option.θΨ ≠ "No" #<>=<>=<>=<>=<>
+
 				# Derive from laboratory
 				hydroInfilt = copy(hydro)
 
@@ -39,18 +40,19 @@ module infilt
 				hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
 				# OUTPUTS
-				∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+					∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 
-				# Statistics
+				# STATISTICS
 					iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
 
-				infiltOutput.Nse_Trans[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iT_TransSteady], ∑Infilt[iSoil, 1:iT_TransSteady]; Power=2.0)
+					infiltOutput.Nse_Trans[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iT_TransSteady], ∑Infilt[iSoil, 1:iT_TransSteady]; Power=2.0)
 
-				infiltOutput.Nse_Steady[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]); Power=2.0)
+					infiltOutput.Nse_Steady[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]); Power=2.0)
 
-				infiltOutput.Nse[iSoil] = 0.5 * infiltOutput.Nse_Trans[iSoil] + 0.5 * infiltOutput.Nse_Steady[iSoil]
-		end # OptimizeRun = "Run"
-	end # iSoil
+					infiltOutput.Nse[iSoil] = 0.5 * infiltOutput.Nse_Trans[iSoil] + 0.5 * infiltOutput.Nse_Steady[iSoil]
+			end # OptimizeRun = "Run"
+			
+		end # for iSoil=1:N_SoilSelect
 
 		Nse_Trans = Statistics.mean(infiltOutput.Nse_Trans[1:N_SoilSelect])
 		Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:N_SoilSelect])
@@ -64,6 +66,7 @@ module infilt
 			∑Infilt = CONVERT_INFILT_DIMENSIONS(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
 
 		return infiltOutput, hydroInfilt, ∑Infilt
+
 	end  # function: START_INFILTRATION
 
 		
