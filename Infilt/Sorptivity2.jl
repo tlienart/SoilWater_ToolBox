@@ -10,10 +10,10 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SORPTIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY(θ_Ini, iSoil, hydro; Rtol=10^-8.0)
+		function SORPTIVITY(θ_Ini, iSoil, hydro; ε=0.001,  Rtol=10^-2.0)
 
 			θhalf = (hydro.θs[iSoil] + θ_Ini) / 2.0
-			Ψ_Sat = 1.0
+			Ψ_Sat = 0.0
 			Ψhalf = wrc.θ_2_ΨDual(θhalf, iSoil, hydro)
 
 			function FLUXCONS_θ(θ, θ_Ini, θs)
@@ -51,11 +51,9 @@ module sorptivity
 				return Sorptivity_Ψ =  kunsat.θ_2_KUNSAT(θ, iSoil, hydro) * (2.0 * (hydro.θs[iSoil] - θ_Ini)) / FLUXCONS_θ(θ, θ_Ini, hydro.θs[iSoil])
 			end # SORPTIVITY_Ψ ~~~~~~~~~~~~~~~~~
 
-			Sorptivity_θ = QuadGK.quadgk(θ -> SORPTIVITY_θ(θ, hydro, θ_Ini, iSoil), θ_Ini+0.0001, θhalf, rtol=Rtol)[1] 
+			Sorptivity_θ = QuadGK.quadgk(θ -> SORPTIVITY_θ(θ, hydro, θ_Ini, iSoil), θ_Ini+ε, θhalf, rtol=Rtol)[1] 
 
 			Sorptivity_Ψ = QuadGK.quadgk(Ψ -> SORPTIVITY_Ψ(Ψ, hydro, θ_Ini, iSoil), Ψ_Sat, Ψhalf, rtol=Rtol)[1]
-
-			println("$Sorptivity_θ $Sorptivity_Ψ")
 
 			return Sorptivity = (Sorptivity_θ + Sorptivity_Ψ) ^ 0.5
 		end # SORPTIVITY
