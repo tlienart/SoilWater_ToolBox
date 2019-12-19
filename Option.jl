@@ -98,7 +98,7 @@ module option
 
 				const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
 		
-				const SorptivityModel  = "Option5" # TODO <"Parlange"> traditional model <"">
+				const SorptivityModel  = "Parlange" # <"Parlange"> strong non-linear diffusivity,  <"Crank"> constant diffusivity, <"Philip&Knight"> dirac delta-function diffusivity, <"Brutsaert"> moderate non-linear diffusivity,
 				
 		
 				const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>

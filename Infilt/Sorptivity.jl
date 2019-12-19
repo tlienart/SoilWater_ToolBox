@@ -19,17 +19,20 @@ module sorptivity
 				if option.infilt.SorptivityModel == "Parlange" # <>=<>=<>=<>=<> strong non-linear behaviur for diffusivity 
 					return Sorptivity = (hydro.θs[iSoil] + θ - 2.0 * θ_Ini) * Diffusivity
 
-				elseif  option.infilt.SorptivityModel == "Option2"  # <>=<>=<>=<>=<>
+				elseif  option.infilt.SorptivityModel == "Brutsaert"  # <>=<>=<>=<>=<>  maximum
 					return Sorptivity = 2.0 * ( ((hydro.θs[iSoil] -  θ_Ini)^ 0.5) * (θ - θ_Ini)^ 0.5   ) * Diffusivity
 
-				elseif  option.infilt.SorptivityModel == "Option3"  # <>=<>=<>=<>=<>
+				elseif  option.infilt.SorptivityModel == "Option3"  # <>=<>=<>=<>=<> Flux concentration function = 1
 					return Sorptivity = 2.0 * (  (θ - θ_Ini)   ) * Diffusivity
 
-				elseif  option.infilt.SorptivityModel == "Option4"  # Worst <>=<>=<>=<>=<>
+				elseif  option.infilt.SorptivityModel == "Simmons&McKeon"  # Worst <>=<>=<>=<>=<> intermediate
 					return Sorptivity = 2.0 * (  (θ - θ_Ini) / ((θ - θ_Ini) / (hydro.θs[iSoil] - θ_Ini)) ^ (2.0 - 4.0 * π) ) * Diffusivity
 
-				elseif  option.infilt.SorptivityModel == "Option5"  # Best <>=<>=<>=<>=<>
+				elseif  option.infilt.SorptivityModel == "Philip&Knight"  # Best <>=<>=<>=<>=<>  minimum
 					return Sorptivity = 2.0 * (  (hydro.θs[iSoil] - θ_Ini)  ) * Diffusivity
+
+				elseif  option.infilt.SorptivityModel == "Whiteetal"  #  <>=<>=<>=<>=<>  maximum
+					return Sorptivity = 2.0 * (  (θ  - θ_Ini) / sin((π/2)*((θ - θ_Ini) / (hydro.θs[iSoil] - θ_Ini))^(π/4) ) * Diffusivity
 				end # option.infilt
 			end # function: SORPTIVITY_FUNC
 
