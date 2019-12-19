@@ -57,6 +57,9 @@ function START_TOOLBOX()
 		# Selecting soils of interest 
 		Id_Select, N_SoilSelect = read.ID()
 
+		# Reinforcing the maximum of iSoil to simulate
+				N_SoilSelect = min(N_SoilSelect, param.N_iSoil_Simulations)
+
 		if option.θΨ ≠ "No"
 			θ_θΨ, Ψ_θΨ, N_θΨ = read.θΨ(Id_Select, N_SoilSelect)
 
@@ -83,8 +86,7 @@ function START_TOOLBOX()
 			RockW_Infilt, ρ_Rock_Infilt, ρbSoil_Infilt, ρp_Fine_Infilt = read.ρ_INFILTRATION(Id_Select, N_SoilSelect)
 		end
 
-		# Reinforcing the maximum of iSoil to simulate
-			N_SoilSelect = min(N_SoilSelect, param.N_iSoil_Simulations)
+
 	println("=== END  : READING === \n")
 
 
