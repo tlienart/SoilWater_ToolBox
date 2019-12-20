@@ -2,7 +2,7 @@
 #		MODULE: infiltration
 # =============================================================
 module infilt
-	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv, ..stats, ..tool
+	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv, ..stats, ..tool, ..quasiExact
 	# include("C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\Plot.jl")
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
@@ -29,7 +29,7 @@ module infilt
 
 					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
 
-					∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+					∑Infilt, T_TransStead = BESTUNIV_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 
 				elseif option.infilt.OptimizeRun == "RunOptKs" #<>=<>=<>=<>=<>	
 
@@ -37,7 +37,12 @@ module infilt
 
 					hydroInfilt = deepcopy(hydro)
 					
-					Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
+					if option.infilt.Model == "Best_Univ" 
+						Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
+
+					elseif option.infilt.Model == "QuasiExact"
+						Optimization = BlackBoxOptim.bboptimize(P -> quasiExact.OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
+					end
 	
 					hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
@@ -45,7 +50,14 @@ module infilt
 
 					SearchRange =[(param.hydro.kg.σ_Min, param.hydro.kg.σ_Max), (log10(param.hydro.kg.Ψm_Min), log10(param.hydro.kg.Ψm_Max)), (log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
 					
-					Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; σ=P[1], Ψm=10.0^P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
+					if option.infilt.Model == "Best_Univ" 
+						Optimization = BlackBoxOptim.bboptimize(P -> OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; σ=P[1], Ψm=10.0^P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
+					
+					elseif option.infilt.Model == "QuasiExact" 
+						Optimization = BlackBoxOptim.bboptimize(P -> quasiExact.OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; σ=P[1], Ψm=10.0^P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
+					else
+						error("ERROR SoilWaterToolBox = $(option.infilt.Model) not found")
+					end
 
                hydroInfilt.σ[iSoil]  = BlackBoxOptim.best_candidate(Optimization)[1]
                hydroInfilt.Ψm[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
@@ -54,9 +66,14 @@ module infilt
 				end # OptimizeRun = "Run"
 
 				# OUTPUTS
-					∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+				if option.infilt.Model == "Best_Univ" 
+					∑Infilt, T_TransStead = bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 
-					infiltOutput.Sorptivity[iSoil] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt) 
+				elseif option.infilt.Model == "QuasiExact"
+					∑Infilt = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt, hydroInfilt, infiltParam, iSoil, N_Infilt, T)
+				end # option.infilt.Model
+
+				infiltOutput.Sorptivity[iSoil] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt) 
 
 				# STATISTICS
 					iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
@@ -89,22 +106,6 @@ module infilt
 		
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>	
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : INFILTRATION_MODEL
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
-			if option.infilt.Model == "Best_Univ" # <>=<>=<>=<>=<>
-
-				∑Infilt, T_TransStead = bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
-
-			elseif option.infilt.Model == "QuasiExact" # <>=<>=<>=<>=<>
-				# quasiExact.QUASIEXACT()
-
-			end #  option.infilt.Model
-			
-			return ∑Infilt, T_TransStead
-		end  # function: INFILTRATION_MODEL
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,7 +147,7 @@ module infilt
 				hydroInfilt.ΨmMac[iSoil] = Ψm
 				hydroInfilt.σMac[iSoil] = σ
 
-				∑Infilt, T_TransStead = INFILTRATION_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
+				∑Infilt, T_TransStead = bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
 
 				iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
 

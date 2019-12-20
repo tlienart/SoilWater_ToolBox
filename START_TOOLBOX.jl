@@ -33,6 +33,7 @@ using Suppressor
 				include("Infilt\\SorptivityTraditional.jl")
 			end
 			include("Infilt\\Best_Univ.jl")
+			include("Infilt\\QuasiExact.jl")
 			include("Infilt\\TimeTransSteady.jl")
 			include("Infilt\\InfiltStruct.jl")
 			include("Infilt\\InfiltInitialize.jl")

@@ -94,7 +94,7 @@ module option
 		# =============================================================
 		module infilt
 			# MODEL USED
-				const Model            = "Best_Univ" 	# <"QuasiExact"> OR <"Best_Univ">
+				const Model            = "QuasiExact" 	# <"QuasiExact"> OR <"Best_Univ">
 
 				const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
 		
@@ -102,7 +102,6 @@ module option
 				
 				const SorptivityModel  = "Parlange" # <"Parlange"> strong non-linear diffusivity,  <"Crank"> constant diffusivity, <"Philip&Knight"> dirac delta-function diffusivity, <"Brutsaert"> moderate non-linear diffusivity,
 				
-		
 				const Relation_σ_2_ψm  = false # <true> constrain param with Kosugi relation between σ and ψm or <false>
 
 				const Psd              = false # <true> constrain the opt hydraulic param with PSD <false> ...
@@ -118,7 +117,7 @@ module option
 			# OUTPUT
 				const OutputDimension = "3D" # <"1D"> such as by using single ring of <"3D"> by using double ring
 
-				const OptimizeRun     = "RunOptKs" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
+				const OptimizeRun     = "Opt" # <"Opt">* Optimize hydraulic parameters from infiltration data <"Run"> run the inftration curves from known hydraulic parameters <"RunOptKs> run the inftration curves from known hydraulic parameters but optimize Ks only <"RunOpt"> run and optimise for comparison purposes <"RunOptKs"> run and optimise for comparison purposes without comparing Ks
 			
 			# PLOTTING
             const Plot_Sorptivity  = true # <true> or <false>

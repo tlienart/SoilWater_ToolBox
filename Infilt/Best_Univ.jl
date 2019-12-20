@@ -42,7 +42,7 @@ module bestUniv
 				if T <= T_TransSteady
 					return ∑Infilt = bestUniv.INFILTRATION_3D_TRANSIT(A, B, hydroInfilt.Ks[iSoil], Sorptivity, T)
 				else
-					return ∑Infilt = bestUniv.INFILTRATION_3D_STEADY(A, B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T,  infiltParam, T_TransSteady)
+					return ∑Infilt = bestUniv.INFILTRATION_3D_STEADY(A, B, iSoil, hydroInfilt.Ks[iSoil], Sorptivity, T, infiltParam, T_TransSteady)
 				end # T <= T_TransSteady
 
 			elseif option.infilt.SingleDoubleRing == "Double"  #<>=<>=<>=<>=<>
