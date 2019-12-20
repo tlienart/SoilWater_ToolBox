@@ -98,6 +98,8 @@ module option
 
 				const SingleDoubleRing = "Single"	# <"Double"> infiltration measured by single ring infiltrometer <"Single"> infiltration measured by single ring infiltrometer
 		
+				const SortivityVersion = "NonInfinity" # <NonInfinity> , <Traditional>
+				
 				const SorptivityModel  = "Parlange" # <"Parlange"> strong non-linear diffusivity,  <"Crank"> constant diffusivity, <"Philip&Knight"> dirac delta-function diffusivity, <"Brutsaert"> moderate non-linear diffusivity,
 				
 		

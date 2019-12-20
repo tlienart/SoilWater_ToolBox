@@ -27,7 +27,11 @@ using Suppressor
 	include("Hydro\\HydroRelation.jl")
 	include("Psd\\PsdThetar.jl")
 		if option.Infilt
-			include("Infilt\\Sorptivity2.jl")
+			if option.infilt.SortivityVersion == "NonInfinity"
+				include("Infilt\\SorptivityNonInfinity.jl")
+			elseif option.infilt.SortivityVersion == "Traditional"
+				include("Infilt\\SorptivityTraditional.jl")
+			end
 			include("Infilt\\Best_Univ.jl")
 			include("Infilt\\TimeTransSteady.jl")
 			include("Infilt\\InfiltStruct.jl")
