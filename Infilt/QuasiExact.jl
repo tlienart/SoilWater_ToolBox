@@ -113,7 +113,7 @@ module quasiExact # quasi-exact objective function
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_INFILTRATION_2_HYDRO
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil], W=0.99)
+		function OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil], W=0.9)
 
 			hydroInfilt.θs[iSoil] = θs
 			hydroInfilt.θr[iSoil] = θr

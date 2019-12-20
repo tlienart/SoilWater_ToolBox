@@ -10,7 +10,7 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SORPTIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY(θ_Ini, iSoil, hydro; ε=0.001,  Rtol=10^-3.0)
+		function SORPTIVITY(θ_Ini, iSoil, hydro; ε=0.001,  Rtol=10^-2.0)
 
 			θhalf = (hydro.θs[iSoil] + θ_Ini) / 2.0
 			Ψ_Sat = 0.0
