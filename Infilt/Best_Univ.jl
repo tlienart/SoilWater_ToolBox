@@ -88,6 +88,7 @@ module bestUniv
 		function INFILTRATION_1D_STEADY(B, iSoil, Ks, Sorptivity, T, infiltParam, T_TransSteady)
 			if option.infilt.bestUniv.Continous == true
 				return bestUniv.INFILTRATION_1D_TRANSIT(B, Ks, Sorptivity, T_TransSteady)  + Ks * (T - T_TransSteady)
+				
 			elseif option.infilt.bestUniv.Continous == false
 				return Ks * T + bestUniv.C(B,  infiltParam, iSoil) * (Sorptivity ^ 2.0) / Ks
 			end
