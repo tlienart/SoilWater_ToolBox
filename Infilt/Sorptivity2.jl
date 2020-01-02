@@ -44,7 +44,7 @@ module sorptivity
 			function SORPTIVITY_θ(θ, hydro, θ_Ini, iSoil)
 				return Sorptivity_θ = DIFFUSIVITY(θ, iSoil, hydro) * (2.0 * (θ - θ_Ini)) / FLUXCONS_θ(θ, θ_Ini, hydro.θs[iSoil])
 			end # SORPTIVITY_θ ~~~~~~~~~~~~~~~~~
-		
+
 
 			function SORPTIVITY_Ψ(Ψ, hydro, θ_Ini, iSoil)
 				θ = wrc.Ψ_2_θDual(Ψ, iSoil, hydro)
