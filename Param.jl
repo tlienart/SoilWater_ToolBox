@@ -2,7 +2,7 @@
 #		MODULE: param
 # =============================================================
 module param
-	const N_iSoil_Simulations = 20 # maximum number of soils to be simulated (good for testing)s
+	const N_iSoil_Simulations = 20000 # maximum number of soils to be simulated (good for testing)s
 
 	# =============================================================
 	#		MODULE:  θr FROM PSD
@@ -98,7 +98,7 @@ module param
 			σMac_Max = 0.8 # 2.55
 			
 			Ψm_Min = 800.0   # [mm]
-			Ψm_Max = 60000.0 # [mm] # 0.9*150000.0 
+			Ψm_Max = 80000.0 # [mm] # 0.9*150000.0 
 			
 			ΨmMac  = 40.0  # 100 to 10 [mm]
 				ΨmMac_Min = 50.0  # [mm]

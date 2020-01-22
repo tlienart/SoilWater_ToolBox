@@ -16,11 +16,14 @@ module infiltInitialize
 					# θr computation
 						hydroInfilt.θr[iSoil] = psdThetar.PSD_2_θr_FUNC(iSoil, ∑Psd)
 
-						# θr > θ_Ini
+					# θr > θ_Ini
 						hydroInfilt.θr[iSoil] =  min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil])
 
 					# θs computation
-						hydroInfilt.θs[iSoil] = param.hydro.Coeff_Φ_2_θs * hydroInfilt.Φ[iSoil]	
+						hydroInfilt.θs[iSoil] = param.hydro.Coeff_Φ_2_θs * hydroInfilt.Φ[iSoil]
+
+					# Checking for θ_Ini
+					infiltParam.θ_Ini[iSoil] = min(infiltParam.θ_Ini[iSoil], hydroInfilt.θs[iSoil] - 0.0015) 
 				end  # for iSoil=1:N_SoilSelect
 
 			# TIME FLUX CORRECTION
