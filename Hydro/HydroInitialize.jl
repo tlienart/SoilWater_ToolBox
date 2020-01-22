@@ -66,6 +66,7 @@ module hydroInitialize
 				# DERIVING θs FROM DATA IF REQUESTED				
 					if optionHydro.θsOpt == "Φ" # <>=<>=<>=<>=<>
 						hydro.θs[iSoil] = max(hydro.Φ[iSoil] * param.hydro.Coeff_Φ_2_θs, θ_Max[iSoil] + 0.005) # So that monotically increasing
+						
 						opt.Opt_θs = false
 
 					elseif optionHydro.θsOpt == "Opt" # <>=<>=<>=<>=<>

@@ -7,7 +7,7 @@ module option
 
 		const θΨ        = "Opt" # <"Opt">* Optimize hydraulic parameters from θ(ψ); <"File"> from save file; <"No"> not available
       
-        const Psd       = false	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd; <false>
+        const Psd       = true	# <true>* Derive θ(ψ) AND/OR hydraulic parameters from Psd; <false>
 		
         const Infilt    = true # <true>* Derive θ(ψ) AND/OR hydraulic parameters from Infiltration; <false>
      	

@@ -14,15 +14,6 @@ module plot
          θ_Sim      = Array{Float64}(undef, (N_Se))
          Kunsat_Sim = Array{Float64}(undef, (N_Se))
          θ_Sim_Psd  = Array{Float64}(undef, (N_Se))
-			
-			# INJECTING Ψ=0 to be seen on plot using logarithmic scale to include θs 
-			# Ψ_θΨ_4plot    = replace(Ψ_θΨ, 0.0=>1.0)    # replacement in [mm]
-			# Ψ_Rpart_4plot = replace(Ψ_Rpart, 0.0=>1.0) # replacement in [mm]
-
-
-
-			# Ψ_θΨ_4plot    = Ψ_θΨ
-			# Ψ_Rpart_4plot = Ψ_Rpart
 
 			for iSoil = 1:N_SoilSelect
 				Ψ_θΨ_Max = maximum(Ψ_θΨ[iSoil,1:N_θΨ[iSoil]]) * 2.0
@@ -31,7 +22,7 @@ module plot
 
 				Ψ_Sim = 10.0 .^ range(log(10.0 ^ -4.0), stop=log(Ψ_θΨ_Max), length=N_Se)
 
-				θ_θΨ_Max = maximum(θ_θΨ[iSoil,1:N_θΨ[iSoil]]) + 0.05
+				θ_θΨ_Max = maximum(θ_θΨ[iSoil,1:N_θΨ[iSoil]]) + 0.1
 
 				# Simulated 
 				for iΨ = 1:N_Se
@@ -42,11 +33,6 @@ module plot
 						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iSoil, hydro)	
 					end	
 				end
-
-				# Introducing θs
-				append!(Ψ_θΨ[iSoil,:], 0.1)
-
-				append!(θ_θΨ[iSoil,:], hydro.θs[iSoil])
 					
 				MultiPlots = Winston.Table(1,2)
 				
@@ -61,16 +47,26 @@ module plot
 					Sim_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim, color="blue", linewidth=5)
 					Winston.setattr(Sim_θ_Ψ, label="Sim")
 
+					Sim_Φ = Winston.Points(1.0 .* cst.mm_2_cm, hydro.Φ[iSoil], color="green", kind="square", size=1.5)
+					Winston.setattr(Sim_Φ, label="TotalPorosity")
+
+
+
 					if option.psd.Plot_Psd_θ_Ψ && option.Psd
 						Psd_θ_Ψ = Winston.Points(Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="blue", kind="circle", size=1.5)
+
+
+						Psd_θ_Ψ = Winston.Points(Ψ_Rpart[iSoil,1:N_Psd[iSoil]] .* cst.mm_2_cm, θ_Rpart[iSoil,1:N_Psd[iSoil]], color="blue", kind="circle", size=1.5)
+	
 						Winston.setattr(Psd_θ_Ψ, label="Psd")
 						Sim_Psd_θ_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, θ_Sim_Psd, color="green", linewidth=5)
+
 						Winston.setattr(Sim_Psd_θ_Ψ, label="Sim Psd")
 						legend_θ_Ψ = Winston.Legend(0.1, 0.25, [Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ, Sim_Psd_θ_Ψ])
-						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ, Sim_Psd_θ_Ψ, legend_θ_Ψ)
+						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, Psd_θ_Ψ, Sim_Psd_θ_Ψ, Sim_Φ, legend_θ_Ψ)
 					else
-						legend_θ_Ψ = Winston.Legend(0.1, 0.1, [Obs_θ_Ψ, Sim_θ_Ψ])
-						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, legend_θ_Ψ)
+						legend_θ_Ψ = Winston.Legend(0.1, 0.5, [Obs_θ_Ψ, Sim_θ_Ψ, Sim_Φ])
+						θ_Ψ = Winston.add(Plot_θ_Ψ, Obs_θ_Ψ, Sim_θ_Ψ, legend_θ_Ψ, Sim_Φ)
 					end
 
 					MultiPlots[1,1] = Plot_θ_Ψ
@@ -80,15 +76,19 @@ module plot
 				 Plot_K_Ψ = Winston.FramedPlot(aspect_ratio=1)  
 					Winston.setattr(Plot_K_Ψ.x1, label="Ψ [cm]", range=(Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), log=true)
 					Winston.setattr(Plot_K_Ψ.y1, label="K(Ψ) [cm h^{-1}]")
-					
+
 					Obs_K_Ψ = Winston.Points(Ψ_KΨ[iSoil,1:N_KΨ[iSoil]] .* cst.mm_2_cm, K_KΨ[iSoil,1:N_KΨ[iSoil]] * cst.mms_2_cmh, color="red", kind="square", size=1.5)
 					Winston.setattr(Obs_K_Ψ, label="Obs")
+
+
+					Obs_Ks = Winston.Points(1.0 .* cst.mm_2_cm, hydro.Ks[iSoil] * cst.mms_2_cmh, color="green", kind="square", size=1.5)
+					Winston.setattr(Obs_Ks, label="Ks")
 
 					Sim_K_Ψ = Winston.Curve(Ψ_Sim .* cst.mm_2_cm, Kunsat_Sim .* cst.mms_2_cmh, color="blue", linewidth=5)
 					Winston.setattr(Sim_K_Ψ, label="Sim")
 
-					legend_K_Ψ = Winston.Legend(0.8, 0.9, [Obs_K_Ψ, Sim_K_Ψ])
-					K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ)
+					legend_K_Ψ = Winston.Legend(0.8, 0.9, [Obs_K_Ψ, Sim_K_Ψ, Obs_Ks])
+					K_θ = Winston.add(Plot_K_Ψ, Obs_K_Ψ, Sim_K_Ψ, legend_K_Ψ, Obs_Ks)
 
 					MultiPlots[1,2] = Plot_K_Ψ
 				end # if option.hydro.KunsatΨ
