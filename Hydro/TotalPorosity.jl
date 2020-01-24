@@ -18,10 +18,8 @@ module Φ
 
 
 				# Vrock = RockW[iSoil] / ρ_Rock[iSoil]
-				Φ = 1.0 - (RockW[iSoil] * ρbSoil[iSoil] / ρ_Rock[iSoil]) - ((1.0 - RockW[iSoil]) *ρbSoil[iSoil] / ρp_Fine[iSoil])
+				Φ[iSoil] = 1.0 - (RockW[iSoil] * ρbSoil[iSoil] / ρ_Rock[iSoil]) - ((1.0 - RockW[iSoil]) *ρbSoil[iSoil] / ρp_Fine[iSoil])
 
-
-				Φ[iSoil] = Φ
 			end # for
 			
 			return Φ

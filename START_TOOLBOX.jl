@@ -50,6 +50,9 @@ using Suppressor
 			include("Psd\\PsdOpt.jl")
 			include("Psd\\START_PSD.jl")
 		end
+		if option.Plot
+			include("Plot.jl")
+		end
 	include("Table.jl")
 end
 
@@ -178,23 +181,22 @@ function START_TOOLBOX()
 
 	if option.Plot
 	println("=== START: PLOTTING  ===")
-		include("Plot.jl")
 
 		if option.θΨ ≠ "No" && option.hydro.Plot_θΨ
-			plot.HYDROPARAM(hydro, hydroPsd, Id_Select, K_KΨ, N_KΨ, N_Psd, N_SoilSelect, N_θΨ, θ_Rpart, θ_θΨ, Ψ_KΨ, Ψ_Rpart, Ψ_θΨ)
+			plot.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro)
 		end # option.Plot_WaterRetentionCurve
 
-		if option.Psd && option.psd.Plot_θr
-			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)
-		end
+		# if option.Psd && option.psd.Plot_θr
+		# 	plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)
+		# end
 
-		if option.Psd && option.psd.Plot_IMP_model
-			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd) 
-		end
+		# if option.Psd && option.psd.Plot_IMP_model
+		# 	plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro) 
+		# end
 
-		if option.infilt.Plot_∑Infilt && option.Infilt
-			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
-		end
+		# if option.infilt.Plot_∑Infilt && option.Infilt
+		# 	plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
+		# end
 
 	println("=== END: PLOTTING  === \n")
 	end # if option.Plot

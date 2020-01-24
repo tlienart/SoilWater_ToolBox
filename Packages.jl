@@ -21,7 +21,8 @@ function PACKAGES(Option_PackageUpdate)
 		PACKAGE_MANAGER("QuadGK")
 		PACKAGE_MANAGER("Suppressor")
 		# PACKAGE_MANAGER("Distributed")
-		PACKAGE_MANAGER("Winston")
+		PACKAGE_MANAGER("Plots")
+		PACKAGE_MANAGER("LaTeXStrings")
 		# PACKAGE_MANAGER("PGFPlots")
 
 			if Option_PackageUpdate
