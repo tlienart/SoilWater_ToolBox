@@ -23,6 +23,7 @@ function PACKAGES(Option_PackageUpdate)
 		# PACKAGE_MANAGER("Distributed")
 		PACKAGE_MANAGER("Plots")
 		PACKAGE_MANAGER("LaTeXStrings")
+		PACKAGE_MANAGER("PackageCompiler")
 		# PACKAGE_MANAGER("PGFPlots")
 
 			if Option_PackageUpdate

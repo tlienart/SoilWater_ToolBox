@@ -186,9 +186,9 @@ function START_TOOLBOX()
 			plot.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro)
 		end # option.Plot_WaterRetentionCurve
 
-		# if option.Psd && option.psd.Plot_θr
-		# 	plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)
-		# end
+		if option.Psd && option.psd.Plot_θr
+			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)
+		end
 
 		# if option.Psd && option.psd.Plot_IMP_model
 		# 	plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro) 
