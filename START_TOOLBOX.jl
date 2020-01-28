@@ -190,13 +190,15 @@ function START_TOOLBOX()
 			plot.PLOT_θr(∑Psd, N_SoilSelect, hydro, paramPsd)
 		end
 
-		# if option.Psd && option.psd.Plot_IMP_model
-		# 	plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro) 
-		# end
+		if option.Psd && option.psd.Plot_IMP_model
+			plot.PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd) 
+		end
 
-		# if option.infilt.Plot_∑Infilt && option.Infilt
-		# 	plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
-		# end
+		if option.infilt.Plot_∑Infilt && option.Infilt
+			plot.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
+
+			# plot.PLOT_TREANSSTEADY(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
+		end
 
 	println("=== END: PLOTTING  === \n")
 	end # if option.Plot

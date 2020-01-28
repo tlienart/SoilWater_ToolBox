@@ -6,9 +6,8 @@
 	# julia > compile_package("Plots", "GR")
 # =============================================================
 module plot
-	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar
-	# using Winston
-	using Plots
+	import ...wrc, ...kunsat, ..path, ..cst, ..param, ..option, ..psdThetar, ..psdFunc
+	using Plots, Plots.PlotMeasures
 	using LaTeXStrings
 	export HYDROPARAM, PLOT_∑INFILT,  PLOT_TREANSSTEADY, PLOT_θr, PLOT_IMP_model, PLOT_∑INFILT
 
@@ -62,7 +61,7 @@ module plot
 					# Plot_θ_Ψ: General attributes
 					xlabel!(L"\psi \ [cm]")
 					ylabel!(L"\theta \ [cm^3 cm^{-3}]")
-					Plots.plot!(xlims = (Ψ_θΨ_Min*cst.mm_2_cm*10.0, Ψ_θΨ_Max*cst.mm_2_cm), ylims = (0.0, hydro.Φ[iSoil]+0.1), xscale= :log10)
+					Plots.plot!(xlims = (Ψ_θΨ_Min*cst.mm_2_cm*10.0, Ψ_θΨ_Max*cst.mm_2_cm), ylims = (0.0, hydro.Φ[iSoil]+0.1), xscale= :log10, size=(600,600))
 
 					# == Plot_K_Ψ ==
 					if option.hydro.KunsatΨ
@@ -86,7 +85,7 @@ module plot
 						# General attributes
 						xlabel!(L"\psi \ [cm]")
 						ylabel!(L" K (\psi) \ [cm h^{-1}]")
-						Plots.plot!(xlims = (Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), ylims = (0.0, hydro.Ks[iSoil] * cst.mms_2_cmh), xscale= :log10, size=(400,400))
+						Plots.plot!(xlims = (Ψ_θΨ_Min*cst.mm_2_cm, Ψ_θΨ_Max*cst.mm_2_cm), ylims = (0.0, hydro.Ks[iSoil] * cst.mms_2_cmh), xscale= :log10, size=(600,600))
 
 					end # if option.hydro.KunsatΨ
 
@@ -156,7 +155,7 @@ module plot
 			# General attributes
 				xlabel!(L"\theta _{r} [cm^{3} \ cm^{-3}]")
 				ylabel!(L"Clay \ [g \ g^{-1}]")                         
-				Plots.plot!(xlims = (Psd_Min, Psd_Max), ylims = (θr_Min, θr_Max))
+				Plots.plot!(xlims = (Psd_Min, Psd_Max), ylims = (θr_Min, θr_Max), size=(600,600))
 	
 			# PLOT 2 <>=<>=<>=<>=<>=<>
 			# Plot θr_Psd(θr)
@@ -174,7 +173,7 @@ module plot
 			# General attributes
 				xlabel!(L"\theta _{r} [cm^3 cm^{-3}]")
 				ylabel!(L"\theta _{r psd} [cm^3 cm^{-3}]")
-				Plots.plot!(xlims = (θr_Min, θr_Max), ylims = (θr_Min, θr_Max))
+				Plots.plot!(xlims = (θr_Min, θr_Max), ylims = (θr_Min, θr_Max), size=(600,600))
 	
 			Path = path.Plots_Psd_θr
 			Plot = Plots.plot(Plot_θr, Plot_θr_Psd)
@@ -182,136 +181,102 @@ module plot
 			return
 		end # function: PLOT_θr
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PLOT_IMP_model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)					
-	# 		for iSoil = 1:N_SoilSelect
-	# 			Rpart_Min = minimum(Rpart[iSoil,1:N_Psd[iSoil]])
-	# 			Rpart_Max = maximum(Rpart[iSoil,1:N_Psd[iSoil]])
-	# 			∑Psd_Min  = minimum(∑Psd[iSoil,1:N_Psd[iSoil]])
-	# 			∑Psd_Max  = maximum(∑Psd[iSoil,1:N_Psd[iSoil]])
+		function PLOT_IMP_model(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)					
+			for iSoil = 1:N_SoilSelect
+				Rpart_Min = minimum(Rpart[iSoil,1:N_Psd[iSoil]])
+				Rpart_Max = maximum(Rpart[iSoil,1:N_Psd[iSoil]])
+				∑Psd_Min  = minimum(∑Psd[iSoil,1:N_Psd[iSoil]])
+				∑Psd_Max  = maximum(∑Psd[iSoil,1:N_Psd[iSoil]])
 
-				
-	# 			IntergranularMixing = zeros(Float64, N_Psd[iSoil])
-				
-	# 			for iRpart = 1:N_Psd[iSoil]
-	# 				ξ2 = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iSoil, iRpart]; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
+				IntergranularMixing = zeros(Float64, N_Psd[iSoil])
+				for iRpart = 1:N_Psd[iSoil]
+					ξ2 = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iSoil, iRpart]; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
 
-	# 				IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], paramPsd.ξ1[iSoil], ξ2)
-	# 			end
+					IntergranularMixing[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iSoil,iRpart], paramPsd.ξ1[iSoil], ξ2)
+				end # for iRpart = 1:N_Psd[iSoil]
 
-	# 			MultiPlots = Winston.Table(1,3)
-				
-				
-	# 			Plot_∑Psd_Rpart = Winston.FramedPlot(aspect_ratio=1)
-	# 				Winston.setattr(Plot_∑Psd_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
-	# 				Winston.setattr(Plot_∑Psd_Rpart.y1, label="∑PSD") #, range=(∑Psd_Min, ∑Psd_Max))
-					
-	# 				∑Psd_Rpart_points = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], color="teal", kind="square", size=1.5)
-					
-	# 				∑Psd_Rpart_curve = Winston.Curve(Rpart[iSoil,1:N_Psd[iSoil]], ∑Psd[iSoil,1:N_Psd[iSoil]], color="teal", linewidth=5) #TODO try to make it smooth 
-					
-	# 				∑Psd_Rpart = Winston.add(Plot_∑Psd_Rpart, ∑Psd_Rpart_points, ∑Psd_Rpart_curve)
-	# 				MultiPlots[1,1] = Plot_∑Psd_Rpart
+				# << PLOT 1 >>
+					# Plot_∑Psd_Rpart
+						X = Rpart[iSoil,1:N_Psd[iSoil]]
+						Y = ∑Psd[iSoil,1:N_Psd[iSoil]]
+						Plot_∑Psd_Rpart = Plots.plot(X ,Y, seriestype=:scatter, label="Obs", color= :teal, shape= :square, markersize= 4)
 
-	# 			Plot_Psd_Rpart = Winston.FramedPlot(aspect_ratio=1)
-	# 				Winston.setattr(Plot_Psd_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
-	# 				Winston.setattr(Plot_Psd_Rpart.y1, label="PSD", range=(0.0, 0.5))
-	# 				Psd_Rpart_points = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], Psd[iSoil,1:N_Psd[iSoil]], color="cyan", kind="square", size=1.5)
-	# 				Psd_Rpart_curve = Winston.Curve(Rpart[iSoil,1:N_Psd[iSoil]], Psd[iSoil,1:N_Psd[iSoil]], color="cyan", linewidth=5) #TODO try to make it smooth 
+					# Plot_∑Psd_Rpart: General attributes
+						xlabel!(L"R_{part} [mm]")
+						ylabel!(L"\sum \ PSD")
+						
+					Plots.plot!(xlims = (Rpart_Min, Rpart_Max), ylims = (∑Psd_Min, ∑Psd_Max), xscale= :log10, aspect_ratio= 1)
 
-	# 				Psd_Rpart = Winston.add(Plot_Psd_Rpart, Psd_Rpart_points, Psd_Rpart_curve)
-				
-	# 				MultiPlots[1,2] = Plot_Psd_Rpart
-				
-	# 			# Plot_NormMixing_Rpart = Winston.FramedPlot(aspect_ratio=1)
-	# 			# 	Winston.setattr(Plot_NormMixing_Rpart.x1, label="R_{part} [mm]", range=(0.0005, 0.5), log=true)
-	# 			# 	Winston.setattr(Plot_NormMixing_Rpart.y1, label="Normalised R_{part}^{-ξ(R_{Part})}", range=(0.0, 0.5))
-	# 			# 	NormMixing_Rpart_line = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], IntergranularMixing[1:N_Psd[iSoil]], color="purple", kind="-", size=1.5)
 
-	# 			# 	NormMixing_Rpart = Winston.add(Plot_NormMixing_Rpart, NormMixing_Rpart_line)
+				# << PLOT 2 >>
+					# Plot_Psd_Rpart
+						X = Rpart[iSoil,1:N_Psd[iSoil]]
+						Y = Psd[iSoil,1:N_Psd[iSoil]]
+						Plot_∑Psd_Psd = Plots.plot(X ,Y, seriestype=:scatter, label="Obs", color= :teal, shape= :square, markersize= 4)
 
-	# 			# 	MultiPlots[1,3] = Plot_NormMixing_Rpart
+						xlabel!(L"R_{part} [mm]")
+						ylabel!(L"PSD [mm]")
+						Plots.plot!(xlims = (Rpart_Min, Rpart_Max), ylims= (0.0, 0.5), xscale= :log10, aspect_ratio= 1)
 
-	# 			Plot_NormMixing_Rpart = Winston.FramedPlot(aspect_ratio=1)
-	# 				Winston.setattr(Plot_NormMixing_Rpart.x1, label="R_{part} [mm]", log=true) #range=(Rpart_Min, Rpart_Max), log=true)
-	# 				Winston.setattr(Plot_NormMixing_Rpart.y1, label="Intergranular")
-					
-	# 				Psd_Rpart_curve = Winston.Points(Rpart[iSoil,1:N_Psd[iSoil]], IntergranularMixing[1:N_Psd[iSoil]], color="cyan", linewidth=5) #TODO try to make it smooth 
 
-	# 				Psd_Rpart = Winston.add(Plot_NormMixing_Rpart,Psd_Rpart_curve)
-				
-	# 				MultiPlots[1,3] = Plot_NormMixing_Rpart
+				# << PLOT 3 >>
+					# Plot NormMixing_Rpart
+						X = Rpart[iSoil,1:N_Psd[iSoil]]
+						Y = IntergranularMixing[1:N_Psd[iSoil]]
+						Plot_NormMixing_Rpart = ∑Psd_Psd = Plots.plot(X, Y, seriestype=:scatter, label="Obs", color= :teal, shape= :square, markersize=4, xscale= :log10)
 
+						xlabel!(L"R_{part} [mm]")
+						ylabel!(L"Intergranular")
+						Plots.plot!(xlims= (Rpart_Min, Rpart_Max), xscale=:log10, aspect_ratio=1)
+
+				Plot = Plots.plot(Plot_∑Psd_Rpart, Plot_∑Psd_Psd, Plot_NormMixing_Rpart, layout= (1,3))
+				Path = path.Plots_IMP_model * "IMP_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"
+				Plots.savefig(Plot, Path)
+
+			end # for iSoil
+			return	
+		end # function: PLOT_IMP_model
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : PLOT_∑INFILT
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
 		
-	# 			Path = path.Plots_IMP_model * "IMP_" * option.hydro.HydroModel * "_" *string(Id_Select[iSoil]) * ".svg"
-	# 			Winston.savefig(MultiPlots, Path)
+			for iSoil=1:N_SoilSelect	
+				# << PLOT 1 >>
+					# Plot_∑infilt_Obs
+						X = Tinfilt[iSoil,1:N_Infilt[iSoil]]
+						Y = ∑Infilt_Obs[iSoil,1:N_Infilt[iSoil]]
+						Plot_∑infilt_Obs = Plots.plot(X, Y, seriestype=:scatter, label="Obs", color= :violet, shape= :square, markersize=4) 
 
-	# 		end # for iSoil
-	# 		return
-	# 	end # function: PLOT_IMP_model
+					# Plot_∑infilt_Sim
+						X = Tinfilt[iSoil,1:N_Infilt[iSoil]]
+						Y = ∑Infilt[iSoil,1:N_Infilt[iSoil]]
+						Plots.plot!(X, Y, seriestype=:line, label="Sim", color= :cyan, shape= :square, markersize=4) 
 
+					# TransSteady
+						X = zeros(Float64,1)
+						Y = zeros(Float64,1)
+						X[1] = Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]]
+						Y[1] = ∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]]
+						Plots.plot!(X, Y, seriestype=:scatter, label="TransSteady", color= :cyan, shape= :circle, markersize=10) 
 
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# #		FUNCTION : PLOT_∑INFILT
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
-		
-	# 		for iSoil=1:N_SoilSelect
-				
-	# 			Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
-	# 				Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
-	# 				Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="∑infiltration [mm]")
+						xlabel!(L"Time [s]")
+						ylabel!(L"\sum infiltration \ [mm]")      
+						
+					Path = path.Plots_∑infilt_Tinfilt * "INFIL_" * option.infilt.Model * "_" * option.infilt.OutputDimension *  "_" * string(Id_Select[iSoil]) *  ".svg"
 
-	# 				∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt_Obs[iSoil,1:N_Infilt[iSoil]], color="violet")   
-	# 				Winston.setattr(∑infilt_Obs, label = "Obs")
+				Plots.savefig(Plot_∑infilt_Obs, Path)
 
-	# 				∑Infilt_Sim = Winston.Curve(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt[iSoil,1:N_Infilt[iSoil]], color="cyan")
-	# 				Winston.setattr(∑Infilt_Sim, label="Sim")
-
-	# 				TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=3)
-	# 				Winston.setattr(TransSteady, label="TransSteady")
-					
-	# 				legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, ∑Infilt_Sim, TransSteady])
-	# 				∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, ∑Infilt_Sim,TransSteady, legend_∑infilt_Tinfilt)
-					
-	# 				Path = path.Plots_∑infilt_Tinfilt * "INFIL_" * option.infilt.Model * "_" * option.infilt.OutputDimension *  "_" * string(Id_Select[iSoil]) *  ".svg"
-
-	# 			Winston.savefig(∑infilt_Tinfilt, Path)
-
-	# 		end # for iSoil
+			end # for iSoil=1:N_SoilSelect
 			
-	# 		return
-	# 	end # PLOT_∑INFILT
-
-	# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	#		FUNCTION : PLOT_TREANSSTEADY
-	# 	#		Temperorary
-	# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function PLOT_TREANSSTEADY(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt, infiltOutput)
-
-	# 		for iSoil=1:N_SoilSelect
-	# 			Plot_∑infilt_Tinfilt = Winston.FramedPlot(aspect_ratio=1)                          
-	# 				Winston.setattr(Plot_∑infilt_Tinfilt.x1, label="Time [s]")
-	# 				Winston.setattr(Plot_∑infilt_Tinfilt.y1, label="∑infiltration [mm]")
-
-	# 				∑infilt_Obs = Winston.Points(Tinfilt[iSoil,1:N_Infilt[iSoil]], ∑Infilt_Obs[iSoil,1:N_Infilt[iSoil]], color="violet")   
-	# 				Winston.setattr(∑infilt_Obs, label = "Obs")
-
-	# 				TransSteady = Winston.Points(Tinfilt[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]],∑Infilt_Obs[iSoil,infiltOutput.iT_TransSteady_Data[iSoil]], color="cyan", kind="square", size=4)
-	# 				Winston.setattr(TransSteady, label="TransSteady")
-					
-	# 				legend_∑infilt_Tinfilt = Winston.Legend(0.1, 0.8, [∑infilt_Obs, TransSteady])
-	# 				∑infilt_Tinfilt = Winston.add(Plot_∑infilt_Tinfilt, ∑infilt_Obs, TransSteady, legend_∑infilt_Tinfilt)
-					
-	# 				Path = "C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\OUTPUT\\Plots\\Infiltration\\" * "INFIL_" * option.infilt.Model * "_" * option.infilt.OutputDimension *  "_" * string(Id_Select[iSoil]) *  ".svg"
-
-	# 			Winston.savefig(∑infilt_Tinfilt, Path)
-	# 		end # for iSoil
-			
-	# 		return
-	# 	end  # function: PLOT_TREANSSTEADY
+			return
+		end # PLOT_∑INFILT
 
 end  # module plot
 # ............................................................
