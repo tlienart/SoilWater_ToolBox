@@ -5,60 +5,252 @@ module path
 	import ..option
 
 	# NAME OF FILE
-		Name = "PAF_"
-
-	# INPUT PATH
-      Id_Select          = "Id_Select.csv"
-      Infiltration       = "Infiltration_1.csv"
-      Infiltration_Param = "Infiltration_Param.csv"
-      Kunsat             = "Kunsat_H.csv"
-      Psd                = "Psd.csv"
-      PsdΦ               = "PsdPorosity.csv"
-      Ψθ                 = "Theta_H.csv"
-      ρ_Ψθ               = "BulkDensity_ThetaH.csv"
-      ρ_Psd              = "BulkDensity_Psd.csv"
-      ρ_Infilt           = "BulkDensity_Infilt.csv"
-
-	# OUTPUT PATH
-      Table_HydroInfilt = "Table_HydroInfilt.csv"
-      Table_Infilt      = "Table_Infilt.csv"
-      Table_Psd         = "Table_Psd.csv"
-      Table_θr          = "Table_Thetar.csv"
-      Table_θΨK         = "Table_ThetaHK.csv"
-      Table_θΨK_Psd     = "Table_PsdHydro.csv"
+		SiteName_Soilhyro = "VCSNSmap"  # "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
+		SiteName_Hypix = "Jules" # TAUPO OTOROHANGA WAIHOU WAITOA HAMILTON;
+		const Model_Name ="A"
+		const Select = "SELECT_1" # Select data to model
 		
+	# INPUT PATH
+		# Smap
+			Smap                    = "Horizon.csv"
+			HydroParam_ThetaH       = "GUI_HydroParam.csv"
+
+		# DATA SoilWater_Toolbox
+         ConvertModel            = "TableHydro_Compiled_Homogeneous.csv"
+         SmapLookupTableWettable = "LookupTable_Stone.csv"
+         Id_Select               = "IdSelect.csv"
+         Infiltration            = "Infiltration.csv"
+         Infiltration_Param      = "Infiltration_Param.csv"
+         # Kunsat                = "Kunsat_H_Ks.csv"
+         Kunsat                  = "KunsatH.csv"
+         Kunsat_Model            = "Kunsat_H_model.csv"
+         Psd                     = "Psd.csv"
+         PsdΦ                    = "PsdPorosity.csv"
+         Ψθ                      = "ThetaH.csv"
+         BulkDensity             = "BulkDensity.csv"
+         # HydroParam_Psd          = "HydroParam_Psd.csv"
+         HydroParam_Infilt       = "HydroParam_Infilt.csv"
+         σ_ψM_Scenario           = "σ_ψM_Scenario.csv"
+
+		# Temporary
+         Temporary_1             = "Stratford_Min.csv"
+         Temporary_2             = "Stratford_Max.csv"
+
+		# DATA HYPIX
+         Climate        = "Climate_2.csv"
+         Discretization = "Discretization_2.csv"
+         HyPix_Param    = "HyPix_Param_2.csv"
+         Hydraulic_Kg   = "Hydraulic_Uni_Kg2.csv"
+         Hydraulic_Vang = "Hydraulic_Vang.csv"
+         calibr         = "Soilmoisture.csv"
+         Input_OfStep   = "Wof_Steps.csv"
+			JulesMetadata = "Metadata.csv"
+			
+			if option.hypix.θΨKmodel == :Kosugi
+				Hydraulic = Hydraulic_Kg
+			else option.hypix.hypix.θΨKmodel == :vanGenuchten
+				Hydraulic = Hydraulic_Vang
+			end
+
+			# DATA LOOKUPTABLE
+            LookUpTable_CropCoeficient = "LookUpTable_CropCoeficient.csv"
+            LookUpTable_Lai            = "LookUpTable_Lai.csv"
+
+
+	# TABLE OUTPUT PATH
+		# DATA SOIL HYDRO
+         Table_HydroInfilt    = "Table_HydroInfilt.csv"
+         Table_Infilt         = "Table_Infilt.csv"
+         Table_Psd            = "Table_Psd.csv"
+         Table_Psd_θΨ_θ       = "Table_PsdTheta.csv"
+         Table_θΨK₀           = "Table_ThetaHK.csv"
+         Table_θΨ_Psd         = "Table_PsdHydro.csv"
+         Table_ExtraPoints_θΨ = "Table_ExtraPoints_θΨ.csv"
+         Table_KosugiθΨ       = "Table_KosugiθΨ.csv"
+
+		# HYPIX
+         Table_Discretisation  = "Table_Discretisation.csv"
+         Table_Hydro           = "Table_Hydro"
+         Table_KΨ              = "Table_KΨ"
+         Table_Performance     = "Table_Performance"
+         Table_Q               = "Table_Q"
+         Table_Signature       = "Table_Signature"
+         Table_TimeSerie       = "Table_TimeSerie"
+         Table_TimeSerie_Daily = "Table_TimeSerie_Daily"
+         Table_Veg             = "Table_Veg"
+         Table_Ψ               = "Table_H"
+         Table_θ               = "Table_Sm"
+         Table_θΨ              = "Table_θΨ"
+         Table_DailyClimate    = "Table_DailyClimate"
+
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
 	# PROCESSING
 		Home = @__DIR__
 
-		# Input
-         Id_Select          = Home * "//INPUT//" * Name * Id_Select
-         Infiltration       = Home * "//INPUT//" * Name * Infiltration
-         Infiltration_Param = Home * "//INPUT//" * Name * Infiltration_Param
-         Kunsat             = Home * "//INPUT//" * Name * Kunsat
-         Psd                = Home * "//INPUT//"  * Name * Psd
-         PsdΦ               = Home * "//INPUT//" * Name * PsdΦ
-         Ψθ                 = Home * "//INPUT//" * Name * Ψθ
-         ρ_Infilt           = Home * "//INPUT//" * Name * ρ_Infilt
-         ρ_Psd              = Home * "//INPUT//" * Name * ρ_Psd
-         ρ_Ψθ               = Home * "//INPUT//" * Name * ρ_Ψθ
+		# INPUT
+			# DATA SOIL HYDRO
+			FileDataSoilhydro_Input = Home * "//INPUT//DataSoilHydraulic//" * SiteName_Soilhyro * "//" * SiteName_Soilhyro * "_"
 
-		# Table
-			Table_θΨK                = Home * "//OUTPUT//Table//" * Name *  option.hydro.HydroModel * "_" * Table_θΨK
-			Table_Psd                = Home * "//OUTPUT//Table//" * Name * option.psd.Model * "_" * Table_Psd
-			Table_θr                 = Home * "//OUTPUT//Table//" * Name * Table_θr
-			Table_θΨK_Psd            = Home * "//OUTPUT//Table//" * Name * option.psd.HydroModel * "_" * Table_θΨK_Psd
-			Table_HydroInfilt        = Home * "//OUTPUT//Table//" * Name * Table_HydroInfilt
-			Table_Infilt             = Home * "//OUTPUT//Table//" * Name * option.infilt.Model * "_" *  Table_Infilt
-			Plots_θΨK                = Home * "//OUTPUT//Plots//Lab//" * Name
-			Plots_BestLab            = Home * "//OUTPUT//Plots//Infiltration//Lab//" * Name
-			Plots_BestLab_SeIniRange = Home * "//OUTPUT//Plots//Infiltration//Lab_SeIniRange//" * Name
-			Plots_∑infilt_Tinfilt    = Home * "//OUTPUT//Plots//Infiltration//" * Name
-			Plots_Psd                = Home * "//OUTPUT//Plots//Psd//" * Name
-			Plots_Psd_θr         = Home * "//OUTPUT//Plots//Psd//ThetaR//" * Name * "Plot_ThetaR.svg"
-			Plots_IMP_model          = Home * "//OUTPUT//Plots//Psd//IMP_results//" * Name
+			# ID_Select	
+				Id_Select          = FileDataSoilhydro_Input * Id_Select
+
+				# Smap
+					Smap = FileDataSoilhydro_Input * Smap
+					SmapLookupTableWettable = FileDataSoilhydro_Input * SmapLookupTableWettable
+
+				# Convert
+					ConvertModel = FileDataSoilhydro_Input * ConvertModel
+					
+				# BulkDensity
+					BulkDensity       = FileDataSoilhydro_Input * BulkDensity
+				
+				#Lab
+               Ψθ                = FileDataSoilhydro_Input * Ψθ
+               Kunsat            = FileDataSoilhydro_Input * Kunsat
+               Kunsat_Model      = FileDataSoilhydro_Input * Kunsat_Model
+               HydroParam_ThetaH = FileDataSoilhydro_Input * HydroParam_ThetaH
+               σ_ψM_Scenario     = FileDataSoilhydro_Input * σ_ψM_Scenario
+               Temporary_1       = FileDataSoilhydro_Input * Temporary_1
+               Temporary_2       = FileDataSoilhydro_Input * Temporary_2
+					
+				#Psd
+               Psd            = FileDataSoilhydro_Input * Psd
+               # HydroParam_Psd = FileDataSoilhydro_Input * HydroParam_Psd
+
+				# Infilt
+               Infiltration       = FileDataSoilhydro_Input * Infiltration
+               Infiltration_Param = FileDataSoilhydro_Input * Infiltration_Param
+               HydroParam_Infilt  = FileDataSoilhydro_Input * HydroParam_Infilt
+
+			# HYPIX
+				FileHypix_Input = Home * "//INPUT//DataHyPix//" * SiteName_Hypix * "//" * SiteName_Hypix * "_" 
+
+					# Name varies depending if hourly or daily
+					Climate        = FileHypix_Input * option.hypix.ClimateDataTimestep * "_" * Climate
+					Discretization = FileHypix_Input * Discretization
+					Hypix_Param    = FileHypix_Input * HyPix_Param
+					Hydraulic      = FileHypix_Input * Hydraulic
+					calibr         = FileHypix_Input * calibr
+					JulesMetadata  = FileHypix_Input * JulesMetadata
+					
+					Input_OfStep = Home * "//INPUT//DataHyPix//RESULTS//"
+
+			# HYPIX LOOKUPTABLE
+				FileHypix_LookUpTable = Home * "//INPUT//DataHyPix//LookUpTable//"
+					
+					LookUpTable_CropCoeficient = FileHypix_LookUpTable * LookUpTable_CropCoeficient
+					LookUpTable_Lai            = FileHypix_LookUpTable * LookUpTable_Lai
+		# TABLE
+			# SOIL HYDRO
+			FileSoilHydro_Table₁ = Home * "//OUTPUT//SoilHydro//" * SiteName_Soilhyro * "//Table//" 
+			#Make Folder if not exist
+			mkpath(FileSoilHydro_Table₁) 
+			FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * SiteName_Soilhyro * "_"
+
+				#Lab
+               Table_θΨK            = FileSoilHydro_Table₁ * string(option.hydro.HydroModel) *  "_" * string(option.hydro.σ_2_Ψm) *  "_" * Model_Name * "_" * Table_θΨK₀
+               Table_θΨ_Psd         = FileSoilHydro_Table₁ * string(option.psd.HydroModel) *  "_" * string(option.hydro.σ_2_Ψm) *  "_" * Model_Name * "_" * Table_θΨ_Psd
+               Table_ExtraPoints_θΨ = FileSoilHydro_Table₁ *   "_" * Table_ExtraPoints_θΨ
+               Table_KosugiθΨ       = FileSoilHydro_Table₁ *   "_" * Table_KosugiθΨ
+
+				#SMAP
+					Table_Smap =  FileSoilHydro_Table₁ * "Smap.csv"
+ 
+				#Infilt
+               Table_HydroInfilt    = FileSoilHydro_Table₁ * string(option.infilt.Model) * "_" *  Model_Name  *  "_" * Table_HydroInfilt
+               Table_Infilt         = FileSoilHydro_Table₁ * string(option.infilt.Model) *  "_" *  Model_Name  *  "_" *  Table_Infilt
+
+				#Psd
+					Table_Psd         = FileSoilHydro_Table₁ * string(option.psd.Model) *  "_" * Model_Name * "_" * Table_Psd
+					Table_Psd_θΨ_θ    = FileSoilHydro_Table₁ * string(option.psd.HydroModel) *  "_" * Model_Name * "_" *  Table_Psd_θΨ_θ
+
+			#HYPIX
+				FileSoilHydro_Table = Home * "//OUTPUT//Hypix//" * SiteName_Hypix * "//Table//" 
+				#Make Folder if not exist
+				mkpath(FileSoilHydro_Table) 
+				FileSoilHydro_Table = FileSoilHydro_Table * SiteName_Hypix * "_"
+
+					Table_Discretisation  = FileSoilHydro_Table * Table_Discretisation
+					Table_Hydro           = FileSoilHydro_Table * Table_Hydro
+					Table_Q               = FileSoilHydro_Table * Table_Q
+					Table_Signature       = FileSoilHydro_Table * Table_Signature
+					Table_TimeSerie       = FileSoilHydro_Table * Table_TimeSerie
+					Table_TimeSerie_Daily = FileSoilHydro_Table * Table_TimeSerie_Daily
+					Table_Veg             = FileSoilHydro_Table * Table_Veg
+					Table_Performance     = FileSoilHydro_Table * Table_Performance
+					Table_Ψ               = FileSoilHydro_Table * Table_Ψ
+					Table_θ               = FileSoilHydro_Table * Table_θ
+					Table_θΨ              = FileSoilHydro_Table * Table_θΨ
+					Table_KΨ              = FileSoilHydro_Table * Table_KΨ
+					Table_DailyClimate    = FileSoilHydro_Table * Table_DailyClimate	
+			
+		# PLOT
+			# SOIL HYDRO
+			FileSoilHydro_Plot = Home * "//OUTPUT//SoilHydro//" * SiteName_Soilhyro * "//Plots//"
+				#Lab
+               Plots_θΨK = FileSoilHydro_Plot * "//Lab//" 
+					mkpath(Plots_θΨK)
+					Plots_θΨK  = Plots_θΨK * SiteName_Soilhyro * "_"
+
+					Plots_σΨm = FileSoilHydro_Plot * "//LabSigmaHm//" 
+					mkpath(Plots_σΨm)
+					Plots_σΨm  = Plots_σΨm * SiteName_Soilhyro * "_"
 
 
+				#Psd
+               Plot_Psd_θΨ     = FileSoilHydro_Plot * "//Psd//IMP_ThetaH//"
+					mkpath(Plot_Psd_θΨ)				
+               Plot_Psd_θΨ = Plot_Psd_θΨ * SiteName_Soilhyro * "_"
+					
+               Plots_IMP_model = FileSoilHydro_Plot * "//Psd//IMP//"
+					mkpath(Plots_IMP_model)
+               Plots_IMP_model = Plots_IMP_model * SiteName_Soilhyro * "_"
+					
+               Plots_Psd       = FileSoilHydro_Plot * "//Psd//"
+					mkpath(Plots_Psd)
+               Plots_Psd       = Plots_Psd * SiteName_Soilhyro * "_"
+
+               Plots_Psd_θr    = FileSoilHydro_Plot * "//Psd//ThetaR//" 
+					mkpath(Plots_Psd_θr)
+					Plots_Psd_θr    = Plots_Psd_θr * "Plot_ThetaR.svg"
+					
+				#Infiltration					
+               Plots_∑infilt_Opt        = FileSoilHydro_Plot * "//Infiltration//Optimize//"
+					mkpath(Plots_∑infilt_Opt)
+               Plots_∑infilt_Opt        = Plots_∑infilt_Opt * SiteName_Soilhyro * "_"
+					
+               Plots_∑infilt_SeIniRange = FileSoilHydro_Plot * "//Infiltration//SeIni//"
+					mkpath(Plots_∑infilt_SeIniRange)
+               Plots_∑infilt_SeIniRange = Plots_∑infilt_SeIniRange * SiteName_Soilhyro * "_"
+
+               Plots_∑infilt_θΨ         = FileSoilHydro_Plot * "//Infiltration//ThetaH//"
+					mkpath(Plots_∑infilt_θΨ)
+               Plots_∑infilt_θΨ         = Plots_∑infilt_θΨ * SiteName_Soilhyro * "_"
+					
+               Plots_Sorptivity_Se      = FileSoilHydro_Plot * "//Infiltration//Sorptivity//"
+					mkpath(Plots_Sorptivity_Se)
+               Plots_Sorptivity_Se      = Plots_Sorptivity_Se * SiteName_Soilhyro * "_"
+			
+			# HYPIX
+				FileHypix_Plot = Home * "//OUTPUT//Hypix//" * SiteName_Hypix  * "//Plots//"
+				mkpath(FileHypix_Plot)
+					Hypix_calibr  = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_ThetaCalibr"
+					Plot_Hypix_θΨK = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_ThetaPsiK"
+					Plot_Se_Time   = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Se_Time.png"
+					Plot_Se_Z      = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Se_Z.png"
+					Vegetation     = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Vegetation"
+					Plot_Sorptivity =  FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_Sorptivity"
+					Plot_RainfallInterception = FileHypix_Plot * SiteName_Hypix  * "_" * "Plot_RainfallInterception"
+
+				FileHypix_Plot_Results = Home * "//OUTPUT//Hypix//RESULTS//"
+				mkpath(FileHypix_Plot_Results)
+               Plot_OfStep   = FileHypix_Plot_Results
+               Plots_θ∂θ∂Ψ    = FileHypix_Plot_Results * "Plot_θ∂θ∂Ψ.svg"
+               Plot_Ψmin_Ψmax = FileHypix_Plot_Results * "Plot_ΨminΨmax.svg"
+					Plot_σ2θr      = FileHypix_Plot_Results * "Plot_θr2σ.svg"
+					Plot_θΨ_Δθ     = FileHypix_Plot_Results * "Plot_θΨ_Δθ.svg"
+					Plot_Se_Ψ_Constrained = FileHypix_Plot_Results * "Plot_Se_Ψ_Constrained.svg"
+			
 end  # module path
 # ............................................................

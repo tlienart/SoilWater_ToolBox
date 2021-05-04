@@ -1,7 +1,21 @@
 module stats
 	import ..wrc, ..param
-	export NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION
+	export RMSE, NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION
 	using Statistics
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function RMSE(Obs, Sim; Power=2.0)
+			N = length(Obs)
+
+			Err = 0.0
+			for i = 1:N
+				Err += abs(Sim[i] - Obs[i]) ^ Power
+			end
+		return (Err / Float64(N)) ^ (1.0 / Power)
+		end # function RMSE
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
@@ -17,10 +31,11 @@ module stats
 			
 			Err = 0.0
 			for i = 1:N
-				Err += sum(abs(Sim[i] - Obs[i]) ^ Power)
+				Err += abs(Sim[i] - Obs[i]) ^ Power
 			end
 			return Err / Obs_Mean_Err 
 		end  # function: NASH_SUTCLIFE_MINIMIZE
+
 
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,12 +44,12 @@ module stats
 		function NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Data, Ψ_Sim, θ_Sim, hydro)
 			Nse = zeros(Float64, N_SoilSelect)
 
-			for iSoil = 1:N_SoilSelect	
-				θΨ = zeros(Float64, N_Data[iSoil])
-				for iRpart = 1:N_Data[iSoil]
-					θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Sim[iSoil,iRpart], iSoil, hydro)
+			for iZ = 1:N_SoilSelect	
+				θΨ = zeros(Float64, N_Data[iZ])
+				for iRpart = 1:N_Data[iZ]
+					θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Sim[iZ,iRpart], iZ, hydro)
 				end
-				Nse[iSoil] = 1.0 - NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Data[iSoil]], θ_Sim[iSoil,1:N_Data[iSoil]])	
+				Nse[iZ] = 1.0 - NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Data[iZ]], θ_Sim[iZ,1:N_Data[iZ]])	
 			end
 
 			# Cumulating the objective function to get the overview
@@ -45,12 +60,14 @@ module stats
 		end # function NASH_SUTCLIFFE_θΨ
 
 		
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NASH_SUTCLIFFE_EFFICIENCY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function NASH_SUTCLIFFE_EFFICIENCY(;Obs=Obs, Sim=Sim, Power=2.0)
 			return Nse = 1 - NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=Power)
 		end  # function: NASH_SUTCLIFFE_EFFICIENCY
+
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,13 +78,14 @@ module stats
 		end
 
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : LINEAR_REGRESSION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function LINEAR_REGRESSION(Xdata, Ydata)
-		X = hcat(ones(length(Xdata)),Xdata)
-		Y = Ydata
-		return Intercept, Slope = inv(X'*X)*(X'*Y)
-	end # function LINEAR_REGRESSION		function RELATIVE_ERR(;Obs=Obs, Sim=Sim)
+		function LINEAR_REGRESSION(Xdata, Ydata)
+			X = hcat(ones(length(Xdata)),Xdata)
+			Y = Ydata
+			return Intercept, Slope = inv(X'*X)*(X'*Y)
+		end # function LINEAR_REGRESSION		function RELATIVE_ERR(;Obs=Obs, Sim=Sim)
 
 end # module

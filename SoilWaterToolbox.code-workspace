@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+		
+			{
+				"type": "julia",
+				"request": "launch",
+				"name": "Run active Julia file",
+				"program": "${file}",
+				"stopOnEntry": false,
+				"cwd": "${workspaceFolder}",
+				"juliaEnv": "${command:activeJuliaEnvironment}"
+			}
+		]
+	}
+}
