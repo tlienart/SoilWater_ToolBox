@@ -7,26 +7,27 @@ module psdFunc
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function PSD_MODEL(iSoil, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd)
+		function PSD_MODEL(iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd)
  		
-			if option.psd.Model == "IMP"
+			if option.psd.Model == :IMP
 				# Correction for the small PSD
-				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, paramPsd.Subclay[iSoil], N_Psd)  		
+				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, paramPsd.Subclay[iZ], N_Psd)  		
 
 				# Computing ξ2 from Psd
-					ξ2 = imp.∑PSD_2_ξ2(∑Psd[paramPsd.∑Psd_2_ξ2_Size[iSoil]]; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iSoil], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iSoil])
+					ξ2 = imp.∑PSD_2_ξ2(∑Psd[paramPsd.∑Psd_2_ξ2_Size[iZ]]; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iZ], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iZ])
 
-				# Computing θ from Psd
-					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iSoil], ξ2) 
 					
-				# Computing ψ from Psd
+				# Computing θ from Psd
+					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iZ], ξ2) 
+					
+				# Computing Ψ from Psd
 					Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd) 	# Computing  from Psd
 	
-			elseif option.psd.Model == "Chang2019Model"
+			elseif option.psd.Model == :Chang2019Model
 				# Computing θ from Psd
-					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iSoil]) 
+					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iZ]) 
 				
-				# Computing ψ from Psd
+				# Computing Ψ from Psd
 					Ψ_Rpart = chang.RPART_2_ΨRPART(Rpart, N_Psd)
 				 									
 			end # option.psd.Chang2019Model
@@ -63,7 +64,7 @@ module psdFunc
 		#      INTERGRANULARMIXING MODELS
 		# =========================================
 			function INTERGRANULARMIXING(Rpart, ξ1, ξ2)
-				return IntergranularMixing = min.(max.(ξ1 .* exp(.-(Rpart .^ .-ξ2)), 0.0), param.psd.imp.ξ_Max)
+				return IntergranularMixing = min(max(ξ1 * exp(-(Rpart ^ -ξ2)), 0.0), param.psd.imp.ξ_Max)
 			end # function INTERGRANULARMIXING
 
 
