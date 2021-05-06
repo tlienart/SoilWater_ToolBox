@@ -11,15 +11,9 @@ module Φ
 
 			Φ = Array{Float64}(undef, (N_SoilSelect))
 
-			for iSoil=1:N_SoilSelect
-				# Φ_Fine = 1.0 - ρbSoil[iSoil] / ρp_Fine[iSoil]
-				# [Volume Rock in soil] - [Fine earth bulk density]
-				# Φ_Fine = 1.0 - (RockW[iSoil] / ρ_Rock[iSoil]) - ((1.0 - RockW[iSoil]) *ρbSoil[iSoil]) / ((1.0 - RockW[iSoil] / ρ_Rock[iSoil]) * ρp_Fine[iSoil])
-
-
-				# Vrock = RockW[iSoil] / ρ_Rock[iSoil]
-				Φ[iSoil] = 1.0 - (RockW[iSoil] * ρbSoil[iSoil] / ρ_Rock[iSoil]) - ((1.0 - RockW[iSoil]) *ρbSoil[iSoil] / ρp_Fine[iSoil])
-
+			for iZ=1:N_SoilSelect
+				# Vrock = RockW[iZ] / ρ_Rock[iZ]
+				Φ[iZ] = 1.0 - (RockW[iZ] * ρbSoil[iZ] / ρ_Rock[iZ]) - ((1.0 - RockW[iZ]) *ρbSoil[iZ] / ρp_Fine[iZ])
 			end # for
 			
 			return Φ

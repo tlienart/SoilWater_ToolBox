@@ -1,7 +1,7 @@
 module quasiExact # quasi-exact objective function
 	import ..option, ..sorptivity, ..wrc, ..kunsat, ..option, ..param
 	import BlackBoxOptim, Optim
- 	export INFILTRATION3D_2_1D, OF_INFILTRATION_2_HYDRO
+ 	export CONVERT_3D_2_1D, HYDRO_2_INFILTRATION3D, OF_QUASIEXACT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TIME_2_TIMEη
@@ -16,10 +16,17 @@ module quasiExact # quasi-exact objective function
 	#		FUNCTION : INFILTRATION3D_2_1D
 	# 		= TRANSFORMS INFILTRATION_3D TO INFILTRATION_1D =
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION3D_2_1D(hydroInfilt, ∑Infilt, infiltParam, iSoil, Sorptivity, T; ϵ=eps())
-			Δθ = hydroInfilt.θs[iSoil] - hydroInfilt.θr[iSoil]
-			return ∑Infilt_1D = max(∑Infilt - (T * infiltParam.γ[iSoil] * Sorptivity ^ 2.0) / (infiltParam.RingRadius[iSoil] * Δθ), ϵ)
-		end # function : INFILTRATION3D_2_1D
+	function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T; θ_Ini= infiltParam.θ_Ini[iZ])
+
+		Δθ = hydroInfilt.θs[iZ] - θ_Ini
+
+		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt)
+
+		for iT = 1:N_Infilt[iZ]
+			∑Infilt_1D[iZ,iT] = ∑Infilt_3D[iZ,iT] - (T[iZ,iT] * infiltParam.γ[iZ] * Sorptivity ^ 2.0) / (infiltParam.RingRadius[iZ] * Δθ)
+		end
+		return ∑Infilt_1D
+	end # function : INFILTRATION3D_2_1D
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,13 +34,13 @@ module quasiExact # quasi-exact objective function
 	# 		TRANSFORMS NORMALIZED INFILTRATION TO INFILTRATION-3D
 	#		Function compute infiltration-1d from normalized infiltration
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTTRATIONη_2_3D(Infilt_η, infiltParam, iSoil, K_θini, Sorptivity, T, Time_η, ΔK, Δθ)
+		function INFILTTRATIONη_2_3D(Infilt_η, infiltParam, iZ, K_θini, Sorptivity, T, Time_η, ΔK, Δθ)
 			
 			INFILTTRATIONη_2_1D(Infilt_η, K_θini, Sorptivity, T, ΔK) = K_θini * T + Infilt_η * (Sorptivity ^ 2.0) / (2.0 * ΔK)
 
-			ΔI_η = Time_η * infiltParam.γ[iSoil]
+			ΔI_η = Time_η * infiltParam.γ[iZ]
 
-			return ∑Infilt = INFILTTRATIONη_2_1D(Infilt_η, K_θini, Sorptivity, T, ΔK) + ΔI_η * (Sorptivity ^ 4.0) / (2.0 * infiltParam.RingRadius[iSoil] * Δθ * (ΔK ^ 2.0))
+			return ∑Infilt_3D = INFILTTRATIONη_2_1D(Infilt_η, K_θini, Sorptivity, T, ΔK) + ΔI_η * (Sorptivity ^ 4.0) / (2.0 * infiltParam.RingRadius[iZ] * Δθ * (ΔK ^ 2.0))
 		end # function :  INFILTTRATIONη_2_3D
 
 
@@ -41,8 +48,8 @@ module quasiExact # quasi-exact objective function
 	#		FUNCTION : INFILTRATION3D_2_η
  	# 		TRANSFORMS INFILTRATION-3D TO NORMALIZED INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTRATION3D_2_η(∑Infilt, infiltParam, iSoil, K_θini, Sorptivity, T, ΔK, Δθ; ϵ=eps())
-			return Infilt_η = max((2.0 * ΔK / Sorptivity ^ 2.0) * (∑Infilt - K_θini * T - infiltParam.γ[iSoil] * TIME_2_TIMEη(Sorptivity, T, ΔK) * (Sorptivity^4.0) / (infiltParam.RingRadius[iSoil] * Δθ * 2.0* (ΔK^2.0)) ), ϵ)
+		function INFILTRATION3D_2_η(∑Infilt_3D, infiltParam, iZ, K_θini, Sorptivity, T, ΔK, Δθ; ϵ=eps())
+			return Infilt_η = max((2.0 * ΔK / Sorptivity ^ 2.0) * (∑Infilt_3D - K_θini * T - infiltParam.γ[iZ] * TIME_2_TIMEη(Sorptivity, T, ΔK) * (Sorptivity^4.0) / (infiltParam.RingRadius[iZ] * Δθ * 2.0* (ΔK^2.0)) ), ϵ)
 		end # function INFILTRATION3D_2_η
 
 
@@ -51,31 +58,31 @@ module quasiExact # quasi-exact objective function
 	# 		COMPUTE INFILTRATION_3D FROM OPTIMIZED HYDRAULIC PARAMETERS
 	# 		Solving quasiexact solution
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-		function HYDRO_2_INFILTRATION3D(∑Infilt, hydroInfilt, infiltParam, iSoil, N_Infilt, T)
+		function HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, T; Infilt_η_Max_Start=0.5)
 
-			Infilt_η = Array{Float64}(undef, N_Infilt[iSoil])
+			Infilt_η = Array{Float64}(undef, N_Infilt[iZ])
 
-			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt)
+			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 
-			Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt)
+			Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 
-			K_θini = kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydroInfilt)
+			K_θini = kunsat.Se_2_KUNSAT(Se_Ini, iZ, hydroInfilt)
 
-			ΔK = hydroInfilt.Ks[iSoil] - K_θini
+			ΔK = hydroInfilt.Ks[iZ] - K_θini
 
-			Δθ = hydroInfilt.θs[iSoil] - infiltParam.θ_Ini[iSoil]
+			Δθ = hydroInfilt.θs[iZ] - infiltParam.θ_Ini[iZ]
 		
 			# At t=1
-				∑Infilt[1] = 0.0
+				∑Infilt_3D[1] = 0.0
 				Infilt_η[1] = 0.0
-				Infilt_η_Min = 0.0001 # 0.0001
-				Infilt_η_Max = 1.0 * T[2] #Since T[1] = 0 0.05
+				Infilt_η_Min = 10^-8
+				Infilt_η_Max = Infilt_η_Max_Start #Since T[1] = 0
 
 			# ~~~~~~~~~~~~~~~~~~~~
-			function OF_QUASIEXACTη(Infilt_η, infiltParam, iSoil, Time_η)
+			function OF_QUASIEXACTη(Infilt_η, infiltParam, iZ, Time_η)
 				Left_Term = Time_η
 
-				Right_Term = (1.0 / (1.0 - infiltParam.β[iSoil])) * (Infilt_η - log((exp(infiltParam.β[iSoil] * Infilt_η) + infiltParam.β[iSoil] - 1.0) / infiltParam.β[iSoil]))
+				Right_Term = (1.0 / (1.0 - infiltParam.β[iZ])) * (Infilt_η - log((exp(infiltParam.β[iZ] * Infilt_η) + infiltParam.β[iZ] - 1.0) / infiltParam.β[iZ]))
 				
 				if Right_Term < 0.0
 					return OF = 10000.0 * exp(Infilt_η)
@@ -85,85 +92,82 @@ module quasiExact # quasi-exact objective function
 			end # function OF_QUASIEXACTη ~~~~~~~~~~~~~~~~~~~~
 
 
-			for iT in 2:N_Infilt[iSoil] # Looping for every time step
-				Time_η = TIME_2_TIMEη(Sorptivity, T[iSoil,iT], ΔK)
+			for iT = 2:N_Infilt[iZ] # Looping for every time step
+				Time_η = TIME_2_TIMEη(Sorptivity, T[iZ,iT], ΔK)
 
 				# Solving for Infilt_η
-					Optimization = Optim.optimize(Infilt_η -> OF_QUASIEXACTη(Infilt_η, infiltParam, iSoil, Time_η), Infilt_η_Min, Infilt_η_Max, Optim.GoldenSection())
+					Optimization = Optim.optimize(Infilt_η -> OF_QUASIEXACTη(Infilt_η, infiltParam, iZ, Time_η), Infilt_η_Min, Infilt_η_Max, Optim.GoldenSection())
+
 					Infilt_η[iT] = Optim.minimizer(Optimization)[1]
 
 				# Deriving the new bounds such that infiltration increases with time & the slope decreases with time
-					Infilt_η_Min = Infilt_η[iT] + 0.0001
+					Infilt_η_Min = Infilt_η[iT]
 
 				# Maximum infiltration rate for T+1: (Infilt[T2] - Infilt[T1]) / (T2 - T1) which is 1 seconds
-					if iT <= N_Infilt[iSoil] - 1
-						Infilt_η_Max = Infilt_η[iT] + (T[iSoil,iT+1]- T[iSoil,iT]) * (Infilt_η[iT] - Infilt_η[iT-1]) / (T[iSoil,iT] - T[iSoil,iT-1])
+					if iT <= N_Infilt[iZ] - 1
+						Infilt_η_Max = Infilt_η[iT] + (T[iZ,iT+1]- T[iZ,iT]) * (Infilt_η[iT] - Infilt_η[iT-1]) / (T[iZ,iT] - T[iZ,iT-1])
 					else
 						Infilt_η_Max = Infilt_η[iT] + (Infilt_η[iT] - Infilt_η[iT-1])
 						
 					end
 
 				# Transforming INFILTTRATIONη to INFILTRATION3D 
-					∑Infilt[iSoil,iT] =  INFILTTRATIONη_2_3D(Infilt_η[iT], infiltParam, iSoil, K_θini, Sorptivity, T[iSoil,iT], Time_η, ΔK, Δθ)
+					∑Infilt_3D[iZ,iT] =  INFILTTRATIONη_2_3D(Infilt_η[iT], infiltParam, iZ, K_θini, Sorptivity, T[iZ,iT], Time_η, ΔK, Δθ)
 			end
-			return ∑Infilt
+			return ∑Infilt_3D
 		end # function: HYDRO_2_INFILTRATION3D
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : OF_INFILTRATION_2_HYDRO
+	#		FUNCTION : OF_QUASIEXACT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil], W=0.9)
 
-			hydroInfilt.θs[iSoil] = θs
-			hydroInfilt.θr[iSoil] = θr
-			hydroInfilt.Ks[iSoil] = Ks
-			hydroInfilt.σ[iSoil] = σ
-			hydroInfilt.Ψm[iSoil] = Ψm
-			hydroInfilt.θsMat[iSoil] = θs
-			hydroInfilt.ΨmMac[iSoil] = Ψm
-			hydroInfilt.σMac[iSoil] = σ
+	function OF_QUASIEXACT(∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; W=0.8)
 
-			iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
+		Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
+		
+		K_θini = kunsat.Se_2_KUNSAT(Se_Ini, iZ, hydroInfilt)
 
-			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt)
+		Kr_θini = K_θini / hydroInfilt.Ks[iZ]
+		
+		ΔK = hydroInfilt.Ks[iZ] - K_θini
+		
+		Δθ = hydroInfilt.θs[iZ] - infiltParam.θ_Ini[iZ]
+		
+		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 
-			Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt)
+		Left_Term = zeros(Float64, N_Infilt[iZ])
 
-			K_θini = kunsat.Se_2_KUNSAT(Se_Ini, iSoil, hydroInfilt)
+		Right_Term = zeros(Float64, N_Infilt[iZ])
 
-			ΔK = hydroInfilt.Ks[iSoil] - K_θini
+		iT_TransSteady = infiltOutput.iT_TransSteady_Data[iZ]
+		
+		Of_Penalty = 0.0 ; Of_Stead = 0.0 ; Of_Trans = 0.0
+		
+		for iT = 2:N_Infilt[iZ]
+			Time_η = TIME_2_TIMEη(Sorptivity, T[iZ,iT], ΔK)
 
-			Δθ = hydroInfilt.θs[iSoil] - infiltParam.θ_Ini[iSoil]
+			Infilt_η = INFILTRATION3D_2_η(∑Infilt_Obs[iZ,iT], infiltParam, iZ, K_θini, Sorptivity, T[iZ,iT], ΔK, Δθ)
 
-			Left_Term = zeros(Float64, N_Infilt[iSoil])
-			Right_Term = zeros(Float64, N_Infilt[iSoil])
-			Of_Penalty = 0.0 ; Of_Stead = 0.0 ; Of_Trans = 0.0
-			for iT in 2:N_Infilt[iSoil]
-				Time_η = TIME_2_TIMEη(Sorptivity, T[iSoil,iT], ΔK)
+			Left_Term[iT] = Time_η
 
-				Infilt_η = INFILTRATION3D_2_η(∑Infilt_Obs[iSoil,iT], infiltParam, iSoil, K_θini, Sorptivity, T[iSoil,iT], ΔK, Δθ)
-
-				Left_Term[iT] = Time_η
-
-				Right_Term[iT] = (1.0 / (1.0 - infiltParam.β[iSoil])) * (Infilt_η - log((exp(infiltParam.β[iSoil] * Infilt_η) + infiltParam.β[iSoil] - 1.0) / infiltParam.β[iSoil]))
-				
-				if Right_Term[iT] > 0.0
-					if iT <= infiltOutput.iT_TransSteady_Data[iSoil]
-						Of_Trans += ((Left_Term[iT]) - (Right_Term[iT])) ^ 2.0
-					else
-						Of_Stead += (log10(Left_Term[iT]) - log10(Right_Term[iT])) ^ 2.0
-					end #  iT <= infiltOutput.iT_TransSteady_Data
+			Right_Term[iT] = (1.0 / (1.0 - infiltParam.β[iZ])) * (Infilt_η - log((exp(infiltParam.β[iZ] * Infilt_η) + infiltParam.β[iZ] - 1.0) / infiltParam.β[iZ]))
+			
+			if Right_Term[iT] > 0.0
+				if iT <= infiltOutput.iT_TransSteady_Data[iZ]
+					Of_Trans += ((Left_Term[iT]) - (Right_Term[iT])) ^ 2.0
 				else
-					Of_Penalty += 1000.0 * exp(Infilt_η)
-					Right_Term[iT] = 0.0
-				end #  Right_Term[iT] > 0.0
+					Of_Stead += (log10(Left_Term[iT]) - log10(Right_Term[iT])) ^ 2.0
+				end #  iT <= infiltOutput.iT_TransSteady_Data
+			else
+				Of_Penalty += 1000.0 * exp(Infilt_η)
+				Right_Term[iT] = 0.0
 			end #  Right_Term[iT] > 0.0
+		end #  Right_Term[iT] > 0.0
 
-			return Wof = (W * Of_Trans / Float64(iT_TransSteady-1)) + ((1.0 - W) * Of_Stead / Float64(N_Infilt[iSoil] - iT_TransSteady + 1)) + Of_Penalty
-		end # function: OF_INFILTRATION_2_HYDRO
-
-
+		return Wof = (W * Of_Trans / Float64(iT_TransSteady-1)) + ((1.0 - W) * Of_Stead / Float64(N_Infilt[iZ] - iT_TransSteady + 1)) + Of_Penalty
+	
+	end # function: OF_INFILT_2_HYDRO
 		# #= =============== KOSUGI =============== =#
 	# module kg	
 	# 	import ..option, ..sorptivity, ..wrc, ..kunsat, ..param
@@ -192,14 +196,14 @@ module quasiExact # quasi-exact objective function
 
 	# 		# 		Of_Hkg = abs(log10(Hkg_Sorpt) - log10(Hkg_σ))
 
-	# 		# 		Wof = quasiExact.OF_INFILTRATION_2_HYDRO( ∑Infilt_Obs[1:N_Infilt[iSoil]], infiltOutput, infiltParam, iSoil, K_θini, N_Infilt, Sorptivity, T[1:N_Infilt[iSoil]], ΔK, Δθ) + Of_Hkg / 10.0
+	# 		# 		Wof = quasiExact.OF_INFILT_2_HYDRO( ∑Infilt_Obs[1:N_Infilt[iZ]], infiltOutput, infiltParam, iZ, K_θini, N_Infilt, Sorptivity, T[1:N_Infilt[iZ]], ΔK, Δθ) + Of_Hkg / 10.0
 
 	# 		# 		return Wof
 	# 		# 	end # function INFILTRATION3D_2_HYDRO_σMOD
 
 	# 		# 	# OPTIMIZATION
 
-	# 		# 		Optimization = Optim.optimize(σ -> OF_Fast_η(T[1:N_Infilt[iSoil]],  ∑Infilt_Obs[1:N_Infilt[iSoil] ], Δθ, N_Infilt , infiltParam, θr, θ_Ini, σ, iT_TransStead), param.σ_Min, param.σ_Max, GoldenSection() )
+	# 		# 		Optimization = Optim.optimize(σ -> OF_Fast_η(T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ] ], Δθ, N_Infilt , infiltParam, θr, θ_Ini, σ, iT_TransStead), param.σ_Min, param.σ_Max, GoldenSection() )
 
 	# 		# 		# Values of the optimal hydraulic params
 	# 		# 		σ = Optim.minimizer(Optimization)[1]
@@ -247,7 +251,7 @@ module quasiExact # quasi-exact objective function
 			
 	# 			ΔK = Ks - K_θini
 
-	# 			OF_Cumul = quasiExact.OF_INFILTRATION_2_HYDRO(N_Infilt[iSoil], iT_TransStead, T[1:N_Infilt[iSoil]],  ∑Infilt_Obs[1:N_Infilt[iSoil]],Sorptivity, ΔK, K_θini, Δθ, infiltParam)
+	# 			OF_Cumul = quasiExact.OF_INFILT_2_HYDRO(N_Infilt[iZ], iT_TransStead, T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ]],Sorptivity, ΔK, K_θini, Δθ, infiltParam)
 	# 			return OF_Cumul
 	# 		end
 
@@ -262,13 +266,13 @@ module quasiExact # quasi-exact objective function
 	# 		end
 
 	# 		if Option_Opt_N # If Ks is not known
-	# 			Optimization = BlackBoxOptim.bboptimize(Param -> OF_Fast_η(T[1:N_Infilt[iSoil]],  ∑Infilt_Obs[1:N_Infilt[iSoil]], Δθ, N_Infilt[iSoil], infiltParam, θr, θ_Ini, 10.0 ^Param[1], 10.0 ^Param[2], Param[3], Km) ; SearchRange =[ (log10(param.Hvg_Min), log10(param.Hvg_Max)), (log10(param.Ks_Min), log10(param.Ks_Max)), (N_Min, N_Max)], NumDimensions=3, TraceMode=:silent)
+	# 			Optimization = BlackBoxOptim.bboptimize(Param -> OF_Fast_η(T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ]], Δθ, N_Infilt[iZ], infiltParam, θr, θ_Ini, 10.0 ^Param[1], 10.0 ^Param[2], Param[3], Km) ; SearchRange =[ (log10(param.Hvg_Min), log10(param.Hvg_Max)), (log10(param.Ks_Min), log10(param.Ks_Max)), (N_Min, N_Max)], NumDimensions=3, TraceMode=:silent)
 	# 			# Values of the optimal hydraulic params
 	# 			Hvg = 10.0 ^(BlackBoxOptim.best_candidate(Optimization)[1])
 	# 			Ks = 10.0 ^(BlackBoxOptim.best_candidate(Optimization)[2])
 	# 			N = BlackBoxOptim.best_candidate(Optimization)[3]
 	# 		else # if N is known
-	# 			Optimization = BlackBoxOptim.bboptimize(Param -> OF_Fast_η(T[1:N_Infilt[iSoil]],  ∑Infilt_Obs[1:N_Infilt[iSoil]], Δθ, N_Infilt[iSoil], infiltParam, θr, θ_Ini, 10.0 ^Param[1], 10.0 ^Param[2], N, Km) ; SearchRange = [ (log10(param.Hvg_Min), log10(param.Hvg_Max)), (param.Ks_Log_Min, param.Ks_Log_Max)], NumDimensions=2, TraceMode=:silent)
+	# 			Optimization = BlackBoxOptim.bboptimize(Param -> OF_Fast_η(T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ]], Δθ, N_Infilt[iZ], infiltParam, θr, θ_Ini, 10.0 ^Param[1], 10.0 ^Param[2], N, Km) ; SearchRange = [ (log10(param.Hvg_Min), log10(param.Hvg_Max)), (param.Ks_Log_Min, param.Ks_Log_Max)], NumDimensions=2, TraceMode=:silent)
 	# 			# Values of the optimal hydraulic params
 	# 			Hvg = 10.0 ^ (BlackBoxOptim.best_candidate(Optimization)[1])
 	# 			Ks = 10.0 ^(BlackBoxOptim.best_candidate(Optimization)[2])  

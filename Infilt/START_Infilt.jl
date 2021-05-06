@@ -2,162 +2,154 @@
 #		MODULE: infiltration
 # =============================================================
 module infilt
-	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ...opt, ..infiltInitialize, ..bestUniv, ..stats, ..tool, ..quasiExact
-	# include("C:\\JOE\\Main\\MODELS\\SOIL\\SoilWaterToolbox\\Plot.jl")
+	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ..option, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_INFILT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt, Id_Select)
+	function START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, Id_Select, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
 		# INITIALIZE
-		T, infiltOutput, hydroInfilt, ∑Infilt = infiltInitialize.INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
+			T, infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltInitialize.INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)
 
-		for iSoil=1:N_SoilSelect
-			println( iSoil)
+		for iZ=1:N_SoilSelect
+			println( "iZ= $iZ")
 
 			# No optimization required running from hydro derived from laboratory
-			if option.θΨ ≠ "No" #<>=<>=<>=<>=<>
-				if option.infilt.OptimizeRun == "Run" #<>=<>=<>=<>=<>
-
-					# Derive from laboratory
-					hydroInfilt = copy(hydro)
-
-					hydroInfilt.θr[iSoil] = min(hydroInfilt.θr[iSoil], infiltParam.θ_Ini[iSoil]) # Not to have errors
-
-					∑Infilt, T_TransStead = BESTUNIV_MODEL(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
-
-				elseif option.infilt.OptimizeRun == "RunOptKs" #<>=<>=<>=<>=<>	
-
-					SearchRange =[(log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
-
+			if option.infilt.OptimizeRun == :Run && option.θΨ ≠ :No #<>=<>=<>=<>=<>
+				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
-					
-					if option.infilt.Model == "Best_Univ" 
-						Optimization = BlackBoxOptim.bboptimize(P ->OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
+				 
+				# Not to have errors
+					infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])
 
-					elseif option.infilt.Model == "QuasiExact"
-						Optimization = BlackBoxOptim.bboptimize(P -> quasiExact.OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
-					end
-	
-					hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
+				if option.infilt.Model == :Best_Univ
+					∑Infilt_3D, T_TransStead =  bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T)
 
-				elseif option.infilt.OptimizeRun == "Opt" #<>=<>=<>=<>=<>	
+				elseif option.infilt.Model == :QuasiExact
+					∑Infilt_3D = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, T)
 
-					SearchRange =[(param.hydro.kg.σ_Min, param.hydro.kg.σ_Max), (log10(param.hydro.kg.Ψm_Min), log10(param.hydro.kg.Ψm_Max)), (log10(param.hydro.Ks_Min), log10(param.hydro.Ks_Max))]
-					
-					if option.infilt.Model == "Best_Univ" 
-						Optimization = BlackBoxOptim.bboptimize(P -> OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; σ=P[1], Ψm=10.0^P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
-					
-					elseif option.infilt.Model == "QuasiExact" 
-						Optimization = BlackBoxOptim.bboptimize(P -> quasiExact.OF_INFILTRATION_2_HYDRO(∑Infilt_Obs, infiltOutput, infiltParam, iSoil, N_Infilt, T, hydroInfilt; σ=P[1], Ψm=10.0^P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
-					else
-						error("ERROR SoilWaterToolBox = $(option.infilt.Model) not found")
-					end
-
-               hydroInfilt.σ[iSoil]  = BlackBoxOptim.best_candidate(Optimization)[1]
-               hydroInfilt.Ψm[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
-               hydroInfilt.Ks[iSoil] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[3]
-
-				end # OptimizeRun = "Run"
-
-				# OUTPUTS
-				if option.infilt.Model == "Best_Univ" 
-					∑Infilt, T_TransStead = bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
-
-				elseif option.infilt.Model == "QuasiExact"
-					∑Infilt = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt, hydroInfilt, infiltParam, iSoil, N_Infilt, T)
 				end # option.infilt.Model
 
-				infiltOutput.Sorptivity[iSoil] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iSoil], iSoil, hydroInfilt) 
 
-				# STATISTICS
-					iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
+			elseif option.infilt.OptimizeRun == :RunOptKs && option.θΨ ≠ :No #<>=<>=<>=<>=<>	
+				# Hydraulic param from laboratory
+					hydroInfilt = deepcopy(hydro)
+				
+				# Not to have errors
+				infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])
+				
+				SearchRange =[(log10(hydroInfilt.Ks_Min), log10(hydroInfilt.Ks_Max))]
 
-					infiltOutput.Nse_Trans[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iT_TransSteady], ∑Infilt[iSoil, 1:iT_TransSteady]; Power=2.0)
+				Optimization = BlackBoxOptim.bboptimize(P -> OF_INFILT_2_HYDRO(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; Ks=10.0^P[1])[1]; SearchRange=SearchRange, NumDimensions=1, TraceMode=:silent)
 
-					infiltOutput.Nse_Steady[iSoil] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]); Power=2.0)
+				hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
-					infiltOutput.Nse[iSoil] = 0.5 * infiltOutput.Nse_Trans[iSoil] + 0.5 * infiltOutput.Nse_Steady[iSoil]
 
-			end # option.θΨ ≠ "No"
+			elseif option.infilt.OptimizeRun == :Opt && option.infilt.HydroModel == :Kosugi # <>=<>=<>=<>=<>	
 
-		end # for iSoil=1:N_SoilSelect
+				if option.infilt.σ_2_Ψm == :Constrained
+					SearchRange =[ (hydroInfilt.σ_Min[iZ], hydroInfilt.σ_Max[iZ]), (0.0, 1.0), (log10(hydroInfilt.Ks_Min[iZ]), log10(hydroInfilt.Ks_Max[iZ]))]
+
+					Optimization = BlackBoxOptim.bboptimize(P -> OF_INFILT_2_HYDRO(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; σ=P[1], Ψm=P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
+
+					hydroInfilt.σ[iZ]  = BlackBoxOptim.best_candidate(Optimization)[1]
+					hydroInfilt.Ψm[iZ] = BlackBoxOptim.best_candidate(Optimization)[2]
+					hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[3]
+		
+					hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt)
+						
+				else
+					SearchRange =[ (hydroInfilt.σ_Min[iZ], hydroInfilt.σ_Max[iZ]), (log10(hydroInfilt.Ψm_Min[iZ]), log10(hydroInfilt.Ψm_Max[iZ])), (log10(hydroInfilt.Ks_Min[iZ]), log10(hydroInfilt.Ks_Max[iZ]))]
+
+					Optimization = BlackBoxOptim.bboptimize(P -> OF_INFILT_2_HYDRO(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; σ=P[1], Ψm=10.0^P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
+
+					hydroInfilt.σ[iZ]  = BlackBoxOptim.best_candidate(Optimization)[1]
+					hydroInfilt.Ψm[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
+					hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[3]
+				end # option.infilt.σ_2_Ψm
+	
+			else
+				error("ERROR SoilWaterToolBox = $(option.infilt.Model) not found")
+			end # option.infilt.OptimizeRun
+
+
+			# OUTPUTS RUNNING THE OPTIMAL INFILTRATION
+				infiltOutput.Sorptivity[iZ] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt) 
+
+				if option.infilt.Model == :Best_Univ 
+					∑Infilt_3D, T_TransStead = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T)
+
+				elseif option.infilt.Model == :QuasiExact
+					# ∑Infilt_3D = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, T)
+					∑Infilt_3D = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, T)
+
+				end # option.infilt.Model
+
+			# Statistics
+				iT_TransSteady = infiltOutput.iT_TransSteady_Data[iZ]
+
+				infiltOutput.Nse_Trans[iZ] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iZ,2:iT_TransSteady], ∑Infilt_3D[iZ, 2:iT_TransSteady]; Power=2.0)
+
+				infiltOutput.Nse_Steady[iZ] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iZ,iT_TransSteady+1:N_Infilt[iZ]]), log10.(∑Infilt_3D[iZ,iT_TransSteady+1:N_Infilt[iZ]]); Power=2.0)
+
+				infiltOutput.Nse[iZ] = 0.5 * infiltOutput.Nse_Trans[iZ] + 0.5 * infiltOutput.Nse_Steady[iZ]
+
+		end # for iZ=1:N_SoilSelect
+
 
 		# AVERAGE STATISTICS
-			Nse_Trans = Statistics.mean(infiltOutput.Nse_Trans[1:N_SoilSelect])
-			Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:N_SoilSelect])
-			Nse =     Statistics.mean(infiltOutput.Nse[1:N_SoilSelect])
+         Nse_Trans  = Statistics.mean(infiltOutput.Nse_Trans[1:N_SoilSelect])
+         Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:N_SoilSelect])
+         Nse        = Statistics.mean(infiltOutput.Nse[1:N_SoilSelect])
 
 			println("    ~ $(option.infilt.SorptivityModel) ~")
 			println("    ~ Nse= $Nse Nse_Trans= $Nse_Trans,  Nse_Steady= $Nse_Steady ~")
 
-		# CONVERTING DIMENSIONS
-			∑Infilt = CONVERT_INFILT_DIMENSIONS(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
 
-		return infiltOutput, hydroInfilt, ∑Infilt
+		# CONVERTING INFILTRATION DIMENSIONS
+			if option.infilt.Model == :Best_Univ
+				for iZ=1:N_SoilSelect
+					∑Infilt_1D = bestFunc.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T)
+				end
+			elseif option.infilt.Model == :QuasiExact
+				for iZ=1:N_SoilSelect
+					∑Infilt_1D = quasiExact.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T)
+				end	
+			end #  option.infilt
 
-	end  # function: START_INFILTRATION
+		return infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D
 
-		
-	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>	
+	end # FUNCTION: START_INFILTRATION
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : CONVERT_INFILT_DIMENSIONS
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	
-		function CONVERT_INFILT_DIMENSIONS(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
-			if option.infilt.Model == "Best_Univ" && option.infilt.SingleDoubleRing == "Double" && option.infilt.OutputDimension == "3D" # <>=<>=<>=<>=<>
+	#		FUNCTION : OF_INFILT_2_HYDRO
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function OF_INFILT_2_HYDRO(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; σ=hydroInfilt.σ[iZ], Ψm=hydroInfilt.Ψm[iZ], θr=hydroInfilt.θr[iZ], θs=hydroInfilt.θs[iZ], Ks=hydroInfilt.Ks[iZ])
 
-				println("    ~ Converting $(option.infilt.Model) Infilt_1D => Infilt_3D ~")
+         hydroInfilt.θs[iZ]       = θs
+         hydroInfilt.θr[iZ]       = θr
+         hydroInfilt.Ks[iZ]       = Ks
+         hydroInfilt.σ[iZ]        = σ
+         hydroInfilt.Ψm[iZ]       = Ψm
+         hydroInfilt.θsMacMat[iZ] = θs
+         hydroInfilt.ΨmMac[iZ]    = Ψm
+         hydroInfilt.σMac[iZ]     = σ
 
-				∑Infilt = bestUniv.CONVERT_1D_2_3D(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
+			hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt)
 
-			elseif option.infilt.Model == "Best_Univ" && option.infilt.SingleDoubleRing == "Single" && option.infilt.OutputDimension == "1D" # <>=<>=<>=<>=<>
+			if option.infilt.Model == :Best_Univ
+				return Nse = ofBest.OF_BEST(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; W=0.5)
 
-				println("    ~ Converting $(option.infilt.Model) Infilt_3D => Infilt_1D ~")
+			elseif option.infilt.Model == :QuasiExact
+				quasiExact.OF_QUASIEXACT(∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T)
+			end # Option.infilt.Model
 
-				∑Infilt = bestUniv.CONVERT_3D_2_1D(hydroInfilt, ∑Infilt, infiltParam, N_Infilt, N_SoilSelect, T)
-
-			elseif option.infilt.Model == "QuasiExact" # <>=<>=<>=<>=<>
-				# quasiExact.QUASIEXACT()
-			end #  option.infilt
-
-			return  ∑Infilt
-		end  # function: CONVERT_INFILT_DIMENSIONS
+		end # FUNCTION: OF_INFILT_2_HYDRO_Best
 
 
-			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			#		FUNCTION : HYDRO_PROCESS
-			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OBJECTIVE_FUNCTION(∑Infilt, ∑Infilt_Obs, hydroInfilt, infiltParam, iSoil, N_Infilt, T, infiltOutput; σ=hydroInfilt.σ[iSoil], Ψm=hydroInfilt.Ψm[iSoil], θr=hydroInfilt.θr[iSoil], θs=hydroInfilt.θs[iSoil], Ks=hydroInfilt.Ks[iSoil], W=0.5)
-
-				hydroInfilt.θs[iSoil] = θs
-				hydroInfilt.θr[iSoil] = θr
-				hydroInfilt.Ks[iSoil] = Ks
-				hydroInfilt.σ[iSoil] = σ
-				hydroInfilt.Ψm[iSoil] = Ψm
-
-				hydroInfilt.θsMat[iSoil] = θs
-				hydroInfilt.ΨmMac[iSoil] = Ψm
-				hydroInfilt.σMac[iSoil] = σ
-
-				∑Infilt, T_TransStead = bestUniv.BEST_UNIVERSAL_START(iSoil, N_Infilt, ∑Infilt, T, infiltParam, hydroInfilt, infiltOutput)
-
-				iT_TransSteady = infiltOutput.iT_TransSteady_Data[iSoil]
-
-				Nse_Trans = stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iSoil,1:iT_TransSteady], ∑Infilt[iSoil, 1:iT_TransSteady]; Power=2.0)
-
-				Nse_Steady = stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]), log10.(∑Infilt[iSoil,iT_TransSteady+1:N_Infilt[iSoil]]); Power=2.0)
-
-				Penalty = abs(∑Infilt_Obs[iSoil,N_Infilt[iSoil]] - ∑Infilt[iSoil,N_Infilt[iSoil] ]) /  ∑Infilt_Obs[iSoil,N_Infilt[iSoil]]
-
-				Nse = W * Nse_Trans + (1.0 - W) * Nse_Steady  + Penalty / 10.0
-
-				return Nse
-			end  # function: HYDRO_PROCESS
+end # MODULE: infilt
 	
-end  # module infiltration
