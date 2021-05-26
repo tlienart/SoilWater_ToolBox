@@ -1,0 +1,98 @@
+{
+// Monaco
+// Menlo
+// "Droid Sans Mono"
+// "Inconsolata" -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif
+    "editor.fontFamily": "Consolas, 'Consolas', monospace",
+    "editor.fontLigatures": true,
+    "editor.codeLens"                             : false,
+    
+    "editor.glyphMargin"                          : false,
+    "editor.insertSpaces"                         : false,
+    "editor.minimap.enabled"                      : false,
+    "editor.tabSize": 3,
+    "extensions.autoUpdate"                       : true,
+    "git.enableSmartCommit"                       : true,
+	"git.path": "C:\\Program Files\\Git\\bin\\git.exe",
+    "julia.enableCrashReporter"                   : true,
+    "julia.enableTelemetry"                       : true,
+	 "julia.executablePath"                        : "C:\\JULIA\\Julia-1.4.2\\bin\\julia.exe",
+	"julia.format.indent": 3,
+    "material-icon-theme.folders.color"           : "#fdd835",
+    "update.mode": "start",
+    "workbench.editor.limit.enabled"              : true,
+    "workbench.editor.limit.perEditorGroup"       : true,
+    "workbench.editor.mouseBackForwardToNavigate": false,
+    "files.autoSave": "afterDelay",
+
+    "editor.wordWrap": "on",
+    "editor.wrappingIndent": "indent",
+    "window.zoomLevel": 0,
+    "workbench.editor.highlightModifiedTabs": true,
+    "workbench.editor.tabSizing": "shrink",
+    "julia.trace.server": "messages",
+    "julia.lint.call": true,
+    "svgPreview.style": {
+        "html": {
+            "background": "white"
+          }
+
+    },
+
+    "julia.NumThreads": 6,
+    "workbench.colorCustomizations": {
+        "editor.background": "#01011b",
+        //  "editor.background": "#000000" #00000c"#01011b","#060631"
+         "editor.foreground": "#ffffff", //#ffffffb2 "#ffffff"
+         "editor.lineHighlightBackground": "#443f06", // Selecting line
+         "editor.selectionBackground": "#576917", //Selecting param
+    },
+  
+    "editor.tokenColorCustomizations": {
+    "[Julia (Monokai Vibrant)]": {
+        "textMateRules": [
+            {
+                "scope": "source.julia meta.bracket",
+                "settings": {
+                    "foreground": "#cad61c"
+                }
+            },
+            // {
+            //     "scope": "source.julia support.function",
+            //     "settings": {
+            //         "foreground": "#c248f3",
+            //         "fontStyle": "bold"
+            //     }
+            // },
+            {
+                "scope": [
+                    "comment",
+                    "string.comment"
+                ],
+                "settings": {
+                    "foreground": "#6ca352", // #6A9955 #7CA668
+                    "fontStyle": "italic"
+                }
+            },  
+        ]
+    }
+},
+
+"workbench.iconTheme": "material-icon-theme",
+"julia.additionalArgs": [
+
+],
+"julia.lint.missingrefs": "all",
+"[julia]": {
+
+
+    "editor.quickSuggestions": true
+},
+"editor.formatOnType": true,
+"workbench.colorTheme": "Super One Dark",
+"scm.inputFontFamily": "Consolas, 'Consolas', monospace",
+"debug.console.fontFamily": "Consolas, 'Consolas', monospace",
+"terminal.integrated.fontFamily": "Consolas, 'Consolas', monospace",
+"markdown.preview.fontFamily": "'Segoe UI'",
+"editor.fontWeight": "400",
+}
