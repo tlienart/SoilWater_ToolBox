@@ -1,17 +1,55 @@
-**Improved prediction of water retention curves for fine texture soils using an intergranular mixing particle size distribution model** 
+# SoilWater-ToolBox
 
-J.A.P. Pollacco1, J. Fernández-Gálvez1, 2, S. Carrick1 
+**This package was developped by Joseph Pollacco and Jesús Fernández Gálvez**
 
-1 Manaaki Whenua – Landcare Research, Lincoln 7640, New Zealand
-2 Permanent address: Department of Regional Geographic Analysis and Physical Geography, University of Granada, Spain
+The SoilWater-ToolBox software is open source under the **GP-3.0** License and it includes a set of interlinked modules.  The SoilWater-ToolBox ecosystem is led by J.A.P Pollacco from Manaaki Whenua – Landcare Research in New-Zealand and J. Fernández-Gálvez from the University of Granada in Spain. The objectives of the SoilWater-ToolBox are to derive the soil hydraulic parameters by using a wide range of cost-effective methods. To date, the following modules are currently included into the SoilWater-ToolBox: 
 
-*Corresponding author. E-mail: pollacco.water@gmail.com 
+1. Intergranular Mixing Particle size distribution model: derives unimodal hydraulic parameters by using particle size distribution (Pollacco et al., 2020);
+2. General Beerkan Estimation of Soil Transfer parameters method: derives the unimodal hydraulic parameters from single ring infiltration experiments (Fernández-Gálvez et al., 2019);
+3. Sorptivity model: novel computation of sorptivity used in the General Beerkan Estimation of Soil Transfer parameters method (Lassabatere et al., 2021);
+4. Derive saturated hydraulic conductivity from unimodal and bimodal *θ*(*ψ*) (Pollacco et al., 2017, 2013b);
+5. Invert hydraulic parameters from *θ* time series (Pollacco et al. 2021);
+6. Derive unique and physical bimodal Kosugi hydraulic parameters from inverse modelling using water retention and/or unsaturated hydraulic conductivity data directly measured in the laboratory or indirectly obtained from inverting *θ* time series (Fernández-Gálvez et al., 2021).
 
-**Abstract**
 
-Laboratory measurements to derive the soil water retention curve,  , are time consuming and expensive. We present a cost-effective alternative using particle size distribution (PSD) and saturated water content. We propose a novel physical conceptual intergranular mixing PSD model, (IMP model), which derives   from PSD, exploiting the relation between particle size and pore size distributions and the intergranular arrangement of the soil particles. The IMP model successfully predicts   for fine texture soil, which is the most challenging soil texture to be modelled. With our novel model, reliable   can be obtained using only three general fitting parameters without needing to assume any particular type of soil particle packing, with mean Nash–Sutcliffe efficiency coefficient of 0.92 for 259 soils.
 
-The IMP model can accurately predict   for fine texture soils because: a) it implements an intergranular mixing function that accounts for soil pores not all being perfectly spherical and takes into consideration the intergranular rearrangement (mixing) of the particles, which allows neighbouring particles to have different sizes resulting in variations in pore radius and pore shape of the corresponding pore fraction; b) it overcomes the absence of  PSD data below the clay fraction by developing a normalised form of the Young–Laplace capillary equation; and c) the residual pore volume accounting for water strongly bound to solid particles or in very small pores is incorporated as a function of the clay fraction.
+REFERENCES
 
-**Keywords:** *Particle size distribution; Pore size distribution; Water retention curve; Intergranular mixing; Kosugi model *"# IntergranularMixingPsdModel" 
-"# SoilWater_ToolBox" 
+Fernández-Gálvez, J., Pollacco, J.A.P., Lassabatere, L., Angulo-Jaramillo, R., Carrick, S., 2019. A general Beerkan Estimation of Soil Transfer parameters method predicting hydraulic parameters of any unimodal water retention and hydraulic conductivity curves: Application to the Kosugi soil hydraulic model without using particle size distribution data. Advances in Water Resources 129, 118–130. https://doi.org/10.1016/j.advwatres.2019.05.005
+
+Fernández-Gálvez, J., Pollacco,  J.A.P., Lilburne, L., McNeill, S., Carrick, S., Lassabatere, L., Angulo-Jaramillo, R. 2021. Deriving physical and unique bimodal soil Kosugi hydraulic parameters from inverse modelling. Advances in Water Resources. https://doi.org/10.1016/j.advwatres.2021.103933 
+
+Lassabatere, L., Peyneau, P.-E., Yilmaz, D., Pollacco, J., Fernández-Gálvez, J., Latorre, B., Moret-Fernández, D., Di Prima, S., Rahmati, M., Stewart, R.D., Abou Najm, M., Hammecker, C., Angulo-Jaramillo, R., 2021. Scaling procedure for straightforward computation of sorptivity. Hydrology and Earth System Sciences Discussions 1–33. https://doi.org/10/gjjxtk
+
+Pollacco, J.A.P., Fernández-Gálvez, J., Carrick, S., 2020. Improved prediction of water retention curves for fine texture soils using an intergranular mixing particle size distribution model. Journal of Hydrology 584, 124597. https://doi.org/10.1016/j.jhydrol.2020.124597
+
+Pollacco, J.A.P., Fernández-Gálvez, J., Carrick, S., McNeill, S., Peltzer, D.A., Belfort, B., Ackerer, P., Lassabatere, L., Angulo-Jaramillo, Zammit, S.C., Rajanayaka C., 2021. HyPix: 1D Richards equation hydrological model in Julia language using multistep optimization scaling for flexible vertical soil discretization. Submitted to Environmental Modelling & Software.
+
+Pollacco, J.A.P., Nasta, P., Ugalde, J.M.S., Angulo-Jaramillo, R., Lassabatere, L., Mohanty, B.P., Romano, N., 2013. Reduction of feasible parameter space of the inverted soil hydraulic parameters sets for Kosugi model. Soil Science SS-S-12-00268.
+
+Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017
+
+
+
+<!-- 
+
+
+This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
+to make a reproducible scientific project named
+> SoilWater-ToolBox
+
+It is authored by Datseris.
+
+To (locally) reproduce this project, do the following:
+
+0. Download this code base. Notice that raw data are typically not included in the
+   git-history and may need to be downloaded independently.
+1. Open a Julia console and do:
+   ```
+   julia> using Pkg
+   julia> Pkg.activate("path/to/this/project")
+   julia> Pkg.instantiate()
+   ```
+
+This will install all necessary packages for you to be able to run the scripts and
+everything should work out of the box. -->
