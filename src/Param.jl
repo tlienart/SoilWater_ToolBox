@@ -22,7 +22,7 @@
 			Ψ_TableComplete
 			K_Table
 			kg # it is a structure
-			smap # it is a structuregg
+			smap # it is a structureggs
 		end
 			mutable struct KG
 				ΨmMac
