@@ -35,7 +35,7 @@ videos
 plots
 notebooks
 _research
-workspace.code-workspace
+*.code-workspace
 
 ################################################################################
 #                                    Julia                                     #
