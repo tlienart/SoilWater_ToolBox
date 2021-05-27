@@ -209,12 +209,12 @@ module plotSmap
             Flag_OtherData2 = false
       
             # ===================== DATA =====================
-            θ_Sim       = fill(0.0,N_Se)
-            θ_OtherData = fill(0.0,N_Se)
-            θ_OtherData2 = fill(0.0,N_Se)
-            θ_OtherData3 = fill(0.0,N_Se)
-            Kunsat_Sim  = fill(0.0,N_Se)
-            Kunsat_OtherData = fill(0.0,N_Se)
+            θ_Sim             = fill(0.0,N_Se)
+            θ_OtherData       = fill(0.0,N_Se)
+            θ_OtherData2      = fill(0.0,N_Se)
+            θ_OtherData3      = fill(0.0,N_Se)
+            Kunsat_Sim        = fill(0.0,N_Se)
+            Kunsat_OtherData  = fill(0.0,N_Se)
             Kunsat_OtherData2 = fill(0.0,N_Se)
             Kunsat_OtherData3 = fill(0.0,N_Se)
             θobs =[]
@@ -225,25 +225,25 @@ module plotSmap
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataSoilHydraulic\\Smap20210226\\Smap20210226_ClappHornberger_Constrained_A_Table_ThetaHK.csv"
 
                option.hydro.HydroModel = :ClappHornberger
-               # Structure of the hydroparameters
-                  hydroData = hydroStruct.HYDROSTRUCT(N_SoilSelect)
-               # Populate the values of the parameters
-                  hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
+                  # Structure of the hydroparameters
+                     hydroData = hydroStruct.HYDROSTRUCT(N_SoilSelect)  
+                  # Populate the values of the parameters
+                  option.hydro.HydroModel = :ClappHornberger
+                     hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
 
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataSoilHydraulic\\Smap20210226\\Smap20210226_Loam.csv"
-
-               option.hydro.HydroModel = :ClappHornberger
-               # Structure of the hydroparameters
-                  hydroData2 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
-               # Populate the values of the parameters
-                  hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
+                  option.hydro.HydroModel = :ClappHornberger
+                  # Structure of the hydroparameters
+                     hydroData2 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+                  # Populate the values of the parameters
+                     hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
 
                  Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataSoilHydraulic\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
-                    option.hydro.HydroModel = :VangenuchtenJules
-               # Structure of the hydroparameters
-                  hydroData3 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
-               # Populate the values of the parameters
-                  hydroData3, ~ = reading.READ_STRUCT(hydroData3, Path) 
+                  option.hydro.HydroModel = :VangenuchtenJules
+                  # Structure of the hydroparameters
+                     hydroData3 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+                  # Populate the values of the parameters
+                     hydroData3, ~ = reading.READ_STRUCT(hydroData3, Path) 
 
             end # if Flag_OtherData
 
@@ -256,6 +256,10 @@ module plotSmap
 
                # Simulated 
                   for iΨ = 1:N_Se
+                     option.hydro.HydroModel = :Vangenuchten
+                      θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydro)
+                      Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydro)
+
                      if Flag_OtherData1
                         # ClappHornberger model Smap_Hydro
                         option.hydro.HydroModel = :ClappHornberger
@@ -269,7 +273,6 @@ module plotSmap
                             option.hydro.HydroModel = :ClappHornberger
                            Kunsat_OtherData2[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydroData2)
           
-
                         # VanGenuchten_Jules
                         option.hydro.HydroModel = :VangenuchtenJules
                          θ_OtherData3[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydroData3)
@@ -293,7 +296,6 @@ module plotSmap
                      end
                   end # iΨ
 
-
                # == Title == 
                   Title = smap.Soilname[iZ]  * "_" * string(Int64(floor(smap.Depth[iZ]))) * "_" * string(option.hydro.HydroModel)
 
@@ -307,52 +309,37 @@ module plotSmap
                #  == Plot_θ_Ψ  ==
                   # Plot_θ_Ψ: General attributes
 
-
                   Fig = Figure(backgroundcolor = RGBf0(0.98, 0.98, 0.98),
                      resolution = (1000, 700))
 
+                  Axis1 = Makie.Axis(Fig[1,1], resolution = (1000, 700))
 
-                     Axis1 = Makie.Axis(Fig[1,1], resolution = (1000, 700))
+                  Makie.xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨ_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨ_Max * 1.1))
+                  Makie.ylims!(Axis1, 0.0, 0.75)
+   
+                  Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])))
+                  Axis1.xlabel = "ln(1 + Ψ) [kPa]"
+                  Axis1.ylabel =  "θ [mm³ mm⁻³]"
+                  Axis1.title = Title
+                  Axis1.titlesize= 24
 
-                     Makie.xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨ_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨ_Max * 1.1))
-                     Makie.ylims!(Axis1, 0.0, 0.75)
-     
-                     Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])))
-                     Axis1.xlabel = "ln(1 + Ψ) [kPa]"
-                     Axis1.ylabel =  "θ [mm³ mm⁻³]"
-                     Axis1.title = Title
-                     Axis1.titlesize= 24
-
-
-                     # Plotting: Other data
-                     # if Flag_OtherData1
-                     #    Idmin, N_θΨ₂, Soilname₂, θ_θΨ_Min, Ψ_θΨ₂ = readSmap.DATA2D(path.Temporary_1)
-                     #    Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa * Ψ_θΨ₂[iZ, 1:N_θΨ₂[iZ]]), θ_θΨ_Min[iZ,1:N_θΨ₂[iZ]], linestyle=:dash, color=:green, linewidth=2)
-
-                     #    Id₂, N_θΨ₂, Soilname₂, θ_θΨ_Max, Ψ_θΨ₂ = readSmap.DATA2D(path.Temporary_2)
-                     #    Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa * Ψ_θΨ₂[iZ, 1:N_θΨ₂[iZ]]), θ_θΨ_Max[iZ,1:N_θΨ₂[iZ]], linestyle=:dash, color=:green, linewidth=2)
-                        
-                     #    Makie.band!(Fig[1,1], log1p.(cst.Mm_2_kPa * Ψ_θΨ₂[iZ, 1:N_θΨ₂[iZ]]), θ_θΨ_Min[iZ,1:N_θΨ₂[iZ]], θ_θΨ_Max[iZ,1:N_θΨ₂[iZ]], color=:grey, label= "Stratford")
-                     # end
-
-                  # Plot_θ_Ψ: Observed
-                     # Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), Float64.(θ_θΨ[iZ,1:N_θΨ[iZ]]), color=:red, markersize=10, marker = '■', label="Obs")
-
-                     P1 = Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), Float64.(θ_θΨ[iZ,1:N_θΨ[iZ]]), color=:blue, markersize=15, marker = '■', label="Smap")
+                  P_Smap= Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), Float64.(θ_θΨ[iZ,1:N_θΨ[iZ]]), color=:blue, markersize=15, marker = '■', label="Smap")
 
                   # Plot_θ_Ψ: Simulated
                      # Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:blue, linewidth=2, label="Sim")
 
 
                   if Flag_OtherData1
-                     P2 = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_OtherData[1:N_Se], color=:red, linewidth=3)
+                     P_ClappHonb = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_OtherData[1:N_Se], color=:red, linewidth=3)
 
-                     P3 = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_OtherData2[1:N_Se], color=:yellow1, linewidth=3)
+                     P_ClappHonb_Loan = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_OtherData2[1:N_Se], color=:yellow1, linewidth=3)
 
-                     P4 = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_OtherData3[1:N_Se], color=:green, linewidth=3)
+                     P_vangJules = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_OtherData3[1:N_Se], color=:green, linewidth=3)
 
-                       Ψ = [0.0 ,1000.0,10000.0,150000.0]
-                     P5 = Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ[1:4]), θobs[1:4], color=:darkviolet, linewidth=2, markersize=15)
+                     Ψ = [0.0 ,1000.0,10000.0,150000.0]
+                     P_Lab = Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ[1:4]), θobs[1:4], color=:darkviolet, linewidth=2, markersize=15)
+
+                     P_Vang = Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:pink, linewidth=3)
                   else
                       Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:blue, linewidth=2)
 
@@ -364,15 +351,13 @@ module plotSmap
                      Y = zeros(Float64,1)
                      Y[1] = hydro.Φ[iZ]
                      Label = 
-                     P6 = Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:slateblue3, markersize=20, marker ="●")
+                     P_PtotalPorosity = Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:slateblue3, markersize=20, marker ="●")
   
                   # Makie.axislegend()
 
                # == Plot_K_Ψ  ==
                option.hydro.KunsatΨ = true
                if option.hydro.KunsatΨ
-                  if Flag_OtherData1
-
                      Axis2 = Makie.Axis(Fig[1,2])
                      Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])))
                      Yticks = 1:1:6
@@ -380,9 +365,13 @@ module plotSmap
                      Axis2.xlabel = "ln(1 + Ψ) [kPa]"
                      Axis2.ylabel =  "ln ( 1 + K (Ψ) ) [mm h⁻¹]"
 
-                     P7 = Makie.lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_OtherData[1:N_Se].*cst.MmS_2_MmH), color=:red, linewidth=3)
+                   Pvang = Makie.lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_Sim[1:N_Se].*cst.MmS_2_MmH), color=:pink, linewidth=3)
 
-                     P8 = Makie.lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_OtherData2[1:N_Se].*cst.MmS_2_MmH), color=:yellow1, linewidth=3)
+                  if Flag_OtherData1
+
+                     Pclapp = Makie.lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_OtherData[1:N_Se].*cst.MmS_2_MmH), color=:red, linewidth=3)
+
+                     Ploan = Makie.lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_OtherData2[1:N_Se].*cst.MmS_2_MmH), color=:yellow1, linewidth=3)
 
                      P9 = Makie.lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_OtherData3[1:N_Se].*cst.MmS_2_MmH), color=:green, linewidth=3)
 
@@ -414,22 +403,6 @@ module plotSmap
                      Makie.lines!(Fig[1,2], log1p.(Ψ_Sim.*cst.Mm_2_kPa), log1p.(Kunsat_Sim.*cst.MmS_2_CmH), color=:blue, label=Label)
                      
                   end
-
-                  # if Flag_OtherData2
-                  #    Axis2.title = Soilname₂[iZ]
-                  # end
-    
-                     # Makie.axislegend()
-
-                  # General attributes
-                 
-                  #   Axis2.xticks(log1p.(Ψ_Sim.*cst.Mm_2_kPa))
-                  #   , Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])
-                  
-                  # Plot1 = Plots.plot(Plot1,Plot_Θψ, Plot_kΘ)
-               # else
-               #    Plot1 = Plots.plot(Plot1, Plot_Θψ)
-
                   
                end # option.hydro.KunsatΨ 
 
@@ -437,19 +410,13 @@ module plotSmap
 
                # Path = path.Plots_θΨK * "Lab_ThetaH_" * Title * ".svg" 
 
-               leg = Fig[1, end+1] = Makie.Legend(Fig, [P1, P2, P3, P4, P5, P6], ["Smap", "ClappHornberger", "ClappHornberger_Loam", "VangenuchtenJules", "Lab","TotalPorosity"])
-
-               noto_sans = "../assets/NotoSans-Regular.ttf"
-               noto_sans_bold = "../assets/NotoSans-Bold.ttf"
-
+               leg = Fig[1, end+1] = Makie.Legend(Fig, [P_Smap, P_ClappHonb, P_ClappHonb_Loan, P_vangJules, P_Vang, P_Lab, P_PtotalPorosity], ["Smap", "ClapHornberger", "ClapHornberger_Loam", "VangJules", "Vang","Lab","TotalPorosity"])
 
                Fig[2, 1:2] = leg
                Makie.trim!(Fig.layout)
                leg.orientation = :horizontal
                Makie.trim!(Fig.layout)
                leg.tellheight = true
-
-            
                
                Path = path.Plots_θΨK * "Lab_ThetaH_" * string(path.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
       

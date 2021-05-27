@@ -29,7 +29,7 @@ function PACKAGES(Option_PackageUpdate)
 		PACKAGE_MANAGER("PGFPlotsX")
 		PACKAGE_MANAGER("ForwardDiff")
 		PACKAGE_MANAGER("GLMakie")
-		PACKAGE_MANAGER("CairoMakie")
+		# PACKAGE_MANAGER("CairoMakie")
 		PACKAGE_MANAGER("Makie")
 		PACKAGE_MANAGER("CSV")
  

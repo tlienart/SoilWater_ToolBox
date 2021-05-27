@@ -172,7 +172,7 @@ module plot
          import ..cst, ..kunsat, ..option, ..param, ..path, ..wrc
 
          # using GLMakie
-         using CairoMakie
+         # using CairoMakie
       
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          #		FUNCTION : HYDROPARAM
@@ -209,8 +209,8 @@ module plot
                   Ticks = Int64.(Ψ_θΨ[iZ,1:N_θΨ[iZ]])
       
                #  ===================== PLOTTING =====================
-                  CairoMakie.activate!(type = "svg")
-                  Makie.inline!(true)
+                  # CairoMakie.activate!(type = "svg")
+                  # Makie.inline!(true)
                   Fig = Makie.Figure()
                               
                #  == Plot_θ_Ψ  ==
