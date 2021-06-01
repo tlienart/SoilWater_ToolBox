@@ -13,7 +13,15 @@ The SoilWater-ToolBox software is open source under the **GP-3.0** License and i
 
 
 
-REFERENCES
+---
+
+
+For further reading on the SoilWater-ToolBox
+[docs/Introducing_SoilWaterToolBox.md](https://)
+
+
+
+## REFERENCES
 
 Fernández-Gálvez, J., Pollacco, J.A.P., Lassabatere, L., Angulo-Jaramillo, R., Carrick, S., 2019. A general Beerkan Estimation of Soil Transfer parameters method predicting hydraulic parameters of any unimodal water retention and hydraulic conductivity curves: Application to the Kosugi soil hydraulic model without using particle size distribution data. Advances in Water Resources 129, 118–130. https://doi.org/10.1016/j.advwatres.2019.05.005
 
@@ -30,26 +38,3 @@ Pollacco, J.A.P., Nasta, P., Ugalde, J.M.S., Angulo-Jaramillo, R., Lassabatere, 
 Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017
 
 
-
-<!-- 
-
-
-This code base is using the Julia Language and [DrWatson](https://juliadynamics.github.io/DrWatson.jl/stable/)
-to make a reproducible scientific project named
-> SoilWater-ToolBox
-
-It is authored by Datseris.
-
-To (locally) reproduce this project, do the following:
-
-0. Download this code base. Notice that raw data are typically not included in the
-   git-history and may need to be downloaded independently.
-1. Open a Julia console and do:
-   ```
-   julia> using Pkg
-   julia> Pkg.activate("path/to/this/project")
-   julia> Pkg.instantiate()
-   ```
-
-This will install all necessary packages for you to be able to run the scripts and
-everything should work out of the box. -->
