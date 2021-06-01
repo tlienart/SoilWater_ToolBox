@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## Welcome to GitHub Pagess
 
 You can use the [editor on GitHub](https://github.com/manaakiwhenua/SoilWater_ToolBox/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
