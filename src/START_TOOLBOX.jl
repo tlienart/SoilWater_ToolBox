@@ -445,9 +445,10 @@ function START_TOOLBOX()
 		if option.globalopt.Infilt && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
 			plot.infilt.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput)
 		end
-		if option.globalopt.Infilt && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
-			plot.infilt.PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect)
-		end
+		# if option.globalopt.Infilt && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
+		# Removing GRUtils software to avoid conflict
+		# 	# plot.infilt.PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect)
+		# end
 		if  option.globalopt.Infilt && option.globalopt.θΨ ≠ :No && option.infilt.Plot_Sorptivity_SeIni # <>=<>=<>=<>=<>
 			plot.infilt.PLOT_SORPTIVITY_SEINI(hydro, Id_Select, N_SoilSelect) 
 		end

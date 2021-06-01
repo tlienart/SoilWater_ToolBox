@@ -198,6 +198,9 @@ module plotSmap
       module makie
          import ..cst, ..hydroStruct, ..kunsat, ..option, ..param, ..path, ..reading, ..wrc, ...readSmap
          using Makie
+         using CairoMakie
+
+         CairoMakie.activate!()
       
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          #		FUNCTION : HYDROPARAM

@@ -533,8 +533,8 @@ module plot
 	module infilt
 		import ...wrc, ...kunsat, ...path, ...cst, ...param, ...option, ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
 		using Plots, Plots.PlotMeasures, LaTeXStrings
-		import GRUtils
-		export  PLOT_∑INFILT, PLOT_∑INFILT_SEINI, PLOT_∑INFILT_θΨ
+		# import GRUtils
+		export  PLOT_∑INFILT, PPLOT_∑INFILT_θΨ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT
@@ -588,75 +588,75 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT_SEINI
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect; P_Tmax = 2.0)
-		println("  ==  START: PLOT_∑INFILT_SEIN  ==")
+		# function PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect; P_Tmax = 2.0)
+		# println("  ==  START: PLOT_∑INFILT_SEIN  ==")
 
-			# Different graphs with initial Se
-				Se_Ini = collect(0:0.2:0.8)
-				N_SeIni = length(Se_Ini)
+		# 	# Different graphs with initial Se
+		# 		Se_Ini = collect(0:0.2:0.8)
+		# 		N_SeIni = length(Se_Ini)
 
-			N_Infilt0 = ones(Int64, min(param.globalparam.N_iZ_Plot_End, N_SoilSelect))
+		# 	N_Infilt0 = ones(Int64, min(param.globalparam.N_iZ_Plot_End, N_SoilSelect))
 
 			
-			for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)			
-				# COMPUTING T_TransSteady				
-					T0 =  zeros(Int64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important as a start
-					∑Infilt0 = zeros(Float64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important
+		# 	for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)			
+		# 		# COMPUTING T_TransSteady				
+		# 			T0 =  zeros(Int64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important as a start
+		# 			∑Infilt0 = zeros(Float64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important
 
-					~, T_TransSteady = bestFunc.BEST_UNIVERSAL_START(∑Infilt0, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt0, T0; θ_Ini=hydroInfilt.θr[iZ])
+		# 			~, T_TransSteady = bestFunc.BEST_UNIVERSAL_START(∑Infilt0, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt0, T0; θ_Ini=hydroInfilt.θr[iZ])
 
-					T_Max = P_Tmax * T_TransSteady
+		# 			T_Max = P_Tmax * T_TransSteady
 			
-				# COMPUTING TIME ARRAY which is the longest at Se = 0 
-					T0 = collect(0.0:T_Max/500.0:T_Max)
+		# 		# COMPUTING TIME ARRAY which is the longest at Se = 0 
+		# 			T0 = collect(0.0:T_Max/500.0:T_Max)
 
-					N_T = Array{Int64}(undef, (param.globalparam.N_iZ_Plot_End)) # Needs to be an array
+		# 			N_T = Array{Int64}(undef, (param.globalparam.N_iZ_Plot_End)) # Needs to be an array
 					
-					N_T[iZ] = length(T0)
+		# 			N_T[iZ] = length(T0)
 
-					T = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
+		# 			T = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
 
-					T[iZ, 1:N_T[iZ]] = T0[1:N_T[iZ]]
+		# 			T[iZ, 1:N_T[iZ]] = T0[1:N_T[iZ]]
 
-					# Infiltration data
-						∑Infilt_3D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
-						∑Infilt_1D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
+		# 			# Infiltration data
+		# 				∑Infilt_3D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
+		# 				∑Infilt_1D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
 
-				# Atributes for plotting
-					Fig = GRUtils.gcf()
+		# 		# Atributes for plotting
+		# 			Fig = GRUtils.gcf()
 
-				for iSeIni=1:N_SeIni
-					# Computing θ_Ini
-						θ_Ini = wrc.Se_2_θ(Se_Ini[iSeIni], iZ, hydroInfilt)
+		# 		for iSeIni=1:N_SeIni
+		# 			# Computing θ_Ini
+		# 				θ_Ini = wrc.Se_2_θ(Se_Ini[iSeIni], iZ, hydroInfilt)
 
-					# Computing ∑Infilt_3D with BEST
-						∑Infilt_3D, ~ = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_T, T; θ_Ini=θ_Ini)
+		# 			# Computing ∑Infilt_3D with BEST
+		# 				∑Infilt_3D, ~ = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_T, T; θ_Ini=θ_Ini)
 
-						∑Infilt_3D = bestFunc.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_T, T; θ_Ini=θ_Ini)
+		# 				∑Infilt_3D = bestFunc.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_T, T; θ_Ini=θ_Ini)
 
-					# PLOTTING ====================
-						X = T[iZ, 1:N_T[iZ]] / 60.0
-						Y = ∑Infilt_3D[iZ,1:N_T[iZ]]		
-						GRUtils.plot!(Fig, X ,Y)
-						GRUtils.hold(true)
+		# 			# PLOTTING ====================
+		# 				X = T[iZ, 1:N_T[iZ]] / 60.0
+		# 				Y = ∑Infilt_3D[iZ,1:N_T[iZ]]		
+		# 				GRUtils.plot!(Fig, X ,Y)
+		# 				GRUtils.hold(true)
 
-				end  # for iSe_Ini
-				GRUtils.xlim(0.0, (T_Max + 10.0)/60.0)
-				GRUtils.xticks(round.((T_Max+10.0)/(10.0 *60.0), digits=0))
-				GRUtils.title("ID = $(Id_Select[iZ])")
-				GRUtils.legend("Se=0","Se=0.2","Se=0.4","Se=0.6","Se=0.8"; location="lower right")
-				GRUtils.xlabel( "\$ Time \\ [minutes] \$")
-				GRUtils.ylabel( "\$ \\sum \\ Infiltration-1D \\ [mm] \$")
+		# 		end  # for iSe_Ini
+		# 		GRUtils.xlim(0.0, (T_Max + 10.0)/60.0)
+		# 		GRUtils.xticks(round.((T_Max+10.0)/(10.0 *60.0), digits=0))
+		# 		GRUtils.title("ID = $(Id_Select[iZ])")
+		# 		GRUtils.legend("Se=0","Se=0.2","Se=0.4","Se=0.6","Se=0.8"; location="lower right")
+		# 		GRUtils.xlabel( "\$ Time \\ [minutes] \$")
+		# 		GRUtils.ylabel( "\$ \\sum \\ Infiltration-1D \\ [mm] \$")
 
-				Path = path.Plots_∑infilt_SeIniRange * "Plot_Infilt_SeIni" * "_" *string(Id_Select[iZ]) * ".svg"
-				GRUtils.savefig(Path, Fig) 
-				GRUtils.hold(false)    
-				println("    ~  $(Path) ~")
-			end  # for iZ
+		# 		Path = path.Plots_∑infilt_SeIniRange * "Plot_Infilt_SeIni" * "_" *string(Id_Select[iZ]) * ".svg"
+		# 		GRUtils.savefig(Path, Fig) 
+		# 		GRUtils.hold(false)    
+		# 		println("    ~  $(Path) ~")
+		# 	end  # for iZ
 
-		println("  ==  END: PLOT_∑INFILT_SEIN  == \n")
-		return
-		end  # function: PLOT_∑INFILT_SEINI
+		# println("  ==  END: PLOT_∑INFILT_SEIN  == \n")
+		# return
+		# end  # function: PLOT_∑INFILT_SEINI
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT_θΨ

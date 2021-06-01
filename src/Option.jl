@@ -151,7 +151,7 @@
          Jules               = false # <true>; <false>
 		
 		# Download packages
-			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
+			DownloadPackage = true # <true> For first time user download packages required to run program; <false>*
 
 		# Plotting
 			Ploting      = true # <true>* plot; <false> no plotting
