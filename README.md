@@ -17,7 +17,7 @@ The SoilWater-ToolBox software is open source under the **GP-3.0** License and i
 
 
 For further reading on the SoilWater-ToolBox
-[docs/Introducing_SoilWaterToolBox.md](https://)
+[https://github.com/manaakiwhenua/SoilWater_ToolBox/docs/Introducing_SoilWaterToolBox.md](https://)
 
 
 
