@@ -12,12 +12,15 @@ The SoilWater-ToolBox software is open source under the **GP-3.0** License and i
 6. Derive unique and physical bimodal Kosugi hydraulic parameters from inverse modelling using water retention and/or unsaturated hydraulic conductivity data directly measured in the laboratory or indirectly obtained from inverting *θ* time series (Fernández-Gálvez et al., 2021).
 
 
-
+$$
+\frac{2q}{3b}
+$$
 ---
 
 
 For further reading on the SoilWater-ToolBox
-[https://github.com/manaakiwhenua/SoilWater_ToolBox/docs/Introducing_SoilWaterToolBox.md](https://)
+[SoilWater-ToolBox](https://github.com/manaakiwhenua/SoilWater_ToolBox/blob/master/docs/Introducing_SoilWaterToolBox.md)
+
 
 
 
