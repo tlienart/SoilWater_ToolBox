@@ -1,8 +1,8 @@
 ![](media/image1.png){width="0.9652777777777778in" height="0.5391240157480315in"}![Graphical user interface, text Description automatically generated with medium confidence](media/image2.png){width="1.2986111111111112in" height="0.5114643482064742in"}![Logo Description automatically generated](media/image3.png){width="1.8055555555555556in" height="0.4342804024496938in"}![Logo Description automatically generated](media/image4.png){width="3.0014041994750658in" height="0.5245745844269466in"}
 
-**International SoilWater-ToolBox 2021**
+# **International SoilWater-ToolBox 2021**
 
-***Current state and future***
+## ***Current state and future***
 
 J.A.P. Pollacco^1,\*^, J. Fernández-Gálvez^2^, L. Lilburne^1^, S. Carrick^1^, S. McNeill^1^, D.A. Peltzer^1^, B. Belfort^3^, P. Ackerer^3^, L. Lassabatere^4^, R. Angulo-Jaramillo^4^, S.C. Zammit^5^, C. Rajanayaka^5^
 
@@ -22,7 +22,7 @@ J.A.P. Pollacco^1,\*^, J. Fernández-Gálvez^2^, L. Lilburne^1^, S. Carrick^1^, 
 
 -----------------------------------------------------------------------
 
-1.  **Open source software**
+1.  ### **Open source software**
 
 The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language (<https://julialang.org/>). It can be downloaded from <https://github.com/manaakiwhenua/SoilWater_ToolBox/> and is available under the **GP-3.0 License**.
 
@@ -30,7 +30,7 @@ The open source **SoilWater-ToolBox** software is written in the performant and 
 
 The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters using a wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil-water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity analyses of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
 
-3.  **SoilWater-ToolBox based on peer-reviewed publications**
+3.  ### **SoilWater-ToolBox based on peer-reviewed publications**
 
 The following modules are implemented in the **SoilWater-ToolBox.** They were developed for the following specific scientific purposes, based on peer-reviewed scientific publications:
 
@@ -70,7 +70,7 @@ The **SoilWater-ToolBox** is being used in several projects in New Zealand (Mana
 
 -   **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*;
 
-6.  **Potential future applications**
+6.  ### **Potential future applications**
 
 Potential future applications include:
 
@@ -90,7 +90,7 @@ Potential future applications include:
 
 -   **SoilWater-HyPix-CenW:** coupling **HyPix** with **CenW** model -- the **HyPix** hydrological model has an advanced unsaturated module which accurately predicts the movement of water in the unsaturated soil; **CenW** has an advanced comprehensive forest growth model based on linked flows of *carbon*, *energy*, *nutrients* and *water* in trees and the soil.
 
-7.  **Maintenance**
+7.  ### **Maintenance**
 
 The **SoilWater-ToolBox** has been developed to meet the urgent needs of a multitude of projects with a wide range of data formats. However, before further expansion of the **SoilWater-ToolBox,** the standard of the code needs to be updated so that implementing new modules will be performed **efficiently** and **bug free**.
 
@@ -104,7 +104,7 @@ The **SoilWater-ToolBox** has been developed to meet the urgent needs of a multi
 
 -   **A graphical user interface** will facilitate and encourage the usage of a complex model/software;
 
-8.  **Advantages of the Julia language**
+8.  ### **Advantages of the Julia language**
 
 The Julia language:
 
@@ -124,7 +124,7 @@ The Julia language:
 
 -   has mature libraries.
 
-9.  **Publications**
+9.  ### **Publications**
 
 Fernández-Gálvez, J., Pollacco, J.A.P., Lassabatere, L., Angulo-Jaramillo, R., Carrick, S., 2019. A general Beerkan Estimation of Soil Transfer parameters method predicting hydraulic parameters of any unimodal water retention and hydraulic conductivity curves: Application to the Kosugi soil hydraulic model without using particle size distribution data. Advances in Water Resources 129, 118--130. https://doi.org/10.1016/j.advwatres.2019.05.005Fernández-Gálvez, 
 
