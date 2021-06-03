@@ -1,8 +1,6 @@
-![](media/image1.png){width="0.9652777777777778in" height="0.5391240157480315in"}![Graphical user interface, text Description automatically generated with medium confidence](media/image2.png){width="1.2986111111111112in" height="0.5114643482064742in"}![Logo Description automatically generated](media/image3.png){width="1.8055555555555556in" height="0.4342804024496938in"}![Logo Description automatically generated](media/image4.png){width="3.0014041994750658in" height="0.5245745844269466in"}
+# International SoilWater-ToolBox 2021
 
-# **International SoilWater-ToolBox 2021**
-
-## ***Current state and future***
+## *Current state and future*
 
 J.A.P. Pollacco^1,\*^, J. Fernández-Gálvez^2^, L. Lilburne^1^, S. Carrick^1^, S. McNeill^1^, D.A. Peltzer^1^, B. Belfort^3^, P. Ackerer^3^, L. Lassabatere^4^, R. Angulo-Jaramillo^4^, S.C. Zammit^5^, C. Rajanayaka^5^
 
@@ -15,22 +13,25 @@ J.A.P. Pollacco^1,\*^, J. Fernández-Gálvez^2^, L. Lilburne^1^, S. Carrick^1^, 
 > ^4^ Univ Lyon, Université Claude Bernard Lyon 1, CNRS, ENTPE, UMR5023 LEHNA, Vaulx en Velin, Lyon 69518, **France**
 >
 > ^5^ National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
->
-> ![](media/image5.png){width="3.673611111111111in" height="2.816107830271216in"}
+
 
 -----------------------------------------------------------------------
 
 -----------------------------------------------------------------------
 
-1.  ### **Open source software**
+## 1. Open source software
 
 The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language (<https://julialang.org/>). It can be downloaded from <https://github.com/manaakiwhenua/SoilWater_ToolBox/> and is available under the **GP-3.0 License**.
 
-2.  **Mission statement**
+
+
+## 2. Mission statement
 
 The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters using a wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil-water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity analyses of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
 
-3.  ### **SoilWater-ToolBox based on peer-reviewed publications**
+
+
+## 3.  SoilWater-ToolBox based on peer-reviewed publications
 
 The following modules are implemented in the **SoilWater-ToolBox.** They were developed for the following specific scientific purposes, based on peer-reviewed scientific publications:
 
@@ -48,63 +49,49 @@ The following modules are implemented in the **SoilWater-ToolBox.** They were de
 
 -   **to derive unique and physical bimodal Kosugi hydraulic parameters** from inverse modelling (Fernández-Gálvez et al., 2021) using water retention and/or unsaturated hydraulic conductivity data directly measured in the laboratory, or indirectly obtained from inverting *soil moisture* time series using the **HyPix** model (Pollacco et al., 2021).
 
-4.  **Schematic flow chart**
+## 4.  Schematic flow chart
 
 A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, and the required input data and outputs.
 
-![Diagram Description automatically generated](media/image7.png){width="7.268055555555556in" height="4.7243055555555555in"}
 
-5.  **Current applications**
+
+
+## 5.  Current applications
 
 The **SoilWater-ToolBox** is being used in several projects in New Zealand (Manaaki Whenua -- Landcare Research, NIWA, Plant & Food), and in France and Spain, for:
 
 -   **laboratory data**, to derive unique sets of physical hydraulic parameters from laboratory data even when key data are missing, such as the *unsaturated hydraulic conductivity*;
-
 -   **S-Map-Hydro** **across New-Zealand**, to derive physical hydraulic parameters suitable for a wide range of hydrological models -- the derived hydraulic parameters are **scaled** to the vertical scale of interest and corrected for **stone** content;
-
 -   **validating/adjusting S-Map-Hydro** by feeding the hydraulic parameters into a physical hydrological model, **HyPix,** and comparing the *soil-water content* outputs with measured values;
-
 -   **inverting hydraulic parameters**, to derive hydraulic parameters by inverting time series *soil-water content* data (e.g. TDR, soil moisture capacitance sensor FDR, neutron probe);
-
 -   the **automatic infiltrometer**, to derive physical hydraulic parameters from automatic infiltration tests ;
-
 -   **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*;
+-   
 
-6.  ### **Potential future applications**
+## 6.  Potential future applications
 
 Potential future applications include:
 
--   **SoilWater-HyPix-2D:** spatialising the **HyPix** model such that it predicts spatially distributed water balance;
+- **SoilWater-HyPix-2D:** spatialising the **HyPix** model such that it predicts spatially distributed water balance;
 
--   **wilding pines:** quantifying the impact of the succession of different vegetation types on the hydrological balance;
+- **wilding pines:** quantifying the impact of the succession of different vegetation types on the hydrological balance;
 
--   **particle size distribution from laser:** deriving bimodal hydraulic parameters that account for the matrix and macropore domains of soils;
+- **particle size distribution from laser:** deriving bimodal hydraulic parameters that account for the matrix and macropore domains of soils;
 
--   **National Soils Data Repository (NSDR):** automatically feeding soil data from the NSDR into the **SoilWater-ToolBox;**
+- **National Soils Data Repository (NSDR):** automatically feeding soil data from the NSDR into the **SoilWater-ToolBox;**
 
--   **Land Cover Database (LCDB):** deriving vegetation parameters automatically from remote sensing and the **LCDB;**
+- **Land Cover Database (LCDB):** deriving vegetation parameters automatically from remote sensing and the **LCDB;**
 
--   **infiltration data from NSDR:** automatically feeding data into the software for soil hydraulic characterization;
+- **infiltration data from NSDR:** automatically feeding data into the software for soil hydraulic characterization;
 
--   **additional vegetation data from remote sensing:** when available, this will be implemented to improve the transpiration module and its impact on the soil-water balance;
+- **additional vegetation data from remote sensing:** when available, this will be implemented to improve the transpiration module and its impact on the soil-water balance;
 
--   **SoilWater-HyPix-CenW:** coupling **HyPix** with **CenW** model -- the **HyPix** hydrological model has an advanced unsaturated module which accurately predicts the movement of water in the unsaturated soil; **CenW** has an advanced comprehensive forest growth model based on linked flows of *carbon*, *energy*, *nutrients* and *water* in trees and the soil.
+- **SoilWater-HyPix-CenW:** coupling **HyPix** with **CenW** model -- the **HyPix** hydrological model has an advanced unsaturated module which accurately predicts the movement of water in the unsaturated soil; **CenW** has an advanced comprehensive forest growth model based on linked flows of *carbon*, *energy*, *nutrients* and *water* in trees and the soil.
 
-7.  ### **Maintenance**
+  
 
-The **SoilWater-ToolBox** has been developed to meet the urgent needs of a multitude of projects with a wide range of data formats. However, before further expansion of the **SoilWater-ToolBox,** the standard of the code needs to be updated so that implementing new modules will be performed **efficiently** and **bug free**.
 
--   **The creation of a compiled SoilWater-ToolBox** into a package with a versioning number will facilitate the deployment of the **SoilWater-ToolBox** and make it easier to link to other databases, but this requires inputting the parameters/options into a dedicated input file;
-
--   **Restructuring the SoilWater-ToolBox** will ensure that different sources of data would have a **plugin** and not interfere with the main program core;
-
--   **Standardisation** of the packages used will increase readability and facilitate the maintenance of the code;
-
--   **An online website manual of the SoilWater-ToolBox** will attract users to run **SoilWater-ToolBox** and encourage fruitful collaboration;
-
--   **A graphical user interface** will facilitate and encourage the usage of a complex model/software;
-
-8.  ### **Advantages of the Julia language**
+## 7.  Advantages of the Julia language
 
 The Julia language:
 
@@ -122,18 +109,22 @@ The Julia language:
 
 -   has a great Julia community for support,
 
--   has mature libraries.
+- has mature libraries.
 
-9.  ### **Publications**
+  
+
+## 8.  Publications
 
 Fernández-Gálvez, J., Pollacco, J.A.P., Lassabatere, L., Angulo-Jaramillo, R., Carrick, S., 2019. A general Beerkan Estimation of Soil Transfer parameters method predicting hydraulic parameters of any unimodal water retention and hydraulic conductivity curves: Application to the Kosugi soil hydraulic model without using particle size distribution data. Advances in Water Resources 129, 118--130. https://doi.org/10.1016/j.advwatres.2019.05.005Fernández-Gálvez, 
 
 J., Pollacco, J.A.P., Lilburne, L., McNeill, S., Carrick, S., Lassabatere, L., Angulo-Jaramillo, R., 2021. Deriving physical and unique bimodal soil Kosugi hydraulic parameters from inverse modelling. Advances in Water Resources 153, 103933. https://doi.org/10/gkbdsxLassabatere, 
 
-L., Peyneau, P.-E., Yilmaz, D., Pollacco, J., Fernández-Gálvez, J., Latorre, B., Moret-Fernández, D., Di Prima, S., Rahmati, M., Stewart, R.D., Abou Najm, M., Hammecker, C., Angulo-Jaramillo, R., 2021. Scaling procedure for straightforward computation of sorptivity. Hydrology and Earth System Sciences. https://doi.org/10.5194/hess-2021-150
+L., Peyneau, P.-E., Yilmaz, D., Pollacco, J., Fernández-Gálvez, J., Latorre, B., Moret-Fernández, D., Di Prima, S., Rahmati, M., Stewart, R.D., Abou Najm, M., Hammecker, C., Angulo-Jaramillo, R., 2021. Scaling procedure for straightforward computation of sorptivity. Hydrology and Earth System Sciences. https://doi.org/10.5194/hess-2021-150Pollacco, 
 
-Pollacco, J.A.P., Fernández-Gálvez, J., Carrick, S., 2020. Improved prediction of water retention curves for fine texture soils using an intergranular mixing particle size distribution model. Journal of Hydrology 584, 124597. https://doi.org/10.1016/j.jhydrol.2020.124597Pollacco, 
+J.A.P., Fernández-Gálvez, J., Carrick, S., 2020. Improved prediction of water retention curves for fine texture soils using an intergranular mixing particle size distribution model. Journal of Hydrology 584, 124597. https://doi.org/10.1016/j.jhydrol.2020.124597Pollacco,
 
 J.A.P., Fernandez-Galvez, J., Carrick, S., McNeill, S., Peltzer, D.A., Lassabatere, Laurent, Raphael, A.-J., Ackerer, P., Belfort, B., Zammit, C., Channa, R., 2021. HyPix: 1D Richards equation hydrological model in Julia language using a multistep optimization scaling method for flexible soil vertical discretization. Submitted to Environmental Modelling & Software.
 
-Pollacco, J.A.P., Nasta, P., Ugalde, J.M.S., Angulo-Jaramillo, R., Lassabatere, L., Mohanty, B.P., Romano, N., 2013. Reduction of feasible parameter space of the inverted soil hydraulic parameters sets for Kosugi model. Soil Science SS-S-12-00268.Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725--2737. https://doi.org/10.5194/hess-21-2725-2017
+Pollacco, J.A.P., Nasta, P., Ugalde, J.M.S., Angulo-Jaramillo, R., Lassabatere, L., Mohanty, B.P., Romano, N., 2013. Reduction of feasible parameter space of the inverted soil hydraulic parameters sets for Kosugi model. Soil Science SS-S-12-00268.
+
+Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725--2737. https://doi.org/10.5194/hess-21-2725-2017
