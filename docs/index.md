@@ -50,6 +50,8 @@ The following modules are implemented in the **SoilWater-ToolBox.** They were de
 
 A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, and the required input data and outputs.
 
+![](D:\Main\MODELS\SoilWater-ToolBox2\docs\FIGURES\SoilWater-ToolBox-FlowChart.bmp)
+
 
 ## 5.  Current applications
 
