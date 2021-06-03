@@ -23,7 +23,7 @@ The open source **SoilWater-ToolBox** software is written in the performant and 
 
 For information on the author
 
-[Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/)
+[Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
 
 
 ## 2. Mission statement
