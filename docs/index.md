@@ -84,12 +84,15 @@ Potential future applications include:
 - has a great Julia community for support,
 - has mature libraries.
 
-## 9. Further links
+## 9. Further links (tests)
 
 For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
 
 For information on HyPix model [HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
 
+
+## TESTING EQUATIONS
+$$ \frac{A}{B} $$
 
 
 ## 8.  Publications
