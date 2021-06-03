@@ -4,7 +4,11 @@
 
 
 
-J.A.P. Pollacco^1,\*^, J. Fernández-Gálvez^2^, L. Lilburne^1^, S. Carrick^1^, S. McNeill^1^, D.A. Peltzer^1^, B. Belfort^3^, P. Ackerer^3^, L. Lassabatere^4^, R. Angulo-Jaramillo^4^, S.C. Zammit^5^, C. Rajanayaka^5^
+J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
+
+
+---
+---
 
 > 1. Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
 > 2. Department of Regional Geographic Analysis and Physical Geography, University of Granada, Granada, **Spain**
@@ -13,22 +17,12 @@ J.A.P. Pollacco^1,\*^, J. Fernández-Gálvez^2^, L. Lilburne^1^, S. Carrick^1^, 
 > 5. National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
 
 ---
-
+---
 ---
 
 ## 1. Open source software
 
 The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language ([https://julialang.org/](https://julialang.org/)). It can be downloaded from [https://github.com/manaakiwhenua/SoilWater_ToolBox/](https://github.com/manaakiwhenua/SoilWater_ToolBox/) and is available under the **GP-3.0 License**
-
-
-For information on the author
-
-[Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
-
-For information on HyPix model
-[HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
-
-
 
 ## 2. Mission statement
 
@@ -50,7 +44,7 @@ The following modules are implemented in the **SoilWater-ToolBox.** They were de
 
 A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, and the required input data and outputs.
 
-![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/FIGURE/SoilWater-ToolBox-FlowChart.bmp)
+![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/FIGURE/SoilWater-ToolBox-FlowChart.bmp "SoilWater-ToolBox Flowchart")
 
 
 ## 5.  Current applications
@@ -79,7 +73,7 @@ Potential future applications include:
 
 ## 7.  Advantages of the Julia language
 
-The Julia language:
+**The Julia language:**
 
 - runs as fast as C+, and is suitable for hydrological modelling,
 - is suitable for use with large data sets and parallel computing,
@@ -89,6 +83,14 @@ The Julia language:
 - facilitates package management,
 - has a great Julia community for support,
 - has mature libraries.
+
+## 9. Further links
+
+For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
+
+For information on HyPix model [HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
+
+
 
 ## 8.  Publications
 
