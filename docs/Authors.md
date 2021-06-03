@@ -1,3 +1,0 @@
-# AUTHORSs
-
-# Joseph Pollacco
