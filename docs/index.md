@@ -25,6 +25,10 @@ For information on the author
 
 [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
 
+For information on HyPix model
+[HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
+
+
 
 ## 2. Mission statement
 
