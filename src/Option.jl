@@ -142,7 +142,7 @@
 		#General
          HydroTranslateModel = false # <true>; <false>
          Hypix               = true # <true>; <false>
-         Smap                = false # <true> ; <false>
+         Smap                = true # <true> ; <false>
          BulkDensity         = false # <true> <false>
          θΨ                  = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
          Psd                 = false	# <true> Derive θ(Ψ) AND/OR hydraulic parameters from Psd; <false>

@@ -1,7 +1,7 @@
 # =============================================================
 #		MODULE: hydro
 # =============================================================
-module hypix
+module hypixStart
 
 	import ..climate, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..option, ..param, ..pathHypix, ..plotHypix, ..plotOther, ..readHypix, ..reading, ..stats, ..tableHypix, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..sitename
 	

@@ -1,7 +1,7 @@
 # =============================================================
 #		MODULE: evaporation
 # =============================================================
-module evapo
+module evaporation
 	import ..wrc
 	export N_IEVAPO, EVAPORATION!
 

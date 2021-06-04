@@ -2,7 +2,7 @@
 #		MODULE: reading
 # =============================================================
 module reading
-	import ..option, ..path, ..tool, ..param, ..vegStruct
+	import ..option, ..path, ..tool, ..param
 	import  DelimitedFiles
 
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT

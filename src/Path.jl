@@ -58,7 +58,7 @@ module path
 			
 			if option.hyPix.θΨKmodel == :Kosugi
 				Hydraulic = Hydraulic_Kg
-			else option.hyPix.hypix.θΨKmodel == :vanGenuchten
+			else option.hyPix.hypixStart.θΨKmodel == :vanGenuchten
 				Hydraulic = Hydraulic_Vang
 			end
 

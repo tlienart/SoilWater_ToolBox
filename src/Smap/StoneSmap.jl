@@ -1,7 +1,7 @@
 # =============================================================
-#		module: stoneCorrection
+#		module: stoneSmap
 # =============================================================
-module stoneCorrection
+module stoneSmap
    using Polynomials
    export STONECORRECTION
 
@@ -80,5 +80,5 @@ module stoneCorrection
    return  θ_θΨ
    end  # function: STONECORRECTION_NONEWETABLE
 
-end  # module: stoneCorrection
+end  # module: stoneSmap
 # ............................................................

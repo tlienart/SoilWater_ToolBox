@@ -3,13 +3,11 @@
 # =============================================================
 module plotHypix
 
-	import  ..cst, ..kunsat, ..option, ..param, ..rootwateruptake, ..tool, ..wrc, ..ΨminΨmax
+	import  ..cst, ..kunsat, ..option, ..param, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
 	import Dates: value, DateTime
 	using PGFPlots
 
 	export θΨK
-
-	
 
 	# ========================================
 	# PLOTTING HYDRAULIC RELATIONSHIP FOR EVERY HORIZON
@@ -132,7 +130,7 @@ module plotHypix
 
 				Wsf = fill(0.0::Float64, N_Se)
 				for iΨ ∈ 1:N_Se
-					Wsf[iΨ] = rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(2, iΨ, veg, Ψstress)
+					Wsf[iΨ] = rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(2, iΨ, veg, Ψstress)
 				end
 
 				Plot_Wsf = PGFPlots.Plots.Linear(Ψstress[1,1:N_Se] .* cst.Mm_2_kPa, Wsf[1:N_Se], style="violet, very thick", mark="none")
@@ -294,9 +292,9 @@ module plotHypix
 							Label_Sim = "Sim=" * string( Int(floor((discret.Znode[obsθ.ithetaObs[ithetaObs]])))) * "mm"
 
 						# Plotting
-							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs].+param.hypix.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs].+param.hypixStart.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
 		
-							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], max.(θobs_Plot[1:N_∑T_Plot, iZobs].-param.hypix.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], max.(θobs_Plot[1:N_∑T_Plot, iZobs].-param.hypixStart.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
 							
 							if option.hyPix.θobs_Average
 								Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, ithetaObs], line=(2.5,:solid), linecolour=Style_Hypix[ithetaObs], label="Obs θaver [0-40cm]")

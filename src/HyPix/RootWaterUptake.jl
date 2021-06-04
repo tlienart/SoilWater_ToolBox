@@ -1,7 +1,7 @@
 # =============================================================
 #		MODULE: veg
 # =============================================================
-module rootwateruptake
+module rootWaterUptake
 	import ..option
 	export ROOT_WATER_UPTAKE
 
@@ -12,14 +12,14 @@ module rootwateruptake
 
 		if option.hyPix.RootWaterUptakeComp
 			for iZ = 1:N_iRoot
-				RootCompensation = rootwateruptake.rootCompensation.ROOT_COMPENSATION(iT, iZ, N_iRoot, veg, ΔRootDensity, Ψ)
+				RootCompensation = rootWaterUptake.rootCompensation.ROOT_COMPENSATION(iT, iZ, N_iRoot, veg, ΔRootDensity, Ψ)
 
-				ΔSink[iT,iZ] = CropCoeficient * ΔPet_Transp * rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * RootCompensation
+				ΔSink[iT,iZ] = CropCoeficient * ΔPet_Transp * rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * RootCompensation
 			end # for
 		else # option.hyPix.RootWaterUptakeComp
 
 			for iZ = 1:N_iRoot
-				ΔSink[iT,iZ] = CropCoeficient * ΔPet_Transp * ΔRootDensity[iZ] * rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ)
+				ΔSink[iT,iZ] = CropCoeficient * ΔPet_Transp * ΔRootDensity[iZ] * rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ)
 			end  # for
 		end # if:
 
@@ -78,7 +78,7 @@ module rootwateruptake
 
 
 	# =============================================================
-	#		MODULE: rootwateruptake
+	#		MODULE: rootWaterUptake
 	# =============================================================
 	module stressReduction 
 		export WATER_STRESS_FUNCTION
@@ -101,7 +101,7 @@ module rootwateruptake
 				end # Ψ >= veg.Ψfeddes3 && Ψ <= veg.Ψfeddes4 	
 			end  # function WATER_STRESS_FUNCTION
 			
-	end  # module rootwateruptake
+	end  # module rootWaterUptake
 	# ............................................................
 
 
@@ -110,7 +110,7 @@ module rootwateruptake
 	#		MODULE: rootcompensation
 	# =============================================================
 	module rootCompensation
-		import ..rootwateruptake
+		import ..rootWaterUptake
 		export ROOT_COMPENSATION
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,14 +121,14 @@ module rootwateruptake
 				#Compute the denominator which is used to normalize
 				∑RootCompensation = 0.0
 				for iZ = 1:N_iRoot
-					∑RootCompensation += rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ veg.RootWaterUptakeComp
+					∑RootCompensation += rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ veg.RootWaterUptakeComp
 				end
 				
 				# Compute the Compensation
 				if ∑RootCompensation > 0.0
-					# return RootCompensation = (rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ (veg.RootWaterUptakeComp - 1.0)) / ∑RootCompensation
+					# return RootCompensation = (rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ (veg.RootWaterUptakeComp - 1.0)) / ∑RootCompensation
 
-					return RootCompensation = (rootwateruptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ veg.RootWaterUptakeComp) / ∑RootCompensation
+					return RootCompensation = (rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ veg.RootWaterUptakeComp) / ∑RootCompensation
 				else
 					return RootCompensation = 1.0
 				end

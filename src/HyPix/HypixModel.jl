@@ -3,7 +3,7 @@
 # =============================================================
 module hypixModel
 
-	import ..checkerror, ..timeStep, ..discretization, ..evapo, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..option, ..param, ..pathHypix, ..pet, ..plot, ..pond, ..climate, ..residual, ..richard, ..rootwateruptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
+	import ..timeStep, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..option, ..param, ..pathHypix, ..pet, ..plot, ..ponding, ..climate, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
 
 	export HYPIX
 
@@ -33,16 +33,16 @@ module hypixModel
 		
 		# ROOTS
 		if option.hyPix.RootWaterUptake
-			N_iRoot = rootwateruptake.rootDistribution.N_IROOT(N_iZ, veg, Z)# Last cell of rootzone
+			N_iRoot = rootWaterUptake.rootDistribution.N_IROOT(N_iZ, veg, Z)# Last cell of rootzone
 
-			ΔRootDensity = rootwateruptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
+			ΔRootDensity = rootWaterUptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
 		else
 			ΔRootDensity = 0.0
 			N_iRoot = 1
 		end # option.hyPix.RootWaterUptake
 
 		# if option.hyPix.Evaporation 
-		# 	N_iEvapo = evapo.N_IEVAPO(N_iZ, veg, Z) # Depth where evaporation can occure
+		# 	N_iEvapo = evaporation.N_IEVAPO(N_iZ, veg, Z) # Depth where evaporation can occure
 		# end # option.hyPix.Evaporation
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
@@ -112,12 +112,12 @@ module hypixModel
 				
 			# ROOT WATER UPTAKE MODEL
 				if option.hyPix.RootWaterUptake
-					ΔSink = rootwateruptake.ROOT_WATER_UPTAKE( CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
+					ΔSink = rootWaterUptake.ROOT_WATER_UPTAKE( CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
 				end # option.hyPix.RootWaterUptake
 
 			# EVAPORATION FROM THE SURFACE WITH HIGHEST Se
 				if option.hyPix.Evaporation
-					ΔEvaporation = evapo.EVAPORATION!(hydro, iT, ΔEvaporation, ΔPet_Evap, θ)
+					ΔEvaporation = evaporation.EVAPORATION!(hydro, iT, ΔEvaporation, ΔPet_Evap, θ)
 					
 					ΔSink[iT,1] += ΔEvaporation[iT]
 				end # option.hyPix.Evaporation

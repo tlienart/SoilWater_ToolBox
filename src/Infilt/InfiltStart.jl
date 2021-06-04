@@ -1,7 +1,7 @@
 # =============================================================
 #		MODULE: infiltration
 # =============================================================
-module infilt
+module infiltStart
 	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ..option, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
@@ -149,7 +149,5 @@ module infilt
 			end # Option.infilt.Model
 
 		end # FUNCTION: OF_INFILT_2_HYDRO_Best
-
-
 end # MODULE: infilt
 	

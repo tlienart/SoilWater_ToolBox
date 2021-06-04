@@ -1,4 +1,4 @@
-module quasiExact # quasi-exact objective function
+module quasiExact 
 	import ..option, ..sorptivity, ..wrc, ..kunsat, ..option, ..param
 	import BlackBoxOptim, Optim
  	export CONVERT_3D_2_1D, HYDRO_2_INFILTRATION3D, OF_QUASIEXACT

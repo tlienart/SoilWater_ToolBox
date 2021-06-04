@@ -2,7 +2,7 @@
 #		MODULE: checkerror
 
 # =============================================================
-module checkerror
+module checkError
 	import ..option, ..param, ..pathHypix
 	import Dates: value, DateTime
 	export CHECK_IFOPEN

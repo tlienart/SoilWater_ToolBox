@@ -67,7 +67,7 @@ module tool
 	#		MODULE: readWrite
 	# =============================================================
 	module readWrite
-		import ...param, ..tool
+		import ..tool
 		import DelimitedFiles
 		import Dates: value, DateTime
 		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, DATA_2_ΔTnew, STRUCT_2_FIELDNAME_PARAM

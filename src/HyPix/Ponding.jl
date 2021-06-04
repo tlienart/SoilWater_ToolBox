@@ -1,8 +1,8 @@
 
 # =============================================================
-#		MODULE: pond
+#		MODULE: ponding
 # =============================================================
-module pond
+module ponding
 	import ..kunsat, ..param, ..cst
 	export PONDING_SORPTIVITY!
 
@@ -43,5 +43,5 @@ module pond
 			return ΔHpond
 		end  # function: PONDING
 	
-end  # module pond
+end  # module ponding
 # ............................................................

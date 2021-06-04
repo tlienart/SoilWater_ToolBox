@@ -1,4 +1,4 @@
-module OfHydrolab 
+module ofHydrolab
 	import ..option, ..stats, ..wrc, ..kunsat
 	export  OF_WRC_KUNSAT
 

@@ -3,7 +3,7 @@
 # =============================================================
 module hydrolabOpt
 
-	import ..OfHydrolab, ..option, ..param, ..tool, ..optimize, ..hydroRelation, ..psdThetar
+	import ..ofHydrolab, ..option, ..param, ..tool, ..optimize, ..hydroRelation, ..psdThetar
 	using BlackBoxOptim, Statistics
 	export HYDROLABOPT_START
 
@@ -120,9 +120,9 @@ module hydrolabOpt
 				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionHydro, X)
 
 				# STATISTICS
-					Of, Of_θΨ, Of_Kunsat = OfHydrolab.OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
 
-					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = OfHydrolab.OF_RMSE(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
 
 					hydroOther.Nse[iZ]    = 1.0 - Of
 					hydroOther.Nse_θΨ[iZ] = 1.0 - Of_θΨ
@@ -164,7 +164,7 @@ module hydrolabOpt
 				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionHydro, X)
 		
 			# Weighted Objective Function
-				Of, Of_θΨ, Of_Kunsat = OfHydrolab.OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+				Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
 				
 		return Of
 		end  # function: OF_HYPIX

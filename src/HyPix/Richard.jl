@@ -2,7 +2,7 @@
 #		MODULE: residual
 # =============================================================
 module richard
-	import ..timeStep, ..flux, ..kunsat, ..option, ..param, ..pond, ..residual, ..wrc
+	import ..timeStep, ..flux, ..kunsat, ..option, ..param, ..ponding, ..residual, ..wrc
 	using LinearAlgebra
 
 	export RICHARD_ITERATION
@@ -84,7 +84,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
-			ΔHpond = pond.PONDING_SORPTIVITY!(discret, hydro, iT, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 			# ∂R∂Ψ2 = fill(0.0, N_iZ)
 			# ∂R∂Ψ▽2 = fill(0.0, N_iZ)
