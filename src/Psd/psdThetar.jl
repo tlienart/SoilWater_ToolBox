@@ -2,7 +2,7 @@
 #		MODULE: psdθr
 # =============================================================
 module psdThetar
-	import ..param, ..stats, ..option
+	import ..param, ..stats
 	import BlackBoxOptim
 	export PSD_2_θr_FUNC, OPTIMIZE_PSD_2_θr
 

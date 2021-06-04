@@ -2,7 +2,7 @@
 #		MODULE: reading
 # =============================================================
 module reading
-	import ..option, ..path, ..tool, ..param
+	import ..path, ..tool, ..param
 	import  DelimitedFiles
 
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
@@ -350,7 +350,7 @@ module reading
 			ParamOpt_LogTransform :: Vector{Bool}
 		end
 
-		function HYDRO_PARAM(hydro, N_SoilSelect, Path)
+		function HYDRO_PARAM(optionₘ, hydro, N_SoilSelect, Path)
 		# Read data
 			Data = DelimitedFiles.readdlm(Path, ',')
 		# Read header
@@ -364,7 +364,7 @@ module reading
 		# Determening which parameters correspond to the selected model
 		iSelectModel = [] 
 		for i=1:Ndata
-			if HydroModel[i] == string(option.hydro.HydroModel)
+			if HydroModel[i] == string(optionₘ.HydroModel)
 				append!(iSelectModel, i)
 			end
 		end
@@ -467,7 +467,7 @@ module reading
 
 		if Flag_Opt == true
 			println("		=== === Optimizing the following parameters === ===")
-			println("			Model=" , option.hydro.HydroModel)
+			println("			Model=" , optionₘ.HydroModel)
 			println("			NparamOpt=" , NparamOpt)
 			println("			ParamOpt= " ,  optim.ParamOpt)
 			println("			Min_Value= " , optim.ParamOpt_Min)

@@ -2,13 +2,12 @@
 #		MODULE: veg
 # =============================================================
 module rootWaterUptake
-	import ..option
 	export ROOT_WATER_UPTAKE
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ROOT_WATER_UPTAKE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 function ROOT_WATER_UPTAKE(CropCoeficient, iT::Int64, N_iRoot::Int64, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)
+	 function ROOT_WATER_UPTAKE(CropCoeficient, iT::Int64, N_iRoot::Int64, option, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)
 
 		if option.hyPix.RootWaterUptakeComp
 			for iZ = 1:N_iRoot

@@ -2,7 +2,10 @@
 #		MODULE: path
 # =============================================================
 module path
-	import ..option, ..sitename
+	import ..sitename, ..options
+
+	# Reading the options
+		option = options.OPTIONS()
 
 	# NAME OF FILE
 		SiteName_Soilhyro = "Smap20210226" #"VCSNSmap2"; "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"

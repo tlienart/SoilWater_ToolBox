@@ -2,7 +2,7 @@
 #		MODULE: HYDRO INITIALIZE
 # =============================================================
 module infiltInitialize
-	import ..hydroStruct, ..psdThetar, ..param, ..timeTransSteady, ..infiltStruct, ..option
+	import ..hydroStruct, ..psdThetar, ..param, ..timeTransSteady, ..infiltStruct
 	export INFILT_INITIALIZE
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

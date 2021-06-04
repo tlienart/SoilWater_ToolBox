@@ -43,10 +43,10 @@ module plotOther
 				hydroHorizon₂.σMac[iσ] = param.hydro.kg.σMac
 				
 				for iΨ = 1:N_Se
-					θplot[iΨ] = wrc.Ψ_2_θDual(Ψplot[iΨ],iσ, hydroHorizon₂)			
+					θplot[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψplot[iΨ],iσ, hydroHorizon₂)			
 				end # for iΨ
 
-				Ψm_Model = wrc.Se_2_ΨDual(0.5, iσ, hydroHorizon₂)
+				Ψm_Model = wrc.Se_2_ΨDual(optionₘ, 0.5, iσ, hydroHorizon₂)
 
 				Plots.plot!(Plot1, log.(Ψplot), θplot, palette=:darkrainbow, label="\$ \\sigma = $(round(σ[iσ],digits=2)) \\ ; ln \\ \\Psi m = $(ceil(Int,log(Ψm_Unique[iσ]))) \$" )
 				if iσ == N_σ
@@ -224,12 +224,12 @@ module plotOther
 				
 				for iΨ = 1:N_Se
 					hydroHorizon₂.Ψm[iZ] = Ψm_Unique_Min[iZ]
-					θplot_Min[iΨ]    = wrc.Ψ_2_θDual(Ψplot_Min[iΨ], iZ, hydroHorizon₂)
-					Kplot_Min[iΨ]    = kunsat.Ψ_2_KUNSAT(Ψplot_Min_Ks[iΨ], iZ, hydroHorizon₂)		
+					θplot_Min[iΨ]    = wrc. Ψ_2_θDual(optionₘ,Ψplot_Min[iΨ], iZ, hydroHorizon₂)
+					Kplot_Min[iΨ]    = kunsat.Ψ_2_KUNSAT(optionₘ, Ψplot_Min_Ks[iΨ], iZ, hydroHorizon₂)		
 					
 					hydroHorizon₂.Ψm[iZ] = Ψm_Unique_Max[iZ]
-					θplot_Max[iΨ]    = wrc.Ψ_2_θDual(Ψplot_Max[iΨ], iZ, hydroHorizon₂)
-					Kplot_Max[iΨ]    = kunsat.Ψ_2_KUNSAT(Ψplot_Max_Ks[iΨ], iZ, hydroHorizon₂)		
+					θplot_Max[iΨ]    = wrc. Ψ_2_θDual(optionₘ,Ψplot_Max[iΨ], iZ, hydroHorizon₂)
+					Kplot_Max[iΨ]    = kunsat.Ψ_2_KUNSAT(optionₘ, Ψplot_Max_Ks[iΨ], iZ, hydroHorizon₂)		
 				end # for iΨ
 
 			# Plot 1: θplot(Ψplot)
@@ -312,7 +312,7 @@ module plotOther
 			Ψplot = exp.(range(log(Ψ_Min), stop=log(Ψ_Max), length=N_Se)) 
 			θplot = fill(0.0::Float64, N_Se)
 			for iΨ = 1:N_Se
-				θplot[iΨ] = wrc.Ψ_2_θDual(Ψplot[iΨ], 1, hydroHorizon₂)			
+				θplot[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψplot[iΨ], 1, hydroHorizon₂)			
 			end # for iΨ
 
 		# Plots.PGFPlotsXBackend()
@@ -322,11 +322,11 @@ module plotOther
 		# Plotting points on the curve
 			N_Δθ = 10
 			# Ψ_Δθ = fill(0.0::Float64, N_Δθ)
-			θ_Min =  wrc.Ψ_2_θDual(Ψ_Min, 1, hydroHorizon₂) +  eps(10.0)
-			θ_Max =  wrc.Ψ_2_θDual(Ψ_Max, 1, hydroHorizon₂) -  eps(10.0)
+			θ_Min =  wrc. Ψ_2_θDual(optionₘ,Ψ_Min, 1, hydroHorizon₂) +  eps(10.0)
+			θ_Max =  wrc. Ψ_2_θDual(optionₘ,Ψ_Max, 1, hydroHorizon₂) -  eps(10.0)
 			Δθ = range(θ_Min, stop=θ_Max , length=N_Δθ)
 			for iθ = 1:N_Δθ
-				Ψ_Δθ = wrc.θ_2_ΨDual(Δθ[iθ], 1, hydroHorizon₂)
+				Ψ_Δθ = wrc.θ_2_ΨDual(optionₘ, Δθ[iθ], 1, hydroHorizon₂)
 
 				Plots.scatter!(Plot1, [log(Ψ_Δθ),log(Ψ_Δθ)], [Δθ[iθ],Δθ[iθ]], label=false, line=(:dashdot, 1),  color=:green)
 				Plots.plot!(Plot1, [log(Ψ_Δθ), log(Ψ_Δθ)], [0.0, Δθ[iθ]], label=false, line=(:dashdot, 1), color=:black)

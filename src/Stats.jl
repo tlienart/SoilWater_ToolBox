@@ -83,7 +83,7 @@ module stats
 			for iZ = 1:N_SoilSelect	
 				θΨ = zeros(Float64, N_Data[iZ])
 				for iRpart = 1:N_Data[iZ]
-					θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Sim[iZ,iRpart], iZ, hydro)
+					θΨ[iRpart] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iZ,iRpart], iZ, hydro)
 				end
 				Nse[iZ] = 1.0 - NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Data[iZ]], θ_Sim[iZ,1:N_Data[iZ]])	
 			end

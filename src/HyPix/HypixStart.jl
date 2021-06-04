@@ -3,7 +3,7 @@
 # =============================================================
 module hypixStart
 
-	import ..climate, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..option, ..param, ..pathHypix, ..plotHypix, ..plotOther, ..readHypix, ..reading, ..stats, ..tableHypix, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..sitename
+	import ..climate, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..param, ..pathHypix, ..plotHypix, ..plotOther, ..readHypix, ..reading, ..stats, ..tableHypix, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..sitename
 	
 	import Statistics, Dates, DelimitedFiles
 	export HYPIX_START
@@ -11,7 +11,7 @@ module hypixStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_START()
+	function HYPIX_START(option)
 
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
@@ -23,7 +23,7 @@ module hypixStart
 
 
 		# READING STRUCTURE OF PATH
-			pathHyPix = pathHypix.PATHHYPIX(iSim)
+			pathHyPix = pathHypix.PATHHYPIX(iSim, option)
 
 				println("\n			==== ==== ===  $(pathHyPix.SiteName_Hypix) 	=== ==== ====\n")
 
@@ -41,14 +41,14 @@ module hypixStart
 
 			# CLIMATE DATA  ~~~~~
 				# Read climate
-					clim = readHypix.CLIMATE(pathHyPix)
+					clim = readHypix.CLIMATE(option, pathHyPix)
 				# Process climate
-					∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp = climate.CLIMATE(clim)
+					∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp = climate.CLIMATE(clim, option)
 
 			# OBSERVED θ  ~~~~~
 			if option.hyPix.θobs
 				# Read observed θ
-					obsθ = readHypix.TIME_SERIES(pathHyPix)
+					obsθ = readHypix.TIME_SERIES(option, pathHyPix)
 				
 				# Process observed θ
 					obsθ = thetaObs.ΘOBS(obsθ, clim, discret, Z)
@@ -73,17 +73,17 @@ module hypixStart
 
 			# INITIALIZING THE STRUCTURE
 				# Initializing hydroHorizon structure
-					hydroHorizon = hydroStruct.HYDROSTRUCT(N_iHorizon)
+					hydroHorizon = hydroStruct.HYDROSTRUCT(option.hydro, N_iHorizon)
 
 				# Initializing hydraulic param into structure 
-					hydro = hydroStruct.HYDROSTRUCT(N_iZ)
+					hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
 
 				# Initialiozing  vegetation parameters into veg structure
 					veg = vegStruct.VEGSTRUCT()
 
 				# Optimisation
-					hydroHorizon_best = hydroStruct.HYDROSTRUCT(N_iHorizon)
-					hydro_best        = hydroStruct.HYDROSTRUCT(N_iZ)
+					hydroHorizon_best = hydroStruct.HYDROSTRUCT(option.hydro, N_iHorizon)
+					hydro_best        = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
 					veg_best          = vegStruct.VEGSTRUCT()
 				
 			# ========================================================
@@ -98,7 +98,7 @@ module hypixStart
 			# Hydraulic parameters
 				hydroHorizon, ~ = reading.READ_STRUCT(hydroHorizon, pathHyPix.HyPix_HydroParam)
 
-				hydro        = horizonLayer.HYDROHORIZON_2_HYDRO(N_iZ, Layer, hydroHorizon)
+				hydro        = horizonLayer.HYDROHORIZON_2_HYDRO(option.hydro, N_iZ, Layer, hydroHorizon)
 
 			# options of optim
 			
@@ -109,15 +109,15 @@ module hypixStart
 			end # option.hyPix.Optimisation
 
 			# SINK TERM 
-            Laiᵀ_η            = readHypix.LOOKUPTABLE_LAI(clim, pathHyPix, veg)
-            CropCoeficientᵀ_η = readHypix.LOOKUPTABLE_CROPCOEFICIENT(clim, pathHyPix, veg)
+            Laiᵀ_η            = readHypix.LOOKUPTABLE_LAI(clim, option, pathHyPix, veg)
+            CropCoeficientᵀ_η = readHypix.LOOKUPTABLE_CROPCOEFICIENT(clim, option, pathHyPix, veg)
 
 			if optim.Flag_Opt
 				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, obsθ, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Layer, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iSim_Count, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iHorizon, N_iZ, optim, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 			end
 			
 			# if Flag_Opt then it will rerun with the optimal parameters
-			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 			# WATER BALANCE
 				# Computed after the warmup period

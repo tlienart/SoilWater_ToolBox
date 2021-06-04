@@ -1,10 +1,10 @@
 module interception
-	import ..option, ..plot
+	import ..plot
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RAINFALL_INTERCEPTION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ_Norm, veg)
+	function RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ_Norm, option, veg)
 			
 		# INTERCEPTION MODEL
 		Sint = 0.0
@@ -32,7 +32,7 @@ module interception
 				∑Pet_Climate[iT] = ∑Pet_Climate[iT-1] + clim.Pet[iT] - ΔEvap_Int
 			end  # for  iT = 1:clim.N_Climate 
 
-		return ∑Pet_Climate, ∑Pr_Climate, clim
+	return ∑Pet_Climate, ∑Pr_Climate, clim
 	end  # function: RAINFALL_INTERCEPTION
 	
 

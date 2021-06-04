@@ -6,8 +6,11 @@
     using Suppressor
     using Revise
 
-    # @suppress begin
+    @suppress begin
         include("Option.jl")
+            # Reading the options
+                option = options.OPTIONS()
+
         # Install packages to run program
         if option.globalopt.DownloadPackage
             include("Packages.jl")
@@ -30,6 +33,7 @@
         include("Checking.jl")
         include("Hydro\\Kunsat.jl")
         include("Stats.jl")
+
         if !(option.globalopt.Hypix)
             include("Table.jl")
             include("Psd\\PsdThetar.jl")
@@ -43,9 +47,7 @@
         end
 
         if option.globalopt.θΨ ≠ :No && option.globalopt.θΨ ≠ :File &&  !(option.globalopt.Hypix)
-            # include("HydroLab\\HydrolabInitialize.jl")	
             include("HydroLab\\OfHydrolab.jl")
-            # include("HydroLab\\START_Lab.jl")
             include("HydroLab\\HydrolabOpt.jl")
             include("Hypix\\Other\\PlotOther.jl")
         end
@@ -73,14 +75,12 @@
             include("Plot.jl")
         end # option.globalopt.Ploting
 
-        println(option.globalopt.Hypix)
         if option.globalopt.Hypix
             include("Hypix\\PathHypix.jl")
             include("Sorptivity\\Sorptivity.jl")
             include("Hypix\\Interpolate.jl")
             include("Hypix\\Opt\\ThetaObs.jl")
             include("HyPix\\θini.jl")
-            # include("Hypix\\Opt\\Signature.jl")
             include("Hypix\\Opt\\OfHypix.jl")
             include("Hypix\\TableHypix.jl")
             include("Hypix\\VegStruct.jl")
@@ -114,9 +114,9 @@
         if option.globalopt.Jules
             include("Hypix\\PathHypix.jl")
             include("Hypix\\VegStruct.jl")
-            include("Hypix\\Discretisation.jl")
+            include("Hypix\\Discretization.jl")
             include("Jules\\Jules.jl")
-            include("HyPix\\ThetaIni.jl")
+            include("HyPix\\θini.jl")
             include("Smap\\Smap2hypix.jl")		
         end  # if: option.Temporay
-    # end # Suppressor 
+    end # Suppressor 

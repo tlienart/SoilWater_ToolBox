@@ -2,7 +2,7 @@
 #		module: readingHypix
 # =============================================================
 module readHypix
-	import  ..option, ..tool, ..param, ..horizonLayer
+	import  ..tool, ..param, ..horizonLayer
 	import Dates: value, DateTime, hour, minute, month, now
 	import DelimitedFiles
 	export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
@@ -265,7 +265,7 @@ module readHypix
 
 		Option_ReadTemperature = false
 
-		function CLIMATE(pathHyPix)
+		function CLIMATE(option, pathHyPix)
 			if option.hyPix.ClimateDataTimestep == "Daily"
 				Pr_Name          = "Rain(mm)"
 				Pet_Name         = "PET(mm)"
@@ -371,7 +371,7 @@ module readHypix
 			∑T  	  :: Vector{Float64}
 		end # mutable struct
 
-		function TIME_SERIES(pathHyPix)
+		function TIME_SERIES(option, pathHyPix)
 		# Read data
 			Data = DelimitedFiles.readdlm(pathHyPix.obsθ, ',')
 		# Read header
@@ -489,7 +489,7 @@ module readHypix
 	#		FUNCTION : LOOKUPTABLE
 	#		Parameters as a function of time
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function LOOKUPTABLE_LAI(clim, pathHyPix, veg)	
+		function LOOKUPTABLE_LAI(clim, option, pathHyPix, veg)	
 			if option.hyPix.LookupTable_Lai == true
 				LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_Lai, "Lai")
 			end
@@ -510,7 +510,7 @@ module readHypix
 		end  # function: LOOKUPTABLE_LAI
 
 
-		function LOOKUPTABLE_CROPCOEFICIENT(clim, pathHyPix, veg)
+		function LOOKUPTABLE_CROPCOEFICIENT(clim, option, pathHyPix, veg)
 			if option.hyPix.LookUpTable_CropCoeficient == true
 				LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_CropCoeficient, "CropCoeficient")
 			end

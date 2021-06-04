@@ -1,20 +1,21 @@
 ##========================================================================================
 ##                                                                                      ##
 ##                                 Soil Water ToolBox                                   ##
-##                                                                                     ##
+##                                                                                      ##
 ##========================================================================================
 
 include("Including.jl")
-
 
 # ===============================================================
 #		FUNCTION : START_TOOLBOX
 # ==============================================================
 function START_TOOLBOX()
 
+	# OPTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		option = options.OPTIONS()
+
 	# READING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if option.globalopt.HydroTranslateModel
-
 			# Creating 
 			hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
 			
@@ -115,13 +116,13 @@ function START_TOOLBOX()
 	println("         ===== Model Name= $(path.Model_Name) =====")
 		
 		# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
-			hydro = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+			hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_SoilSelect)
 
 			hydroOther = hydroStruct.HYDRO_OTHERS(N_SoilSelect)
 
-			hydro, optim = reading.HYDRO_PARAM(hydro, N_SoilSelect, path.HydroParam_ThetaH)
+			hydro, optim = reading.HYDRO_PARAM(option.hydro, hydro, N_SoilSelect, path.HydroParam_ThetaH)
 
-			checking.CHECKING(optim)
+			checking.CHECKING(option, option.hydro, optim)
 
 			if option.globalopt.Smap
 				hydroParam, optim = stoneSmap.STONECORRECTION_HYDRO(hydro, N_SoilSelect, optim, smap)
@@ -142,16 +143,16 @@ function START_TOOLBOX()
 				end
 
 			if option.hydro.KunsatΨ
-				hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, hydroOther=hydroOther, optionHydro=option.hydro, optim=optim)
+				hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim)
 
 			else
-				hydro, hydroOther =  hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, hydroOther=hydroOther, optionHydro=option.hydro, optim=optim)
+				hydro, hydroOther =  hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim)
 			end # option.hydro.KunsatΨ
 
 			# SPATIAL CASE FOR BROOKS AND COREY
 				if option.hydro.HydroModel==:BrooksCorey || option.hydro.HydroModel==:ClappHornberger
 					for iZ=1:N_SoilSelect
-						hydro.Ψga[iZ] = wrc.GREEN_AMPT(iZ, hydro)
+						hydro.Ψga[iZ] = wrc.GREEN_AMPT(optionₘ, iZ, hydro)
 					end
 				end #  option.hydro.HydroModel
 		end # option.globalopt.θΨ == :File
@@ -172,7 +173,7 @@ function START_TOOLBOX()
 					else
 						TopsoilSubsoil="Topsoil"
 					end
-					KunsatModel_Lab[iZ] = kunsat.θΨ_2_KUNSAT(0.9999, iZ, hydro, 0.0; TopsoilSubsoil=TopsoilSubsoil)
+					KunsatModel_Lab[iZ] = kunsat.θΨ_2_KUNSAT(option.hydro, 0.9999, iZ, hydro, 0.0; TopsoilSubsoil=TopsoilSubsoil)
 
 					if option.hydro.KunsatΨ == false
 						hydro.Ks[iZ] = KunsatModel_Lab[iZ]
@@ -205,7 +206,7 @@ function START_TOOLBOX()
 		KunsatModel_Psd = fill(0.0::Float64, N_SoilSelect)
 
 		if  option.psd.HydroParam
-			hydroPsd, hydroOther_Psd = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_Rpart, Ψ_θΨ=Ψ_Rpart, N_θΨ=N_Psd, hydro=hydroPsd, hydroOther=hydroOther_Psd, optionHydro=option.psd, optim=optim_Psd)
+			hydroPsd, hydroOther_Psd = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_Rpart, Ψ_θΨ=Ψ_Rpart, N_θΨ=N_Psd, hydro=hydroPsd, hydroOther=hydroOther_Psd, option=option, optionₘ=option.psd, optim=optim_Psd)
 		end
 
 	
@@ -215,7 +216,7 @@ function START_TOOLBOX()
 	else
 		θ_Rpart = zeros(Float64, N_SoilSelect,1)
 		Ψ_Rpart = zeros(Float64, N_SoilSelect,1)
-		hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+		hydroPsd = hydroStruct.HYDROSTRUCT(option.psd, N_SoilSelect)
 		N_Psd = zeros(Float64, N_SoilSelect)
 
 	end # option.globalopt.Psd ...............................................................................
@@ -240,7 +241,7 @@ function START_TOOLBOX()
 	end # option.globalopt.Infilt
 
 	if option.globalopt.Hypix
-		hypixStart.HYPIX_START()
+		hypixStart.HYPIX_START(option)
 	end # option.globalopt.Hypix
 
 
@@ -254,16 +255,16 @@ function START_TOOLBOX()
 
 				if option.smap.AddPointKosugiBimodal && option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
 					# Extra points in θ(Ψ) to reduce none uniqueness
-					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydro, Id_Select, N_SoilSelect, path.Table_ExtraPoints_θΨ, param.hydro.Ψ_Table)
+					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, Id_Select, N_SoilSelect, path.Table_ExtraPoints_θΨ, param.hydro.Ψ_Table)
 	
 					# Extra points required by TopNet
-						table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydro, Id_Select, N_SoilSelect, path.Table_KosugiθΨ, param.hydro.smap.Ψ_Table)
+						table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, Id_Select, N_SoilSelect, path.Table_KosugiθΨ, param.hydro.smap.Ψ_Table)
 
-						table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydro, Id_Select, param.hydro.K_Table, KunsatModel_Lab, N_SoilSelect, path.Kunsat_Model)
+						table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, Id_Select, param.hydro.K_Table, KunsatModel_Lab, N_SoilSelect, path.Kunsat_Model)
 				end
 
 				if option.smap.CombineData
-					tableSmap.SMAP(Id_Select, N_SoilSelect, smap)
+					tableSmap.SMAP(option.hydro, Id_Select, N_SoilSelect, smap)
 				end
 			end
 

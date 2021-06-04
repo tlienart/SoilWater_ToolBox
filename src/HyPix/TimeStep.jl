@@ -1,17 +1,17 @@
 module timeStep
-	import ..param, ..option, ..wrc
+	import ..param, ..wrc
    export TIMESTEP, ADAPTIVE_TIMESTEP, ΔΨMAX
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION :  TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIMESTEP(∑T, discret, Flag_ReRun::Bool, hydro, iT::Int64, N_∑T_Climate::Float64, N_iZ::Int64, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
+		function TIMESTEP(∑T, discret, Flag_ReRun::Bool, hydro, iT::Int64, N_∑T_Climate::Float64, N_iZ::Int64, option, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
 
 			Δθ_Max = param.hyPix.Δθ_Max
 
 			# The iT is of the previous simulation
 			if !Flag_ReRun # <>=<>=<>=<>=<>	
-				ΔT₂, Δθ_Max = ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, Q, ΔΨmax, ΔSink, θ, Ψ)
+				ΔT₂, Δθ_Max = ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, option.hydro, Q, ΔΨmax, ΔSink, θ, Ψ)
 				iT += 1 # Going to the next simulation
 				ΔT[iT] = ΔT₂
 			end
@@ -40,7 +40,7 @@ module timeStep
 	#		FUNCTION : ΔΨMAX
 	# 		Computing ΔΨMAX required by ADAPTIVE_TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ΔΨMAX(ΔΨmax, hydro, N_iZ)
+		function ΔΨMAX(hydro, N_iZ::Int64, optionₘ, ΔΨmax)
 
 			for iZ=1:N_iZ
 				θ½ = (hydro.θsMacMat[iZ] + hydro.θr[iZ]) * 0.5
@@ -49,7 +49,7 @@ module timeStep
 
 				θ▽ = max(θ½ - param.hyPix.Δθ_Max * 0.5, hydro.θr[iZ])
 
-				ΔΨmax[iZ] = wrc.θ_2_ΨDual(θ▽, iZ, hydro) - wrc.θ_2_ΨDual(θ△, iZ, hydro)
+				ΔΨmax[iZ] = wrc.θ_2_ΨDual(optionₘ, θ▽, iZ, hydro) - wrc.θ_2_ΨDual(optionₘ, θ△, iZ, hydro)
 			end # for iZ=1:N_iZ
 
 		return ΔΨmax
@@ -60,7 +60,7 @@ module timeStep
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ADAPTIVE_TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ADAPTIVE_TIMESTEP(discret, hydro, iT::Int64, N_iZ::Int64, Q, ΔΨmax, ΔSink, θ, Ψ)
+		function ADAPTIVE_TIMESTEP(discret, hydro, iT::Int64, N_iZ::Int64, option, optionₘ, Q, ΔΨmax, ΔSink, θ, Ψ)
 
 			# Searching for the minimum value of ΔT of the simulation
 				if option.hyPix.NormMin == :Norm
@@ -81,9 +81,9 @@ module timeStep
 
 						Ψ△  = Ψ[iT,iZ] + ΔΨmax[iZ]
 						
-						θ△ = wrc.Ψ_2_θDual(Ψ▽, iZ, hydro)
+						θ△ = wrc. Ψ_2_θDual(optionₘ, Ψ▽, iZ, hydro)
 
-						θ▽ = wrc.Ψ_2_θDual(Ψ△, iZ, hydro)
+						θ▽ = wrc. Ψ_2_θDual(optionₘ, Ψ△, iZ, hydro)
 
 						Δθ₂_Max =  (θ△ - θ▽) * 0.5
 					end # option.hyPix.AdaptiveTimeStep ==:ΔΨ	

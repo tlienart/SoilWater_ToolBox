@@ -1,5 +1,5 @@
 module quasiExact 
-	import ..option, ..sorptivity, ..wrc, ..kunsat, ..option, ..param
+	import ..sorptivity, ..wrc, ..kunsat, ..param
 	import BlackBoxOptim, Optim
  	export CONVERT_3D_2_1D, HYDRO_2_INFILTRATION3D, OF_QUASIEXACT
 
@@ -20,7 +20,7 @@ module quasiExact
 
 		Δθ = hydroInfilt.θs[iZ] - θ_Ini
 
-		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt)
+		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, optionₘ)
 
 		for iT = 1:N_Infilt[iZ]
 			∑Infilt_1D[iZ,iT] = ∑Infilt_3D[iZ,iT] - (T[iZ,iT] * infiltParam.γ[iZ] * Sorptivity ^ 2.0) / (infiltParam.RingRadius[iZ] * Δθ)
@@ -62,11 +62,11 @@ module quasiExact
 
 			Infilt_η = Array{Float64}(undef, N_Infilt[iZ])
 
-			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
+			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, optionₘ)
 
 			Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 
-			K_θini = kunsat.Se_2_KUNSAT(Se_Ini, iZ, hydroInfilt)
+			K_θini = kunsat.Se_2_KUNSAT(optionₘ, Se_Ini, iZ, hydroInfilt)
 
 			ΔK = hydroInfilt.Ks[iZ] - K_θini
 
@@ -126,7 +126,7 @@ module quasiExact
 
 		Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 		
-		K_θini = kunsat.Se_2_KUNSAT(Se_Ini, iZ, hydroInfilt)
+		K_θini = kunsat.Se_2_KUNSAT(optionₘ, Se_Ini, iZ, hydroInfilt)
 
 		Kr_θini = K_θini / hydroInfilt.Ks[iZ]
 		
@@ -134,7 +134,7 @@ module quasiExact
 		
 		Δθ = hydroInfilt.θs[iZ] - infiltParam.θ_Ini[iZ]
 		
-		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
+		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, optionₘ)
 
 		Left_Term = zeros(Float64, N_Infilt[iZ])
 
@@ -168,124 +168,7 @@ module quasiExact
 		return Wof = (W * Of_Trans / Float64(iT_TransSteady-1)) + ((1.0 - W) * Of_Stead / Float64(N_Infilt[iZ] - iT_TransSteady + 1)) + Of_Penalty
 	
 	end # function: OF_INFILT_2_HYDRO
-		# #= =============== KOSUGI =============== =#
-	# module kg	
-	# 	import ..option, ..sorptivity, ..wrc, ..kunsat, ..param
-	# 	import ..quasiExact
-	# 	export BlackBoxOptim, Optim
-	# 	export INFILTRATION3D_2_HYDRO, INFILTRATION3D_2_HYDRO_σMOD
+	
 
-	# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	#		FUNCTION : INFILTRATION3D_2_HYDRO_σMOD
-	# 	# 		OPTIMIZE THE HYDRAULIC PARAMETERS FROM INFILTRATION DATA
-	# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-	# 		# function INFILTRATION3D_2_HYDRO_σMOD(T,  ∑Infilt_Obs, N_Infilt, θs, θ_Ini, Time_TransStead, Sorptivity, infiltParam, hydroInfilt)
-	# 		# 	θr = 0.0
-	# 		# 	Δθ = θs - θ_Ini
-	# 		# 	Se_Ini = wrc.se.θ_2_Se(θ_Ini, θs, θr)
-
-	# 		# 	# Objective function which matches observed with simulated infiltration
-	# 		# 	function OF_Fast_η(T,  ∑Infilt_Obs, Δθ, N_Infilt, infiltParam, θr, θ_Ini, σ, iT_TransStead)
-	# 		# 		Hkg_σ = relationship.σ_2_Hkg(σ)
-
-	# 		# 		Hkg_Sorpt = sorptivity.kg.SORPTIVITY_2_Hkg(Sorptivity, θ_Ini, θs, θr, σ, Ks)
-
-	# 		# 		K_θini = kunsat.kg.Se_2_KUNSAT(Se_Ini, θs, θr, σ, Ks, θs, σ)
-
-	# 		# 		ΔK = Ks - K_θini
-
-	# 		# 		Of_Hkg = abs(log10(Hkg_Sorpt) - log10(Hkg_σ))
-
-	# 		# 		Wof = quasiExact.OF_INFILT_2_HYDRO( ∑Infilt_Obs[1:N_Infilt[iZ]], infiltOutput, infiltParam, iZ, K_θini, N_Infilt, Sorptivity, T[1:N_Infilt[iZ]], ΔK, Δθ) + Of_Hkg / 10.0
-
-	# 		# 		return Wof
-	# 		# 	end # function INFILTRATION3D_2_HYDRO_σMOD
-
-	# 		# 	# OPTIMIZATION
-
-	# 		# 		Optimization = Optim.optimize(σ -> OF_Fast_η(T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ] ], Δθ, N_Infilt , infiltParam, θr, θ_Ini, σ, iT_TransStead), param.σ_Min, param.σ_Max, GoldenSection() )
-
-	# 		# 		# Values of the optimal hydraulic params
-	# 		# 		σ = Optim.minimizer(Optimization)[1]
-				
-			
-	# 		# 	Hkg_Sorpt = sorptivity.kg.SORPTIVITY_2_Hkg(Sorptivity, θ_Ini, θs, θr, σ, Ks)
-			
-	# 		# 	return σ, Hkg_Sorpt
-	# 		# end # function INFILTRATION3D_2_HYDRO_σMOD
-
-
-
-
-
-	# end # module kg
-
-
-	#= =============== VAN GENUCHTEN =============== =#
-	# module vg
-	# include("Cst.jl")
-	# include("Param.jl")
-	# include("Wrc.jl")
-	# include("Kunsat.jl")
-	# include("Sorptivity.jl")
-	# include("Stat.jl")
-	# include("Tools.jl")
-	# include("HydroRelationship.jl")
-	# using ..quasiExact
-	# using BlackBoxOptim, Optim
-	# 	export INFILTRATION3D_2_HYDRO
-
-	# 	# OPTIMIZE THE HYDRAULIC PARAMETERS FROM INFILTRATION DATA============================
-	# 	function INFILTRATION3D_2_HYDRO(T,  ∑Infilt_Obs, N_Infilt, θs, θ_Ini, infiltParam, Km, iT_TransStead, Time_TransStead, Option_Opt_N, N=1.)
-	# 		θr = 0.
-	# 		Δθ = θs - θ_Ini
-			
-	# 		# Objective function which matches observed with simulated infiltration
-	# 		function OF_Fast_η(T,  ∑Infilt_Obs, Δθ, N_Infilt, infiltParam, θr, θ_Ini, Hvg, Ks, N, Km)
-			
-	# 		 Sorptivity = sorptivity.vg.SORPTIVITY(θ_Ini, θs, θs, θr, Hvg, N, Ks, Km)
-
-	# 			Se_Ini = wrc.se.θ_2_Se(θ_Ini, θs, θr)
-			
-	# 			K_θini = kunsat.vg.Se_2_KUNSAT(Se_Ini, N, Ks, Km)
-			
-	# 			ΔK = Ks - K_θini
-
-	# 			OF_Cumul = quasiExact.OF_INFILT_2_HYDRO(N_Infilt[iZ], iT_TransStead, T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ]],Sorptivity, ΔK, K_θini, Δθ, infiltParam)
-	# 			return OF_Cumul
-	# 		end
-
-	# 		# OPTIMIZATION
-	# 		# N_Min and N_Max depends on Km
-	# 		if Km == 1
-	# 			N_Min = param.N_Km1_Min
-	# 			N_Max = param.N_Km1_Max
-	# 		elseif Km == 2
-	# 			N_Min = param.N_Km2_Min
-	# 			N_Max = param.N_Km2_Max
-	# 		end
-
-	# 		if Option_Opt_N # If Ks is not known
-	# 			Optimization = BlackBoxOptim.bboptimize(Param -> OF_Fast_η(T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ]], Δθ, N_Infilt[iZ], infiltParam, θr, θ_Ini, 10.0 ^Param[1], 10.0 ^Param[2], Param[3], Km) ; SearchRange =[ (log10(param.Hvg_Min), log10(param.Hvg_Max)), (log10(param.Ks_Min), log10(param.Ks_Max)), (N_Min, N_Max)], NumDimensions=3, TraceMode=:silent)
-	# 			# Values of the optimal hydraulic params
-	# 			Hvg = 10.0 ^(BlackBoxOptim.best_candidate(Optimization)[1])
-	# 			Ks = 10.0 ^(BlackBoxOptim.best_candidate(Optimization)[2])
-	# 			N = BlackBoxOptim.best_candidate(Optimization)[3]
-	# 		else # if N is known
-	# 			Optimization = BlackBoxOptim.bboptimize(Param -> OF_Fast_η(T[1:N_Infilt[iZ]],  ∑Infilt_Obs[1:N_Infilt[iZ]], Δθ, N_Infilt[iZ], infiltParam, θr, θ_Ini, 10.0 ^Param[1], 10.0 ^Param[2], N, Km) ; SearchRange = [ (log10(param.Hvg_Min), log10(param.Hvg_Max)), (param.Ks_Log_Min, param.Ks_Log_Max)], NumDimensions=2, TraceMode=:silent)
-	# 			# Values of the optimal hydraulic params
-	# 			Hvg = 10.0 ^ (BlackBoxOptim.best_candidate(Optimization)[1])
-	# 			Ks = 10.0 ^(BlackBoxOptim.best_candidate(Optimization)[2])  
-	# 		end
-
-	# 	 Sorptivity = sorptivity.vg.SORPTIVITY(θ_Ini, θs, θs, θr, Hvg, N, Ks, Km)
-
-	# 		Se_Ini= wrc.se.θ_2_Se(θ_Ini, θs, θr)
- 
-	# 		Kr_θini= kunsat.vg.Se_2_KUNSAT(Se_Ini, N, 1., Km)
-			
-	# 		return Ks, Kr_θini,Sorptivity, N, Hvg
-	# 	end
-	# end # module vg
 
 end # module quasiExact

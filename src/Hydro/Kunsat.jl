@@ -1,21 +1,21 @@
 module kunsat
-	import ..option, ..wrc
+	import ..wrc
 	export Ψ_2_KUNSAT, Se_2_KUNSAT, θ_2_KUNSAT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Ψ_2_KUNSAT(Ψ₁, iZ::Int64, hydroParam)
-			if option.hydro.HydroModel == :Kosugi
-				return Kunsat = kunsat.kg.Ψ_2_KUNSAT(Ψ₁, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :Vangenuchten || option.hydro.HydroModel == :VangenuchtenJules
-				return Kunsat = kunsat.vg.Ψ_2_KUNSAT(Ψ₁, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :BrooksCorey
-				return Kunsat = kunsat.bc.Ψ_2_KUNSAT(Ψ₁, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :ClappHornberger
-				return Kunsat = kunsat.ch.Ψ_2_KUNSAT(Ψ₁, iZ::Int64, hydroParam)
+		function Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				return Kunsat = kunsat.kg.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :Vangenuchten ||  optionₘ.HydroModel == :VangenuchtenJules
+				return Kunsat = kunsat.vg.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :BrooksCorey
+				return Kunsat = kunsat.bc.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :ClappHornberger
+				return Kunsat = kunsat.ch.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for Ψ_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel) model for Ψ_2_KUNSAT is not yet available")
 			end
 		end # function Ψ_2_KUNSAT
 
@@ -23,11 +23,11 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ΨSE_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function ΨSE_2_KUNSAT(Ψ₁, Se, iZ::Int64, hydroParam)
-			if option.hydro.HydroModel == :Kosugi
-				return Kunsat = kunsat.kg.ΨSE_2_KUNSAT(Ψ₁, Se, iZ::Int64, hydroParam)
+	  function ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				return Kunsat = kunsat.kg.ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for ΨSE_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel) model for ΨSE_2_KUNSAT is not yet available")
 			end
 		end # function Ψ_2_KUNSAT
 
@@ -35,19 +35,19 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Se_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
+	  function Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
 			Se = max(min(Se, 1.0), 0.0)
 
-			if option.hydro.HydroModel == :Kosugi
-				return Kunsat = kunsat.kg.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :Vangenuchten
-				return Kunsat = kunsat.vg.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :BrooksCorey
-				return Kunsat = kunsat.bc.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :ClappHornberger
-				return Kunsat = kunsat.ch.Se_2_KUNSAT(Se, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				return Kunsat = kunsat.kg.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :Vangenuchten
+				return Kunsat = kunsat.vg.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :BrooksCorey
+				return Kunsat = kunsat.bc.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :ClappHornberger
+				return Kunsat = kunsat.ch.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for Se_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel) model for Se_2_KUNSAT is not yet available")
 			end
 		end # function Se_2_KUNSAT
 	
@@ -55,13 +55,13 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Se_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function Se_2_KR(Se, iZ::Int64, hydroParam)
+	  function Se_2_KR(optionₘ, Se, iZ::Int64, hydroParam)
 			Se = max(min(Se, 1.0), 0.0)
 
-			if option.hydro.HydroModel == :Kosugi
-				return Kunsat = kunsat.kg.Se_2_KR(Se, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				return Kunsat = kunsat.kg.Se_2_KR(optionₘ, Se, iZ::Int64, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for Se_2_KR is not yet available")
+				error("$( optionₘ.HydroModel) model for Se_2_KR is not yet available")
 			end
 		end # function Se_2_KUNSAT
 
@@ -69,12 +69,12 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function θ_2_KUNSAT(θ₁, iZ::Int64, hydroParam)
-			if option.hydro.HydroModel == :Kosugi
+	  function θ_2_KUNSAT(optionₘ, θ₁, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
 				Se = wrc.θ_2_Se(θ₁, iZ, hydroParam)
-				return Kunsat = Se_2_KUNSAT(Se, iZ, hydroParam)
+				return Kunsat = Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for θ_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel) model for θ_2_KUNSAT is not yet available")
 			end
 		end # function θ_2_KUNSAT
 
@@ -82,17 +82,17 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function ∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
-			if option.hydro.HydroModel == :Kosugi
-				return ∂Kunsat = kunsat.kg.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :Vangenuchten
-				return ∂Kunsat = kunsat.vg.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :BrooksCorey
-				return ∂Kunsat = kunsat.bc.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
-			elseif option.hydro.HydroModel == :ClappHornberger
-				return ∂Kunsat = kunsat.ch.∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam)
+	  function ∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				return ∂Kunsat = kunsat.kg.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :Vangenuchten
+				return ∂Kunsat = kunsat.vg.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :BrooksCorey
+				return ∂Kunsat = kunsat.bc.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			elseif  optionₘ.HydroModel == :ClappHornberger
+				return ∂Kunsat = kunsat.ch.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for ∂K∂Ψ is not yet available")
+				error("$( optionₘ.HydroModel) model for ∂K∂Ψ is not yet available")
 			end
 		end # function ∂K∂Ψ
 
@@ -100,22 +100,22 @@ module kunsat
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function ∂K∂θ(Ψ₁, iZ::Int64, hydroParam)
-			if option.hydro.HydroModel == :Kosugi
-				return ∂Kunsat = kunsat.kg.∂K∂θ(Ψ₁, iZ::Int64, hydroParam)
+	  function ∂K∂θ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				return ∂Kunsat = kunsat.kg.∂K∂θ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(option.hydro.HydroModel) model for ∂K∂θ is not yet available")
+				error("$( optionₘ.HydroModel) model for ∂K∂θ is not yet available")
 			end
 		end
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θψ_2_K
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨ_2_KUNSAT(Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
-				if option.hydro.HydroModel == :Kosugi
-					return Kunsat = kunsat.kg.θΨ_2_KUNSAT(Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
+			function θΨ_2_KUNSAT(optionₘ, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
+				if  optionₘ.HydroModel == :Kosugi
+					return Kunsat = kunsat.kg.θΨ_2_KUNSAT(optionₘ, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
 				else
-					error("$(option.hydro.HydroModel) model for θψ_2_KUNSAT is not yet available")
+					error("$( optionₘ.HydroModel) model for θψ_2_KUNSAT is not yet available")
 				end
 
 			end  # function: θψ_2_K
@@ -127,7 +127,7 @@ module kunsat
 	#		MODULE KOSUGI
 	# =============================================================
 	module kg
-		import ..option, ..wrc, ...cst, ...param
+		import..wrc, ...cst, ...param
 		import ForwardDiff, QuadGK
 		import SpecialFunctions: erfc, erfcinv
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ, θΨ_2_KUNSAT
@@ -135,9 +135,9 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Ψ_2_KUNSAT(Ψ₁, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
+			function Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
 
-				Se = wrc.Ψ_2_SeDual(Ψ₁, iZ, hydroParam)
+				Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
 
 				KsMat = Ks * (θsMacMat - θr) / (θs - θr)			
 				Kunsat_Mat =  KsMat * √Se * (0.5 * erfc(((log(Ψ₁ / Ψm)) / σ + σ) / √2.0)) ^ 2
@@ -152,7 +152,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ΨSE_2_KUNSAT(Ψ₁, Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
+			function ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
 
 				KsMat = Ks * (θsMacMat - θr) / (θs - θr)			
 				Kunsat_Mat =  KsMat * √Se * (0.5 * erfc(((log(Ψ₁ / Ψm)) / σ + σ) / √2.0)) ^ 2
@@ -167,7 +167,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Se_2_KUNSAT(Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
+			function Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
 
 				Se = max( min(Se, 1.0), 0.0)
 
@@ -184,7 +184,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Se_2_Kr
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function Se_2_KR(Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
+			function Se_2_KR(optionₘ, Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
 
 				Se = max( min(Se, 1.0), 0.0)
 
@@ -201,11 +201,11 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂K∂Ψ(Ψ₁, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
+			function ∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ])
 				
 				ψ =fill(0.0::Float64, 1) 
 
-				∂K∂Ψ_Numerical(ψ::Vector) = Ψ_2_KUNSAT(abs(ψ[1]), iZ, hydroParam)
+				∂K∂Ψ_Numerical(ψ::Vector) = Ψ_2_KUNSAT(optionₘ, abs(ψ[1]), iZ, hydroParam)
 				
 				ψ[1] = Ψ₁
 				
@@ -222,7 +222,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂K∂θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂K∂θ(Ψ₁, Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ]) 
+			function ∂K∂θ(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ]) 
 
 				P1 = 1.0 / sqrt(2.0)
 				P2 = 0.125
@@ -244,7 +244,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		"""Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017"""
 
-			function θΨ_2_KUNSAT(Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil", θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], Rtol= 10^-8.0)
+			function θΨ_2_KUNSAT(optionₘ, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil", θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], Rtol= 10^-8.0)
 
 				# So it will be independent of the Rock Fragments
 					if θs / (1.0 - RockFragment) - θsMacMat / (1.0 - RockFragment)  ≥ param.hydro.θs_θsMacMat # Bimodal
@@ -333,16 +333,16 @@ module kunsat
 	#		MODULE VAN GENUCHTEN
 	# =============================================================
 	module vg
-		import ..option, ..wrc
+		import ..wrc
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION vg : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
+			function  Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
 				M = 1.0 - Km / N
 
-				Se = wrc.Ψ_2_SeDual(Ψ₁, iZ, hydroParam)
+				Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
 				return Kunsat = Ks * (Se^L) * ( 1.0 - (1.0 - Se ^ (1.0 / M) ) ^ M ) ^ 2.0
 			end #function Ψ_2_KUNSAT
 
@@ -350,7 +350,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION vg : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Se_2_KUNSAT(Se, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
+			function  Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
 				M = 1.0 - Km / N
 			return Kunsat = Ks * (Se.^L) * ( 1. - (1. - Se.^ (1.0 / M) ) .^ M ) .^ 2.0
 			end # function Se_2_KUNSAT
@@ -359,7 +359,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION vg : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂K∂Ψ(Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
+			function ∂K∂Ψ(optionₘ, Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψvg=hydroParam.Ψvg[iZ], N=hydroParam.N[iZ], Ks=hydroParam.Ks[iZ], Km=hydroParam.Km[iZ], L=0.5)
 				M = 1.0 - Km/N
 		
 				∂K∂Ψ = Ks * (L * (-M * (N * (1 / Ψvg) * (Ψ₁ / Ψvg) ^ (N - 1)) * (1.0 + (Ψ₁ / Ψvg) ^ N) ^ (-M - 1)) * ((1.0 + (Ψ₁ / Ψvg) ^ N) ^ -M) ^ (L - 1)) * (1.0 - (1.0 - ((1.0 + (Ψ₁ / Ψvg) ^ N) ^ -M) ^ (1.0 / M)) ^ M) ^ 2.0 + Ks *
@@ -375,13 +375,13 @@ module kunsat
 	#		MODULE BROOKS AND COOREY
 	# =============================================================
 	module bc
-		import ..option, ..wrc
+		import ..wrc
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION bc : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
+			function  Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
 				
 				M = -3.0 * λbc - 2.0
 
@@ -397,7 +397,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION bc : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Se_2_KUNSAT(Se, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
+			function  Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
 				
 				M = -3.0 * λbc - 2.0
 				return Kunsat = Ks * Se .^ M 
@@ -408,7 +408,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION bc : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂K∂Ψ(Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
+			function ∂K∂Ψ(optionₘ, Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψbc=hydroParam.Ψbc[iZ], λbc=hydroParam.λbc[iZ], Ks=hydroParam.Ks[iZ])
 				
 				M = -3.0 * λbc - 2.0
 		
@@ -424,13 +424,13 @@ module kunsat
 	#		MODULE CLAPP AND HORNBERGER
 	# =============================================================
 	module ch
-		import ..option, ..wrc
+		import ..wrc
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION ch : Ψ_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Ψ_2_KUNSAT(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
+			function  Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
 				
 				M = -3.0 * λch - 2.0
 
@@ -446,7 +446,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION ch : Se_2_KUNSAT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function  Se_2_KUNSAT(Se, iZ, hydroParam, θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψbc[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
+			function  Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam, θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψbc[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
 					
 				M = -3.0 * λch - 2.0
 				return Kunsat = Ks * Se .^ M 
@@ -457,7 +457,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION ch : ∂K∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂K∂Ψ(Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
+			function ∂K∂Ψ(optionₘ, Ψ₁, iZ, hydroParam, θs=hydroParam.θs[iZ], Ψch=hydroParam.Ψch[iZ], λch=hydroParam.λch[iZ], Ks=hydroParam.Ks[iZ])
 				
 				M = -3.0 * λch - 2.0
 		

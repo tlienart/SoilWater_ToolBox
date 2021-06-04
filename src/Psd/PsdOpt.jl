@@ -25,7 +25,7 @@ module psdOpt
 	#		MODULE: imp
 	# =============================================================
 	module imp
-		import ...param, ...stats, ...wrc, ...option, ...psdFunc, ..psdOpt
+		import ...param, ...stats, ...wrc, , ...psdFunc, ..psdOpt
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +102,7 @@ module psdOpt
 							θΨ =  Array{Float64}(undef, (N_Psd[iZ]))
 							for iRpart = 1:N_Psd[iZ]
 								# Observed data
-								θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Rpart[iZ, iRpart], iZ, hydro)
+								θΨ[iRpart] = wrc. Ψ_2_θDual(optionₘ,Ψ_Rpart[iZ, iRpart], iZ, hydro)
 							end
 
 							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
@@ -171,7 +171,7 @@ module psdOpt
 					θΨ = zeros(Float64, N_Psd)
 					for iRpart = 1:N_Psd
 						# Observed data
-						θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Rpart[iRpart], iZ, hydro)
+						θΨ[iRpart] = wrc. Ψ_2_θDual(optionₘ,Ψ_Rpart[iRpart], iZ, hydro)
 					end
 
 					Of = stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)
@@ -185,7 +185,7 @@ module psdOpt
 	#		MODULE: chang
 	# =============================================================
 	module chang
-	 	import ...param, ...stats, ...wrc, ...option, ....psdFunc, ..psdOpt
+	 	import ...param, ...stats, ...wrc, , ....psdFunc, ..psdOpt
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,7 +237,7 @@ module psdOpt
 							θΨ = zeros(Float64, N_Psd[iZ])
 							for iRpart = 1:N_Psd[iZ]
 								# Observed data
-								θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Rpart[iZ, iRpart], iZ, hydro)
+								θΨ[iRpart] = wrc. Ψ_2_θDual(optionₘ,Ψ_Rpart[iZ, iRpart], iZ, hydro)
 							end
 
 							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
@@ -279,7 +279,7 @@ module psdOpt
 					θΨ = zeros(Float64, N_Psd)
 					for iRpart = 1:N_Psd
 						# Observed data
-						θΨ[iRpart] = wrc.Ψ_2_θDual(Ψ_Rpart[iRpart], iZ, hydro)
+						θΨ[iRpart] = wrc. Ψ_2_θDual(optionₘ,Ψ_Rpart[iRpart], iZ, hydro)
 					end
 
 					Of = stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)

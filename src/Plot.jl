@@ -8,7 +8,7 @@ module plot
 	#		MODULE: lab
 	# =============================================================
 	module lab
-		import ...cst, ...hydroRelation, ...hydroStruct, ...kunsat, ...option, ...param, ...path, ...reading, ...wrc, ...ΨminΨmax
+		import ...cst, ...hydroRelation, ...hydroStruct, ...kunsat, , ...param, ...path, ...reading, ...wrc, ...ΨminΨmax
 		using Plots.PlotMeasures, LaTeXStrings
 		using Suppressor
 		# using Plots; pgfplotsx()
@@ -40,8 +40,8 @@ module plot
 
 				# Simulated 
 					for iΨ = 1:N_Se
-						θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydro)
-						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydro)
+						θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
+						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
 					end # iΨ
 
 				# == Title == 
@@ -169,7 +169,7 @@ module plot
       #		module: makie
       # =============================================================
       module makie
-         import ..cst, ..kunsat, ..option, ..param, ..path, ..wrc
+         import ..cst, ..kunsat, , ..param, ..path, ..wrc
 
          # using GLMakie
          # using CairoMakie
@@ -197,9 +197,9 @@ module plot
 
                # Simulated 
                   for iΨ = 1:N_Se
-                     θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydro)
+                     θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
 
-                     Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydro)
+                     Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
                   end # iΨ
 
                # == Title == 
@@ -316,7 +316,7 @@ module plot
 	# =============================================================
 	module psd
 		using Plots, Plots.PlotMeasures, LaTeXStrings
-		import ...wrc, ...kunsat, ...path, ...cst, ...param, ...option, ...psdThetar, ...psdFunc, ...bestFunc
+		import ...wrc, ...kunsat, ...path, ...cst, ...param, , ...psdThetar, ...psdFunc, ...bestFunc
 		export PLOT_θr, PLOT_IMP_MODEL, PLOT_PSD_θΨ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -477,7 +477,7 @@ module plot
 
 				# Simulated 
 					for iΨ = 1:N_Se
-						θ_θΨ_Psd[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydroPsd)
+						θ_θΨ_Psd[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroPsd)
 					end # iΨ 
 
 				# Plot_θ_Ψ: Psd model fitting for e.g. Kosugi model
@@ -531,7 +531,7 @@ module plot
 	#		MODULE: infilt
 	# =============================================================
 	module infilt
-		import ...wrc, ...kunsat, ...path, ...cst, ...param, ...option, ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
+		import ...wrc, ...kunsat, ...path, ...cst, ...param, , ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
 		using Plots, Plots.PlotMeasures, LaTeXStrings
 		# import GRUtils
 		export  PLOT_∑INFILT, PPLOT_∑INFILT_θΨ
@@ -685,15 +685,15 @@ module plot
 				end #  option.hydro.KunsatΨ
 
 				for iΨ = 1:N_Se
-					θ_Infilt[iΨ] = wrc.Ψ_2_θDual(Ψ[iΨ], iZ, hydroInfilt)
+					θ_Infilt[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydroInfilt)
 
-					Kunsat_Infilt[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ[iΨ], iZ, hydroInfilt)
+					Kunsat_Infilt[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydroInfilt)
 
 					if option.globalopt.θΨ ≠ :No
-						θ_Obs[iΨ] = wrc.Ψ_2_θDual(Ψ[iΨ], iZ, hydro)
+						θ_Obs[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydro)
 
 						if option.globalopt.θΨ ≠ :No && option.hydro.KunsatΨ
-							Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ[iΨ], iZ, hydro)
+							Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydro)
 						end # option.hydro.KunsatΨ		
 					end # option.globalopt.θΨ ≠ :No
 
@@ -773,7 +773,7 @@ module plot
 						θ_Ini[iSeIni] = wrc.Se_2_θ(Se_Ini[iSeIni], iZ, hydro)
 
 					# Computing Sorptivity
-						Sorptivity[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], iZ, hydro)  		
+						Sorptivity[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], iZ, hydro, option, optionₘ)  		
 
 					# PLOTTING ====================
 						X = Se_Ini[1:N_SeIni]                           

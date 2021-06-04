@@ -2,8 +2,7 @@
 #		module: plotHypix
 # =============================================================
 module plotHypix
-
-	import  ..cst, ..kunsat, ..option, ..param, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
+	import  ..cst, ..kunsat, ..param, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
 	import Dates: value, DateTime
 	using PGFPlots
 
@@ -37,13 +36,13 @@ module plotHypix
 			
 			for iΨ = 1:N_Se
 				if Ψ_Max_Horizon[iZ] ≥ Ψplot[iΨ] ≥ Ψ_Min_Horizon[iZ]
-					θplot[iΨ]    = wrc.Ψ_2_θDual(Ψplot[iΨ], iZ, hydroHorizon)
+					θplot[iΨ]    = wrc. Ψ_2_θDual(optionₘ,Ψplot[iΨ], iZ, hydroHorizon)
 					
-					Kplot[iΨ]    = kunsat.Ψ_2_KUNSAT(Ψplot[iΨ], iZ, hydroHorizon)
+					Kplot[iΨ]    = kunsat.Ψ_2_KUNSAT(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 					
-					∂θ∂Ψplot[iΨ] = wrc.∂θ∂Ψ(Ψplot[iΨ], iZ, hydroHorizon)
+					∂θ∂Ψplot[iΨ] = wrc.∂θ∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 
-					∂K∂Ψplot[iΨ] = kunsat.∂K∂Ψ(Ψplot[iΨ], iZ, hydroHorizon)
+					∂K∂Ψplot[iΨ] = kunsat.∂K∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 				else
 					θplot[iΨ]    = NaN
 					
@@ -150,7 +149,7 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			module plots
-			import ...sorptivity, ..wrc, ..cst, ...option, ..param, ...readHypix
+			import ...sorptivity, ..wrc, ..cst, , ..param, ...readHypix
 			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
@@ -173,7 +172,7 @@ module plotHypix
 					for iSeIni=1:N_SeIni
 						θ_Ini[iSeIni] = wrc.Se_2_θ(Se_Ini[iSeIni], 1, hydro)
 
-						Sorptivity_Mod[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], 1, hydro) 
+						Sorptivity_Mod[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], 1, hydro, option, optionₘ) 
 					end
 					
 					# PLOTTING ====================	

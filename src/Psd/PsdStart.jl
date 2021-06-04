@@ -1,5 +1,5 @@
 module psdStart
-	import ..option, ..param, ..stats, ..psdInitialize, ..psdOpt, ..psdFunc
+	import ..param, ..stats, ..psdInitialize, ..psdOpt, ..psdFunc
 
 	# ======================================================================================
 	#          PSD_START Slow initialization

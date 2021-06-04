@@ -2,7 +2,7 @@
 #		MODULE: pathHypix
 # =============================================================
 module pathHypix
-	import ..option, ..sitename
+	import ..sitename
 	import DelimitedFiles
 
 	export PATHHYPIX
@@ -58,7 +58,7 @@ module pathHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PATHHYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PATHHYPIX(iSim)	
+		function PATHHYPIX(iSim, option)	
 			# INPUT NAME OF FILE
 				ProjectName_Hypix = "JULES" # "JULES"; "LYSIMETERS" 
 				
@@ -125,10 +125,6 @@ module pathHypix
 					Home = dirname(Home0)
 					Home = dirname(Home)
 					Home = Home * "/data/Private/"
-
-
-
-					# Home = replace(Home2,"Hypix" => "" )
 
 
 				# HYPIX INPUT JULES ===

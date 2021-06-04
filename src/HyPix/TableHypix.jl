@@ -183,7 +183,7 @@ module tableHypix
 				θ_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
 						Ψ_Mod =param.hyPix.ploting.θΨ_Table[iΨ]
-						θ_Mod[iZ, iΨ] = wrc.Ψ_2_θDual(Ψ_Mod, iZ, hydroHorizon)
+						θ_Mod[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Mod, iZ, hydroHorizon)
 				end # iZ
 
 			# Concatenating the 2 matrices
@@ -226,7 +226,7 @@ module tableHypix
 				K_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
 						Ψ_Mod =param.hyPix.ploting.θΨ_Table[iΨ]
-						K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_CmH
+						K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_CmH
 				end # iZ
 
 			# Concatenating the 2 matrices

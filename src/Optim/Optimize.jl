@@ -2,15 +2,13 @@
 #		MODULE: optimize
 # =============================================================
  module optimize
-
-   import ..option
    export SEARCHRANGE
    
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SEARCHRANGE
 	#		Required by BlackBoxOptim
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function SEARCHRANGE(optim)
+      function SEARCHRANGE(optionₘ, optim)
          ParamOpt_Min₂ = copy(optim.ParamOpt_Min)
          ParamOpt_Max₂ = copy(optim.ParamOpt_Max)
 
@@ -23,7 +21,7 @@
          end
 
       # Making sure that for constrained optimisation Ψm is between 0 & 1
-         if (option.hydro.σ_2_Ψm==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
+         if (optionₘ.σ_2_Ψm==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
             iψm = findfirst(isequal("Ψm"), optim.ParamOpt)[1]
 
             ParamOpt_Min₂[iψm] = 0.0

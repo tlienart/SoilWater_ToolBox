@@ -1,20 +1,18 @@
 module climate
 	import Dates: value, DateTime
-	import ..option
-
 	export CLIMATE
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :   CLIMATE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function CLIMATE(clim)
+		function CLIMATE(clim, option)
 
 			fill(0.0::Float64, clim.N_Climate)
 
-         ∑Pr_Climate      = fill(0.0::Float64, clim.N_Climate)
-         ∑Pet_Climate	  = fill(0.0::Float64, clim.N_Climate)
-         ∑T_Climate       = fill(0.0::Float64, clim.N_Climate)
-         Temp             = fill(0.0::Float64, clim.N_Climate)
+			∑Pr_Climate      = fill(0.0::Float64, clim.N_Climate)
+			∑Pet_Climate	  = fill(0.0::Float64, clim.N_Climate)
+			∑T_Climate       = fill(0.0::Float64, clim.N_Climate)
+			Temp             = fill(0.0::Float64, clim.N_Climate)
 
 			# Computing Pr, PotEvap, Temp in the correct format
 	 		Start_Date = clim.Date[1]

@@ -2,8 +2,7 @@
 #		module: plotSmap
 # =============================================================
 module plotSmap
-
-   import ..cst, ..hydroStruct, ..kunsat, ..option, ..param, ..path, ..reading, ..wrc
+   import ..cst, ..hydroStruct, ..kunsat, ..param, ..path, ..reading, ..wrc
    using Plots.PlotMeasures, LaTeXStrings
    using Suppressor
    using Plots; pgfplotsx
@@ -36,9 +35,9 @@ module plotSmap
                hydroParam2.θsMacMat[iZ] = hydroParam.θsMacMat[iZ] * (1.0 - RockFragment[iRF])
                hydroParam2.θr[iZ] = hydroParam.θr[iZ] * (1.0 - RockFragment[iRF])
 
-               Kunsat_Sim[iRF] = kunsat.θΨ_2_KUNSAT(1.0, iZ, hydroParam2, RockFragment[iRF]; TopsoilSubsoil="Topsoil") * cst.MmS_2_CmH 
+               Kunsat_Sim[iRF] = kunsat.θΨ_2_KUNSAT(optionₘ, optionₘ, 1.0, iZ, hydroParam2, RockFragment[iRF]; TopsoilSubsoil="Topsoil") * cst.MmS_2_CmH 
 
-               Kunsat_PeckWatson[iRF] =kunsat.θΨ_2_KUNSAT(1.0, iZ, hydroParam, 0.0; TopsoilSubsoil="Topsoil") * (2.0 *  (1.0 - RockFragment[iRF]) /  (2.0 + RockFragment[iRF])) * cst.MmS_2_CmH
+               Kunsat_PeckWatson[iRF] =kunsat.θΨ_2_KUNSAT(optionₘ, optionₘ, 1.0, iZ, hydroParam, 0.0; TopsoilSubsoil="Topsoil") * (2.0 *  (1.0 - RockFragment[iRF]) /  (2.0 + RockFragment[iRF])) * cst.MmS_2_CmH
             end
 
             Label= smap.Soilname[iZ] * "_" * string(smap.Depth[iZ])
@@ -86,13 +85,13 @@ module plotSmap
 
             # Simulated 
                for iΨ = 1:N_Se
-                  θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydro)
+                  θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
 
                   if Flag_OtherData
-                     θ_OtherData[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydroData)
+                     θ_OtherData[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroData)
                   end
 
-                  Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydro)
+                  Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
                end # iΨ
 
             # == Title == 
@@ -196,7 +195,7 @@ module plotSmap
       #		module: makie
       # =============================================================
       module makie
-         import ..cst, ..hydroStruct, ..kunsat, ..option, ..param, ..path, ..reading, ..wrc, ...readSmap
+         import ..cst, ..hydroStruct, ..kunsat, ..param, ..path, ..reading, ..wrc, ...readSmap
          using Makie
          using CairoMakie
 
@@ -260,27 +259,27 @@ module plotSmap
                # Simulated 
                   for iΨ = 1:N_Se
                      option.hydro.HydroModel = :Vangenuchten
-                      θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydro)
-                      Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydro)
+                      θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
+                      Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
 
                      if Flag_OtherData1
                         # ClappHornberger model Smap_Hydro
                         option.hydro.HydroModel = :ClappHornberger
-                           θ_OtherData[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydroData)
+                           θ_OtherData[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroData)
                            option.hydro.HydroModel = :ClappHornberger
-                           Kunsat_OtherData[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydroData)
+                           Kunsat_OtherData[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydroData)
 
                         # ClappHornberger Loam
                         option.hydro.HydroModel = :ClappHornberger
-                           θ_OtherData2[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydroData2)
+                           θ_OtherData2[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroData2)
                             option.hydro.HydroModel = :ClappHornberger
-                           Kunsat_OtherData2[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydroData2)
+                           Kunsat_OtherData2[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydroData2)
           
                         # VanGenuchten_Jules
                         option.hydro.HydroModel = :VangenuchtenJules
-                         θ_OtherData3[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydroData3)
+                         θ_OtherData3[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroData3)
                          option.hydro.HydroModel = :VangenuchtenJules
-                        Kunsat_OtherData3[iΨ] =  kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydroData3)
+                        Kunsat_OtherData3[iΨ] =  kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydroData3)
 
                          θobs₀ =[ [ 0.456,	0.35,	0.28,	0.16],
                         [0.4465,	0.32,	0.25,	0.15],
@@ -292,10 +291,10 @@ module plotSmap
                          θobs = θobs₀[iZ,:][1] 
                      else
                          option.hydro.HydroModel = :VangenuchtenJules
-                         θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_Sim[iΨ], iZ, hydro)
+                         θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
 
                          option.hydro.HydroModel = :VangenuchtenJules
-                        Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(Ψ_Sim[iΨ], iZ, hydro)
+                        Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
                      end
                   end # iΨ
 

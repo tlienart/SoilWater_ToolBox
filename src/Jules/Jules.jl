@@ -2,7 +2,7 @@
 #		module: jules joseph2
 # =============================================================
 module jules
-   import ..option, ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc, ..pathHypix
+   import ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc, ..pathHypix
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
    export READ_JULES_SITES
 

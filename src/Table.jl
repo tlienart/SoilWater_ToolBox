@@ -62,7 +62,7 @@ module table
 		#		FUNCTION : TABLE_θΨK
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_θΨ(hydro, Id_Select, N_SoilSelect, Path, Ψ_Table; Orientation="Horizontal")
+			function TABLE_EXTRAPOINTS_θΨ(optionₘ, hydro, Id_Select, N_SoilSelect, Path, Ψ_Table; Orientation="Horizontal")
 				println("    ~  $(Path) ~")
 
 				N_Ψ = Int64(length(Ψ_Table))
@@ -82,7 +82,7 @@ module table
 					for iZ=1:N_SoilSelect
 						for iΨ =1:N_Ψ
 							Ψ₂ = Ψ_Table[iΨ]
-							θ₂[iZ, iΨ] = wrc.Ψ_2_θDual(Ψ₂, iZ, hydro)
+							θ₂[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
 						end # iΨ
 					end # iZ
 
@@ -100,7 +100,7 @@ module table
 						for iΨ =1:N_Ψ
 							Id₂[iCount] = Id_Select[iZ]
 							Ψ₂[iCount] = Ψ_Table[iΨ]
-							θ₂[iCount] = wrc.Ψ_2_θDual(Ψ₂[iCount], iZ, hydro)
+							θ₂[iCount] = wrc. Ψ_2_θDual(optionₘ,Ψ₂[iCount], iZ, hydro)
 	
 							iCount+=1
 						end # iΨ
@@ -122,7 +122,7 @@ module table
 		#		FUNCTION : TABLE_EXTRAPOINTS_K
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_Kθ(hydroParam, Id_Select, K_Table, KunsatModel_Lab, N_SoilSelect::Int64, Path::String)
+			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, Id_Select, K_Table, KunsatModel_Lab, N_SoilSelect::Int64, Path::String)
 				println("    ~  $(Path) ~")
 
 				N_K = Int64(length(K_Table))
@@ -143,7 +143,7 @@ module table
 
 						Id₂[iCount] = Id_Select[iZ]
 						Ψ₂[iCount] = K_Table[iK]
-						Kunsat₂[iCount] = kunsat.Ψ_2_KUNSAT(Ψ₂[iCount], iZ, hydroParam₂)
+						Kunsat₂[iCount] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ₂[iCount], iZ, hydroParam₂)
 
 						iCount+=1
 					end # iΨ
@@ -232,7 +232,7 @@ module table
 					for iZ=1:N_SoilSelect
 						for iΨ =1:N_Ψ
 							Ψ = param.psd.Ψ_Table[iΨ]
-							θ[iZ, iΨ] = wrc.Ψ_2_θDual(Ψ, iZ, hydroPsd)
+							θ[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ, iZ, hydroPsd)
 						end # iΨ
 					end # iZ
 

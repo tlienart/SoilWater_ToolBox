@@ -2,7 +2,7 @@
 #		MODULE: bestFunc
 # =============================================================
 module bestFunc
-	import ..option, ..sorptivity, ..wrc, ..kunsat, ..option
+	import ..sorptivity, ..wrc, ..kunsat
 	export  BEST_UNIVERSAL_START, CONVERT_3D_2_1D, CONVERT_1D_2_3D
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -13,9 +13,9 @@ module bestFunc
 			# Initializing
 				Se_Ini = wrc.θ_2_Se(θ_Ini, iZ, hydroInfilt)
 
-				Kr_θini = (kunsat.Se_2_KUNSAT(Se_Ini, iZ, hydroInfilt)) / hydroInfilt.Ks[iZ]
+				Kr_θini = (kunsat.Se_2_KUNSAT(optionₘ, Se_Ini, iZ, hydroInfilt)) / hydroInfilt.Ks[iZ]
 
-				Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt)
+				Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, optionₘ)
 
 				A = bestFunc.A(θ_Ini, hydroInfilt.θs[iZ], iZ, infiltParam)
 
@@ -105,7 +105,7 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T; θ_Ini= infiltParam.θ_Ini[iZ])
 				
-			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt)
+			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, optionₘ)
 
 			A = bestFunc.A(θ_Ini, hydroInfilt.θs[iZ], iZ, infiltParam)
 
@@ -122,7 +122,7 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function CONVERT_1D_2_3D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T; θ_Ini= infiltParam.θ_Ini[iZ])
 
-			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt)
+			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, optionₘ)
 
 			A = bestFunc.A(θ_Ini, hydroInfilt.θs[iZ], iZ, infiltParam)
 

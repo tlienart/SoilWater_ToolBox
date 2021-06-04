@@ -2,7 +2,7 @@
 #		MODULE: hydroStruct
 # =============================================================
 module hydroStruct
-	import ..option, ..tool
+	import ..tool
 	export HYDROSTRUCT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,11 +133,10 @@ module hydroStruct
          Rmse_KΨ :: 	Vector{Float64}
 		end
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROSTRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROSTRUCT(N_SoilSelect::Int64) # <>=<>=<>=<>=<>=<>=<>=<>=<>
+		function HYDROSTRUCT(optionₘ, N_SoilSelect::Int64)
 			# For all models
          θs         = fill(0.0::Float64, N_SoilSelect)
          θr         = fill(0.0::Float64, N_SoilSelect)
@@ -159,7 +158,7 @@ module hydroStruct
 			Φ_Max      = fill(0.0::Float64, N_SoilSelect)
 			So_Max     = fill(0.0::Float64, N_SoilSelect)
 			
-			if option.hydro.HydroModel == :Kosugi # <>=<>=<>=<>=<>
+			if optionₘ.HydroModel == :Kosugi # <>=<>=<>=<>=<>
 				σ              = fill(0.0::Float64, N_SoilSelect)
             Ψm             = fill(0.0::Float64, N_SoilSelect)
             σMac           = fill(0.0::Float64, N_SoilSelect)
@@ -182,7 +181,7 @@ module hydroStruct
 				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMacMat_ƞ, σMac, ΨmMac, So, θsMacMat, Φ, θs_Min, θr_Min, Ks_Min, σ_Min,Ψm_Min, θsMacMat_ƞ_Min, σMac_Min, ΨmMac_Min, So_Min, θsMacMat_Min, Φ_Min, θs_Max, θr_Max, Ks_Max, σ_Max, Ψm_Max, θsMacMat_ƞ_Max, σMac_Max, ΨmMac_Max, So_Max, θsMacMat_Max, Φ_Max)
 				return hydro
 
-			elseif option.hydro.HydroModel == :Vangenuchten || option.hydro.HydroModel == :VangenuchtenJules # <>=<>=<>=<>=<>
+			elseif optionₘ.HydroModel == :Vangenuchten || optionₘ.HydroModel == :VangenuchtenJules # <>=<>=<>=<>=<>
             N       = fill(0.0::Float64, N_SoilSelect)
             Ψvg     = fill(0.0::Float64, N_SoilSelect)
             Km      = fill(0.0::Float64, N_SoilSelect)
@@ -205,7 +204,7 @@ module hydroStruct
 				return hydro
 
 
-			elseif option.hydro.HydroModel == :BrooksCorey # <>=<>=<>=<>=<>=<>
+			elseif optionₘ.HydroModel == :BrooksCorey # <>=<>=<>=<>=<>=<>
             λbc     = fill(0.0::Float64, N_SoilSelect)
             Ψbc     = fill(0.0::Float64, N_SoilSelect)
             λbc_Min = fill(0.0::Float64, N_SoilSelect)
@@ -217,7 +216,7 @@ module hydroStruct
 				hydro = BROOKS_COREY(θs, θr, λbc, Ψbc, Ks, Φ, Ψga, θs_Min, θr_Min, λbc_Min, Ψbc_Min, Ks_Min, Φ_Min, θs_Max, θr_Max, λbc_Max, Ψbc_Max, Ks_Max, Φ_Max)
 				return hydro
 
-			elseif option.hydro.HydroModel == :ClappHornberger # <>=<>=<>=<>=<>=<>
+			elseif optionₘ.HydroModel == :ClappHornberger # <>=<>=<>=<>=<>=<>
 				λch = fill(0.0::Float64, N_SoilSelect)
 				Ψch  = fill(0.0::Float64, N_SoilSelect)
             Ψga  = fill(0.0::Float64, N_SoilSelect)
@@ -230,7 +229,7 @@ module hydroStruct
 
 				hydro = CLAPP_HORNBERGER(θs, θr, λch, Ψch, Ks, Φ, Ψga,  θs_Min, θr_Min, λch_Min, Ψch_Min, Ks_Min, Φ_Max, θs_Max, θr_Max, λch_Max, Ψch_Max, Ks_Max, Φ_Max)
 				return hydro
-			end # option.hydro.HydroModel
+			end # optionₘ.HydroModel
 
 		end #  function HYDROSTRUCT
 

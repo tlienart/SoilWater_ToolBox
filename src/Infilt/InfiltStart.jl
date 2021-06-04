@@ -2,7 +2,7 @@
 #		MODULE: infiltration
 # =============================================================
 module infiltStart
-	import ..option, ..sorptivity, ..param, ..wrc, ..kunsat, ..option, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
+	import ..sorptivity, ..param, ..wrc, ..kunsat, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
 
@@ -77,7 +77,7 @@ module infiltStart
 
 
 			# OUTPUTS RUNNING THE OPTIMAL INFILTRATION
-				infiltOutput.Sorptivity[iZ] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt) 
+				infiltOutput.Sorptivity[iZ] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, optionₘ) 
 
 				if option.infilt.Model == :Best_Univ 
 					∑Infilt_3D, T_TransStead = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T)

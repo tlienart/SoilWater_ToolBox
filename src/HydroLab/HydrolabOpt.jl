@@ -2,15 +2,14 @@
 #		module: hypixOpt
 # =============================================================
 module hydrolabOpt
-
-	import ..ofHydrolab, ..option, ..param, ..tool, ..optimize, ..hydroRelation, ..psdThetar
+	import ..ofHydrolab, ..param, ..tool, ..optimize, ..hydroRelation, ..psdThetar
 	using BlackBoxOptim, Statistics
 	export HYDROLABOPT_START
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIXOPT_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROLABOPT_START(;N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ=[0], Ψ_KΨ=[0], N_KΨ=1, hydro, hydroOther, optionHydro, optim)
+	function HYDROLABOPT_START(;N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ=[0], Ψ_KΨ=[0], N_KΨ=1, hydro, hydroOther, option, optionₘ, optim)
 
 		for iZ = 1:N_SoilSelect
 			# CORRECTION OF THE FEASIBLE RANGE ~~~
@@ -26,7 +25,7 @@ module hydrolabOpt
 					iθr = findfirst(isequal("θr"), optim.ParamOpt)[1]
 					optim.ParamOpt_Max[iθr] = hydro.θr_Max[iZ]
 
-				elseif ("θr" ∉ optim.ParamOpt) && (optionHydro.θrOpt==:ParamPsd) && (option.globalopt.Psd) # Derive θr frpm PSD
+				elseif ("θr" ∉ optim.ParamOpt) && (optionₘ.θrOpt==:ParamPsd) && (option.globalopt.Psd) # Derive θr frpm PSD
 					hydro.θr[iZ] = min(psdThetar.PSD_2_θr_FUNC(∑Psd, hydro, iZ), θ_Min-0.005)
 
 				end # if ("θr" ∈ optim.ParamOpt)
@@ -53,7 +52,7 @@ module hydrolabOpt
 						hydro.θs[iZ] = θ_Max
 						hydro.Φ[iZ] = hydro.θs[iZ] / 0.95
 
-				elseif  ("θs" ∉ optim.ParamOpt) && (optionHydro.θsOpt == :Φ) # <>=<>=<>=<>=<>
+				elseif  ("θs" ∉ optim.ParamOpt) && (optionₘ.θsOpt == :Φ) # <>=<>=<>=<>=<>
 						if hydro.Φ[iZ] * 0.95 > θ_Max + 0.005
 							hydro.θs[iZ] = hydro.Φ[iZ] * 0.95
 						elseif hydro.Φ[iZ] * 0.965 > θ_Max + 0.005
@@ -62,7 +61,7 @@ module hydrolabOpt
 							hydro.θs[iZ] = max(hydro.Φ[iZ] - 0.005, hydro.θs_Max[iZ] + 0.005)
 						end # hydro.Φ[iZ] * 0.95 > hydro.θs_Min[iZ]
 
-				elseif ("θs" ∈ optim.ParamOpt) && (option.hydro.θs_MinFromData )# <>=<>=<>=<>=<>
+				elseif ("θs" ∈ optim.ParamOpt) && (optionₘ.θs_MinFromData )# <>=<>=<>=<>=<>
 					hydro.θs_Min[iZ] = θ_Max + 0.005
 					hydro.θs_Max[iZ] = max(θ_Max + 0.25, hydro.θs_Max[iZ])
 
@@ -71,7 +70,7 @@ module hydrolabOpt
 						optim.ParamOpt_Min[iθs] = hydro.θs_Min[iZ]
 						optim.ParamOpt_Max[iθs] = hydro.θs_Max[iZ]
 		
-				end # optionHydro.θsOpt
+				end # optionₘ.θsOpt
 				
 			# CORRECTING Ks
 
@@ -91,7 +90,7 @@ module hydrolabOpt
 						iKs = findfirst(isequal("Ks"), optim.ParamOpt)[1]
 						optim.ParamOpt_Max[iKs] = hydro.Ks_Max[iZ]
 
-				elseif ("Ks" ∈ optim.ParamOpt) && option.hydro.Ks_MinMaxFromData
+				elseif ("Ks" ∈ optim.ParamOpt) && optionₘ.Ks_MinMaxFromData
 					Ks_max = maximum(K_KΨ[iZ, 1:N_KΨ[iZ]])
 					hydro.Ks_Min[iZ] = Ks_max # Greatest measure of Kunsat
 					hydro.Ks_Max[iZ] = max(hydro.Ks_Min[iZ] + 0.01, hydro.Ks_Max[iZ])
@@ -101,33 +100,33 @@ module hydrolabOpt
 						optim.ParamOpt_Min[iKs] = hydro.Ks_Min[iZ]
 						optim.ParamOpt_Max[iKs] = hydro.Ks_Max[iZ]
 
-				elseif ("Ks" ∉ optim.ParamOpt) && (optionHydro.KsOpt == :Data) && (option.hydro.KunsatΨ)
+				elseif ("Ks" ∉ optim.ParamOpt) && (optionₘ.KsOpt == :Data) && (optionₘ.KunsatΨ)
 					Ks_max = maximum(K_KΨ[iZ, 1:N_KΨ[iZ]])
 					hydro.Ks[iZ] = Ks_max
 
 				end # "Ks" ∈ optim.ParamOpt
 			
 			# Updated searchrange
-				SearchRange = optimize.SEARCHRANGE(optim)
+				SearchRange = optimize.SEARCHRANGE(optionₘ, optim)
 
 			# OPTIMIZATION: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				Optimization = BlackBoxOptim.bboptimize(X -> hydrolabOpt.OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionHydro, θ_θΨ, Ψ_KΨ, Ψ_θΨ); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent)
+				Optimization = BlackBoxOptim.bboptimize(X -> hydrolabOpt.OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent)
 
 				X = BlackBoxOptim.best_candidate(Optimization)
 
-				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionHydro, X)
+				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
 
 				# STATISTICS
-					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionₘ) 
 
-					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionₘ) 
 
 					hydroOther.Nse[iZ]    = 1.0 - Of
 					hydroOther.Nse_θΨ[iZ] = 1.0 - Of_θΨ
 
-					if optionHydro.KunsatΨ
+					if optionₘ.KunsatΨ
 						hydroOther.Nse_KΨ[iZ] = 1.0 - Of_Kunsat
 					end
 		end # for iZ = 1:N_SoilSelect
@@ -140,7 +139,7 @@ module hydrolabOpt
 			Rmse_θΨ_Aver = Statistics.mean(hydroOther.Rmse_θΨ[1:N_SoilSelect])
 			Rmse_KΨ_Aver = Statistics.mean(hydroOther.Rmse_KΨ[1:N_SoilSelect])
 				
-			if option.hydro.KunsatΨ
+			if optionₘ.KunsatΨ
 				Nse_Aver = (Nse_θΨ_Aver + Nse_KΨ_Aver) / 2.0
 			else
 				Nse_Aver = Nse_θΨ_Aver
@@ -158,13 +157,13 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionHydro, θ_θΨ, Ψ_KΨ, Ψ_θΨ)
+		function OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ)
 
 			# New optimized param which are put into the matching veg or hydro parameters
-				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionHydro, X)
+				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
 		
 			# Weighted Objective Function
-				Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+				Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionₘ) 
 				
 		return Of
 		end  # function: OF_HYPIX
@@ -173,11 +172,11 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PARAM_2_hydro(hydro, iZ, optim, optionHydro, X)
+	function PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
 		
 		for iParam = 1:optim.NparamOpt
 			# Determening if parameters are Log transformed
-				if (optim.ParamOpt_LogTransform[iParam]) && !(optim.ParamOpt[iParam]=="Ψm" && optionHydro.σ_2_Ψm == :Constrained)
+				if (optim.ParamOpt_LogTransform[iParam]) && !(optim.ParamOpt[iParam]=="Ψm" && optionₘ.σ_2_Ψm == :Constrained)
 					Paramₐ = expm1(X[iParam])
 				else
 					Paramₐ = X[iParam]
@@ -197,17 +196,17 @@ module hydrolabOpt
 		# ==================== SPECIAL CASE ====================
 
 		# RELATIONSHIP BETWEEN σ AND Ψm
-		if (optionHydro.σ_2_Ψm ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
-			hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, option.hydro; Pσ=3.0)
-		end # option.hydro.σ_2_Ψm ≠ :No
+		if (optionₘ.σ_2_Ψm ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
+			hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ; Pσ=3.0)
+		end # optionₘ.σ_2_Ψm ≠ :No
 
 		#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
-		if option.hydro.θrOpt==:σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
+		if optionₘ.θrOpt==:σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
 			hydro.θr[iZ] = hydroRelation.σ_2_θr(hydro, iZ)
 		end
 
 		# Converting θsMacMat_ƞ -> θsMacMat
-		if  optionHydro.HydroModel == :Kosugi
+		if  optionₘ.HydroModel == :Kosugi
 			hydro.θsMacMat[iZ] = hydro.θsMacMat_ƞ[iZ] * hydro.θs[iZ]
 		end
 

@@ -53,7 +53,7 @@ module signature
 				Ψ_Obs = Matrix{Float64}(undef, N_∑T_Plot, obsθ.Ndepth) # Reserving memory
 
 				for iT=1:N_∑T_Plot, iZ=1:obsθ.Ndepth
-					Ψ_Obs[iT,iZ] = wrc.θ_2_ΨDual(min.( max.(obsθ.θobs[iT,iZ], hydroHorizon.θr[iZ]), hydroHorizon.θs[iZ]), iZ, hydroHorizon)
+					Ψ_Obs[iT,iZ] = wrc.θ_2_ΨDual(optionₘ, min.( max.(obsθ.θobs[iT,iZ], hydroHorizon.θr[iZ]), hydroHorizon.θs[iZ]), iZ, hydroHorizon)
 				end # for iT iZ
 
 				Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim = SIGNATURE_Ψ(obsθ, N_∑T_Plot, veg, ΔRootDensity_Plot, ΔT_Plot, Ψ_Obs, Ψ_SimReduced)

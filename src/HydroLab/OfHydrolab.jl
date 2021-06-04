@@ -1,11 +1,11 @@
 module ofHydrolab
-	import ..option, ..stats, ..wrc, ..kunsat
+	import..stats, ..wrc, ..kunsat
 	export  OF_WRC_KUNSAT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_WRC_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_WRC_KUNSAT(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro; Wof = 0.5) 
+		function OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro; Wof = 0.5) 
 
 			# === OF θΨ ====
 				θ_Obs = Array{Float64}(undef, N_θΨ[iZ])
@@ -13,7 +13,7 @@ module ofHydrolab
 
 				for iΨ = 1:N_θΨ[iZ]
 					θ_Obs[iΨ] = θ_θΨ[iZ,iΨ]
-					θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_θΨ[iZ,iΨ], iZ, hydro)
+					θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,  Ψ_θΨ[iZ,iΨ], iZ, hydro)
 				end # for iΨ = 1:N_θΨ[iZ]
 
 				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨ[iZ]], θ_Sim[1:N_θΨ[iZ]])
@@ -33,7 +33,7 @@ module ofHydrolab
 				for iΨ = iStart:N_KΨ[iZ]
 					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨ[iZ,iΨ])
 						
-					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(Ψ_KΨ[iZ,iΨ], iZ, hydro))
+					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨ[iZ,iΨ], iZ, hydro))
 				end # for iΨ = 1:N_KΨ[iZ]
 
 				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln[iStart:N_KΨ[iZ]], Kunsat_Sim_Ln[iStart:N_KΨ[iZ]])			
@@ -56,7 +56,7 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_RMSE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_RMSE(iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+		function OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
 
 		# === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iZ])
@@ -64,7 +64,7 @@ module ofHydrolab
 
 			for iΨ = 1:N_θΨ[iZ]
 				θ_Obs[iΨ] = θ_θΨ[iZ,iΨ]
-				θ_Sim[iΨ] = wrc.Ψ_2_θDual(Ψ_θΨ[iZ,iΨ], iZ, hydro)
+				θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ_θΨ[iZ,iΨ], iZ, hydro)
 			end # for iΨ = 1:N_θΨ[iZ]
 
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨ[iZ]], θ_Sim[1:N_θΨ[iZ]])
@@ -83,7 +83,7 @@ module ofHydrolab
 				for iΨ = iStart:N_KΨ[iZ]
 					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨ[iZ,iΨ])
 						
-					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(Ψ_KΨ[iZ,iΨ], iZ, hydro))
+					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨ[iZ,iΨ], iZ, hydro))
 				end # for iΨ = 1:N_KΨ[iZ]
 
 				Rmse_KΨ = stats.RMSE(Kunsat_Obs_Ln[iStart:N_KΨ[iZ]], Kunsat_Sim_Ln[iStart:N_KΨ[iZ]])

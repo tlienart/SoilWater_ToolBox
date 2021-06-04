@@ -2,7 +2,7 @@
 #		MODULE: infiltStruct
 # =============================================================
 module infiltStruct
-	import ..option, ..tool
+	import ..tool
 	export INFILTSTRUCT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
