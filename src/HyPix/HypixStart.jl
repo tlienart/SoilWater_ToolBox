@@ -241,8 +241,8 @@ module hypixStart
 					tableHypix.Q(∑T[1:N_iT], Q[1:N_iT,1:N_iZ+1], Z[N_iZ], discret.Znode[1:N_iZ], iSim, pathHyPix)
 				end
 				if option.hyPix.Tabule_θΨ
-					tableHypix.θΨ(hydroHorizon, iSim, N_iHorizon, pathHyPix)
-					tableHypix.KΨ(hydroHorizon, iSim, N_iHorizon, pathHyPix)
+					tableHypix.θΨ(hydroHorizon, iSim, N_iHorizon, option.hydro, pathHyPix)
+					tableHypix.KΨ(hydroHorizon, iSim, N_iHorizon, option.hydro, pathHyPix)
 				end
 				if option.hyPix.Table_Climate
 					tableHypix.DAILY_CLIMATE(∑T_Climate, clim, iSim, pathHyPix)

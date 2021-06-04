@@ -164,7 +164,7 @@ module tableHypix
 	#		FUNCTION : θΨ
 	# 		Tabular values of the hydroParam model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨ(hydroHorizon, iSim, N_iHorizon, pathHyPix)
+		function θΨ(hydroHorizon, iSim, N_iHorizon, optionₘ, pathHyPix)
 			
 			Path = pathHyPix.Table_θΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
@@ -183,7 +183,7 @@ module tableHypix
 				θ_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
 				for iZ=1:N_iHorizon, iΨ =1:N_θΨ
 						Ψ_Mod =param.hyPix.ploting.θΨ_Table[iΨ]
-						θ_Mod[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Mod, iZ, hydroHorizon)
+						θ_Mod[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ_Mod, iZ, hydroHorizon)
 				end # iZ
 
 			# Concatenating the 2 matrices
@@ -207,7 +207,7 @@ module tableHypix
 	#		FUNCTION : KΨ
 	# 		Tabular values of the hydroParam model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KΨ(hydroHorizon, iSim, N_iHorizon, pathHyPix)
+		function KΨ(hydroHorizon, iSim, N_iHorizon, optionₘ, pathHyPix)
 				
 			Path = pathHyPix.Table_KΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
