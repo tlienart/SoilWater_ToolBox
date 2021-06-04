@@ -96,11 +96,17 @@ module path
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
 	# PROCESSING
-		Home = @__DIR__
+		# Change path name to /data/Private/
+		Home2 = @__DIR__
+
+		# perform cs..
+		Home = dirname(Home2)
+
+		Home = Home * "/data/Private/"
 
 		# INPUT
 			# DATA SOIL HYDRO
-			FileDataSoilhydro_Input = Home * "//INPUT//DataSoilHydraulic//" * SiteName_Soilhyro * "//" * SiteName_Soilhyro * "_"
+			FileDataSoilhydro_Input = Home * "INPUT//DataSoilHydraulic//" * SiteName_Soilhyro * "//" * SiteName_Soilhyro * "_"
 
 			# ID_Select	
 				Id_Select          = FileDataSoilhydro_Input * Id_Select

@@ -9,20 +9,20 @@ module pathHypix
 
 	mutable struct PATHYPIXS
 		Climate
-      Dates
-      Discretization
-      HyPix_HydroParam
-      HyPix_Param
-      HyPix_VegParam
-      Hydraulic_Kg
-      Input_OfStep
+		Dates
+		Discretization
+		HyPix_HydroParam
+		HyPix_Param
+		HyPix_VegParam
+		Hydraulic_Kg
+		Input_OfStep
 		JulesMetadata
 		ProjectName_Hypix
 		SiteName_Hypix
-      obsθ 
+		obsθ 
 
 		LookUpTable_CropCoeficient
-      LookUpTable_Lai
+		LookUpTable_Lai
 
 		Table_DailyClimate
 		Table_Discretisation
@@ -69,60 +69,66 @@ module pathHypix
 				JulesMetadata = "JULES_LinkingData.csv"
 
 			# HYPIX INPUT DATA
-            Climate          = "Climate_2.csv"
-            Dates            = "Dates.csv"
-            Discretization   = "Discretization_2.csv"
-            HyPix_HydroParam = "HypixHydro.csv"
-            HyPix_Param      = "HyPix_Param_2.csv"
-            HyPix_VegParam   = "Vegetation.csv"
-            Hydraulic_Kg     = "Hydraulic_Uni_Kg2.csv"
-            Input_OfStep     = "Wof_Steps.csv"
-            obsθ             = "Soilmoisture.csv"
+				Climate          = "Climate_2.csv"
+				Dates            = "Dates.csv"
+				Discretization   = "Discretization_2.csv"
+				HyPix_HydroParam = "HypixHydro.csv"
+				HyPix_Param      = "HyPix_Param_2.csv"
+				HyPix_VegParam   = "Vegetation.csv"
+				Hydraulic_Kg     = "Hydraulic_Uni_Kg2.csv"
+				Input_OfStep     = "Wof_Steps.csv"
+				obsθ             = "Soilmoisture.csv"
 				
 			# HYPIX LOOKUPTABLE
 				LookUpTable_CropCoeficient = "LookUpTable_CropCoeficient.csv"
 				LookUpTable_Lai            = "LookUpTable_Lai.csv"
 
 			# HYPIX OUTPUT TABLE
-            Table_DailyClimate    = "Table_DailyClimate"
-            Table_Discretisation  = "Table_Discretisation.csv"
-            Table_Hydro           = "Table_Hydro"
-            Table_KΨ              = "Table_KΨ"
-            Table_Performance     = "Table_Performance"
-            Table_Q               = "Table_Q"
-            Table_Signature       = "Table_Signature"
-            Table_TimeSerie       = "Table_TimeSerie"
-            Table_TimeSerie_Daily = "Table_TimeSerie_Daily"
-            Table_Veg             = "Table_Veg"
-            Table_Ψ               = "Table_H"
-            Table_θ               = "Table_Sm"
-            Table_θaverage        = "Table_THETAaverage"
-            Table_θΨ              = "Table_θΨ"
+				Table_DailyClimate    = "Table_DailyClimate"
+				Table_Discretisation  = "Table_Discretisation.csv"
+				Table_Hydro           = "Table_Hydro"
+				Table_KΨ              = "Table_KΨ"
+				Table_Performance     = "Table_Performance"
+				Table_Q               = "Table_Q"
+				Table_Signature       = "Table_Signature"
+				Table_TimeSerie       = "Table_TimeSerie"
+				Table_TimeSerie_Daily = "Table_TimeSerie_Daily"
+				Table_Veg             = "Table_Veg"
+				Table_Ψ               = "Table_H"
+				Table_θ               = "Table_Sm"
+				Table_θaverage        = "Table_THETAaverage"
+				Table_θΨ              = "Table_θΨ"
 
 			# HYPIX PLOTS 
-            Plot_HypixTime            = "Plot_HypixTime"
-            Plot_Hypix_θΨK            = "Plot_ThetaPsiK"
-            Plot_RainfallInterception = "Plot_RainfallInterception"
-            Plot_Se_Time              = "Plot_Se_Time.png"
-            Plot_Se_Z                 = "Plot_Se_Z.png"
-            Plot_Sorptivity           = "Plot_Sorptivity"
-            Vegetation                = "Plot_Vegetation"
+				Plot_HypixTime            = "Plot_HypixTime"
+				Plot_Hypix_θΨK            = "Plot_ThetaPsiK"
+				Plot_RainfallInterception = "Plot_RainfallInterception"
+				Plot_Se_Time              = "Plot_Se_Time.png"
+				Plot_Se_Z                 = "Plot_Se_Z.png"
+				Plot_Sorptivity           = "Plot_Sorptivity"
+				Vegetation                = "Plot_Vegetation"
 
 			# HYPIX PLOT OTHERS: RESULTS
 				# Plot_OfStep
-            Plot_Se_Ψ_Constrained = "Plot_Se_Ψ_Constrained.svg"
-            Plot_Ψmin_Ψmax        = "Plot_ΨminΨmax.svg"
-            Plot_θΨ_Δθ            = "Plot_θΨ_Δθ.svg"
-            Plot_σ2θr             = "Plot_θr2σ.svg"
-            Plots_θ∂θ∂Ψ           = "Plot_θ∂θ∂Ψ.svg"
+				Plot_Se_Ψ_Constrained = "Plot_Se_Ψ_Constrained.svg"
+				Plot_Ψmin_Ψmax        = "Plot_ΨminΨmax.svg"
+				Plot_θΨ_Δθ            = "Plot_θΨ_Δθ.svg"
+				Plot_σ2θr             = "Plot_θr2σ.svg"
+				Plots_θ∂θ∂Ψ           = "Plot_θ∂θ∂Ψ.svg"
 
 			# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			# 						PROCESSING DATA
 			#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				Home2 = @__DIR__
+				Home0 = @__DIR__
 
 				# Moving up a level
-					Home = replace(Home2,"Hypix" => "" )
+					Home = dirname(Home0)
+					Home = dirname(Home)
+					Home = Home * "/data/Private/"
+
+
+
+					# Home = replace(Home2,"Hypix" => "" )
 
 
 				# HYPIX INPUT JULES ===

@@ -141,21 +141,21 @@
 	# =============================================================
 		#General
          HydroTranslateModel = false # <true>; <false>
-         Hypix               = false # <true>; <false>
-         Smap                = true # <true> ; <false>
+         Hypix               = true # <true>; <false>
+         Smap                = false # <true> ; <false>
          BulkDensity         = false # <true> <false>
-         θΨ                  = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+         θΨ                  = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
          Psd                 = false	# <true> Derive θ(Ψ) AND/OR hydraulic parameters from Psd; <false>
          Infilt              = false # <true> Derive θ(Ψ) AND/OR hydraulic parameters from Infiltration data; <false>
          Temporary           = false # <true>; <false>                
          Jules               = false # <true>; <false>
 		
 		# Download packages
-			DownloadPackage = true # <true> For first time user download packages required to run program; <false>*
+			DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 		# Plotting
-			Ploting      = true # <true>* plot; <false> no plotting
-			Plot_Show = false # <true>* plot shown in VScode; <false>
+            Ploting   = false # <true>* plot; <false> no plotting
+            Plot_Show = false # <true>* plot shown in VScode; <false>
 
 		globalopt = GLOBALOPT(HydroTranslateModel, Hypix, Smap, BulkDensity, θΨ, Psd, Infilt, Temporary, Jules, DownloadPackage, Ploting, Plot_Show)
 
@@ -190,7 +190,7 @@
 	#		HYDRO OPTIONS
 	# =============================================================
 		# Hydraulic model
-			HydroModel      = :Vangenuchten # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
+			HydroModel      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
 			θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
 			θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
 			σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
