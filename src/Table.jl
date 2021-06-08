@@ -91,9 +91,9 @@ module table
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
 					FieldName_String = ["Id","H[mm]","Theta"]
 					N = N_Ψ * N_SoilSelect
-               Id₂ = Vector{Int64}(undef, N)
-               Ψ₂  = Vector{Float64}(undef,  N)
-               θ₂  = Vector{Float64}(undef, N)
+					Id₂ = Vector{Int64}(undef, N)
+					Ψ₂  = Vector{Float64}(undef,  N)
+					θ₂  = Vector{Float64}(undef, N)
 					iCount = 1
 
 					for iZ=1:N_SoilSelect
@@ -132,10 +132,10 @@ module table
 							
 			# Computing K at required Ψ
 				N = N_K *N_SoilSelect
-            Id₂     = Vector{Int64}(undef, N)
-            Ψ₂      = Vector{Float64}(undef,  N)
-            Kunsat₂ = Vector{Float64}(undef, N)
-            iCount  = 1
+				Id₂     = Vector{Int64}(undef, N)
+				Ψ₂      = Vector{Float64}(undef,  N)
+				Kunsat₂ = Vector{Float64}(undef, N)
+				iCount  = 1
 				hydroParam₂ = deepcopy(hydroParam)
 				for iZ=1:N_SoilSelect
 					for iK =1:N_K
@@ -178,11 +178,11 @@ module table
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
 				open(path.Table_Psd, "w") do io
-					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(Matrix,digits=5)], ",")
 				end
-				return
+			return nothing
 			end
 
 
@@ -299,7 +299,7 @@ module table
 
 				Matrix =  round.(Matrix, digits=5)
 				open(path.Table_Infilt, "w") do io
-					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
 				end

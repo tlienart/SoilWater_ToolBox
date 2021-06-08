@@ -2,14 +2,30 @@
 #		module option
 # ===========================================================
 module options
-	mutable struct OPTION
+	using Base: Bool
+mutable struct OPTION
 		globalopt 		# Structure
-		smap 				# Structure
+		smap 			# Structure
 		hydro 			# Structure
-		psd 				# Structure
+		psd 			# Structure
 		infilt 			# Structure
 		hyPix 			# Structure
 	end
+		struct DATA
+			θΨ::Bool
+			Kθ::Bool
+			Infilt::Bool
+			Psd::Bool
+			RockFragment::Bool
+			TotalPorosity::Bool
+			HydrParam::Bool
+			IdSelect::Bool
+
+			Pr::Bool
+			Etp::Bool
+			θobs::Bool
+		end
+
 		mutable struct GLOBALOPT
 			HydroTranslateModel::Bool
 			Hypix::Bool
