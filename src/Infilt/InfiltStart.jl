@@ -18,7 +18,7 @@ module infiltStart
 			println( "iZ= $iZ")
 
 			# No optimization required running from hydro derived from laboratory
-			if option.infilt.OptimizeRun == :Run && option.globalopt.θΨ ≠ :No #<>=<>=<>=<>=<>
+			if option.infilt.OptimizeRun == :Run && option.run.HydroLabθΨ ≠ :No #<>=<>=<>=<>=<>
 				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
 				 
@@ -34,7 +34,7 @@ module infiltStart
 				end # option.infilt.Model
 
 
-			elseif option.infilt.OptimizeRun == :RunOptKs && option.globalopt.θΨ ≠ :No #<>=<>=<>=<>=<>	
+			elseif option.infilt.OptimizeRun == :RunOptKs && option.run.HydroLabθΨ ≠ :No #<>=<>=<>=<>=<>	
 				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
 				

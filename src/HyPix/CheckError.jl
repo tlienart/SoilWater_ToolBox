@@ -54,7 +54,7 @@ module checkError
 			end
 
 		# CHECKING STARTING & ENDING DATES OF PLOTS 
-			if option.globalopt.Ploting
+			if option.other.Ploting
 				CHECK_DATES_PLOTS(clim, param)
 			end
 

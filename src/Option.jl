@@ -2,185 +2,230 @@
 #		module option
 # ===========================================================
 module options
-	using Base: Bool
-mutable struct OPTION
-		globalopt 		# Structure
-		smap 			# Structure
-		hydro 			# Structure
-		psd 			# Structure
-		infilt 			# Structure
-		hyPix 			# Structure
+
+
+	# What available data we have?
+	struct DATA
+		HydroParam::Bool
+		Infilt::Bool
+		θΨ::Bool
+		Kθ::Bool
+		Psd::Bool
+		RockFragment::Bool
+		TotalPorosity::Bool
+
+		Pr::Bool
+		Pet::Bool
+		θobs::Bool
+	end # struct DATA
+
+	# What model wanting to run
+	mutable struct RUN
+		ChangeHydroModel::Bool
+		ρb_2_Φ ::Bool
+		IntergranularMixingPsd::Bool
+		HydroLabθΨ::Symbol
+		InfiltBest::Bool
+		RockFragment::Bool
+		Temporary::Bool
+
+		Hypix::Bool
 	end
-		struct DATA
-			θΨ::Bool
-			Kθ::Bool
-			Infilt::Bool
-			Psd::Bool
-			RockFragment::Bool
-			TotalPorosity::Bool
-			HydrParam::Bool
-			IdSelect::Bool
 
-			Pr::Bool
-			Etp::Bool
-			θobs::Bool
-		end
+	# How to input the data
+	mutable struct DATAFROM
+		Smap::Bool
+		Jules::Bool
+	end
 
-		mutable struct GLOBALOPT
-			HydroTranslateModel::Bool
-			Hypix::Bool
-			Smap::Bool
-			BulkDensity::Bool
-			θΨ::Symbol
-			Psd::Bool
-			Infilt::Bool
-			Temporary::Bool
-			Jules::Bool
-			DownloadPackage::Bool
-			Ploting::Bool
-			Plot_Show::Bool
-		end
-		# mutable struct ROCKFRAGMENT
-		# 	rockFragment
-		# 	RockInjected
-		# 	RockWettable
-		# end
-		mutable struct SMAP
-			CorrectStone
-			CorrectStoneWetability
-			UsePointKosugiBimodal
-			AddPointKosugiBimodal
-			CombineData
-			Plot_Kunsat
-		end
-		mutable struct HYDRO
-			HydroModel
-			θsOpt
-			θrOpt
-			σ_2_Ψm
-			θs_MinFromData
-			Ks_MinMaxFromData
-			KunsatΨ
-			KsOpt
-			Kunsat_JustRun
-			Plot_θΨ
-			Plot_σ_Ψm
-		end
-		mutable struct PSD
-			Model
-			OptimizePsd
-			Psd_2_θr
-			∑Psd_2_ξ1
-			HydroParam
-			HydroModel
-			θsOpt
-			θrOpt
-			σ_2_Ψm
-			KunsatΨ
-			KsOpt
-			Kunsat_JustRun
-			Plot_Psd_θΨ
-			Plot_θr
-			Plot_IMP_Model
-			Table_Psd_θΨ_θ
-		end
-		mutable struct INFILT
-			DataSingleDoubleRing  
-			OptimizeRun  
-			Model                	
-			SortivityVersion     
-			SorptivitySplitModel  
-			SorptivityModel      
-			HydroModel       
-			θsOpt            
-			θrOpt            
-			σ_2_Ψm          
-			KunsatΨ         
-			KsOpt 
-			Kunsat_JustRun 
-			Plot_Sorptivity        	
-			Plot_SeIni_Range       
-			Plot_∑Infilt           
-			Plot_θΨ                
-			Plot_Sorptivity_SeIni  
-		end
-		mutable struct HYPIX
-			ClimateDataTimestep
-			RainfallInterception
-			Evaporation
-			RootWaterUptake
-			RootWaterUptakeComp
-			LookupTable_Lai
-			LookUpTable_CropCoeficient
-			θΨKmodel
-			BottomBoundary
-			∂R∂Ψ_Numerical
-			AdaptiveTimeStep
-			NormMin
-			Flag_ReRun
-			Qbottom_Correction
-			Lai_2_SintMax
-			σ_2_Ψm
-			σ_2_θr
-			θs_Opt
-			Optimisation::Bool
-			θobs
-			θobs_Average::Bool
-			θobs_Hourly::Bool
-			Signature_Run
-			Table::Bool
-			Table_Discretization::Bool
-			Table_Q::Bool
-			Table_RootWaterUptake::Bool
-			Table_TimeSeries::Bool
-			Table_Ψ::Bool
-			Table_θ::Bool
-			Table_TimeSeriesDaily::Bool
-			Tabule_θΨ::Bool
-			Table_Climate::Bool
-			Plot_Vegetation::Bool
-			Plot_θΨK::Bool
-			Plot_Interception::Bool
-			Plot_Other::Bool
-			Plot_Sorptivity::Bool
-			Plot_Hypix::Bool
-			Plot_Climate::Bool
-			Plot_θ::Bool
-			Plot_Ψ::Bool
-			Plot_Flux::Bool
-			Plot_WaterBalance::Bool
-			Plot_ΔT::Bool
-		end
+	mutable struct OTHER
+		DownloadPackage::Bool
+		Ploting::Bool
+		PlotVscode::Bool
+	end
+
+	# mutable struct ROCKFRAGMENT
+	# 	rockFragment
+	# 	RockInjected
+	# 	RockWettable
+	# end
+	mutable struct SMAP
+		CorrectStone
+		CorrectStoneWetability
+		UsePointKosugiBimodal
+		AddPointKosugiBimodal
+		CombineData
+		Plot_Kunsat
+	end
+	mutable struct HYDRO
+		HydroModel
+		θsOpt
+		θrOpt
+		σ_2_Ψm
+		θs_MinFromData
+		Ks_MinMaxFromData
+		KunsatΨ
+		KsOpt
+		Kunsat_JustRun
+		Plot_θΨ
+		Plot_σ_Ψm
+	end
+	mutable struct PSD
+		Model
+		OptimizePsd
+		Psd_2_θr
+		∑Psd_2_ξ1
+		HydroParam
+		HydroModel
+		θsOpt
+		θrOpt
+		σ_2_Ψm
+		KunsatΨ
+		KsOpt
+		Kunsat_JustRun
+		Plot_Psd_θΨ
+		Plot_θr
+		Plot_IMP_Model
+		Table_Psd_θΨ_θ
+	end
+	mutable struct INFILT
+		DataSingleDoubleRing  
+		OptimizeRun  
+		Model                	
+		SortivityVersion     
+		SorptivitySplitModel  
+		SorptivityModel      
+		HydroModel       
+		θsOpt            
+		θrOpt            
+		σ_2_Ψm          
+		KunsatΨ         
+		KsOpt 
+		Kunsat_JustRun 
+		Plot_Sorptivity        	
+		Plot_SeIni_Range       
+		Plot_∑Infilt           
+		Plot_θΨ                
+		Plot_Sorptivity_SeIni  
+	end
+	mutable struct HYPIX
+		ClimateDataTimestep
+		RainfallInterception
+		Evaporation
+		RootWaterUptake
+		RootWaterUptakeComp
+		LookupTable_Lai
+		LookUpTable_CropCoeficient
+		θΨKmodel
+		BottomBoundary
+		∂R∂Ψ_Numerical
+		AdaptiveTimeStep
+		NormMin
+		Flag_ReRun
+		Qbottom_Correction
+		Lai_2_SintMax
+		σ_2_Ψm
+		σ_2_θr
+		θs_Opt
+		Optimisation::Bool
+		θobs
+		θobs_Average::Bool
+		θobs_Hourly::Bool
+		Signature_Run
+		Table::Bool
+		Table_Discretization::Bool
+		Table_Q::Bool
+		Table_RootWaterUptake::Bool
+		Table_TimeSeries::Bool
+		Table_Ψ::Bool
+		Table_θ::Bool
+		Table_TimeSeriesDaily::Bool
+		Tabule_θΨ::Bool
+		Table_Climate::Bool
+		Plot_Vegetation::Bool
+		Plot_θΨK::Bool
+		Plot_Interception::Bool
+		Plot_Other::Bool
+		Plot_Sorptivity::Bool
+		Plot_Hypix::Bool
+		Plot_Climate::Bool
+		Plot_θ::Bool
+		Plot_Ψ::Bool
+		Plot_Flux::Bool
+		Plot_WaterBalance::Bool
+		Plot_ΔT::Bool
+	end
+		mutable struct OPTION
+			smap::SMAP
+			hydro::HYDRO
+			psd::PSD
+			infilt::INFILT
+			hyPix::HYPIX
+			other::OTHER
+			data::DATA
+			run::RUN
+			dataFrom::DATAFROM
+		end # struct OPTION
+	
 	#..................................................................
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPTION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function OPTIONS()
-		
 			# =============================================================
-			# GLOBAL GLOBALOPT
+			# 		OTHER
 			# =============================================================
-				#General
-				HydroTranslateModel = false # <true>; <false>
-				Hypix               = true # <true>; <false>
-				Smap                = false # <true> ; <false>
-				BulkDensity         = false # <true> <false>
-				θΨ                  = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
-				Psd                 = false	# <true> Derive θ(Ψ) AND/OR hydraulic parameters from Psd; <false>
-				Infilt              = false # <true> Derive θ(Ψ) AND/OR hydraulic parameters from Infiltration data; <false>
-				Temporary           = false # <true>; <false>                
-				Jules               = false # <true>; <false>
-				
 				# Download packages
 					DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 				# Plotting
 					Ploting   = false # <true>* plot; <false> no plotting
-					Plot_Show = false # <true>* plot shown in VScode; <false>
+					PlotVscode = false # <true>* plot shown in VScode; <false>
 
-				globalopt = GLOBALOPT(HydroTranslateModel, Hypix, Smap, BulkDensity, θΨ, Psd, Infilt, Temporary, Jules, DownloadPackage, Ploting, Plot_Show)
+			other = OTHER(DownloadPackage, Ploting, PlotVscode)
 
+			# =============================================================
+			# 		DATA
+			#      What data do we have ?
+			# =============================================================
+				HydroParam = false
+				Infilt = false
+				θΨ = false
+				Kθ = false
+				Psd = false
+				RockFragment = false
+				TotalPorosity = false
+
+				Pr = false
+				Pet = false
+				θobs = false
+
+			data = DATA(HydroParam,	Infilt,	θΨ,	Kθ, Psd, RockFragment, TotalPorosity,Pr, Pet, θobs)
+
+			# =============================================================
+			# 		READ DATA
+			#      How to read data ?
+			# =============================================================
+				Smap = false
+				Jules = false
+
+			dataFrom = DATAFROM(Smap, Jules)
+
+			# =============================================================
+			# 		RUN
+			#      What model wanting to run ?
+			# =============================================================
+				ChangeHydroModel = false
+				ρb_2_Φ  = false
+				IntergranularMixingPsd = false
+				HydroLabθΨ = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+				InfiltBest = false
+				RockFragment = false
+				Temporary = false
+				Hypix = false
+
+			run = RUN(ChangeHydroModel, ρb_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockFragment, Temporary, Hypix)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
@@ -374,7 +419,7 @@ mutable struct OPTION
 			# =============================================================
 			#		GLOBAL OPTION
 			# ===========================================================
-				option = OPTION(globalopt, smap, hydro, psd, infilt, hyPix)
+				option = OPTION(smap, hydro, psd, infilt, hyPix, other, data, run, dataFrom)
 
 		return option
 		end  # function: OPTION

@@ -12,9 +12,9 @@
                 option = options.OPTIONS()
 
         # Install packages to run program
-        if option.globalopt.DownloadPackage
+        if option.other.DownloadPackage
             include("Packages.jl")
-        end # option.globalopt.DownloadPackage
+        end # option.other.DownloadPackage
         include("Tool.jl")
         include("Hypix\\Other\\Sitename.jl")
         include("Path.jl")
@@ -27,32 +27,32 @@
         include("Optim\\Optimize.jl")
         include("Reading.jl")
 
-        if !(option.globalopt.Hypix)
+        if !(option.run.Hypix)
             include("Hydro\\Φ.jl")
         end
         include("Checking.jl")
         include("Hydro\\Kunsat.jl")
         include("Stats.jl")
 
-        if !(option.globalopt.Hypix)
+        if !(option.run.Hypix)
             include("Table.jl")
             include("Psd\\PsdThetar.jl")
         end
 
-        if option.globalopt.Smap
+        if option.dataFrom.Smap
             include("Smap\\StoneSmap.jl")
             include("Smap\\ReadSmap.jl")
             include("Smap\\PlotSmap.jl")
             include("Smap\\TableSmap.jl")
         end
 
-        if option.globalopt.θΨ ≠ :No && option.globalopt.θΨ ≠ :File &&  !(option.globalopt.Hypix)
+        if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File &&  !(option.run.Hypix)
             include("HydroLab\\OfHydrolab.jl")
             include("HydroLab\\HydrolabOpt.jl")
             include("Hypix\\Other\\PlotOther.jl")
         end
         
-        if option.globalopt.Infilt
+        if option.run.InfiltBest
             include("Sorptivity\\Sorptivity.jl")            
             include("Infilt\\BestFunc.jl")
             include("Infilt\\OfBest.jl")
@@ -61,21 +61,21 @@
             include("Infilt\\InfiltStruct.jl")
             include("Infilt\\InfiltInitialize.jl")
             include("Infilt\\InfiltStart.jl")
-        end # option.globalopt.Infilt
+        end # option.run.InfiltBest
         
-        if option.globalopt.Psd
+        if option.run.IntergranularMixingPsd
             include("Psd\\PsdStruct.jl")
             include("Psd\\PsdInitialize.jl")
             include("Psd\\PsdFunc.jl")
             include("Psd\\PsdOpt.jl")
             include("Psd\\PsdStart.jl")
-        end # option.globalopt.Psd
+        end # option.run.IntergranularMixingPsd
 
-        if option.globalopt.Ploting && !(option.globalopt.Hypix)
+        if option.other.Ploting && !(option.run.Hypix)
             include("Plot.jl")
-        end # option.globalopt.Ploting
+        end # option.other.Ploting
 
-        if option.globalopt.Hypix
+        if option.run.Hypix
             include("Hypix\\PathHypix.jl")
             include("Sorptivity\\Sorptivity.jl")
             include("Hypix\\Interpolate.jl")
@@ -102,16 +102,16 @@
             include("HyPix\\Other\\θaver.jl")
             include("Hypix\\Memory.jl")
             include("Hypix\\Climate.jl")
-            if option.globalopt.Ploting
+            if option.other.Ploting
                 include("Hypix\\Other\\PlotOther.jl")
                 include("Hypix\\PlotHypix.jl")
             end
             include("Hypix\\HypixModel.jl")
             include("Hypix\\Opt\\HypixOpt.jl")
             include("Hypix\\HypixStart.jl")
-        end  # if: option.globalopt.Hypix
+        end  # if: option.run.Hypix
 
-        if option.globalopt.Jules
+        if option.dataFrom.Jules
             include("Hypix\\PathHypix.jl")
             include("Hypix\\VegStruct.jl")
             include("Hypix\\Discretization.jl")

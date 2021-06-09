@@ -35,7 +35,7 @@
 				Hour, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
 				Minute, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute")
 				Second, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
-				Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, "Rain(mm)")
+				Prr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, "Rain(mm)")
 
 
             # CONVERT INTO DATES

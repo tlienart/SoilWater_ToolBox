@@ -36,8 +36,8 @@ module checking
 			elseif  (optionₘ.θrOpt==:ParamPsd) && ("θr"∈ optim.ParamOpt) # Derive θr frpm PSD
 				error("*** optionₘ.θrOpt==:ParamPsd && θr does not need to be optimized ***")
 
-			elseif  (optionₘ.θrOpt==:ParamPsd) && ("θr"∉ optim.ParamOpt) && !(option.globalopt.Psd) # Derive θr frpm PSD
-				error("*** optionₘ.θrOpt==:ParamPsd THAN option.globalopt.Psd=true ***")
+			elseif  (optionₘ.θrOpt==:ParamPsd) && ("θr"∉ optim.ParamOpt) && !(option.run.IntergranularMixingPsd) # Derive θr frpm PSD
+				error("*** optionₘ.θrOpt==:ParamPsd THAN option.run.IntergranularMixingPsd=true ***")
 			
 			elseif ("Ks" ∈ optim.ParamOpt) && (optionₘ.KunsatΨ==false)
 				error("***  (Ks ∈ optim.ParamOpt) && (KunsatΨ==false) THAN option.KunsatΨ=true ***")
@@ -45,7 +45,7 @@ module checking
         	elseif option.smap.UsePointKosugiBimodal && optionₘ.KunsatΨ && "Ks" ∉ optim.ParamOpt
             	error("***  Ks  ∉ optim.ParamOpt && option.smap.UsePointKosugiBimodal && optionₘ.KunsatΨ THAN Ks ∈ optim.ParamOpt***")
 			
-			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) && optionₘ.KunsatΨ && option.globalopt.Smap
+			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) && optionₘ.KunsatΨ && option.dataFrom.Smap
 				error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN optionₘ.KunsatΨ=false OR UsePointKosugiBimodal = true")
 
 			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) &&  "Ks" ∈ optim.ParamOpt && option.Smap

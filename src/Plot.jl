@@ -493,7 +493,7 @@ module plot
 					Plot_θ_Ψ_Psd = Plots.plot!(X ,Y, seriestype=:scatter, label=Label, color= :violet, shape= :circle, markersize=4)
 
 				# Plot_θ_Ψ: Observed
-				if option.globalopt.θΨ ≠ :No 
+				if option.run.HydroLabθΨ ≠ :No 
 					X = Ψ_θΨ[iZ,1:N_θΨ[iZ]] .* cst.Mm_2_Cm
 					Y = θ_θΨ[iZ,1:N_θΨ[iZ]]
 					Label = "LabObs"
@@ -678,7 +678,7 @@ module plot
 
 				θ_θΨ_Max = hydroInfilt.Φ[iZ] + 0.1
 
-				if option.globalopt.θΨ ≠ :No && option.hydro.KunsatΨ
+				if option.run.HydroLabθΨ ≠ :No && option.hydro.KunsatΨ
 					K_Ψ_Max = max(hydroInfilt.Ks[iZ], hydro.Ks[iZ]) * 1.1
 				else
 					K_Ψ_Max = hydroInfilt.Ks[iZ] * 1.1
@@ -689,13 +689,13 @@ module plot
 
 					Kunsat_Infilt[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydroInfilt)
 
-					if option.globalopt.θΨ ≠ :No
+					if option.run.HydroLabθΨ ≠ :No
 						θ_Obs[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydro)
 
-						if option.globalopt.θΨ ≠ :No && option.hydro.KunsatΨ
+						if option.run.HydroLabθΨ ≠ :No && option.hydro.KunsatΨ
 							Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydro)
 						end # option.hydro.KunsatΨ		
-					end # option.globalopt.θΨ ≠ :No
+					end # option.run.HydroLabθΨ ≠ :No
 
 				end # iΨ 
 
@@ -707,12 +707,12 @@ module plot
 						Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 					# Plot_θ_Ψ: Observed
-					if option.globalopt.θΨ ≠ :No
+					if option.run.HydroLabθΨ ≠ :No
 						X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 						Y = θ_Obs[1:N_Se]
 						Label = "Obs"
 						Plot_θ_Ψ = Plots.plot!(X ,Y, seriestype=:line, label=Label, color= :red, lw=2)
-					end # option.globalopt.θΨ ≠ :No
+					end # option.run.HydroLabθΨ ≠ :No
 
 					# Plot_θ_Ψ: General attributes
 						Plots.xlabel!("\\psi [cm]")
@@ -727,7 +727,7 @@ module plot
 						Plot_K_Ψ = Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 						# Plot_K_Ψ: Sim K_Ψ
-						if option.globalopt.θΨ ≠ :No && option.hydro.KunsatΨ
+						if option.run.HydroLabθΨ ≠ :No && option.hydro.KunsatΨ
 							X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 							Y = Kunsat_Obs[1:N_Se] .* cst.MmS_2_CmH
 							Label = "Obs"

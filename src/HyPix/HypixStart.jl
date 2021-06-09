@@ -256,7 +256,7 @@ module hypixStart
 			println("		=== === END: Table === === \n")
 			end  # if option.hyPix.Table
 				
-			if option.globalopt.Ploting
+			if option.other.Ploting
 			println("		=== === START: Plotting === ===")
 
 				if option.hyPix.Plot_Other

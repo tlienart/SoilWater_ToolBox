@@ -425,7 +425,7 @@ module plotSmap
                Makie.save(Path, Fig)
      
                # Displaying figure in VScode
-               if option.globalopt.Plot_Show
+               if option.other.PlotVscode
                   display(Fig)
                end
 
