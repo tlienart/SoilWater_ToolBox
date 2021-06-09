@@ -4,13 +4,8 @@
 
 # International SoilWater-ToolBox 2021
 
-## *Current state and future*
+## *Current state and futures*
 
-<<<<<<< HEAD
-=======
-HELLO3
-
->>>>>>> 43d3c0f65e20721c9248213059a3fb58fffe7319
 J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
 
 ---
