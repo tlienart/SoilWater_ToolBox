@@ -1,16 +1,17 @@
 <!-- MathJax -->
+
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 # International SoilWater-ToolBox 2021
 
 ## *Current state and future*
-HELLO
 
+HELLO
 
 J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
 
-
 ---
+
 ---
 
 > 1. Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
@@ -20,7 +21,9 @@ J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilbur
 > 5. National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
 
 ---
+
 ---
+
 ---
 
 ## 1. Open source software
@@ -48,7 +51,6 @@ The following modules are implemented in the **SoilWater-ToolBox.** They were de
 A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, and the required input data and outputs.
 
 ![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/FIGURE/SoilWater-ToolBox-FlowChart.bmp "SoilWater-ToolBox Flowchart")
-
 
 ## 5.  Current applications
 
@@ -91,14 +93,14 @@ Potential future applications include:
 
 For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
 
-For information on HyPix model [HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
-
+For information on HyPix model [HyPixhttps://github.com/manaakiwhenua/SoilWater_ToolBox](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
 
 ## TESTING EQUATIONS
+
 $$
 \frac{A}{B}
-$$
 
+$$
 
 ## 8.  Publications
 
