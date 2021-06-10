@@ -62,7 +62,7 @@ module plot
 
 					# Plot_θ_Ψ: Simulated
 						X = Ψ_Sim[1:N_Se]
-						Y = θ_Sim[1:N_Se]
+						Y = θ_Simp[1:N_Se]
 						Label = "Sim"
 						Plot_Θψ = Plots.plot!(Plot1, subplot=1, log1p.(cst.Mm_2_kPa*X), Y, seriestype=:line, label=Label, color=:blue, lw=2)
 

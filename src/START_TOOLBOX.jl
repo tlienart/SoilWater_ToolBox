@@ -11,8 +11,9 @@ include("Including.jl")
 # ==============================================================
 function START_TOOLBOX()
 
-	# OPTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# OPTIONS/ PARAM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		option = options.OPTIONS()
+		param = params.PARAM()
 
 	# READING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if option.run.ChangeHydroModel

@@ -1,116 +1,84 @@
 # =============================================================
 #		MODULE: param
 # =============================================================
-	mutable struct PARAM
-		globalparam
-		hydro
-		psd
-		infilt
-		hyPix 
+module params
+
+	mutable struct GLOBALPARAM
+		N_iZ_Simulations
+		N_iZ_Plot_Start
+		N_iZ_Plot_End
 	end
-		mutable struct GLOBALPARAM
-			N_iZ_Simulations
-			N_iZ_Plot_Start
-			N_iZ_Plot_End
+		mutable struct KG
+			ΨmMac
+			ΨmMac_Min
+			ΨmMac_Max
+			σMac
+			∇_θsMacMat_Min
+			∇_θsMacMat_Max
+			Ψσ_Min
+			Ψσ_Max
+			Ψσ
+			Pσ_1
+			Pσ_2
 		end
-		mutable struct HYDROS
-			Coeff_Φ_2_θs
-			θs_θsMacMat
-			ΨmacMat
+		mutable struct SMAPS
+			Ψ_Table
+		end
+	mutable struct HYDROS
+		Coeff_Φ_2_θs
+		θs_θsMacMat
+		ΨmacMat
+		Ψ_Max
+		Ψ_Table
+		Ψ_TableComplete
+		K_Table
+		kg::KG
+		smap::SMAPS
+	end
+
+		mutable struct IMP
 			Ψ_Max
-			Ψ_Table
-			Ψ_TableComplete
-			K_Table
-			kg # it is a structure
-			smap # it is a structureggs
+			λ
+			ξ_Max
+			ξ1
+			ξ1_Min
+			ξ1_Max
+			ξ2_Max
+			∑Psd_2_ξ2_β1
+			∑Psd_2_ξ2_β1_Min
+			∑Psd_2_ξ2_β1_Max
+			∑Psd_2_ξ2_β2
+			∑Psd_2_ξ2_β2_Min
+			∑Psd_2_ξ2_β2_Max
+			∑Psd_2_ξ2_Size
+			Subclay
+			Subclay_Min
+			Subclay_Max
 		end
-			mutable struct KG
-				ΨmMac
-				ΨmMac_Min
-				ΨmMac_Max
-				σMac
-				∇_θsMacMat_Min
-				∇_θsMacMat_Max
-				Ψσ_Min
-				Ψσ_Max
-				Ψσ
-				Pσ_1
-				Pσ_2
-			end
-			mutable struct SMAPS
-				Ψ_Table
-			end
-		mutable struct PSDS
-			Psd_2_θr_α1
-			Psd_2_θr_α1_Min
-			Psd_2_θr_α1_Max
-			Psd_2_θr_α2
-			Psd_2_θr_α2_Min
-			Psd_2_θr_α2_Max
-			Psd_2_θr_Size
-			Ψ_Table
-			imp # it is a structure
-			chang # it is a structure
+		mutable struct CHANG
+			ξ1
+			ξ1_Min
+			ξ1_Max
 		end
-			mutable struct IMP
-				Ψ_Max
-				λ
-				ξ_Max
-				ξ1
-				ξ1_Min
-				ξ1_Max
-				ξ2_Max
-				∑Psd_2_ξ2_β1
-				∑Psd_2_ξ2_β1_Min
-				∑Psd_2_ξ2_β1_Max
-				∑Psd_2_ξ2_β2
-				∑Psd_2_ξ2_β2_Min
-				∑Psd_2_ξ2_β2_Max
-				∑Psd_2_ξ2_Size
-				Subclay
-				Subclay_Min
-				Subclay_Max
-			end
-			mutable struct CHANG
-				ξ1
-				ξ1_Min
-				ξ1_Max
-			end
-		mutable struct INFILTS
-			SeIni_Output
-			Npoint_Infilt
-			ΔSlope_Err_SteadyState
-		end
-		mutable struct HYPIXS
-			iSim_Start
-			iSim_End
-			Year_Start::Int64
-			Month_Start::Int64
-			Day_Start::Int64
-			Hour_Start::Int64
-			Minute_Start::Int64
-			Second_Start::Int64
-			Year_End::Int64
-			Month_End::Int64
-			Day_End::Int64
-			Hour_End::Int64
-			Minute_End::Int64
-			Second_End::Int64
-			ΔZrz_Max
-			ΔZdeep_max
-			Cosα
-			ΔHpondMax
-			Ψ_Bot
-			ΔT_Min
-			ΔT_Max
-			N_Iter
-			ΔT_Rerun
-			Δθ_Max
-			NewtonStepWeaken
-			WaterBalanceResidual_Max
-			obsθ # it is a structure
-			ploting # it is a structure
-		end
+	mutable struct PSDS
+		Psd_2_θr_α1
+		Psd_2_θr_α1_Min
+		Psd_2_θr_α1_Max
+		Psd_2_θr_α2
+		Psd_2_θr_α2_Min
+		Psd_2_θr_α2_Max
+		Psd_2_θr_Size
+		Ψ_Table
+		imp::IMP
+		chang::CHANG
+	end
+		
+	mutable struct INFILTS
+		SeIni_Output
+		Npoint_Infilt
+		ΔSlope_Err_SteadyState
+	end
+
 		mutable struct OBSΘ
 			NmaxFuncEvals::Int64
 			Year_Start::Int64
@@ -143,11 +111,53 @@
 			Cells_Plot
 			θΨ_Table
 		end
-		mutable struct SIGNATURES
-			Month_Winter_Start
-			Month_Winter_End
+	mutable struct HYPIXS
+		iSim_Start
+		iSim_End
+		Year_Start::Int64
+		Month_Start::Int64
+		Day_Start::Int64
+		Hour_Start::Int64
+		Minute_Start::Int64
+		Second_Start::Int64
+		Year_End::Int64
+		Month_End::Int64
+		Day_End::Int64
+		Hour_End::Int64
+		Minute_End::Int64
+		Second_End::Int64
+		ΔZrz_Max
+		ΔZdeep_max
+		Cosα
+		ΔHpondMax
+		Ψ_Bot
+		ΔT_Min
+		ΔT_Max
+		N_Iter
+		ΔT_Rerun
+		Δθ_Max
+		NewtonStepWeaken
+		WaterBalanceResidual_Max
+		obsθ::OBSΘ
+		ploting::PLOT
+	end
+
+		mutable struct PARAM
+			globalparam::GLOBALPARAM
+			hydro::HYDROS
+			psd::PSDS
+			infilt::INFILTS
+			hyPix::HYPIXS 
 		end
 
+	#__________________________________________________________________
+	#..................................................................
+	#__________________________________________________________________
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : OPTION
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function PARAM()
 	# =============================================================
 	#		GLOBAL PARAMETERS
 	# =============================================================
@@ -356,33 +366,24 @@
 		#----------------------
 		#	 Plot \ table parameters
 		#----------------------
-		  Year_Start   = Year_Start
-        Month_Start  = Month_Start
-        Day_Start    = Day_Start
-        Hour_Start   = Hour_Start
-        Minute_Start = Minute_Start
-        Second_Start = Second_Start
-        Year_End     = Year_End
-        Month_End    = Month_End
-        Day_End      = Day_End
-        Hour_End     = Hour_End
-        Minute_End   = Minute_End
-        Second_End   = Second_End
-		  Cells_Plot = [1 3 5 7 9 11 13]
-		  θΨ_Table = [0.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0, 6000.0, 7000, 8000, 9000, 10000.0, 2E4, 3E4, 4E4, 5E4, 6E4, 7E4, 8E4, 9E4, 1E5, 150000.0, 2E5, 3E5, 1E6] # mm
+		  	Year_Start   = Year_Start
+			Month_Start  = Month_Start
+			Day_Start    = Day_Start
+			Hour_Start   = Hour_Start
+			Minute_Start = Minute_Start
+			Second_Start = Second_Start
+			Year_End     = Year_End
+			Month_End    = Month_End
+			Day_End      = Day_End
+			Hour_End     = Hour_End
+			Minute_End   = Minute_End
+			Second_End   = Second_End
+			Cells_Plot = [1 3 5 7 9 11 13]
+			θΨ_Table = [0.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0, 6000.0, 7000, 8000, 9000, 10000.0, 2E4, 3E4, 4E4, 5E4, 6E4, 7E4, 8E4, 9E4, 1E5, 150000.0, 2E5, 3E5, 1E6] # mm
 
 		ploting = PLOT(Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, Cells_Plot, θΨ_Table)
 
-		#----------------------
-		#		signature parameters
-		#----------------------
-			# Seasonality
-				Month_Winter_Start = 4
-				Month_Winter_End   = 10
-			
-	# signatures = SIGNATURES(Month_Winter_Start, Month_Winter_End)
-
-	hyPix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End,	ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, obsθ, ploting)
+	hyPix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, obsθ, ploting)
 
 
 	# =============================================================
@@ -390,4 +391,8 @@
 	# =============================================================
 		param = PARAM(globalparam, hydro, psd, infilt, hyPix)
 
-# end param
+	return param
+	end # param
+end # module param
+
+params.PARAM()
