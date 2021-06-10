@@ -30,7 +30,7 @@ The open source **SoilWater-ToolBox** software is written in the performant and 
 
 ## 2. Mission statement
 
-The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters using a wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil-water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity analyses of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
+The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters using wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil-water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
 
 ## 3.  SoilWater-ToolBox based on peer-reviewed publications
 
@@ -46,7 +46,7 @@ The following modules are implemented in the **SoilWater-ToolBox.** They were de
 
 ## 4.  Schematic flow chart
 
-A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, and the required input data and outputs.
+A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, the required input data and outputs prodcued by the **SoilWater-ToolBox.** .
 
 ![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/FIGURE/SoilWater-ToolBox-FlowChart.bmp "SoilWater-ToolBox Flowchart")
 
