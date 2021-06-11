@@ -25,20 +25,8 @@ G_{apFrac}=1-\,\,e^{-K_g×LAI}
 
 $$
 
-The foliage of the canopy is considered as a water storage filled up to a depth *Sint* [L], *with a saturated storage capacity*, 
-
-$$
-Sint_{sat}
-
-$$
-
- [L]. When the canopy is fully saturated (
-$$
-Sint=Sint_{sat}
-
-$$
-
-), then any excess of $\varDelta Pr_{int}$ overflows, $\varDelta Pr_{over}$$ [L], to the soil surface. The amount of water that reaches the soil surface is the *throughfall precipitation* [L]:
+The foliage of the canopy is considered as a water storage filled up to a depth *Sint* [L], *with a saturated storage capacity*, $$
+Sint_{sat} $$ [L]. When the canopy is fully saturated ($$Sint=Sint_{sat}$$), then any excess of $\varDelta Pr_{int}$ overflows, $\varDelta Pr_{over}$$ [L], to the soil surface. The amount of water that reaches the soil surface is the *throughfall precipitation* [L]:
 
 $$
 \varDelta Pr_{through}=\varDelta Pr_{ground}+\varDelta Pr_{over}
