@@ -11,28 +11,29 @@ include("Including.jl")
 # ==============================================================
 function START_TOOLBOX()
 
-	# OPTIONS/ PARAM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# OPTIONS / PARAM / path ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		option = options.OPTIONS()
 		param = params.PARAM()
+		path = paths.PATH()
 
 	# READING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if option.run.ChangeHydroModel
 			# Creating 
 			hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
 			
-			hydroTranslate, N_SoilSelect = reading.READ_STRUCT(hydroTranslate, path.ConvertModel)
+			hydroTranslate, N_SoilSelect = reading.READ_STRUCT(hydroTranslate, path.inputSoilwater.ConvertModel)
 			
 			# Temporary Id
 				Id_Select = collect(1:1:N_SoilSelect)
 		
 			# Deriving a table of θ(Ψ)
-				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, Id_Select, N_SoilSelect, path.Ψθ, param.hydro.Ψ_TableComplete; Orientation="Vertical")
+				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, Id_Select, N_SoilSelect, path.inputSoilwater.Ψθ, param.hydro.Ψ_TableComplete; Orientation="Vertical")
 			
 			# Deriving a table of K(θ)
-				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, Id_Select, param.hydro.Ψ_TableComplete, hydroTranslate.Ks[1:N_SoilSelect], N_SoilSelect::Int64, path.Kunsat)
+				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, Id_Select, param.hydro.Ψ_TableComplete, hydroTranslate.Ks[1:N_SoilSelect], N_SoilSelect::Int64, path.inputSoilwater.Kunsat)
 
 			# Creating an Id output required by the program
-				table.TABLE_ID(N_SoilSelect::Int64, path.Id_Select)
+				table.TABLE_ID(N_SoilSelect::Int64, path.inputSoilwater.Id_Select)
 			
 		elseif !(option.run.Hypix)
 			# Selecting soils of interest
@@ -114,14 +115,14 @@ function START_TOOLBOX()
 
 	if option.run.HydroLabθΨ ≠ :No # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	println("\n === START: DERIVING HYDRO PARAMETERS  === \n")
-	println("         ===== Model Name= $(path.Model_Name) =====")
+	println("         ===== Model Name= $(path.option.Model_Name) =====")
 		
 		# INITIALIZES HYDRAULIC PARAMETERS STRUCT INDEPENDENTLY OF THE SELECTED MODEL
 			hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_SoilSelect)
 
 			hydroOther = hydroStruct.HYDRO_OTHERS(N_SoilSelect)
 
-			hydro, optim = reading.HYDRO_PARAM(option.hydro, hydro, N_SoilSelect, path.HydroParam_ThetaH)
+			hydro, optim = reading.HYDRO_PARAM(option.hydro, hydro, N_SoilSelect, path.inputSoilwater.HydroParam_ThetaH)
 
 			checking.CHECKING(option, option.hydro, optim)
 
@@ -194,7 +195,7 @@ function START_TOOLBOX()
 		# Structure of hydroPsd
 			hydroPsd = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 			hydroOther_Psd = hydroStruct.HYDRO_OTHERS(N_SoilSelect)
-			hydroPsd, optim_Psd = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.HydroParam_ThetaH)
+			hydroPsd, optim_Psd = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.inputSoilwater.HydroParam_ThetaH)
 
 		# Total Porosity= Φ
 		if option.run.ρb_2_Φ
@@ -228,7 +229,7 @@ function START_TOOLBOX()
 		# Structure of hydroInfilt
 			hydroInfilt = hydroStruct.HYDROSTRUCT(N_SoilSelect)
 			hydroOther_Infilt = hydroStruct.HYDRO_OTHERS(N_SoilSelect)
-			hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.HydroParam_Infilt)
+			hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.inputSoilwater.HydroParam_Infilt)
 
 		# Total Porosity= Φ
 			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockW, ρ_Rock, ρbSoil, ρp_Fine)
@@ -256,12 +257,12 @@ function START_TOOLBOX()
 
 				if option.smap.AddPointKosugiBimodal && option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
 					# Extra points in θ(Ψ) to reduce none uniqueness
-					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, Id_Select, N_SoilSelect, path.Table_ExtraPoints_θΨ, param.hydro.Ψ_Table)
+					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, Id_Select, N_SoilSelect, path.tableSoilwater.Table_ExtraPoints_θΨ, param.hydro.Ψ_Table)
 	
 					# Extra points required by TopNet
-						table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, Id_Select, N_SoilSelect, path.Table_KosugiθΨ, param.hydro.smap.Ψ_Table)
+						table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, Id_Select, N_SoilSelect, path.tableSoilwater.Table_KosugiθΨ, param.hydro.smap.Ψ_Table)
 
-						table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, Id_Select, param.hydro.K_Table, KunsatModel_Lab, N_SoilSelect, path.Kunsat_Model)
+						table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, Id_Select, param.hydro.K_Table, KunsatModel_Lab, N_SoilSelect, path.inputSoilwater.Kunsat_Model)
 				end
 
 				if option.smap.CombineData

@@ -20,10 +20,10 @@ module readSmap
          MaxRootingDepth ::Vector{Float64}
       end
       function SMAP(Id_Select_True, N_SoilSelect)
-         println("    ~  $(path.Smap) ~")
+         println("    ~  $(path.inputSmap.Smap) ~")
 
          # Read data
-            Data = DelimitedFiles.readdlm(path.Smap, ',')
+            Data = DelimitedFiles.readdlm(path.inputSmap.Smap, ',')
          # Read header
             Header = Data[1,1:end]
          # Remove first READ_ROW_SELECT
@@ -70,7 +70,7 @@ module readSmap
          RockClass_Polynomial_Array::Array{} 
       end
       function ROCKFRAGMENT_WETTABLE()
-         Path = path.SmapLookupTableWettable
+         Path = path.inputSmap.SmapLookupTableWettable
          println("    ~  $(Path) ~")
          
          # Read data

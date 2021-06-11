@@ -52,7 +52,7 @@ module pathHypix
 		Plot_θΨ_Δθ
 		Plot_σ2θr
 		Plot_Ψmin_Ψmax
-		Plots_θ∂θ∂Ψ
+		Plot_θ∂θ∂Ψ
 	end
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,7 +114,7 @@ module pathHypix
 				Plot_Ψmin_Ψmax        = "Plot_ΨminΨmax.svg"
 				Plot_θΨ_Δθ            = "Plot_θΨ_Δθ.svg"
 				Plot_σ2θr             = "Plot_θr2σ.svg"
-				Plots_θ∂θ∂Ψ           = "Plot_θ∂θ∂Ψ.svg"
+				Plot_θ∂θ∂Ψ           = "Plot_θ∂θ∂Ψ.svg"
 
 			# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			# 						PROCESSING DATA
@@ -197,7 +197,7 @@ module pathHypix
 					mkpath(FileHypix_Plot_Results)
 
 					Plot_OfStep   = FileHypix_Plot_Results
-					Plots_θ∂θ∂Ψ    = FileHypix_Plot_Results * Plots_θ∂θ∂Ψ
+					Plot_θ∂θ∂Ψ    = FileHypix_Plot_Results * Plot_θ∂θ∂Ψ
 					Plot_Ψmin_Ψmax = FileHypix_Plot_Results * Plot_Ψmin_Ψmax
 					Plot_σ2θr      = FileHypix_Plot_Results * Plot_σ2θr
 					Plot_θΨ_Δθ     = FileHypix_Plot_Results * Plot_θΨ_Δθ
@@ -249,7 +249,7 @@ module pathHypix
 					Plot_θΨ_Δθ,
 					Plot_σ2θr,
 					Plot_Ψmin_Ψmax,
-					Plots_θ∂θ∂Ψ)
+					Plot_θ∂θ∂Ψ)
 
 	return pathHyPix
 	end  # function: PATHHYPIX
