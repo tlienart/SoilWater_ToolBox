@@ -66,7 +66,7 @@ module tableSmap
          if Option_BrooksCorey # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "BrooksCorey"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.Model_Name * "_" * path.Table_θΨK₀
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀
             
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"λbc";"Ψbc"; "Ks"; "Ψga"]
@@ -96,7 +96,7 @@ module tableSmap
          if  Option_ClappHornberger # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "ClappHornberger"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.Model_Name * "_" * path.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
 
@@ -127,7 +127,7 @@ module tableSmap
          if Option_VanGenuchten # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "Vangenuchten"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.Model_Name * "_" * path.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"N";"Ψvg"; "Ks"]
@@ -157,7 +157,7 @@ module tableSmap
          if Option_VanGenuchtenJules # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "VangenuchtenJules"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.Model_Name * "_" * path.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"N";"Ψvg"; "Ks"]
@@ -187,7 +187,7 @@ module tableSmap
          if Option_Kosugi # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "Kosugi"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.Model_Name * "_" * path.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
                Select_θΨ =["θs";"θr";"Ks";"Ψm";"σ";"σMac";"ΨmMac";"θsMacMat"; "θsMacMat_ƞ"]
@@ -217,7 +217,7 @@ module tableSmap
       if Option_Kosugi_Table # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
          # HydroModel_θΨ = "Kosugi"
 
-         Path_θΨ =  path.Table_KosugiθΨ
+         Path_θΨ =  path.tableSoilwater.Table_KosugiθΨ
 
          if isfile(Path_θΨ)
             Select_θΨ = string.(Int64.(param.hydro.smap.Ψ_Table)) .* "mm"

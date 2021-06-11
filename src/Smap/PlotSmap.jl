@@ -175,9 +175,9 @@ module plotSmap
                Plot1 = Plots.plot(Plot1, Plot_Θψ)
             end # option.hydro.KunsatΨ 
 
-            Path = path.Plots_θΨK * "Lab_ThetaH_" * Title * ".svg" 
+            Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
             
-            # Path = path.Plots_θΨK * "Lab_ThetaH_" * string(path.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
+            # Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
             # Plots.GRBackend()
 
             
@@ -410,7 +410,7 @@ module plotSmap
 
                # Fig[3, 1] = Makie.Legend(Fig, Axis1, "PLOTS", orientation=:horizontal)
 
-               # Path = path.Plots_θΨK * "Lab_ThetaH_" * Title * ".svg" 
+               # Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
 
                leg = Fig[1, end+1] = Makie.Legend(Fig, [P_Smap, P_ClappHonb, P_ClappHonb_Loan, P_vangJules, P_Vang, P_Lab, P_PtotalPorosity], ["Smap", "ClapHornberger", "ClapHornberger_Loam", "VangJules", "Vang","Lab","TotalPorosity"])
 
@@ -420,7 +420,7 @@ module plotSmap
                Makie.trim!(Fig.layout)
                leg.tellheight = true
                
-               Path = path.Plots_θΨK * "Lab_ThetaH_" * string(path.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
+               Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
       
                Makie.save(Path, Fig)
      

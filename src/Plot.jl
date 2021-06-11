@@ -113,9 +113,9 @@ module plot
 							Plot1 = Plots.plot(Plot1, Plot_Θψ)
 						end # option.hydro.KunsatΨ 
 
-				Path = path.Plots_θΨK * "Lab_ThetaH_" * Title * ".svg" 
+				Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
 				
-				# Path = path.Plots_θΨK * "Lab_ThetaH_" * string(path.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
+				# Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
 				# Plots.GRBackend()
 	
 				# @suppress begin
@@ -158,7 +158,7 @@ module plot
 
 			Plots.plot!(σ[1:N_σ], log.(Ψm_Max[1:N_σ]), seriestype=:line, color=:blue, lw=2, style=:dashdot, legend=false, xlabel=L" \sigma \ [-]", ylabel=L"ln \ \psi _{m} \ [mm]", grid=false)
 
-			Path = path.Plots_σΨm * "SigmaHm" * ".svg"     
+			Path = path.plotSoilwater.Plot_σΨm * "SigmaHm" * ".svg"     
 			Plot = Plots.plot(Plot_σΨm)
 			Plots.savefig(Plot, Path)
 			println("    ~  $(Path) ~")
@@ -287,9 +287,9 @@ module plot
 
                # Fig[3, 1] = Makie.Legend(Fig, Axis1, "PLOTS", orientation=:horizontal)
 
-               # Path = path.Plots_θΨK * "Lab_ThetaH_" * Title * ".svg" 
+               # Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
                
-               Path = path.Plots_θΨK * "Lab_ThetaH_" * string(path.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
+               Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
       
                Makie.save(Path, Fig)
      
@@ -378,7 +378,7 @@ module plot
 					ylabel!(L"\theta _{r \ psd} [cm^3 cm^{-3}]")
 					Plots.plot!(xlims= (θr_Min, θr_Max), ylims= (θr_Min, θr_Max))
 
-			Path = path.Plots_Psd_θr
+			Path = path.plotSoilwater.Plot_Psd_θr
 			Plot = Plots.plot(Plot_θr, Plot_θr_Psd)
 			Plots.savefig(Plot, Path)
 			println("    ~  $(Path) ~")
@@ -448,7 +448,7 @@ module plot
 
 
 				Plot = Plots.plot(Plot_∑Psd_Rpart, Plot_Rpart_Psd, Plot_NormMixing_Rpart, layout = (3,1))
-				Path = path.Plots_IMP_model * "IMP_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"
+				Path = path.plotSoilwater.Plot_IMP_model * "IMP_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"
 				Plots.savefig(Plot, Path)
 				println("    ~  $(Path) ~")
 			end # for iZ
@@ -514,7 +514,7 @@ module plot
 					ylabel!(L"\theta \ [cm^3 cm^{-3}]")
 					Plots.plot!(xlims =(Ψ_θΨ_Min*cst.Mm_2_Cm, Ψ_θΨ_Max*cst.Mm_2_Cm), ylims =(0.0, θ_θΨ_Max), xscale= :log10, size=(800,400))
 
-				Path = path.Plot_Psd_θΨ * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
+				Path = path.plotSoilwater.Plot_Psd_θΨ * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
 				Plot = Plots.plot(Plot_θ_Ψ_Psd)
 				Plots.savefig(Plot, Path)
 				println("    ~  $(Path) ~")
@@ -574,7 +574,7 @@ module plot
 						Plots.xlabel!(L"Time [minutes]")
 						Plots.ylabel!(L"\sum infiltration \ [mm]")      
 						
-					Path = path.Plots_∑infilt_Opt * "INFIL_" * string(option.infilt.Model)  *  "_" * string(Id_Select[iZ]) *  ".svg"
+					Path = path.plotSoilwater.Plot_∑infilt_Opt * "INFIL_" * string(option.infilt.Model)  *  "_" * string(Id_Select[iZ]) *  ".svg"
 
 				Plots.savefig(Plot_∑infilt_Obs, Path)
 				println("    ~  $(Path) ~")
@@ -648,7 +648,7 @@ module plot
 		# 		GRUtils.xlabel( "\$ Time \\ [minutes] \$")
 		# 		GRUtils.ylabel( "\$ \\sum \\ Infiltration-1D \\ [mm] \$")
 
-		# 		Path = path.Plots_∑infilt_SeIniRange * "Plot_Infilt_SeIni" * "_" *string(Id_Select[iZ]) * ".svg"
+		# 		Path = path.plotSoilwater.Plot_∑infilt_SeIniRange * "Plot_Infilt_SeIni" * "_" *string(Id_Select[iZ]) * ".svg"
 		# 		GRUtils.savefig(Path, Fig) 
 		# 		GRUtils.hold(false)    
 		# 		println("    ~  $(Path) ~")
@@ -739,7 +739,7 @@ module plot
 							Plots.ylabel!(L" K (\psi) \ [cm \ h^{-1}]")
 							Plots.plot!(xlims = (Ψ_θΨ_Min*cst.Mm_2_Cm, Ψ_θΨ_Max*cst.Mm_2_Cm), ylims = (10^-2.0, K_Ψ_Max * cst.MmS_2_CmH), xscale= :log10,  yscale= :log10, legend=:bottomleft, size=(800,400))
 
-					Path = path.Plots_∑infilt_θΨ * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
+					Path = path.plotSoilwater.Plot_∑infilt_θΨ * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
 					Plot = Plots.plot(Plot_θ_Ψ, Plot_K_Ψ)
 					Plots.savefig(Plot, Path)
 					println("    ~  $(Path) ~")
@@ -786,7 +786,7 @@ module plot
 				GRUtils.xlabel( "\$ Se \\ [-] \$")
 				GRUtils.ylabel( "\$ Sorptivity [mm s ^{-0.5}] \$")
 
-				Path = path.Plots_Sorptivity_Se * "Plot_Sorptivity_Se" * "_" *string(Id_Select[iZ]) * ".svg"
+				Path = path.plotSoilwater.Plot_Sorptivity_Se * "Plot_Sorptivity_Se" * "_" *string(Id_Select[iZ]) * ".svg"
 				GRUtils.savefig(Path, Fig) 
 				GRUtils.hold(false)    
 				println("    ~  $(Path) ~")

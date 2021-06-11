@@ -17,7 +17,7 @@ module table
 
 			Select = fill(1::Int64, N_SoilSelect)
 
-			FieldName_String = ["Id", path.Select]
+			FieldName_String = ["Id", path.option.Select]
 
 			Output = Tables.table( [Id_Select[1:N_SoilSelect] Select[1:N_SoilSelect]] )
 			
@@ -171,13 +171,13 @@ module table
 		#		FUNCTION : PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function PSD(Id_Select, N_SoilSelect, paramPsd)
-				println("    ~  $(path.Table_Psd) ~")
+				println("    ~  $(path.tableSoilwater.Table_Psd) ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect,  paramPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
-				open(path.Table_Psd, "w") do io
+				open(path.tableSoilwater.Table_Psd, "w") do io
 					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(Matrix,digits=5)], ",")
@@ -190,7 +190,7 @@ module table
 		#		FUNCTION : θΨK_PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function θΨK_PSD(hydroPsd, Id_Select, KunsatModel_Psd, N_SoilSelect)
-				println("    ~  $(path.Table_θΨ_Psd) ~")
+				println("    ~  $(path.tableSoilwater.Table_θΨ_Psd) ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroPsd)
 
@@ -200,7 +200,7 @@ module table
 				push!(FieldName_String, "Kunsat_Model")
 
 				Matrix =  round.(Matrix, digits=5)
-				open(path.Table_θΨ_Psd, "w") do io
+				open(path.tableSoilwater.Table_θΨ_Psd, "w") do io
 					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
@@ -215,7 +215,7 @@ module table
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd)
-				println("    ~  $(path.Table_Psd_θΨ_θ) ~")
+				println("    ~  $(path.tableSoilwater.Table_Psd_θΨ_θ) ~")
 
 				N_Ψ = Int64(length(param.psd.Ψ_Table))
 
@@ -241,7 +241,7 @@ module table
 					θ = round.(θ, digits=5)
 
 				# Writting the table
-					open(path.Table_Psd_θΨ_θ, "w") do io
+					open(path.tableSoilwater.Table_Psd_θΨ_θ, "w") do io
 						DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
 						for i = 1:length(Id_Select)
 							DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
@@ -268,7 +268,7 @@ module table
 		#		FUNCTION : HYDRO_INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function HYDRO_INFILT(hydroInfilt, Id_Select, KunsatModel_Infilt, N_SoilSelect)
-				println("    ~  $(path.Table_HydroInfilt) ~")
+				println("    ~  $(path.tableSoilwater.Table_HydroInfilt) ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroInfilt)
 
@@ -278,7 +278,7 @@ module table
 				push!(FieldName_String, string("Kunsat_θΨ"))
 
 				Matrix =  round.(Matrix, digits=10)
-				open(path.Table_HydroInfilt, "w") do io
+				open(path.tableSoilwater.Table_HydroInfilt, "w") do io
 					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
@@ -291,14 +291,14 @@ module table
 		#		FUNCTION : infilt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function INFILT(Id_Select, N_SoilSelect, infiltOutput)
-				println("    ~  $(path.Table_Infilt) ~")
+				println("    ~  $(path.tableSoilwater.Table_Infilt) ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, infiltOutput)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
 				Matrix =  round.(Matrix, digits=5)
-				open(path.Table_Infilt, "w") do io
+				open(path.tableSoilwater.Table_Infilt, "w") do io
 					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")

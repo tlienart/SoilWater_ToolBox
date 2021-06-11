@@ -256,7 +256,7 @@ module plotOther
 			# ylims=(0.0,1.0),
 
 			Plots.savefig(Plot1, pathHyPix.Plot_Se_Ψ_Constrained)
-			println("			 ~ ",  pathHyPix.Plots_θ∂θ∂Ψ, "~")
+			println("			 ~ ",  pathHyPix.Plot_θ∂θ∂Ψ, "~")
 		end # function: SE_Ψ_CONSTRAINED
 
 
@@ -365,7 +365,7 @@ module plotOther
 		Plots.plot!(Plot1, subplot=2 , xlims=(7.0,12.0), ylims =(7.0,12.0))
 		Plots.plot!(Plot1, subplot=2, xlims=(7.0,12.0), ylims =(7.0,12.0) , xlabel=L"ln \ \psi_{m} \ [mm] \ Scenario \_ G", ylabel=L"ln \ \psi_{m} \ [mm]")
 
-		Path = pathHyPix.Plots_σΨm * "Plot_σ_ψM_Scenario.svg"
+		Path = pathHyPix.Plot_σΨm * "Plot_σ_ψM_Scenario.svg"
 		Plots.savefig(Plot1, Path)
 		println("			 ~ ", Path, "~")
 	end

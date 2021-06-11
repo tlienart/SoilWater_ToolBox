@@ -12,10 +12,10 @@ module reading
 	#		FUNCTION : ID
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ID()
-			println("    ~  $(path.Id_Select) ~")
+			println("    ~  $(path.inputSoilwater.Id_Select) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Id_Select, ',')
+				Data = DelimitedFiles.readdlm(path.inputSoilwater.Id_Select, ',')
 
 				Header = Data[1,begin:end]
 
@@ -23,11 +23,11 @@ module reading
 
 				Data = sortslices(Data, dims=1)
 
-				# Data, Header = DelimitedFiles.readdlm(path.Id_Select, ',', Any, header=true)
+				# Data, Header = DelimitedFiles.readdlm(path.inputSoilwater.Id_Select, ',', Any, header=true)
 
 				Id, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
 			
-				Id_True, N_iZ_All = tool.readWrite.READ_HEADER_FAST(Data, Header, path.Select)
+				Id_True, N_iZ_All = tool.readWrite.READ_HEADER_FAST(Data, Header, path.option.Select)
 
 				Id = Int64.(Id)
 			
@@ -92,10 +92,10 @@ module reading
 	#		FUNCTION : ρ_Ψθ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function BULKDENSITY(Id_Select, N_SoilSelect)
-			println("    ~  $(path.BulkDensity) ~")
+			println("    ~  $(path.inputSoilwater.BulkDensity) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.BulkDensity, ',')
+				Data = DelimitedFiles.readdlm(path.inputSoilwater.BulkDensity, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -120,7 +120,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ)
 
-			Path = path.Table_ExtraPoints_θΨ
+			Path = path.tableSoilwater.Table_ExtraPoints_θΨ
 
 			# Read data
 				Data = DelimitedFiles.readdlm(Path, ',')
@@ -158,10 +158,10 @@ module reading
 	#		FUNCTION : θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θΨ(Id_Select, N_SoilSelect)
-			println("    ~  $(path.Ψθ) ~")
+			println("    ~  $(path.inputSoilwater.Ψθ) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Ψθ, ',')
+				Data = DelimitedFiles.readdlm(path.inputSoilwater.Ψθ, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -183,10 +183,10 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function KUNSATΨ(Id_Select, N_SoilSelect)
 			# Determeining where to read the data
-			if isfile(path.Kunsat)
-				Path = path.Kunsat
-			elseif isfile(path.Kunsat_Model)
-				Path = path.Kunsat_Model
+			if isfile(path.inputSoilwater.Kunsat)
+				Path = path.inputSoilwater.Kunsat
+			elseif isfile(path.inputSoilwater.Kunsat_Model)
+				Path = path.inputSoilwater.Kunsat_Model
 			else
 				error("\n SoilWater-ToolBox input error: No Kunsat data. You coud derive K(θ) from Kosugi model with option.UsePointKosugiBimodal \n")
 			end
@@ -268,10 +268,10 @@ module reading
 		end # struct INFILT
 
 		function INFILTRATION(Id_Select, N_SoilSelect)
-			println("    ~  $(path.Infiltration) ~")
+			println("    ~  $(path.inputSoilwater.Infiltration) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Infiltration, ',')
+				Data = DelimitedFiles.readdlm(path.inputSoilwater.Infiltration, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -284,10 +284,10 @@ module reading
 				
 				∑Infilt_Obs , ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "Cumul_Infiltration[mm]", N_SoilSelect)
 				
-			println("    ~  $(path.Infiltration_Param) ~")
+			println("    ~  $(path.inputSoilwater.Infiltration_Param) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Infiltration_Param, ',')
+				Data = DelimitedFiles.readdlm(path.inputSoilwater.Infiltration_Param, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -313,10 +313,10 @@ module reading
 	#		FUNCTION : PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function PSD(Id_Select, N_SoilSelect) # TODO make sure that the particles are ordered from smalest to largest
-			println("    ~  $(path.Psd) ~")
+			println("    ~  $(path.inputSoilwater.Psd) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.Psd, ',')
+				Data = DelimitedFiles.readdlm(path.inputSoilwater.Psd, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
