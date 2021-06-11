@@ -3,19 +3,10 @@
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 # International SoilWater-ToolBox 2021
-
-<<<<<<< HEAD
 ## *Current state and future*
 
 
-=======
-## *Current state and futures*
->>>>>>> d2ba2b6f2ac0ca3d4be221f4261dd6af7ab73921
-
 J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
-
----
-
 ---
 
 > 1. Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
