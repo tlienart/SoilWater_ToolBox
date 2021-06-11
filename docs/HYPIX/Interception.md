@@ -13,10 +13,10 @@ $$
 
 where
 
-$$
+$
 \varDelta Pr_{ground}
 
-$$
+$
 
 [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and
 
