@@ -2,8 +2,6 @@
 #		module option
 # ===========================================================
 module options
-
-
 	# What available data we have?
 	struct DATA
 		HydroParam::Bool
@@ -167,6 +165,7 @@ module options
 			dataFrom::DATAFROM
 		end # struct OPTION
 	
+	#__________________________________________________________________
 	#..................................................................
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -184,6 +183,7 @@ module options
 					PlotVscode = false # <true>* plot shown in VScode; <false>
 
 			other = OTHER(DownloadPackage, Ploting, PlotVscode)
+
 
 			# =============================================================
 			# 		DATA
@@ -266,7 +266,7 @@ module options
 					θs_MinFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
 					Ks_MinMaxFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
 						
-				# HAVE WE Kunsat(ψ)DATA
+				# Have WE Kunsat(ψ)DATA
 					KunsatΨ         = false #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 						KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
 						Kunsat_JustRun = false
