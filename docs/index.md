@@ -23,11 +23,11 @@ J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilbur
 
 ## 1. Open source software
 
-The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language ([https://julialang.org/](https://julialang.org/)). It can be downloaded from [https://github.com/manaakiwhenua/SoilWater_ToolBox/](https://github.com/manaakiwhenua/SoilWater_ToolBox/) and is available under the **GP-3.0 License**
+The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language ([https://julialang.org/](https://julialang.org/)). It can be downloaded from [https://github.com/manaakiwhenua/SoilWater_ToolBox/](https://github.com/manaakiwhenua/SoilWater_ToolBox/) and is available under the **GP-3.0 License**. This software includes a set of interlinked modules that can also be used independently.
 
 ## 2. Mission statement
 
-The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters using wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil-water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
+The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters and soil water fluxes using wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
 
 ## 3.  SoilWater-ToolBox based on peer-reviewed publications
 
@@ -49,14 +49,16 @@ A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below
 
 ## 5.  Current applications
 
-The **SoilWater-ToolBox** is being used in several projects in New Zealand (Manaaki Whenua -- Landcare Research, NIWA, Plant & Food), and in France and Spain, for:
+The management of both soil and water resources is of primarily importance. Current pressure on natural resources together with climate trends, increase the need for better understanding and predicting the movement of water in the soil. Characterizing soil properties to model soil water dynamic is also directly link to the water cycle with direct implications into the environment, management of crop production, and related socio-economical aspects.
+
+The **SoilWater-ToolBox** is being used in several projects in New Zealand (Manaaki Whenua -- Landcare Research, NIWA, Plant & Food), as well as in France and Spain, for:
 
 - **laboratory data**, to derive unique sets of physical hydraulic parameters from laboratory data even when key data are missing, such as the *unsaturated hydraulic conductivity*;
 - **S-Map-Hydro** **across New-Zealand**, to derive physical hydraulic parameters suitable for a wide range of hydrological models -- the derived hydraulic parameters are **scaled** to the vertical scale of interest and corrected for **stone** content;
 - **validating/adjusting S-Map-Hydro** by feeding the hydraulic parameters into a physical hydrological model, **HyPix,** and comparing the *soil-water content* outputs with measured values;
 - **inverting hydraulic parameters**, to derive hydraulic parameters by inverting time series *soil-water content* data (e.g. TDR, soil moisture capacitance sensor FDR, neutron probe);
 - the **automatic infiltrometer**, to derive physical hydraulic parameters from automatic infiltration tests ;
-- **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*;
+- **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*.
 
 ## 6.  Potential future applications
 
