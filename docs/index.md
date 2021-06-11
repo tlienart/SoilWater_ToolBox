@@ -58,7 +58,7 @@ The **SoilWater-ToolBox** is being used in several projects in New Zealand (Mana
 - **validating/adjusting S-Map-Hydro** by feeding the hydraulic parameters into a physical hydrological model, **HyPix,** and comparing the *soil-water content* outputs with measured values;
 - **inverting hydraulic parameters**, to derive hydraulic parameters by inverting time series *soil-water content* data (e.g. TDR, soil moisture capacitance sensor FDR, neutron probe);
 - the **automatic infiltrometer**, to derive physical hydraulic parameters from automatic infiltration tests ;
-- **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*;
+- **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*.
 
 ## 6.  Potential future applications
 
