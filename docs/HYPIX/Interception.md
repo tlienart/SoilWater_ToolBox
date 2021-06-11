@@ -6,24 +6,21 @@
 
 The parsimonious physically based interception model is an improvement of Pollacco *et al.* (2013a). The following interception model uses *potential evaporation of a wet canopy* *Δ**Pet~int~,*  *LAI* [-], and *extinction coefficient for solar radiation*, *K~g~* [-] set to 0.5. The *gross precipitation depth* that falls on top of a canopy, [L], is partitioned following Rutter *et al.* (1971) as:
 
-$$
+$
 \varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground}
-
-$$
+$
 
 where
 
 $
 \varDelta Pr_{ground}
-
 $
 
 [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and
 
-$$
+$
 \varDelta Pr_{int}
-
-$$
+$
 
 [L] is the *intercepted precipitation depth.* They are computed as:
 
