@@ -37,7 +37,7 @@ function START_TOOLBOX()
 			
 		elseif !(option.run.Hypix)
 			# Selecting soils of interest
-				Id_Select, Id_Select_True, N_SoilSelect = reading.ID()
+				Id_Select, Id_Select_True, N_SoilSelect = reading.ID(PathIdSlect=path.inputSoilwater.Id_Select, PathOptionSelect=path.option.Select)
 
 			# Determine the soils to simulale
 				N_SoilSelect = Int(min(N_SoilSelect, param.globalparam.N_iZ_Simulations))
@@ -45,12 +45,12 @@ function START_TOOLBOX()
 
 			# Reading bulk density
 				if option.run.ρb_2_Φ
-					RockW, ρ_Rock, ρbSoil, ρp_Fine = reading.BULKDENSITY(Id_Select, N_SoilSelect)
+					RockW, ρ_Rock, ρbSoil, ρp_Fine = reading.BULKDENSITY(Id_Select, N_SoilSelect, path.inputSoilwater.BulkDensity)
 				end
 
 			# Reading θ(Ψ)
 				if option.run.HydroLabθΨ ≠ :No # <> = <> = <> = <> = <> = <>
-					θ_θΨ, Ψ_θΨ, N_θΨ = reading.θΨ(Id_Select, N_SoilSelect)
+					θ_θΨ, Ψ_θΨ, N_θΨ = reading.θΨ(Id_Select, N_SoilSelect, path.inputSoilwater.Ψθ)
 				else
 					θ_θΨ = [] 
 					Ψ_θΨ = [] 
@@ -59,7 +59,7 @@ function START_TOOLBOX()
 		
 			# Reading K(θ)
 				if option.hydro.KunsatΨ # <>=<>=<>=<>=<>
-					K_KΨ, Ψ_KΨ, N_KΨ = reading.KUNSATΨ(Id_Select, N_SoilSelect)
+					K_KΨ, Ψ_KΨ, N_KΨ = reading.KUNSATΨ(Id_Select, N_SoilSelect, path)
 				else
 					Ψ_KΨ = []
 					K_KΨ = []
@@ -68,7 +68,7 @@ function START_TOOLBOX()
 
 			# Reading Particle Size distribution
 				if option.run.IntergranularMixingPsd
-					Rpart, ∑Psd, N_Psd = reading.PSD(Id_Select, N_SoilSelect)
+					Rpart, ∑Psd, N_Psd = reading.PSD(Id_Select, N_SoilSelect, path.inputSoilwater.Psd)
 				else
 					∑Psd = zeros(Float64, N_SoilSelect, 1)
 					Rpart = zeros(Float64, N_SoilSelect, 1)
@@ -77,7 +77,7 @@ function START_TOOLBOX()
 		
 			# Reading infiltration	
 				if option.run.InfiltBest # <>=<>=<>=<>=<>
-					Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = reading.INFILTRATION(Id_Select, N_SoilSelect)
+					Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam  = reading.INFILTRATION(Id_Select, N_SoilSelect, path.inputSoilwater.Infiltration, path.inputSoilwater.Infiltration_Param)
 				end # option.run.InfiltBest
 
 			# Reading Smap data
@@ -103,7 +103,7 @@ function START_TOOLBOX()
 		end
 
 		if option.smap.UsePointKosugiBimodal
-			N_θΨ, θ_θΨ, Ψ_θΨ = reading.θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ)
+			N_θΨ, θ_θΨ, Ψ_θΨ = reading.θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, path.tableSoilwater.Table_ExtraPoints_θΨ)
 		end
 	end
 
@@ -251,7 +251,7 @@ function START_TOOLBOX()
 		if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File # <>=<>=<>=<>=<>
 
 			if !(option.dataFrom.Smap)
-				table.hydroLab.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect)
+				table.hydroLab.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, path.Table_θΨK)
 			else
 				tableSmap.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, smap)
 
@@ -273,22 +273,22 @@ function START_TOOLBOX()
 		end # option.run.HydroLabθΨ 
 
 		if option.run.IntergranularMixingPsd # <>=<>=<>=<>=<>
-			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, paramPsd)
+			table.psd.PSD(Id_Select[1:N_SoilSelect], N_SoilSelect, paramPsd, path.tableSoilwater.Table_Psd)
 
 			if option.psd.HydroParam  && option.psd.HydroParam
-				table.psd.θΨK_PSD(hydroPsd, Id_Select, KunsatModel_Psd, N_SoilSelect)
+				table.psd.θΨK_PSD(hydroPsd, Id_Select, KunsatModel_Psd, N_SoilSelect, path.tableSoilwater.Table_Psd)
 			end
 			
 			if option.psd.Table_Psd_θΨ_θ
-				table.psd.PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd)
+				table.psd.PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd, path.tableSoilwater.Table_Psd_θΨ_θ)
 			end
 		end # option.run.IntergranularMixingPsd
 
 		if option.run.InfiltBest # <>=<>=<>=<>=<>
-			table.infilt.HYDRO_INFILT(hydroInfilt, Id_Select, KunsatModel_Infilt, N_SoilSelect)
+			table.infilt.HYDRO_INFILT(hydroInfilt, Id_Select, KunsatModel_Infilt, N_SoilSelect, path.tableSoilwater.Table_HydroInfilt)
 
-			table.infilt.INFILT(Id_Select, N_SoilSelect, infiltOutput)
-		end
+			table.infilt.INFILT(Id_Select, N_SoilSelect, infiltOutput, path.tableSoilwater.Table_Infilt)
+		end # option.run.InfiltBest
 
 	# PRINT OUTPUT ======================================================================================
 	if option.other.Ploting && !option.run.Hypix
@@ -299,20 +299,17 @@ function START_TOOLBOX()
 		end
 
 		if option.run.HydroLabθΨ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
-			# plot.lab.σ_Ψm(hydro)
+
 			if option.dataFrom.Smap
 				plotSmap.makie.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab; smap=smap)
 
 				# plotSmap.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab; N_Se=1000, smap=[])
 			else
-				plot.lab.makie.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab)
+				plot.lab.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab, path.plotSoilwater.Plot_θΨK, path.option.Model_Name)
 			end	
 		end # option.run.HydroLabθΨ
-		if  option.run.HydroLabθΨ ≠ :No && option.hydro.Plot_σ_Ψm && option.hydro.HydroModel == :Kosugi
-			plot.lab.σ_Ψm(hydro)
-		end
 		if option.run.IntergranularMixingPsd && option.psd.Plot_θr # <>=<>=<>=<>=<>
-			plot.psd.PLOT_θr(∑Psd, N_SoilSelect, hydro, hydroPsd)
+			plot.psd.PLOT_θr(∑Psd, N_SoilSelect, hydro, hydroPsd, path.plotSoilwater.Plot_Psd_θr, path.plotSoilwater.Plot_IMP_model)
 		end
 		if option.run.IntergranularMixingPsd && option.psd.Plot_IMP_Model # <>=<>=<>=<>=<>
 			plot.psd.PLOT_IMP_MODEL(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd) 
@@ -321,23 +318,21 @@ function START_TOOLBOX()
 			println("			~ PSD WARNING Sorry cannot plot Plot_Psd_θΨ as option.psd.HydroParam==false ~")
 		end
 		if option.run.IntergranularMixingPsd && option.psd.Plot_Psd_θΨ && option.psd.HydroParam # <>=<>=<>=<>=<>
-			plot.psd.PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, Id_Select, hydroPsd, hydro)
+			plot.psd.PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, Id_Select, hydroPsd, hydro, path.plotSoilwater.Plot_Psd_θΨ)
 		end
 		if option.run.InfiltBest && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
-			plot.infilt.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput)
+			plot.infilt.PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput, path.plotSoilwater.Plot_∑infilt_Opt )
 		end
 		# if option.run.InfiltBest && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
 		# Removing GRUtils software to avoid conflict
 		# 	# plot.infilt.PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect)
 		# end
-		if  option.run.InfiltBest && option.run.HydroLabθΨ ≠ :No && option.infilt.Plot_Sorptivity_SeIni # <>=<>=<>=<>=<>
-			plot.infilt.PLOT_SORPTIVITY_SEINI(hydro, Id_Select, N_SoilSelect) 
-		end
+
 		if option.run.InfiltBest && option.infilt.Plot_θΨ
 			if option.run.HydroLabθΨ ≠ :No
-				plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect; hydro=hydro)
+				plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect, path.plotSoilwater.Plot_∑infilt_θΨ; hydro=hydro)
 			else
-				plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect)
+				plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect, path.plotSoilwater.Plot_∑infilt_θΨ)
 			end # option.run.HydroLabθΨ
 		end # option.run.InfiltBest
 

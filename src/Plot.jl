@@ -8,24 +8,22 @@ module plot
 	#		MODULE: lab
 	# =============================================================
 	module lab
-		import ...cst, ...hydroRelation, ...hydroStruct, ...kunsat, , ...param, ...path, ...reading, ...wrc, ...ΨminΨmax
-		using Plots.PlotMeasures, LaTeXStrings
-		using Suppressor
-		# using Plots; pgfplotsx()
-		using Plots; gr()
+		import ..cst, ..kunsat, ..param, ..wrc
 
-
-		export HYDROPARAM, σ_Ψthen		
-		
+		# using GLMakie
+		using CairoMakie
+	
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDROPARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro; N_Se=1000)
-		println("  ==  START: Plotting HydroParam  ==")
-
-         θ_Sim       = Array{Float64}(undef, (N_Se))
-         θ_OtherData = Array{Float64}(undef, (N_Se))
-         Kunsat_Sim  = Array{Float64}(undef, (N_Se))
+		function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab, Path_Plot_θΨK, Path_Model_Name; N_Se=1000)
+			println("  ==  START: Plotting HydroParam  ==")
+	
+					
+			# ===================== DATA =====================
+			θ_Sim       = Array{Float64}(undef, (N_Se))
+			θ_OtherData = Array{Float64}(undef, (N_Se))
+			Kunsat_Sim  = Array{Float64}(undef, (N_Se))
 
 			Ψ_θΨ_Min = 0.0
 
@@ -36,11 +34,10 @@ module plot
 
 				θ_θΨ_Max = hydro.Φ[iZ]
 
-				K_Ψ_Max =  hydro.Ks[iZ]
-
 				# Simulated 
 					for iΨ = 1:N_Se
-						θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
+						θ_Sim[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
+
 						Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
 					end # iΨ
 
@@ -49,262 +46,99 @@ module plot
 
 				# == Ticks ==
 					Ticks = Int64.(Ψ_θΨ[iZ,1:N_θΨ[iZ]])
-					
-					Plot1 = Plots.plot(layout=(2), bottom_margin = 100px, top_margin = 10px, right_margin = 50px, left_margin = 200px, size=(6000,2000))
-					default(titlefont = (20, "times"), legendfontsize = 18, guidefont = (18, :darkgreen), tickfont = (12, :blue), guide = "x", framestyle = :zerolines, yminorgrid = true)
-				
+	
+				#  ===================== PLOTTING =====================
+					# CairoMakie.activate!(type = "svg")
+					# inline!(true)
+					Fig = Figure()
+									
 				#  == Plot_θ_Ψ  ==
-					# Plot_θ_Ψ: Observed
-						X = Ψ_θΨ[iZ,1:N_θΨ[iZ]]
-						Y = θ_θΨ[iZ,1:N_θΨ[iZ]]
-						Label = "Obs"
-						Plot_Θψ = Plots.plot!(Plot1, subplot=1, log1p.(cst.Mm_2_kPa * X) ,Y, seriestype=:scatter, label=Label, color=:red, shape=:square, markersize=4)
+					# Plot_θ_Ψ: General attributes
+					# Axis1.xticks= (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])), Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])
+						Axis1 = Axis(Fig[1,1], resolution = (1000, 600))
+
+						xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨ_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨ_Max * 1.1))
+
+						# ylims!(Axis1, 0.0, θ_θΨ_Max)
+						Axis1.xlabel = "ln(1 + Ψ) [kPa]"
+						Axis1.ylabel =  "ln(1 + Ψ) [kPa]"
+						Axis1.title = Title
+
+						# Plot_θ_Ψ: Observed
+						scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), Float64.(θ_θΨ[iZ,1:N_θΨ[iZ]]), color=:red, markersize=10, marker = '■', label="Obs")
 
 					# Plot_θ_Ψ: Simulated
-						X = Ψ_Sim[1:N_Se]
-						Y = θ_Simp[1:N_Se]
-						Label = "Sim"
-						Plot_Θψ = Plots.plot!(Plot1, subplot=1, log1p.(cst.Mm_2_kPa*X), Y, seriestype=:line, label=Label, color=:blue, lw=2)
+							lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:blue, linewidth=2, label="Sim")
 
 					# Plot_θ_Ψ: Total porosity point
 						X = zeros(Float64,1)
 						X[1] = 0.0
 						Y = zeros(Float64,1)
 						Y[1] = hydro.Φ[iZ]
-						Label = "\$ \\phi \$"
-						Plot_Θψ = Plots.plot!(Plot1, subplot=1, log1p.(cst.Mm_2_kPa * X) , Y, seriestype=:scatter, label= Label, color=:green, shape=:square, markersize=4) 
+						Label = 
+						scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:yellow, markersize=15, marker ="●", label="Φ")
 
-						# Plot_θ_Ψ: General attributes
-							xlabel!(L"ln(1 \ + \ \psi) \ [kPa]")
-							ylabel!(L"\theta \ [cm^3 cm^{-3}]")
-							Plot_Θψ= Plots.plot!(Plot1, subplot=1, xlims=( log1p.(cst.Mm_2_kPa * Ψ_θΨ_Min), log1p.( cst.Mm_2_kPa * Ψ_θΨ_Max * 1.1)), ylims =(0.0, θ_θΨ_Max), xticks=(log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]]), (cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])), title=Title)
+					axislegend()
 
-						#  == Plot_K_Ψ  ==
-						if option.hydro.KunsatΨ
-						# Plot_K_Ψ: Ks
-							K_Ψ_Max = maximum(K_KΨ[iZ,1:N_KΨ[iZ]] )
-							X = zeros(Float64,1)
-							X[1] = 0.0 
-							Y = zeros(Float64,1)
-							Y[1] = K_Ψ_Max
-							Label = "Ks_Max"
-							Plot_kΘ =Plots.plot!(Plot1, subplot=2, log1p.(X.*cst.Mm_2_kPa), log1p.(Y.*cst.MmS_2_CmH), seriestype=:scatter, label=Label , color= :green, shape= :square, markersize=4)
-	
-						if option.hydro.KunsatΨ
-							X = Ψ_KΨ[iZ,1:N_KΨ[iZ]]
-							Y = K_KΨ[iZ,1:N_KΨ[iZ]]
-							Label = "Obs"
-							Plot_kΘ = Plots.plot!(Plot1, subplot=2, log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH), seriestype=:scatter, label=Label, color= :red, shape= :square, markersize=4)
-						end # option.hydro.KunsatΨ
-	
-						# Plot_K_Ψ: Sim K_Ψ
-							X = Ψ_Sim
-							Y = Kunsat_Sim 
-							Label = "Sim"
-							Plot_kΘ =Plots.plot!(Plot1, subplot=2, log1p.(X.*cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH), seriestype=:line, label=Label, color= :blue, lw=2)
-	
-						# General attributes
-							# Plots.xlabel!(L"ln( 1 \ + \ \psi ) \ [cm]")
-							# Plots.ylabel!(L"ln ( 1 \ + \ K (\psi) )  \ [cm \ h^{-1}]")
-							Plot_kΘ =Plots.plot!(Plot1, subplot=2, xlims = (log1p.(cst.Mm_2_kPa .* Ψ_θΨ_Min), log1p.(Ψ_θΨ_Max .* cst.Mm_2_kPa)), ylims = (log1p(0.0), log1p(K_Ψ_Max .* cst.MmS_2_CmH .* 1.1)),  xticks=(log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), (cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]])))
-							
-							Plot1 = Plots.plot(Plot1,Plot_Θψ, Plot_kΘ)
-						else
-							Plot1 = Plots.plot(Plot1, Plot_Θψ)
-						end # option.hydro.KunsatΨ 
+				# == Plot_K_Ψ  ==
+				if option.hydro.KunsatΨ
+					Axis2 = Axis(Fig[1,2])
 
-				Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
+					K_Ψ_Max = maximum(K_KΨ[iZ,1:N_KΨ[iZ]])
+					xlims!(Axis2, log1p.(cst.Mm_2_kPa*Ψ_θΨ_Min), log1p.(Ψ_θΨ_Max*cst.Mm_2_kPa))
+					ylims!(Axis2,  (log1p(0.0), log1p(hydro.Ks[iZ]* cst.MmS_2_CmH * 1.1)))
+					Axis2.xlabel = "ln(1 + Ψ) [kPa]"
+					Axis2.ylabel =  "ln ( 1 + K (Ψ) ) [cm h⁻¹]"              
+	
+					# Plot_K_Ψ: Ks                    
+						X = zeros(Float64,1)
+						X[1] = 0.0 
+						Y = zeros(Float64,1)
+						Y[1] = hydro.Ks[iZ]
+						Label = "Ks_Max"
+						scatter!(Fig[1,2], log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH) ,Y, color=:yellow, markersize=15, marker = '■', label=Label )
+
+					# PlotK_Ψ: K(Ψ) obs
+						X = Ψ_KΨ[iZ,1:N_KΨ[iZ]]
+						Y = K_KΨ[iZ,1:N_KΨ[iZ]]
+						Label = "Obs"
+						scatter!(Fig[1,2], log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH) ,Y, color=:red, markersize=10, marker = '■', label=Label )
+
+					# Plot_K_Ψ: K(Ψ) sim
+						X = Ψ_Sim
+						Y = Kunsat_Sim 
+						Label = "Sim"
+						lines!(Fig[1,2], log1p.(Ψ_Sim.*cst.Mm_2_kPa), log1p.(Kunsat_Sim.*cst.MmS_2_CmH), color=:blue, label=Label)
+
+						axislegend()
+
+					# General attributes
+					
+					#   Axis2.xticks(log1p.(Ψ_Sim.*cst.Mm_2_kPa))
+					#   , Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])
+					
+					# Plot1 = Plots.plot(Plot1,Plot_Θψ, Plot_kΘ)
+				# else
+				#    Plot1 = Plots.plot(Plot1, Plot_Θψ)
+
+					
+				end # option.hydro.KunsatΨ 
+
+				# Fig[3, 1] = Legend(Fig, Axis1, "PLOTS", orientation=:horizontal)
+
+				# Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
 				
-				# Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
-				# Plots.GRBackend()
+				Path = Path_Plot_θΨK * "Lab_ThetaH_" * string(Path_Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
 	
-				# @suppress begin
-					Plots.savefig(Plot1, Path)
-				# end
+				save(Path, Fig)
+	
+				display(Fig)
+
 				println("    ~  $(Path) ~")
 			end # for iZ
 
 			println("  ==  END: Plotting HydroParam  == \n")		
 		return nothing
-		end  # function: HYDROPARAM
-
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION :σ_Ψm
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function σ_Ψm(hydro)
-			N_σ = 1000
-			σ = range(hydro.σ_Min[1], stop=hydro.σ_Max[1], length=N_σ)
-
-			Ψm_Min = Vector{Float64}(undef, N_σ)
-			Ψm_Max = Vector{Float64}(undef, N_σ)
-			Ψm_Unique = Vector{Float64}(undef, N_σ)
-
-			for iσ = 1:N_σ
-				Ψm_Min[iσ] = hydroRelation.σ_2_Ψm(σ[iσ], param.hydro.kg.Ψσ_Min, hydro.Ψm_Min[1], hydro.Ψm_Max[1])
-		
-				Ψm_Max[iσ] = hydroRelation.σ_2_Ψm(σ[iσ], param.hydro.kg.Ψσ_Max, hydro.Ψm_Min[1], hydro.Ψm_Max[1])
-
-				Ψm_Unique[iσ] = hydroRelation.σ_2_Ψm(σ[iσ], param.hydro.kg.Ψσ, 950, hydro.Ψm_Max[1])
-			end
-
-			Plots.PGFPlotsXBackend()
-
-			default( guidefont = (20, :black), tickfont = (14, :midnightblue), guide = "x")
-
-			Plot_σΨm = Plots.plot(σ[1:N_σ], log.(Ψm_Min[1:N_σ]), seriestype=:line, color=:blue, lw=2, style=:dashdot)
-
-			Plots.plot!(hydro.σ, log.(hydro.Ψm), seriestype=:scatter, color=:green, shape=:star5, markersize=4)
-
-			Plots.plot!(σ[1:N_σ], log.(Ψm_Max[1:N_σ]), seriestype=:line, color=:blue, lw=2, style=:dashdot, legend=false, xlabel=L" \sigma \ [-]", ylabel=L"ln \ \psi _{m} \ [mm]", grid=false)
-
-			Path = path.plotSoilwater.Plot_σΨm * "SigmaHm" * ".svg"     
-			Plot = Plots.plot(Plot_σΨm)
-			Plots.savefig(Plot, Path)
-			println("    ~  $(Path) ~")
-		end  # function:σ_Ψm
-
-
-		# =============================================================
-      #		module: makie
-      # =============================================================
-      module makie
-         import ..cst, ..kunsat, , ..param, ..path, ..wrc
-
-         # using GLMakie
-         # using CairoMakie
-      
-        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         #		FUNCTION : HYDROPARAM
-         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab; N_Se=1000)
-            println("  ==  START: Plotting HydroParam  ==")
-      
-                
-            # ===================== DATA =====================
-            θ_Sim       = Array{Float64}(undef, (N_Se))
-            θ_OtherData = Array{Float64}(undef, (N_Se))
-            Kunsat_Sim  = Array{Float64}(undef, (N_Se))
-
-            Ψ_θΨ_Min = 0.0
-
-            for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
-               Ψ_θΨ_Max = maximum(Ψ_θΨ[iZ,N_θΨ[iZ]]) + 100000.0
-
-               Ψ_Sim = expm1.(range(log1p(Ψ_θΨ_Min), stop=log1p(Ψ_θΨ_Max), length=N_Se)) 
-
-               θ_θΨ_Max = hydro.Φ[iZ]
-
-               # Simulated 
-                  for iΨ = 1:N_Se
-                     θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydro)
-
-                     Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Sim[iΨ], iZ, hydro)
-                  end # iΨ
-
-               # == Title == 
-						Title =  string(Id_Select[iZ]) * "_" * string(option.hydro.HydroModel) * "_" * string(option.hydro.σ_2_Ψm)
-
-               # == Ticks ==
-                  Ticks = Int64.(Ψ_θΨ[iZ,1:N_θΨ[iZ]])
-      
-               #  ===================== PLOTTING =====================
-                  # CairoMakie.activate!(type = "svg")
-                  # Makie.inline!(true)
-                  Fig = Makie.Figure()
-                              
-               #  == Plot_θ_Ψ  ==
-                  # Plot_θ_Ψ: General attributes
-                  # Axis1.xticks= (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])), Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])
-                     Axis1 = Makie.Axis(Fig[1,1], resolution = (1000, 600))
-
-                     Makie.xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨ_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨ_Max * 1.1))
-
-                     # Makie.ylims!(Axis1, 0.0, θ_θΨ_Max)
-                     Axis1.xlabel = "ln(1 + Ψ) [kPa]"
-                     Axis1.ylabel =  "ln(1 + Ψ) [kPa]"
-                     Axis1.title = Title
-
-                   # Plot_θ_Ψ: Observed
-                     Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), Float64.(θ_θΨ[iZ,1:N_θΨ[iZ]]), color=:red, markersize=10, marker = '■', label="Obs")
-
-                  # Plot_θ_Ψ: Simulated
-                      Makie.lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:blue, linewidth=2, label="Sim")
-
-                  # Plot_θ_Ψ: Total porosity point
-                     X = zeros(Float64,1)
-                     X[1] = 0.0
-                     Y = zeros(Float64,1)
-                     Y[1] = hydro.Φ[iZ]
-                     Label = 
-                     Makie.scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:yellow, markersize=15, marker ="●", label="Φ")
-  
-                  Makie.axislegend()
-
-               # == Plot_K_Ψ  ==
-               if option.hydro.KunsatΨ
-                  Axis2 = Makie.Axis(Fig[1,2])
-
-                  K_Ψ_Max = maximum(K_KΨ[iZ,1:N_KΨ[iZ]])
-                  Makie.xlims!(Axis2, log1p.(cst.Mm_2_kPa*Ψ_θΨ_Min), log1p.(Ψ_θΨ_Max*cst.Mm_2_kPa))
-                  Makie.ylims!(Axis2,  (log1p(0.0), log1p(hydro.Ks[iZ]* cst.MmS_2_CmH * 1.1)))
-                  Axis2.xlabel = "ln(1 + Ψ) [kPa]"
-                  Axis2.ylabel =  "ln ( 1 + K (Ψ) ) [cm h⁻¹]"              
-    
-                  # Plot_K_Ψ: Ks                    
-                     X = zeros(Float64,1)
-                     X[1] = 0.0 
-                     Y = zeros(Float64,1)
-                     Y[1] = hydro.Ks[iZ]
-                     Label = "Ks_Max"
-                     Makie.scatter!(Fig[1,2], log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH) ,Y, color=:yellow, markersize=15, marker = '■', label=Label )
-
-                  # PlotK_Ψ: K(Ψ) obs
-                     X = Ψ_KΨ[iZ,1:N_KΨ[iZ]]
-                     Y = K_KΨ[iZ,1:N_KΨ[iZ]]
-                     Label = "Obs"
-                     Makie.scatter!(Fig[1,2], log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH) ,Y, color=:red, markersize=10, marker = '■', label=Label )
-
-                  # Plot_K_Ψ: K(Ψ) sim
-                     X = Ψ_Sim
-                     Y = Kunsat_Sim 
-                     Label = "Sim"
-                     Makie.lines!(Fig[1,2], log1p.(Ψ_Sim.*cst.Mm_2_kPa), log1p.(Kunsat_Sim.*cst.MmS_2_CmH), color=:blue, label=Label)
-   
-                     Makie.axislegend()
-
-                  # General attributes
-                 
-                  #   Axis2.xticks(log1p.(Ψ_Sim.*cst.Mm_2_kPa))
-                  #   , Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])
-                  
-                  # Plot1 = Plots.plot(Plot1,Plot_Θψ, Plot_kΘ)
-               # else
-               #    Plot1 = Plots.plot(Plot1, Plot_Θψ)
-
-                  
-               end # option.hydro.KunsatΨ 
-
-               # Fig[3, 1] = Makie.Legend(Fig, Axis1, "PLOTS", orientation=:horizontal)
-
-               # Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
-               
-               Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
-      
-               Makie.save(Path, Fig)
-     
-                        display(Fig)
-
-
-               println("    ~  $(Path) ~")
-            end # for iZ
-
-            println("  ==  END: Plotting HydroParam  == \n")		
-         return nothing
-         end  # function: HYDROPARAM
-
-      end  # module: makie
-      # ............................................................
 
 	end  # module lab
 	# ............................................................
@@ -316,13 +150,13 @@ module plot
 	# =============================================================
 	module psd
 		using Plots, Plots.PlotMeasures, LaTeXStrings
-		import ...wrc, ...kunsat, ...path, ...cst, ...param, , ...psdThetar, ...psdFunc, ...bestFunc
+		import ...wrc, ...kunsat, ...cst, ...param, ...psdThetar, ...psdFunc, ...bestFunc
 		export PLOT_θr, PLOT_IMP_MODEL, PLOT_PSD_θΨ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_θr
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_θr(∑Psd, N_SoilSelect, hydro, hydroPsd)
+		function PLOT_θr(∑Psd, N_SoilSelect, hydro, hydroPsd, Path)
 			println("  ==  START: Plotting PLOT_θr  ==")
 
 			# Sorting ascending order with clay fraction
@@ -378,7 +212,6 @@ module plot
 					ylabel!(L"\theta _{r \ psd} [cm^3 cm^{-3}]")
 					Plots.plot!(xlims= (θr_Min, θr_Max), ylims= (θr_Min, θr_Max))
 
-			Path = path.plotSoilwater.Plot_Psd_θr
 			Plot = Plots.plot(Plot_θr, Plot_θr_Psd)
 			Plots.savefig(Plot, Path)
 			println("    ~  $(Path) ~")
@@ -391,7 +224,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_IMP_MODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_IMP_MODEL(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd)
+		function PLOT_IMP_MODEL(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd, Path)
 			println("  ==  START: PLOT_IMP_MODEL  ==")	
 
 			for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End
@@ -448,7 +281,7 @@ module plot
 
 
 				Plot = Plots.plot(Plot_∑Psd_Rpart, Plot_Rpart_Psd, Plot_NormMixing_Rpart, layout = (3,1))
-				Path = path.plotSoilwater.Plot_IMP_model * "IMP_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"
+				Path = Path * "IMP_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"
 				Plots.savefig(Plot, Path)
 				println("    ~  $(Path) ~")
 			end # for iZ
@@ -460,8 +293,9 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_IMP_ΘΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, Id_Select, hydroPsd, hydro; N_Se= 100)
-		println("  ==  START: Plotting PLOT_PSD_θΨ  ==")
+		function PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, Id_Select, hydroPsd, hydro, Path; N_Se= 100)
+		
+			println("  ==  START: Plotting PLOT_PSD_θΨ  ==")
 
 			θ_θΨ_Psd = Array{Float64}(undef, (N_Se))
 
@@ -477,7 +311,7 @@ module plot
 
 				# Simulated 
 					for iΨ = 1:N_Se
-						θ_θΨ_Psd[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroPsd)
+						θ_θΨ_Psd[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ_Sim[iΨ], iZ, hydroPsd)
 					end # iΨ 
 
 				# Plot_θ_Ψ: Psd model fitting for e.g. Kosugi model
@@ -514,13 +348,13 @@ module plot
 					ylabel!(L"\theta \ [cm^3 cm^{-3}]")
 					Plots.plot!(xlims =(Ψ_θΨ_Min*cst.Mm_2_Cm, Ψ_θΨ_Max*cst.Mm_2_Cm), ylims =(0.0, θ_θΨ_Max), xscale= :log10, size=(800,400))
 
-				Path = path.plotSoilwater.Plot_Psd_θΨ * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
+				Path = Path * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
 				Plot = Plots.plot(Plot_θ_Ψ_Psd)
 				Plots.savefig(Plot, Path)
 				println("    ~  $(Path) ~")
 			end # iZ
 		println("  ==  END: Plotting PLOT_PSD_θΨ  == \n")
-		return		
+		return	nothing	
 		end # function PLOT_IMP_ΘΨ
 
 	end  # module: psd
@@ -531,15 +365,14 @@ module plot
 	#		MODULE: infilt
 	# =============================================================
 	module infilt
-		import ...wrc, ...kunsat, ...path, ...cst, ...param, , ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
+		import ...wrc, ...kunsat, ...cst, ...param, ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
 		using Plots, Plots.PlotMeasures, LaTeXStrings
-		# import GRUtils
 		export  PLOT_∑INFILT, PPLOT_∑INFILT_θΨ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput)
+		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput, Path)
 		println("  ==  START: PLOT_∑INFILT  == \n")
 		
 			for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
@@ -574,94 +407,21 @@ module plot
 						Plots.xlabel!(L"Time [minutes]")
 						Plots.ylabel!(L"\sum infiltration \ [mm]")      
 						
-					Path = path.plotSoilwater.Plot_∑infilt_Opt * "INFIL_" * string(option.infilt.Model)  *  "_" * string(Id_Select[iZ]) *  ".svg"
+					Path = Path * "INFIL_" * string(option.infilt.Model)  *  "_" * string(Id_Select[iZ]) *  ".svg"
 
 				Plots.savefig(Plot_∑infilt_Obs, Path)
 				println("    ~  $(Path) ~")
 
 			end # for iZ=1:N_SoilSelect
 		println("  ==  END: PLOT_∑INFILT  == \n")
-		return
+		return nothing
 		end # PLOT_∑INFILT
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : PLOT_∑INFILT_SEINI
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function PLOT_∑INFILT_SEINI(hydroInfilt, Id_Select, infiltOutput, infiltParam, N_SoilSelect; P_Tmax = 2.0)
-		# println("  ==  START: PLOT_∑INFILT_SEIN  ==")
-
-		# 	# Different graphs with initial Se
-		# 		Se_Ini = collect(0:0.2:0.8)
-		# 		N_SeIni = length(Se_Ini)
-
-		# 	N_Infilt0 = ones(Int64, min(param.globalparam.N_iZ_Plot_End, N_SoilSelect))
-
-			
-		# 	for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)			
-		# 		# COMPUTING T_TransSteady				
-		# 			T0 =  zeros(Int64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important as a start
-		# 			∑Infilt0 = zeros(Float64, (min(param.globalparam.N_iZ_Plot_End, N_SoilSelect),1)) # Not important
-
-		# 			~, T_TransSteady = bestFunc.BEST_UNIVERSAL_START(∑Infilt0, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt0, T0; θ_Ini=hydroInfilt.θr[iZ])
-
-		# 			T_Max = P_Tmax * T_TransSteady
-			
-		# 		# COMPUTING TIME ARRAY which is the longest at Se = 0 
-		# 			T0 = collect(0.0:T_Max/500.0:T_Max)
-
-		# 			N_T = Array{Int64}(undef, (param.globalparam.N_iZ_Plot_End)) # Needs to be an array
-					
-		# 			N_T[iZ] = length(T0)
-
-		# 			T = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
-
-		# 			T[iZ, 1:N_T[iZ]] = T0[1:N_T[iZ]]
-
-		# 			# Infiltration data
-		# 				∑Infilt_3D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
-		# 				∑Infilt_1D = Array{Float64}(undef, (param.globalparam.N_iZ_Plot_End, N_T[iZ]))
-
-		# 		# Atributes for plotting
-		# 			Fig = GRUtils.gcf()
-
-		# 		for iSeIni=1:N_SeIni
-		# 			# Computing θ_Ini
-		# 				θ_Ini = wrc.Se_2_θ(Se_Ini[iSeIni], iZ, hydroInfilt)
-
-		# 			# Computing ∑Infilt_3D with BEST
-		# 				∑Infilt_3D, ~ = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_T, T; θ_Ini=θ_Ini)
-
-		# 				∑Infilt_3D = bestFunc.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_T, T; θ_Ini=θ_Ini)
-
-		# 			# PLOTTING ====================
-		# 				X = T[iZ, 1:N_T[iZ]] / 60.0
-		# 				Y = ∑Infilt_3D[iZ,1:N_T[iZ]]		
-		# 				GRUtils.plot!(Fig, X ,Y)
-		# 				GRUtils.hold(true)
-
-		# 		end  # for iSe_Ini
-		# 		GRUtils.xlim(0.0, (T_Max + 10.0)/60.0)
-		# 		GRUtils.xticks(round.((T_Max+10.0)/(10.0 *60.0), digits=0))
-		# 		GRUtils.title("ID = $(Id_Select[iZ])")
-		# 		GRUtils.legend("Se=0","Se=0.2","Se=0.4","Se=0.6","Se=0.8"; location="lower right")
-		# 		GRUtils.xlabel( "\$ Time \\ [minutes] \$")
-		# 		GRUtils.ylabel( "\$ \\sum \\ Infiltration-1D \\ [mm] \$")
-
-		# 		Path = path.plotSoilwater.Plot_∑infilt_SeIniRange * "Plot_Infilt_SeIni" * "_" *string(Id_Select[iZ]) * ".svg"
-		# 		GRUtils.savefig(Path, Fig) 
-		# 		GRUtils.hold(false)    
-		# 		println("    ~  $(Path) ~")
-		# 	end  # for iZ
-
-		# println("  ==  END: PLOT_∑INFILT_SEIN  == \n")
-		# return
-		# end  # function: PLOT_∑INFILT_SEINI
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT_θΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect; hydro=[], N_Se=100)
+		function PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect, Param, Path; hydro=[], N_Se=100)
 		println("  ==  START: PLOT_∑INFILT_θΨ  ==")
 
 			θ_Infilt      = Array{Float64}(undef, (N_Se))
@@ -685,12 +445,12 @@ module plot
 				end #  option.hydro.KunsatΨ
 
 				for iΨ = 1:N_Se
-					θ_Infilt[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydroInfilt)
+					θ_Infilt[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydroInfilt)
 
 					Kunsat_Infilt[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydroInfilt)
 
 					if option.run.HydroLabθΨ ≠ :No
-						θ_Obs[iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydro)
+						θ_Obs[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydro)
 
 						if option.run.HydroLabθΨ ≠ :No && option.hydro.KunsatΨ
 							Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydro)
@@ -739,7 +499,7 @@ module plot
 							Plots.ylabel!(L" K (\psi) \ [cm \ h^{-1}]")
 							Plots.plot!(xlims = (Ψ_θΨ_Min*cst.Mm_2_Cm, Ψ_θΨ_Max*cst.Mm_2_Cm), ylims = (10^-2.0, K_Ψ_Max * cst.MmS_2_CmH), xscale= :log10,  yscale= :log10, legend=:bottomleft, size=(800,400))
 
-					Path = path.plotSoilwater.Plot_∑infilt_θΨ * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
+					Path = Path * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
 					Plot = Plots.plot(Plot_θ_Ψ, Plot_K_Ψ)
 					Plots.savefig(Plot, Path)
 					println("    ~  $(Path) ~")
@@ -749,55 +509,6 @@ module plot
 		return
 		end  # function: PLOT_∑INFILT_θΨ
 
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : PLOT_SORPTIVITY_SEINI
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_SORPTIVITY_SEINI(hydro, Id_Select, N_SoilSelect)
-		println("  ==  START: PLOT_SORPTIVITY_SeIni  ==")
-
-			# Setting the range of values for Se
-				Se_Ini = collect(0.0:0.001:0.9)
-				N_SeIni = length(Se_Ini)
-
-			for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End							
-				Sorptivity = Array{Float64}(undef, (N_SeIni)) # When you use undef it will populate Sorptivity with any numbers
-				θ_Ini      = Array{Float64}(undef, (N_SeIni))
-
-				# Atributes for plotting
-					Fig = GRUtils.gcf()
-
-				for iSeIni=1:N_SeIni
-					
-					# Computing θ_Ini
-						θ_Ini[iSeIni] = wrc.Se_2_θ(Se_Ini[iSeIni], iZ, hydro)
-
-					# Computing Sorptivity
-						Sorptivity[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], iZ, hydro, option, optionₘ)  		
-
-					# PLOTTING ====================
-						X = Se_Ini[1:N_SeIni]                           
-						Y = Sorptivity[1:N_SeIni]
-						GRUtils.plot!(Fig, X ,Y)
-						GRUtils.hold(false)
-			
-				end  # for iSe_Ini
-				GRUtils.title("ID = $(Id_Select[iZ])")
-				GRUtils.xlabel( "\$ Se \\ [-] \$")
-				GRUtils.ylabel( "\$ Sorptivity [mm s ^{-0.5}] \$")
-
-				Path = path.plotSoilwater.Plot_Sorptivity_Se * "Plot_Sorptivity_Se" * "_" *string(Id_Select[iZ]) * ".svg"
-				GRUtils.savefig(Path, Fig) 
-				GRUtils.hold(false)    
-				println("    ~  $(Path) ~")
-			end  # for iZ
-
-		println("  ==  END: PLOT_SORPTIVITY_SeIni  == \n")
-		return
-		end  # function: PLOT_SORPTIVITY_SEINI
-		
-	end  # module: infilt
-	# ............................................................
 
 end  # module plot
 # ............................................................

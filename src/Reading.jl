@@ -1,21 +1,20 @@
- # =============================================================
+# =============================================================
 #		MODULE: reading
 # =============================================================
 module reading
-	import ..path, ..tool, ..param
+	import ..tool, ..param
 	import  DelimitedFiles
 
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ID
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ID()
-			println("    ~  $(path.inputSoilwater.Id_Select) ~")
+		function ID(;PathIdSlect, PathOptionSelect)
+			println("    ~  $(Path) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.inputSoilwater.Id_Select, ',')
+				Data = DelimitedFiles.readdlm(PathIdSlect, ',')
 
 				Header = Data[1,begin:end]
 
@@ -23,11 +22,11 @@ module reading
 
 				Data = sortslices(Data, dims=1)
 
-				# Data, Header = DelimitedFiles.readdlm(path.inputSoilwater.Id_Select, ',', Any, header=true)
+				# Data, Header = DelimitedFiles.readdlm(Path, ',', Any, header=true)
 
 				Id, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
 			
-				Id_True, N_iZ_All = tool.readWrite.READ_HEADER_FAST(Data, Header, path.option.Select)
+				Id_True, N_iZ_All = tool.readWrite.READ_HEADER_FAST(Data, Header, PathOptionSelect)
 
 				Id = Int64.(Id)
 			
@@ -91,11 +90,11 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ρ_Ψθ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BULKDENSITY(Id_Select, N_SoilSelect)
-			println("    ~  $(path.inputSoilwater.BulkDensity) ~")
+		function BULKDENSITY(Id_Select, N_SoilSelect, Path)
+			println("    ~  $(Path) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.inputSoilwater.BulkDensity, ',')
+				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -118,10 +117,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θψ_FILE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ)
-
-			Path = path.tableSoilwater.Table_ExtraPoints_θΨ
-
+		function θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, Path)
 			# Read data
 				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
@@ -157,11 +153,11 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨ(Id_Select, N_SoilSelect)
-			println("    ~  $(path.inputSoilwater.Ψθ) ~")
+		function θΨ(Id_Select, N_SoilSelect, Path)
+			println("    ~  $(Path) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.inputSoilwater.Ψθ, ',')
+				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -178,10 +174,11 @@ module reading
 		end  # function: θΨ
 
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : KUNSATΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KUNSATΨ(Id_Select, N_SoilSelect)
+		function KUNSATΨ(Id_Select, N_SoilSelect, path)
 			# Determeining where to read the data
 			if isfile(path.inputSoilwater.Kunsat)
 				Path = path.inputSoilwater.Kunsat
@@ -257,6 +254,7 @@ module reading
 		end  # function: READ_STRUCT
 
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -267,11 +265,11 @@ module reading
 			β
 		end # struct INFILT
 
-		function INFILTRATION(Id_Select, N_SoilSelect)
-			println("    ~  $(path.inputSoilwater.Infiltration) ~")
+		function INFILTRATION(Id_Select, N_SoilSelect, PathInfilt, PathInfiltParam)
+			println("    ~  $(PathInfilt) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.inputSoilwater.Infiltration, ',')
+				Data = DelimitedFiles.readdlm(PathInfilt, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -284,10 +282,10 @@ module reading
 				
 				∑Infilt_Obs , ~ = tool.readWrite.READ_ROW_SELECT(Id_Select, Data, Header, "Cumul_Infiltration[mm]", N_SoilSelect)
 				
-			println("    ~  $(path.inputSoilwater.Infiltration_Param) ~")
+			println("    ~  $(PathInfiltParam) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.inputSoilwater.Infiltration_Param, ',')
+				Data = DelimitedFiles.readdlm(PathInfiltParam, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -312,11 +310,11 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PSD(Id_Select, N_SoilSelect) # TODO make sure that the particles are ordered from smalest to largest
-			println("    ~  $(path.inputSoilwater.Psd) ~")
+		function PSD(Id_Select, N_SoilSelect, Path) # TODO make sure that the particles are ordered from smalest to largest
+			println("    ~  $(Path) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(path.inputSoilwater.Psd, ',')
+				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT

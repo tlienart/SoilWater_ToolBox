@@ -2,7 +2,6 @@
 #		MODULE: table
 # =============================================================
 module table
-	import ..path
 	import Tables, CSV
 	export TABLE_ID
 
@@ -37,8 +36,8 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK(hydro, hydroOther, Id_Select, KunsatModel_Lab, N_SoilSelect)
-				println("    ~  $(path.Table_θΨK) ~")
+			function θΨK(hydro, hydroOther, Id_Select, KunsatModel_Lab, N_SoilSelect, Path)
+				println("    ~  $(Path) ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydro)
 
@@ -53,7 +52,7 @@ module table
 
 				Output = Tables.table([Id_Select Matrix])
 
-				CSV.write(path.Table_θΨK, Output, header=FieldName_String, delim=',' )
+				CSV.write(Path, Output, header=FieldName_String, delim=',' )
 			return nothing
 			end  # function:  θΨK
 
@@ -75,18 +74,17 @@ module table
 						end
 						pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 							
-				# Computing θ at required θ
-					θ₂ = fill(0.0::Float64, (N_SoilSelect, N_Ψ))
+					# Computing θ at required θ
+						θ₂ = fill(0.0::Float64, (N_SoilSelect, N_Ψ))
 
+						for iZ=1:N_SoilSelect
+							for iΨ =1:N_Ψ
+								Ψ₂ = Ψ_Table[iΨ]
+								θ₂[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
+							end # iΨ
+						end # iZ
 
-					for iZ=1:N_SoilSelect
-						for iΨ =1:N_Ψ
-							Ψ₂ = Ψ_Table[iΨ]
-							θ₂[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
-						end # iΨ
-					end # iZ
-
-					CSV.write(Path, Tables.table([string.(Id_Select) θ₂]), header=FieldName_String )
+						CSV.write(Path, Tables.table([string.(Id_Select) θ₂]), header=FieldName_String )
 
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
 					FieldName_String = ["Id","H[mm]","Theta"]
@@ -163,21 +161,21 @@ module table
 	#		MODULE: psd
 	# =============================================================
 	module psd
-		import ...path, ...tool, ...wrc, ...param, ...cst
+		import...tool, ...wrc, ...param, ...cst
 		import DelimitedFiles
 		export PSD, θΨK_PSD
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD(Id_Select, N_SoilSelect, paramPsd)
-				println("    ~  $(path.tableSoilwater.Table_Psd) ~")
+			function PSD(Id_Select, N_SoilSelect, paramPsd, Path)
+				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect,  paramPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
-				open(path.tableSoilwater.Table_Psd, "w") do io
+				open(Path, "w") do io
 					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Int64.(Id_Select) round.(Matrix,digits=5)], ",")
@@ -189,8 +187,8 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK_PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK_PSD(hydroPsd, Id_Select, KunsatModel_Psd, N_SoilSelect)
-				println("    ~  $(path.tableSoilwater.Table_θΨ_Psd) ~")
+			function θΨK_PSD(hydroPsd, Id_Select, KunsatModel_Psd, N_SoilSelect, Path)
+				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroPsd)
 
@@ -200,12 +198,12 @@ module table
 				push!(FieldName_String, "Kunsat_Model")
 
 				Matrix =  round.(Matrix, digits=5)
-				open(path.tableSoilwater.Table_θΨ_Psd, "w") do io
+				open(Path, "w") do io
 					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
 				end
-				return
+			return nothing
 			end  # function:  θΨK_PSD
 
 
@@ -214,8 +212,8 @@ module table
 		#		FUNCTION : PSD_θΨ_θ
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd)
-				println("    ~  $(path.tableSoilwater.Table_Psd_θΨ_θ) ~")
+			function PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd, Path)
+				println("    ~  $Path ~")
 
 				N_Ψ = Int64(length(param.psd.Ψ_Table))
 
@@ -241,14 +239,14 @@ module table
 					θ = round.(θ, digits=5)
 
 				# Writting the table
-					open(path.tableSoilwater.Table_Psd_θΨ_θ, "w") do io
+					open(Path, "w") do io
 						DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
 						for i = 1:length(Id_Select)
 							DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 							DelimitedFiles.writedlm(io, [θ[i, 1:N_Ψ+1]], ",")
 						end # i
 					end # Path
-				return
+			return nothing
 			end  # function:  θΨK_PSD
 
 	end  # module psd
@@ -260,15 +258,15 @@ module table
 	#		MODULE: infilt
 	# =============================================================
 	module infilt
-		import ...path, ...tool
+		import ...tool
 		import DelimitedFiles
 		export HYDRO_INFILT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDRO_INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYDRO_INFILT(hydroInfilt, Id_Select, KunsatModel_Infilt, N_SoilSelect)
-				println("    ~  $(path.tableSoilwater.Table_HydroInfilt) ~")
+			function HYDRO_INFILT(hydroInfilt, Id_Select, KunsatModel_Infilt, N_SoilSelect, Path)
+				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroInfilt)
 
@@ -278,32 +276,32 @@ module table
 				push!(FieldName_String, string("Kunsat_θΨ"))
 
 				Matrix =  round.(Matrix, digits=10)
-				open(path.tableSoilwater.Table_HydroInfilt, "w") do io
+				open(Path, "w") do io
 					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
 				end
-				return
+			return nothing
 			end  # function: HYDRO_INFILT
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : infilt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function INFILT(Id_Select, N_SoilSelect, infiltOutput)
-				println("    ~  $(path.tableSoilwater.Table_Infilt) ~")
+			function INFILT(Id_Select, N_SoilSelect, infiltOutput, Path)
+				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, infiltOutput)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
 				Matrix =  round.(Matrix, digits=5)
-				open(path.tableSoilwater.Table_Infilt, "w") do io
+				open(Path, "w") do io
 					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id_Select Matrix], ",")
 				end
-				return
+			return nothing
 			end  # function: HYDRO_INFILT
 		
 	end  # module: infilt
