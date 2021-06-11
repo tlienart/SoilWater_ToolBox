@@ -1,3 +1,7 @@
+<!-- MathJax -->
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
 # INTERCEPTION MODEL
 
 The parsimonious physically based interception model is an improvement of Pollacco *et al.* (2013a). The following interception model uses *potential evaporation of a wet canopy* *Δ**Pet~int~,*  *LAI* [-], and *extinction coefficient for solar radiation*, *K~g~* [-] set to 0.5. The *gross precipitation depth* that falls on top of a canopy, [L], is partitioned following Rutter *et al.* (1971) as:
