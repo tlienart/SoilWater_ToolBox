@@ -2,14 +2,14 @@
 #		module: tableSmap
 # =============================================================
 module tableSmap
-   import ..path, ..tool, ..param, ..wrc
+   import ..tool, ..param, ..wrc
    import CSV, Tables, DataFrames, DelimitedFiles
 
    	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function θΨK(hydro, hydroOther, Id_Select, KunsatModel_Lab, N_SoilSelect, smap)
-            println("    ~  $(path.Table_θΨK) ~")
+         function θΨK(hydro, hydroOther, Id_Select, KunsatModel_Lab, N_SoilSelect, smap, Path)
+            println("    ~  $(Path) ~")
 
             Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydro)
 
@@ -27,7 +27,7 @@ module tableSmap
                pushfirst!(FieldName_String, string("Id")) 
                push!(FieldName_String, string("KunsatModel"))
                
-            CSV.write(path.Table_θΨK,Tables.table([Id_Select smap.Soilname[1:N_SoilSelect] smap.Depth[1:N_SoilSelect] Matrix]), header=FieldName_String )
+            CSV.write(Path, Tables.table([Id_Select smap.Soilname[1:N_SoilSelect] smap.Depth[1:N_SoilSelect] Matrix]), header=FieldName_String )
       
          return nothing
          end  # function:  θΨK
@@ -43,7 +43,7 @@ module tableSmap
    JulesModel_VangenuchtenJules = ["ThetaS_VgJules[mm3 mm-3]";"ThetaR_VgJules[mm3 mm-3]";"n_VgJules[-]";"Hvg_VgJules[mm]"; "Ks_VgJules[mm s-1]";"3300mm";"10000mm"]
 
    """
-      function SMAP(optionₘ, Id_Select, N_SoilSelect, smap)
+      function SMAP(optionₘ, Id_Select, N_SoilSelect, smap, path)
          println("    ~  $(path.Table_Smap) ~")
 
          # Header

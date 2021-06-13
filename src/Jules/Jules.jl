@@ -2,14 +2,14 @@
 #		module: jules joseph2
 # =============================================================
 module jules
-   import ..param, ..path, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc, ..pathHypix
+   import ..param, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc, ..pathHypix
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
    export READ_JULES_SITES
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : START_JULES
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function START_JULES()
+   function START_JULES(pathHyPix)
 
       Options_θjules = "BrookCorey" # <"Texture">,<"vanGenuchten">,<"BrookCorey">
 
@@ -45,8 +45,8 @@ module jules
              
          for iSiteName in SiteName
 
-            # Making a new path if not exist
-               Path_Output =  path.Home * "//INPUT//DataHyPix//JULES//" * iSiteName
+            # Making a new pathHyPix if not exist
+               Path_Output =  pathHyPix.Home * "//INPUT//DataHyPix//JULES//" * iSiteName
                mkpath(Path_Output) 
                
             # dictionary which correspond SiteName to VCSNgridnumber
@@ -363,7 +363,7 @@ module jules
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          function READ_JULES_SITES()
             # Read data
-               Data = DelimitedFiles.readdlm(path.JulesMetadata, ',')
+               Data = DelimitedFiles.readdlm(pathHyPix.JulesMetadata, ',')
             # Read header
                Header = Data[1,1:end]
             # Remove first READ_ROW_SELECT

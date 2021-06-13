@@ -13,8 +13,9 @@ function START_TOOLBOX()
 
 	# OPTIONS / PARAM / path ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		option = options.OPTIONS()
+		println(option.infilt.Model)
 		param = params.PARAM()
-		path = paths.PATH()
+		path = paths.PATH(option)
 
 	# READING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if option.run.ChangeHydroModel
@@ -82,8 +83,8 @@ function START_TOOLBOX()
 
 			# Reading Smap data
 				if option.dataFrom.Smap
-					smap = readSmap.SMAP(Id_Select_True, N_SoilSelect)
-					rfWetable = readSmap.ROCKFRAGMENT_WETTABLE()
+					smap = readSmap.SMAP(Id_Select_True, N_SoilSelect, path.inputSmap.Smap)
+					rfWetable = readSmap.ROCKFRAGMENT_WETTABLE(path.inputSmap.SmapLookupTableWettable)
 				end # option.dataFrom.Smap
 
 			else # TODO: Needs to be removed
@@ -108,8 +109,8 @@ function START_TOOLBOX()
 	end
 
 	if option.dataFrom.Jules
-		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES()
-		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName,  SiteName_2_θini)
+		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(pathHyPix)
+		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName,  SiteName_2_θini, path)
 		
 	end  # if: option.START_JULES()
 
@@ -253,7 +254,7 @@ function START_TOOLBOX()
 			if !(option.dataFrom.Smap)
 				table.hydroLab.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, path.Table_θΨK)
 			else
-				tableSmap.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, smap)
+				tableSmap.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, smap, path.Table_θΨK)
 
 				if option.smap.AddPointKosugiBimodal && option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
 					# Extra points in θ(Ψ) to reduce none uniqueness
@@ -266,7 +267,7 @@ function START_TOOLBOX()
 				end
 
 				if option.smap.CombineData
-					tableSmap.SMAP(option.hydro, Id_Select, N_SoilSelect, smap)
+					tableSmap.SMAP(option.hydro, Id_Select, N_SoilSelect, smap, path)
 				end
 			end
 
@@ -294,14 +295,14 @@ function START_TOOLBOX()
 	if option.other.Ploting && !option.run.Hypix
 	println("		=== START: PLOTTING  ===")
 	
-		if option.smap.Plot_Kunsat  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			plotSmap.PLOT_KUNSAT(hydro, N_SoilSelect, smap; N_Se= 1000)
-		end
+		# if option.smap.Plot_Kunsat  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# 	plotSmap.PLOT_KUNSAT(hydro, N_SoilSelect, smap; N_Se= 1000)
+		# end
 
 		if option.run.HydroLabθΨ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
 
 			if option.dataFrom.Smap
-				plotSmap.makie.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab; smap=smap)
+				plotSmap.makie.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab, path; smap=smap)
 
 				# plotSmap.HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab; N_Se=1000, smap=[])
 			else

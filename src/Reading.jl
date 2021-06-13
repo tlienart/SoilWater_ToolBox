@@ -11,7 +11,7 @@ module reading
 	#		FUNCTION : ID
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ID(;PathIdSlect, PathOptionSelect)
-			println("    ~  $(Path) ~")
+			println("    ~  $(PathIdSlect) ~")
 
 			# Read data
 				Data = DelimitedFiles.readdlm(PathIdSlect, ',')

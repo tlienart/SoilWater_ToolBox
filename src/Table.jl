@@ -29,7 +29,7 @@ module table
 	#		MODULE: hydroLab
 	# =============================================================
 	module hydroLab
-		import ...path, ...tool, ...param, ...wrc, ...kunsat
+		import  ...tool, ...param, ...wrc, ...kunsat
 		import DelimitedFiles, Tables, CSV
 		export θΨK
 

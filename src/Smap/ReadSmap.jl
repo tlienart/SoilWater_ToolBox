@@ -2,7 +2,7 @@
 #		module: readSmap
 # =============================================================
 module readSmap
-   import ..path, ..tool, ..cst
+   import ..tool, ..cst
    using Polynomials
    using DelimitedFiles
    export DATA2D, SMAP, ROCKFRAGMENT_WETTABLE_STRUCT
@@ -19,11 +19,11 @@ module readSmap
          RockDepth    ::Vector{Float64}
          MaxRootingDepth ::Vector{Float64}
       end
-      function SMAP(Id_Select_True, N_SoilSelect)
-         println("    ~  $(path.inputSmap.Smap) ~")
+      function SMAP(Id_Select_True, N_SoilSelect, Path)
+         println("    ~  $(Path) ~")
 
          # Read data
-            Data = DelimitedFiles.readdlm(path.inputSmap.Smap, ',')
+            Data = DelimitedFiles.readdlm(Path, ',')
          # Read header
             Header = Data[1,1:end]
          # Remove first READ_ROW_SELECT
@@ -69,8 +69,7 @@ module readSmap
          N_RockClass::Int64
          RockClass_Polynomial_Array::Array{} 
       end
-      function ROCKFRAGMENT_WETTABLE()
-         Path = path.inputSmap.SmapLookupTableWettable
+      function ROCKFRAGMENT_WETTABLE(Path)
          println("    ~  $(Path) ~")
          
          # Read data

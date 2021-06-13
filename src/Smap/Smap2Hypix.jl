@@ -2,23 +2,22 @@
 #		module: smap2hypix
 # =============================================================
 module smap2hypix
-   import ..path, ..tool, ..cst, ..discretization, ..path, ..hydroStruct, ..reading, ..vegStruct, ..wrc
+   import ..tool, ..cst, ..discretization, ..hydroStruct, ..reading, ..vegStruct, ..wrc
    import DelimitedFiles, Tables, CSV
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : SMAP_2_HYDRO
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function SMAP_2_HYPIX(SoilName_2_SiteName,  SiteName_2_θini)
+   function SMAP_2_HYPIX(SoilName_2_SiteName, SiteName_2_θini, path)
 
       # Reducing Ks
          Ks_FactorReduce = 0.1
 
       # DERIVING HYDRAULIC PARAMETER
          IgnoreSoil = "Rang_81a.2" #TODO remove 
-         # Path_Output =  path.Home * "//INPUT//DataHyPix//JULES//"
+
          
          # Read data
-            # Path_Input ="D:\\DATAraw\\JULESdata\\HydraulicParam\\Jules_HydroParam_Kosugi.csv"
              Path_Input ="D:\\DATAraw\\JULESdata\\HydraulicParam\\Jules_HydroParam_Kosugi_NoStones.csv"
             Data = DelimitedFiles.readdlm(Path_Input, ',')
             Header = Data[1,1:end]

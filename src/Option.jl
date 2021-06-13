@@ -154,15 +154,15 @@ module options
 		Plot_ΔT::Bool
 	end
 		mutable struct OPTION
-			smap::SMAP
-			hydro::HYDRO
-			psd::PSD
-			infilt::INFILT
-			hyPix::HYPIX
-			other::OTHER
 			data::DATA
-			run::RUN
 			dataFrom::DATAFROM
+			hydro::HYDRO
+			hyPix::HYPIX
+			infilt::INFILT
+			other::OTHER
+			psd::PSD
+			run::RUN
+			smap::SMAP
 		end # struct OPTION
 	
 	#__________________________________________________________________
@@ -419,7 +419,7 @@ module options
 			# =============================================================
 			#		GLOBAL OPTION
 			# ===========================================================
-				option = OPTION(smap, hydro, psd, infilt, hyPix, other, data, run, dataFrom)
+				option = OPTION(data, dataFrom, hydro, hyPix, infilt, other, psd, run, smap)
 
 		return option
 		end  # function: OPTION
