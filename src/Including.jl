@@ -25,7 +25,8 @@
         include("Hydro\\HydroRelation.jl")
         include("Hydro\\Wrc.jl")
         include("Optim\\Optimize.jl")
-        include("Reading.jl")
+        include("reading.jl")
+        include("Table.jl")
 
         if !(option.run.Hypix)
             include("Hydro\\Φ.jl")
@@ -35,7 +36,7 @@
         include("Stats.jl")
 
         if !(option.run.Hypix)
-            include("Table.jl")
+
             include("Psd\\PsdThetar.jl")
         end
 
@@ -82,10 +83,8 @@
             include("Hypix\\Opt\\ThetaObs.jl")
             include("HyPix\\θini.jl")
             include("Hypix\\Opt\\OfHypix.jl")
-            include("Hypix\\TableHypix.jl")
             include("Hypix\\VegStruct.jl")
             include("Hypix\\HorizonLayer.jl")
-            include("Hypix\\ReadHypix.jl")
             include("Hypix\\Interception.jl")
             include("Hypix\\Flux.jl")
             include("Hypix\\Discretization.jl")
@@ -115,8 +114,8 @@
             include("Hypix\\PathHypix.jl")
             include("Hypix\\VegStruct.jl")
             include("Hypix\\Discretization.jl")
-            include("Jules\\Jules.jl")
+            include("NoCore\\Jules\\Jules.jl")
             include("HyPix\\θini.jl")
-            include("Smap\\Smap2hypix.jl")		
+            include("NoCore\\Smap\\Smap2hypix.jl")		
         end  # if: option.Temporay
     end # Suppressor 

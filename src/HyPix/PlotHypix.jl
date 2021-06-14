@@ -149,7 +149,7 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			module plots
-			import ...sorptivity, ..wrc, ..cst, ...readHypix
+			import ...sorptivity, ..wrc, ..cst, ....reading
 			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
@@ -230,7 +230,7 @@ module plotHypix
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES
-					param = readHypix.DATES(param, pathHyPix)
+					param = reading.DATES(param, pathHyPix)
 
 				# TICKS
 					# Date_Start_Calibr = obsθ.Date[1]

@@ -2,7 +2,7 @@
 #		MODULE: tincrease
 # =============================================================
 module Δtchange
-	import ..interpolate, ..readHypix, ..tool, ..cst
+	import ..interpolate, ...reading, ..tool, ..cst
 	import Dates: value, DateTime, Day, Second, Hour, now
 
 	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsθ, clim, N_iT::Int64, N_iZ::Int64, param, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate, pathHyPix)
@@ -30,7 +30,7 @@ module Δtchange
 		# PREPARING DATA FOR PLOTS
 			Date_Start = clim.Date[2]
 
-			param = readHypix.DATES(param, pathHyPix)
+			param = reading.hyPix.DATES(param, pathHyPix)
 					
 			Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
 				
@@ -136,7 +136,7 @@ module Δtchange
 					Flag_Plot_Pond = false
 				end
 		
-		return ∑T_Plot, ∑T_Date_Plot, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑T_Plot, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot
+	return ∑T_Plot, ∑T_Date_Plot, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑T_Plot, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot
 	end # function: CHANGE_OUTPUT_ΔT
 	
 end  # module: tincrease
