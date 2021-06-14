@@ -3,7 +3,7 @@
 # =============================================================
 module signature
 
-	import ..param, ..tool, ..wrc
+	import ..tool, ..wrc
 	import Dates: value, DateTime, year, month, day, hour, minute, second
 
 	export SIGNATURE

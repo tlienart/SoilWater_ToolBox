@@ -1,6 +1,5 @@
 module flux
 	import ..kunsat:Ψ_2_KUNSAT 
-	import ..param
 	export Q!, K_AVER!
 
 		function K_AVER!(optionₘ, discret, hydro, iZ::Int64, N_iZ::Int64, ψ_, ψ▲)
@@ -22,7 +21,7 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Q
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Q!(option, optionₘ, discret, hydro, iZ::Int64, iT::Int64, N_iZ::Int64, ΔHpond, ΔPr, ΔT, ψ_, ψ▲)
+		function Q!(option, optionₘ, discret, hydro, iZ::Int64, iT::Int64, N_iZ::Int64, param, ΔHpond, ΔPr, ΔT, ψ_, ψ▲)
 
 			if iZ == 1  # <>=<>=<>=<>=<>
 				return Q = (ΔPr[iT] + ΔHpond[iT-1] - ΔHpond[iT]) / ΔT[iT]
@@ -52,13 +51,13 @@ module flux
 	# 		only in use if ∂R∂Ψ_Numerical = false
 	# =============================================================
 	module ∂q∂Ψ
-		import ..param, ..flux
+		import ..flux
 		export ∂Q∂Ψ, ∂Q∂Ψ△, ∂Q▽∂Ψ, ∂Q▽∂Ψ▽
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Q∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, optionₘ, Ψ)
+			function ∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, optionₘ, param, Ψ)
 
 				# if ΔHpond[iT] > 0.0
 				# 	return ∂Q∂Ψ = 1.0 / (1.0 + discret.ΔZ_Aver[1] / (ΔT[iT] * hydro.Ks[1]) )
@@ -80,7 +79,7 @@ module flux
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Q∂Ψ△
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64,optionₘ, Ψ)
+			function ∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64,optionₘ, param, Ψ)
 				if iZ == 1 						# <>=<>=<>=<>=<>
 					return ∂Q∂Ψ△ = NaN
 				else #elseif 2 ≤ iZ ≤ N_iZ 	# <>=<>=<>=<>=<>
@@ -94,7 +93,7 @@ module flux
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Q▽∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Q▽∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, option, optionₘ, Ψ)
+			function ∂Q▽∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, option, optionₘ, param, Ψ)
 				if iZ ≤ N_iZ 	# <>=<>=<>=<>=<>
 					K_Aver▽ = flux.K_AVER!(optionₘ, discret, hydro, iZ, N_iZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
@@ -115,7 +114,7 @@ module flux
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Q▽∂Ψ▽
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂Q▽∂Ψ▽(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, option, optionₘ, Ψ)
+			function ∂Q▽∂Ψ▽(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, option, optionₘ, param, Ψ)
 				if iZ ≤ N_iZ-1 	# <>=<>=<>=<>=<>
 
 					K_Aver▽ = flux.K_AVER!(optionₘ, discret, hydro, iZ+1, N_iZ, Ψ[iT,iZ+1], Ψ[iT,iZ])

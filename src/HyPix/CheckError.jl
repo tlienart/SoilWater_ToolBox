@@ -3,7 +3,6 @@
 
 # =============================================================
 module checkError
-	import ..pathHypix
 	import Dates: value, DateTime
 	export CHECK_IFOPEN
 

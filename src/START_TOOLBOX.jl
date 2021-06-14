@@ -18,7 +18,7 @@ function START_TOOLBOX()
 
 		param = params.PARAM()
 
-		path = paths.PATH(option)
+		path = paths.PATH(1, option)
 
 	# ------------------------END: option/ param/ path---------------------------  
 
@@ -110,12 +110,13 @@ function START_TOOLBOX()
 		end
 
 		if option.smap.UsePointKosugiBimodal
-			N_θΨ, θ_θΨ, Ψ_θΨ = reading.θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, path.tableSoilwater.Table_ExtraPoints_θΨ)
+			N_θΨ, θ_θΨ, Ψ_θΨ = reading.θψ_FILE(
+				N_SoilSelect, N_θΨ, param, path.tableSoilwater.Table_ExtraPoints_θΨ, θ_θΨ, Ψ_θΨ)
 		end
 	end
 
 	if option.dataFrom.Jules
-		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(pathHyPix)
+		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)
 		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName,  SiteName_2_θini, path)
 		
 	end  # if: option.START_JULES()
@@ -152,10 +153,10 @@ function START_TOOLBOX()
 				end
 
 			if option.hydro.KunsatΨ
-				hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim)
+				hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
 
 			else
-				hydro, hydroOther =  hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim)
+				hydro, hydroOther =  hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
 			end # option.hydro.KunsatΨ
 
 			# SPATIAL CASE FOR BROOKS AND COREY
@@ -250,7 +251,7 @@ function START_TOOLBOX()
 	end # option.run.InfiltBest
 
 	if option.run.Hypix
-		hypixStart.HYPIX_START(option)
+		hypixStart.HYPIX_START(option, param, path)
 	end # option.run.Hypix
 
 

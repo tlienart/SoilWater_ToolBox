@@ -216,14 +216,14 @@ module options
 			# 		RUN
 			#      What model wanting to run ?
 			# =============================================================
-				ChangeHydroModel = false
-				ρb_2_Φ  = false
-				IntergranularMixingPsd = false
-				HydroLabθΨ = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
-				InfiltBest = false
-				RockFragment = false
-				Temporary = false
-				Hypix = false
+            ChangeHydroModel       = false
+            ρb_2_Φ                 = false
+            IntergranularMixingPsd = false
+            HydroLabθΨ             = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+            InfiltBest             = false
+            RockFragment           = false
+            Temporary              = false
+            Hypix                  = true
 
 			run = RUN(ChangeHydroModel, ρb_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockFragment, Temporary, Hypix)
 				

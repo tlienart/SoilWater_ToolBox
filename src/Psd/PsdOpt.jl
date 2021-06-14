@@ -25,7 +25,7 @@ module psdOpt
 	#		MODULE: imp
 	# =============================================================
 	module imp
-		import ...param, ...stats, ...wrc, , ...psdFunc, ..psdOpt
+		import ...stats, ...wrc, ...psdFunc, ..psdOpt
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -185,7 +185,7 @@ module psdOpt
 	#		MODULE: chang
 	# =============================================================
 	module chang
-	 	import ...param, ...stats, ...wrc, , ....psdFunc, ..psdOpt
+	 	import ...stats, ...wrc, ....psdFunc, ..psdOpt
 		import BlackBoxOptim
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -2,14 +2,14 @@
 #		module: jules joseph2
 # =============================================================
 module jules
-   import ..param, ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc, ..pathHypix
+   import ..tool, ..θini, ..hydroStruct, ..reading, ..tool, ..wrc
    import DelimitedFiles, Dates, CSV, Tables, NCDatasets, NetCDF
    export READ_JULES_SITES
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : START_JULES
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function START_JULES(pathHyPix)
+   function START_JULES(path)
 
       Options_θjules = "BrookCorey" # <"Texture">,<"vanGenuchten">,<"BrookCorey">
 

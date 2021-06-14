@@ -76,7 +76,7 @@
         end # option.other.Ploting
 
         if option.run.Hypix
-            include("Hypix\\PathHypix.jl")
+            # include("Hypix\\PathHypix.jl")
             include("Sorptivity\\Sorptivity.jl")
             include("Hypix\\Interpolate.jl")
             include("Hypix\\Opt\\ThetaObs.jl")

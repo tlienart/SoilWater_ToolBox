@@ -1,5 +1,5 @@
 module timeTransSteady
-	import ..stats, ..param
+	import ..stats
 	export ∑INFIlT_2_TIMETRANSSTEADY
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

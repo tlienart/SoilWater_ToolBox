@@ -1,5 +1,5 @@
 module quasiExact 
-	import ..sorptivity, ..wrc, ..kunsat, ..param
+	import ..sorptivity, ..wrc, ..kunsat
 	import BlackBoxOptim, Optim
  	export CONVERT_3D_2_1D, HYDRO_2_INFILTRATION3D, OF_QUASIEXACT
 

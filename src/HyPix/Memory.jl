@@ -3,12 +3,11 @@
 
 # =============================================================
 module memory
-	import ..param
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(clim, iSim_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsθ)
+	function MEMORY(clim, iSim_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsθ, param)
 
 		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 

@@ -2,7 +2,7 @@
 #		MODULE: reading
 # =============================================================
 module reading
-	import ..tool, ..param
+	import ..tool
 	import  DelimitedFiles
 
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
@@ -117,7 +117,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θψ_FILE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θψ_FILE(N_SoilSelect, θ_θΨ, Ψ_θΨ, N_θΨ, Path)
+		function θψ_FILE(N_SoilSelect, N_θΨ::Int64, param, Path::String, θ_θΨ, Ψ_θΨ)
 			# Read data
 				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header

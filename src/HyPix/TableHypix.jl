@@ -3,7 +3,7 @@
 # =============================================================
 module tableHypix
 
-	import ..cst, ..param, ..tool, ..wrc, ..kunsat
+	import ..cst, ..tool, ..wrc, ..kunsat
 	import DelimitedFiles
 	import Dates: value, DateTime, year, month, day, hour, minute, second
 	
@@ -164,7 +164,7 @@ module tableHypix
 	#		FUNCTION : θΨ
 	# 		Tabular values of the hydroParam model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨ(hydroHorizon, iSim, N_iHorizon, optionₘ, pathHyPix)
+		function θΨ(hydroHorizon, iSim, N_iHorizon, optionₘ, param, pathHyPix)
 			
 			Path = pathHyPix.Table_θΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")
@@ -207,7 +207,7 @@ module tableHypix
 	#		FUNCTION : KΨ
 	# 		Tabular values of the hydroParam model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KΨ(hydroHorizon, iSim, N_iHorizon, optionₘ, pathHyPix)
+		function KΨ(hydroHorizon, iSim, N_iHorizon, optionₘ, param, pathHyPix)
 				
 			Path = pathHyPix.Table_KΨ * "_" * string(iSim) * ".csv"
 			println("			~  $(Path) ~")

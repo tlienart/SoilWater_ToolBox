@@ -7,7 +7,7 @@ module ofHypix
 	#		MODULE: θ
 	# =============================================================
 	module θof
-		import ...tool, ...param, ...interpolate
+		import ...tool, ...interpolate
 		import Statistics
 		export WOF_θ, RMSE_θ
 

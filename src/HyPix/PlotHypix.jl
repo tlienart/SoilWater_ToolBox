@@ -2,7 +2,7 @@
 #		module: plotHypix
 # =============================================================
 module plotHypix
-	import  ..cst, ..kunsat, ..param, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
+	import  ..cst, ..kunsat, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
 	import Dates: value, DateTime
 	using PGFPlots
 
@@ -149,7 +149,7 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			module plots
-			import ...sorptivity, ..wrc, ..cst, , ..param, ...readHypix
+			import ...sorptivity, ..wrc, ..cst, ...readHypix
 			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
@@ -230,7 +230,7 @@ module plotHypix
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES
-					param = readHypix.DATES(pathHyPix)
+					param = readHypix.DATES(param, pathHyPix)
 
 				# TICKS
 					# Date_Start_Calibr = obsθ.Date[1]

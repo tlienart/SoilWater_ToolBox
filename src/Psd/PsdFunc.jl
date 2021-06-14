@@ -41,7 +41,7 @@ module psdFunc
 	#		MODULE: imp
 	# =============================================================
 	module imp
-		import ...cst, ...param, ...psdInitialize
+		import ...cst, ...psdInitialize
 		export ∑PSD_2_ξ2, SUBCLAY_CORRECTION, INTERGRANULARMIXING, RPART_2_ΨRPART
 
 		# =========================================
@@ -145,7 +145,7 @@ module psdFunc
 	#		MODULE: Chang et al., 2019
 	# =============================================================
 	module chang
-		import ...cst, ...param
+		import ...cst
 
 		# ==============================================
 		#      Rpart -> Ψ_Rpart  from Chang et al., 2019

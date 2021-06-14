@@ -2,10 +2,10 @@
 #		MODULE: tincrease
 # =============================================================
 module Δtchange
-	import ..interpolate, ..param, ..readHypix, ..tool, ..cst
+	import ..interpolate, ..readHypix, ..tool, ..cst
 	import Dates: value, DateTime, Day, Second, Hour, now
 
-	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsθ, clim, N_iT::Int64, N_iZ::Int64, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate, pathHyPix)
+	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsθ, clim, N_iT::Int64, N_iZ::Int64, param, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate, pathHyPix)
 
 		# PREPROCESSING ∑Evaporation, ∑ΔQ
          ∑Evaporation = fill(0.0::Float64, N_iT)
@@ -30,7 +30,7 @@ module Δtchange
 		# PREPARING DATA FOR PLOTS
 			Date_Start = clim.Date[2]
 
-			param = readHypix.DATES(pathHyPix)
+			param = readHypix.DATES(param, pathHyPix)
 					
 			Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
 				

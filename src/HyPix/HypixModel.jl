@@ -3,14 +3,14 @@
 # =============================================================
 module hypixModel
 
-	import ..timeStep, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..param, ..pathHypix, ..pet, ..plot, ..ponding, ..climate, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
+	import ..timeStep, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..climate, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
 
 	export HYPIX
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -52,7 +52,7 @@ module hypixModel
 
 		# ADAPTIVETIMESTEP
 			if option.hyPix.AdaptiveTimeStep == :ΔΨ
-				ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option.hydro, ΔΨmax)
+				ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option.hydro, param, ΔΨmax)
 			end #  option.hyPix.AdaptiveTimeStep == :ΔΨ
 
 		# FIRST TIME STEP
@@ -88,7 +88,7 @@ module hypixModel
 		while true # this controles the time loop
 
 			# INCREASING OR DECREASING THE TIME STEP
-				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), N_iZ, option, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
+				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), N_iZ, option, param, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
 
 				if FlagContinueLoop == false
 					iT = iT - 1
@@ -133,7 +133,7 @@ module hypixModel
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled = false)
 
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, Iter_CountTotal, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, Iter_CountTotal, N_iZ, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, option.hydro)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, Iter_CountTotal, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, Iter_CountTotal, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, option.hydro)
 
 		end # while loop
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+	

@@ -2,59 +2,12 @@
 #		module: plotSmap
 # =============================================================
 module plotSmap
-   # import ..cst, ..hydroStruct, ..kunsat, ..param, ..path, ..reading, ..wrc
-   # using Plots.PlotMeasures, LaTeXStrings
-   # using Suppressor
-   # using Plots; pgfplotsx
-
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : PLOT_KUNSAT
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # function PLOT_KUNSAT(hydroParam, N_SoilSelect, smap; N_Se= 1000)
-
-      #    hydroParam2 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
-
-      #    hydroParam2 = deepcopy(hydroParam)
-
-      #    Ψ_θΨ_Max = 150000.0 + 10000.0
-      #    Ψ_θΨ_Min = 0.0
-
-      #    RockFragment = collect(eps(100.0):0.5 / N_Se:0.99)
-
-      #    N = length(RockFragment)
-
-      #    Kunsat_Sim  = Array{Float64}(undef, (N))
-      #    Kunsat_PeckWatson = Array{Float64}(undef, (N))
-
-      #    Plot1 = Plots.plot()
-      #    default(titlefont = (20, "times"), legendfontsize = 18, guidefont = (18, :darkgreen), tickfont = (12, :orange), guide = "x", framestyle = :zerolines, yminorgrid = true)
-
-      #    for iZ in 1:N_SoilSelect
-      #       for iRF = 1:N
-      #          hydroParam2.θs[iZ] = hydroParam.θs[iZ] * (1.0 - RockFragment[iRF])
-      #          hydroParam2.θsMacMat[iZ] = hydroParam.θsMacMat[iZ] * (1.0 - RockFragment[iRF])
-      #          hydroParam2.θr[iZ] = hydroParam.θr[iZ] * (1.0 - RockFragment[iRF])
-
-      #          Kunsat_Sim[iRF] = kunsat.θΨ_2_KUNSAT(optionₘ, optionₘ, 1.0, iZ, hydroParam2, RockFragment[iRF]; TopsoilSubsoil="Topsoil") * cst.MmS_2_CmH 
-
-      #          Kunsat_PeckWatson[iRF] =kunsat.θΨ_2_KUNSAT(optionₘ, optionₘ, 1.0, iZ, hydroParam, 0.0; TopsoilSubsoil="Topsoil") * (2.0 *  (1.0 - RockFragment[iRF]) /  (2.0 + RockFragment[iRF])) * cst.MmS_2_CmH
-      #       end
-
-      #       Label= smap.Soilname[iZ] * "_" * string(smap.Depth[iZ])
-      #       Plots.plot!(Plot1, RockFragment, Kunsat_Sim, label=Label * "_Pollacco", palette = :darkrainbow)
-
-      #       Plots.plot!(Plot1, RockFragment,  Kunsat_PeckWatson, line = (:dot, 4), xlabel=L"RockFragment \ [-]", ylabel=L"K_{s} \ [cm \ h ^{-1}]", label=Label * "PeckWatson", palette = :darkrainbow, legend = :outertopright, yaxis=:log, legendtitle = "LEGEND")
-      #    end
-
-      #    Plots.savefig(Plot1,"D:\\Temp\\Kunsat.svg")
-
-      # end  # function: PLOT_KUNSAT
 
       # =============================================================
       #		module: makie
       # =============================================================
       module makie
-         import ..cst, ..hydroStruct, ..kunsat, ..param, ..reading, ..wrc, ...readSmap
+         import ..cst, ..hydroStruct, ..kunsat, ..reading, ..wrc, ...readSmap
          using Makie
          using CairoMakie
 

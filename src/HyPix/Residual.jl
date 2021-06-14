@@ -10,13 +10,13 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# 		FUNCTION : RESIDUAL_DIFF DERIVATIVE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RESIDUAL(option, optionₘ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
+		function RESIDUAL(option, optionₘ, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
 			if iZ==1
-				Q[iT,1] = flux.Q!(option, optionₘ, discret, hydro, 1, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψ[iT,1], Ψ[iT,1])
+				Q[iT,1] = flux.Q!(option, optionₘ, discret, hydro, 1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,1], Ψ[iT,1])
 			end
 
 			# if iZ == N_iZ
-			# 	Q[iT,iZ+1] = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψ[iT, min(iZ+1,N_iZ)], Ψ[iT,iZ])
+			# 	Q[iT,iZ+1] = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT, min(iZ+1,N_iZ)], Ψ[iT,iZ])
 			
 			# 	θ[iT,iZ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iT,iZ], iZ, hydro)
 
@@ -25,7 +25,7 @@ module residual
 			# 	Q[iT,iZ+1] = min(max(Qmax, 0.0), Q[iT,iZ+1])
 
 			# else
-				Q[iT,iZ+1] = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψ[iT, min(iZ+1,N_iZ)], Ψ[iT,iZ])
+				Q[iT,iZ+1] = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT, min(iZ+1,N_iZ)], Ψ[iT,iZ])
 
 				θ[iT,iZ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iT,iZ], iZ, hydro)
 		#   end
@@ -40,20 +40,20 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RESIDUAL_DIFF DERIVATIVE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RESIDUAL_DIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)
+		function RESIDUAL_DIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)
 
 			if !Flag_NoConverge
 				# Q[iT,iZ] format for ForwardDiff
-					Q₁ = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψ_, Ψ▲)
+					Q₁ = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ_, Ψ▲)
 
 				# Q[iT,iZ+1] format for ForwardDiff
-					Q₂ = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψ▼, Ψ_)		
+					Q₂ = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ▼, Ψ_)		
 			else 
 				# Q[iT,iZ] format for ForwardDiff
-					Q₁ = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψbest_, Ψbest▲)
+					Q₁ = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψbest_, Ψbest▲)
 
 				# Q[iT,iZ+1] format for ForwardDiff
-					Q₂ = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, ΔHpond, ΔPr, ΔT, Ψbest▼, Ψbest_)
+					Q₂ = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψbest▼, Ψbest_)
 			end
 
 			# θ[iT,iZ] format for ForwardDiff
@@ -174,7 +174,7 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂RESIDUAL∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64,  N_iZ::Int64, option, optionₘ, ΔT, θ, Ψ)
+		function ∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64,  N_iZ::Int64, option, optionₘ, param, ΔT, θ, Ψ)
 
 			# K_Aver[iZ+1] = flux.K_AVER!(optionₘ, discret, hydro, iZ+1, N_iZ, Ψ[iT, min(iZ+1,N_iZ)],  Ψ[iT, iZ])
 
@@ -184,13 +184,13 @@ module residual
 
 			∂θ∂Ψ = wrc.∂θ∂Ψ(optionₘ, Ψ[iT,iZ], iZ, hydro)
 
-			∂Q∂Ψ = flux.∂q∂Ψ.∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ,  N_iZ, optionₘ, Ψ)
+			∂Q∂Ψ = flux.∂q∂Ψ.∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ,  N_iZ, optionₘ, param, Ψ)
 
-			∂Q∂Ψ△ = flux.∂q∂Ψ.∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT, iZ,  N_iZ, optionₘ, Ψ)
+			∂Q∂Ψ△ = flux.∂q∂Ψ.∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT, iZ,  N_iZ, optionₘ, param, Ψ)
 
-			∂Q▽∂Ψ = flux.∂q∂Ψ.∂Q▽∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ+1,  N_iZ, option, optionₘ, Ψ)
+			∂Q▽∂Ψ = flux.∂q∂Ψ.∂Q▽∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ+1,  N_iZ, option, optionₘ, param, Ψ)
 
-			∂Q▽∂Ψ▽ = flux.∂q∂Ψ.∂Q▽∂Ψ▽(∂K∂Ψ, discret, hydro, iT, iZ,  N_iZ, option, optionₘ, Ψ)
+			∂Q▽∂Ψ▽ = flux.∂q∂Ψ.∂Q▽∂Ψ▽(∂K∂Ψ, discret, hydro, iT, iZ,  N_iZ, option, optionₘ, param, Ψ)
 		
 			if iZ ≥ 2
 				∂R∂Ψ△ = - ΔT[iT] * ∂Q∂Ψ△

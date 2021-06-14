@@ -3,7 +3,7 @@
 # =============================================================
 module plotOther
 
-		import ..wrc,  ..ΨminΨmax, ..hydroRelation, ..hydroStruct, ..param, ..tool, ..cst, ..kunsat
+		import ..wrc,  ..ΨminΨmax, ..hydroRelation, ..hydroStruct, ..tool, ..cst, ..kunsat
 		using Plots.PlotMeasures, LaTeXStrings
 		using Plots; pgfplotsx()
 		export ΨMINΨMAX, WOF_STEPS, SE_Ψ_CONSTRAINED, PLOT_σ_2_θr, PLOT_θΨ_Δθ, σ_ψM_SCEARIO

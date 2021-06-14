@@ -2,7 +2,7 @@
 #		MODULE: infiltration
 # =============================================================
 module infiltStart
-	import ..sorptivity, ..param, ..wrc, ..kunsat, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
+	import ..sorptivity, ..wrc, ..kunsat, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
 	import BlackBoxOptim, Statistics
 	export START_INFILTRATION
 

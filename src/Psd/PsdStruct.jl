@@ -2,7 +2,7 @@
 #		MODULE: hydroStruct
 # =============================================================
 module psdStruct
-	import ..param, ..tool
+	import ..tool
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : HYDRAULIC

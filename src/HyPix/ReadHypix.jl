@@ -2,7 +2,7 @@
 #		module: readingHypix
 # =============================================================
 module readHypix
-	import  ..tool, ..param, ..horizonLayer
+	import  ..tool, ..horizonLayer
 	import Dates: value, DateTime, hour, minute, month, now
 	import DelimitedFiles
 	export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
@@ -10,7 +10,7 @@ module readHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DATES
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DATES(pathHyPix)
+		function DATES(param, pathHyPix)
 			# Read data
 				Data = DelimitedFiles.readdlm(pathHyPix.Dates, ',')
 			# Read header
@@ -265,7 +265,7 @@ module readHypix
 
 		Option_ReadTemperature = false
 
-		function CLIMATE(option, pathHyPix)
+		function CLIMATE(option, param, pathHyPix)
 			if option.hyPix.ClimateDataTimestep == "Daily"
 				Pr_Name          = "Rain(mm)"
 				Pet_Name         = "PET(mm)"
@@ -297,7 +297,7 @@ module readHypix
 				end
 
 			# READING DATES FROM FILE
-				param = DATES(pathHyPix)
+				param = DATES(param, pathHyPix)
 
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 				Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
@@ -371,7 +371,7 @@ module readHypix
 			∑T  	  :: Vector{Float64}
 		end # mutable struct
 
-		function TIME_SERIES(option, pathHyPix)
+		function TIME_SERIES(option, param, pathHyPix)
 		# Read data
 			Data = DelimitedFiles.readdlm(pathHyPix.obsθ, ',')
 		# Read header
@@ -421,7 +421,7 @@ module readHypix
 				end #  iHeader
 
 			# READING DATES FROM FILE
-				param = DATES(pathHyPix)
+				param = DATES(param, pathHyPix)
 
 			# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 				Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)

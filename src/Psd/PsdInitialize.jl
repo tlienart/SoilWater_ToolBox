@@ -2,7 +2,7 @@
 #		MODULE: psdInitiate
 # =============================================================
 module psdInitialize
-	import ..psdStruct, ..psdThetar, ..param
+	import ..psdStruct, ..psdThetar
 	export PSD_INITIALIZE
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

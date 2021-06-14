@@ -2,14 +2,14 @@
 #		module: hypixOpt
 # =============================================================
 module hydrolabOpt
-	import ..ofHydrolab, ..param, ..tool, ..optimize, ..hydroRelation, ..psdThetar
+	import ..ofHydrolab, ..tool, ..optimize, ..hydroRelation, ..psdThetar
 	using BlackBoxOptim, Statistics
 	export HYDROLABOPT_START
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIXOPT_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROLABOPT_START(;N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ=[0], Ψ_KΨ=[0], N_KΨ=1, hydro, hydroOther, option, optionₘ, optim)
+	function HYDROLABOPT_START(;N_SoilSelect, ∑Psd, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ=[0], Ψ_KΨ=[0], N_KΨ=1, hydro, hydroOther, option, optionₘ, optim, param)
 
 		for iZ = 1:N_SoilSelect
 			# CORRECTION OF THE FEASIBLE RANGE ~~~
@@ -159,7 +159,7 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ)
 
-			# New optimized param which are put into the matching veg or hydro parameters
+			# New optimized which are put into the matching veg or hydro parameters
 				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
 		
 			# Weighted Objective Function
@@ -188,7 +188,7 @@ module hydrolabOpt
 			# Updating the value of the parameters for the soil wanting to optimize by keeping the values constant
 				vectParam[iZ] = Paramₐ
 
-			# Putting the updated hydro param into hydro
+			# Putting the updated hydro into hydro
 				setfield!(hydro, Symbol(optim.ParamOpt[iParam]), vectParam)
 		end # for loop
 

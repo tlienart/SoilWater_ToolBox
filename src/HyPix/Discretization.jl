@@ -2,7 +2,6 @@
 #		module: discret
 # =============================================================
 module discretization
-	import ..param
 	export DISCRETIZATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

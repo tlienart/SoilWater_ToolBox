@@ -8,7 +8,7 @@ module plot
 	#		MODULE: lab
 	# =============================================================
 	module lab
-		import ..cst, ..kunsat, ..param, ..wrc
+		import ..cst, ..kunsat, ..wrc
 
 		# using GLMakie
 		using CairoMakie
@@ -150,7 +150,7 @@ module plot
 	# =============================================================
 	module psd
 		using Plots, Plots.PlotMeasures, LaTeXStrings
-		import ...wrc, ...kunsat, ...cst, ...param, ...psdThetar, ...psdFunc, ...bestFunc
+		import ...wrc, ...kunsat, ...cst, ...psdThetar, ...psdFunc, ...bestFunc
 		export PLOT_θr, PLOT_IMP_MODEL, PLOT_PSD_θΨ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -365,7 +365,7 @@ module plot
 	#		MODULE: infilt
 	# =============================================================
 	module infilt
-		import ...wrc, ...kunsat, ...cst, ...param, ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
+		import ...wrc, ...kunsat, ...cst, ...psdThetar, ...psdFunc, ...bestFunc, ...sorptivity
 		using Plots, Plots.PlotMeasures, LaTeXStrings
 		export  PLOT_∑INFILT, PPLOT_∑INFILT_θΨ
 
