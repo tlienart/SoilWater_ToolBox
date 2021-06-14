@@ -57,6 +57,7 @@ module paths
 		Table_Psd::String
 		Table_Psd_θΨ_θ::String
 		Table_θΨ_Psd::String
+		Table_θΨK::String
 	end # struct INPUT_SOILWATER
 	
 	mutable struct PATHS
@@ -166,13 +167,14 @@ module paths
 		#		TABLE_SOILWATER
 		# =============================================================
 			# Output tables soil water
-				Table_ExtraPoints_θΨ = "Table_ExtraPoints_θΨ.csv"
-				Table_HydroInfilt    = "Table_HydroInfilt.csv"
-				Table_Infilt         = "Table_Infilt.csv"
-				Table_KosugiθΨ       = "Table_KosugiθΨ.csv"
-				Table_Psd            = "Table_Psd.csv"
-				Table_Psd_θΨ_θ       = "Table_PsdTheta.csv"
-				Table_θΨ_Psd         = "Table_PsdHydro.csv"
+            Table_ExtraPoints_θΨ = "Table_ExtraPoints_θΨ.csv"
+            Table_HydroInfilt    = "Table_HydroInfilt.csv"
+            Table_Infilt         = "Table_Infilt.csv"
+            Table_KosugiθΨ       = "Table_KosugiθΨ.csv"
+            Table_Psd            = "Table_Psd.csv"
+            Table_Psd_θΨ_θ       = "Table_PsdTheta.csv"
+            Table_θΨ_Psd         = "Table_PsdHydro.csv"
+            Table_θΨK            = "Table_θΨK.csv"
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * SiteName_Soilhyro * "_"
@@ -184,8 +186,9 @@ module paths
 				Table_Psd            = FileSoilHydro_Table₁ * string(opt.psd.Model) *  "_" * Model_Name * "_" * Table_Psd
 				Table_Psd_θΨ_θ       = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * Model_Name * "_" *  Table_Psd_θΨ_θ
 				Table_θΨ_Psd         = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * Model_Name * "_" * Table_θΨ_Psd
+				Table_θΨK        = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * Model_Name * "_" * Table_θΨK
 			
-			tableSoilwater = TABLE_SOILWATER(Table_ExtraPoints_θΨ, Table_HydroInfilt, Table_Infilt, Table_KosugiθΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd)
+			tableSoilwater = TABLE_SOILWATER(Table_ExtraPoints_θΨ, Table_HydroInfilt, Table_Infilt, Table_KosugiθΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK)
 
 
 		# =============================================================

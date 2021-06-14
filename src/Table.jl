@@ -29,7 +29,7 @@ module table
 	#		MODULE: hydroLab
 	# =============================================================
 	module hydroLab
-		import  ...tool, ...param, ...wrc, ...kunsat
+		import  ...tool, ...wrc, ...kunsat
 		import DelimitedFiles, Tables, CSV
 		export θΨK
 
@@ -161,7 +161,7 @@ module table
 	#		MODULE: psd
 	# =============================================================
 	module psd
-		import...tool, ...wrc, ...param, ...cst
+		import...tool, ...wrc, ...cst
 		import DelimitedFiles
 		export PSD, θΨK_PSD
 
@@ -212,7 +212,7 @@ module table
 		#		FUNCTION : PSD_θΨ_θ
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd, Path)
+			function PSD_θΨ_θ(hydroPsd, Id_Select, N_SoilSelect, param, Path::String)
 				println("    ~  $Path ~")
 
 				N_Ψ = Int64(length(param.psd.Ψ_Table))

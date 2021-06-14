@@ -10,12 +10,18 @@ include("Including.jl")
 #		FUNCTION : START_TOOLBOX
 # ==============================================================
 function START_TOOLBOX()
+	 
 
-	# OPTIONS / PARAM / path ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		option = options.OPTIONS()
-		println(option.infilt.Model)
+	# _______________________ START: option/ param/ path _______________________ 
+		
+	option = options.OPTIONS()
+
 		param = params.PARAM()
+
 		path = paths.PATH(option)
+
+	# ------------------------END: option/ param/ path---------------------------  
+
 
 	# READING ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		if option.run.ChangeHydroModel
@@ -176,7 +182,7 @@ function START_TOOLBOX()
 					else
 						TopsoilSubsoil="Topsoil"
 					end
-					KunsatModel_Lab[iZ] = kunsat.θΨ_2_KUNSAT(option.hydro, 0.9999, iZ, hydro, 0.0; TopsoilSubsoil=TopsoilSubsoil)
+					KunsatModel_Lab[iZ] = kunsat.θΨ_2_KUNSAT(option.hydro, param, 0.9999, iZ, hydro, 0.0; TopsoilSubsoil=TopsoilSubsoil)
 
 					if option.hydro.KunsatΨ == false
 						hydro.Ks[iZ] = KunsatModel_Lab[iZ]
@@ -204,7 +210,7 @@ function START_TOOLBOX()
 		end
 
 		# PSD model
-			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psdStart.START_PSD(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect, N_θΨ, Rpart, θ_θΨ, Ψ_θΨ)
+			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psdStart.START_PSD(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect, N_θΨ, param, Rpart, θ_θΨ, Ψ_θΨ)
 
 		KunsatModel_Psd = fill(0.0::Float64, N_SoilSelect)
 
@@ -252,7 +258,7 @@ function START_TOOLBOX()
 		if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File # <>=<>=<>=<>=<>
 
 			if !(option.dataFrom.Smap)
-				table.hydroLab.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, path.Table_θΨK)
+				table.hydroLab.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, path.tableSoilwater.Table_θΨK)
 			else
 				tableSmap.θΨK(hydro, hydroOther, Id_Select[1:N_SoilSelect], KunsatModel_Lab, N_SoilSelect, smap, path.Table_θΨK)
 
@@ -267,7 +273,7 @@ function START_TOOLBOX()
 				end
 
 				if option.smap.CombineData
-					tableSmap.SMAP(option.hydro, Id_Select, N_SoilSelect, smap, path)
+					tableSmap.SMAP(option.hydro, Id_Select, N_SoilSelect, smap, param, path)
 				end
 			end
 
@@ -281,7 +287,7 @@ function START_TOOLBOX()
 			end
 			
 			if option.psd.Table_Psd_θΨ_θ
-				table.psd.PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd, path.tableSoilwater.Table_Psd_θΨ_θ)
+				table.psd.PSD_θΨ_θ(Id_Select, N_SoilSelect, hydroPsd, param, path.tableSoilwater.Table_Psd_θΨ_θ)
 			end
 		end # option.run.IntergranularMixingPsd
 

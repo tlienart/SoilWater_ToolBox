@@ -1,5 +1,5 @@
 module stats
-	import ..wrc, ..param
+	import ..wrc
 	export RMSE, NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION
 	using Statistics
 

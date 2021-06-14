@@ -3,14 +3,14 @@
 
 # =============================================================
 module checkError
-	import ..param, ..pathHypix
+	import ..pathHypix
 	import Dates: value, DateTime
 	export CHECK_IFOPEN
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CHECK_ERROR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CHECK_ERROR(N_iRoot, N_iZ, N_iHorizon, Z, clim, veg, hydroHorizon)
+	function CHECK_ERROR(clim, hydroHorizon, N_iHorizon, N_iRoot, N_iZ, param, veg, Z)
 
 		# DETERMENING IF PATH IS OPEN
 			CHECK_IFOPEN(pathHyPix.Table_Discretisation)

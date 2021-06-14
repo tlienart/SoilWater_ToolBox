@@ -1,17 +1,17 @@
 module psdStart
-	import ..param, ..stats, ..psdInitialize, ..psdOpt, ..psdFunc
+	import ..stats, ..psdInitialize, ..psdOpt, ..psdFunc
 
 	# ======================================================================================
 	#          PSD_START Slow initialization
 	# ======================================================================================
-	function START_PSD(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect, N_θΨ, Rpart, θ_θΨ, Ψ_θΨ)
+	function START_PSD(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect, N_θΨ, param, Rpart, θ_θΨ, Ψ_θΨ)
 
 		if  option.psd.OptimizePsd == :OptAllSoil && option.run.HydroLabθΨ == :No
 			error("PSD error: if  option.psd.OptimizePsd == :OptAllSoil && option.run.HydroLabθΨ ≠ :No ")
 		end 
 
 		# INITIATING THE PSD DATA		
-		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect)
+		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect, param)
 
 		if option.psd.OptimizePsd == :Run  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, paramPsd.θr_Psd, paramPsd, hydroPsd)

@@ -111,9 +111,9 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θψ_2_K
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨ_2_KUNSAT(optionₘ, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
+			function θΨ_2_KUNSAT(optionₘ, param, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
 				if  optionₘ.HydroModel == :Kosugi
-					return Kunsat = kunsat.kg.θΨ_2_KUNSAT(optionₘ, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
+					return Kunsat = kunsat.kg.θΨ_2_KUNSAT(optionₘ, param, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
 				else
 					error("$( optionₘ.HydroModel) model for θψ_2_KUNSAT is not yet available")
 				end
@@ -127,7 +127,7 @@ module kunsat
 	#		MODULE KOSUGI
 	# =============================================================
 	module kg
-		import..wrc, ...cst, ...param
+		import..wrc, ...cst
 		import ForwardDiff, QuadGK
 		import SpecialFunctions: erfc, erfcinv
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂Ψ, θΨ_2_KUNSAT
@@ -244,7 +244,7 @@ module kunsat
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		"""Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017"""
 
-			function θΨ_2_KUNSAT(optionₘ, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil", θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], Rtol= 10^-8.0)
+			function θΨ_2_KUNSAT(optionₘ, param, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil", θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], Rtol= 10^-8.0)
 
 				# So it will be independent of the Rock Fragments
 					if θs / (1.0 - RockFragment) - θsMacMat / (1.0 - RockFragment)  ≥ param.hydro.θs_θsMacMat # Bimodal

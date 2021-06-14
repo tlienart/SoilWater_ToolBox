@@ -2,7 +2,7 @@
 #		module: tableSmap
 # =============================================================
 module tableSmap
-   import ..tool, ..param, ..wrc
+   import ..tool, ..wrc
    import CSV, Tables, DataFrames, DelimitedFiles
 
    	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,7 +43,7 @@ module tableSmap
    JulesModel_VangenuchtenJules = ["ThetaS_VgJules[mm3 mm-3]";"ThetaR_VgJules[mm3 mm-3]";"n_VgJules[-]";"Hvg_VgJules[mm]"; "Ks_VgJules[mm s-1]";"3300mm";"10000mm"]
 
    """
-      function SMAP(optionₘ, Id_Select, N_SoilSelect, smap, path)
+      function SMAP(optionₘ, Id_Select, N_SoilSelect, smap, param, path)
          println("    ~  $(path.Table_Smap) ~")
 
          # Header

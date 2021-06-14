@@ -14,7 +14,7 @@ module infiltInitialize
 				for iZ=1:N_SoilSelect
 					# θr computation
 						# if option.run.IntergranularMixingPsd
-							hydroInfilt.θr[iZ] = psdThetar.PSD_2_θr_FUNC(∑Psd, hydroInfilt, iZ)
+							hydroInfilt.θr[iZ] = psdThetar.PSD_2_θr_FUNC(∑Psd, hydroInfilt, iZ, param)
 						# else
 						# 	hydroInfilt.θr[iZ] = param.hydro.θr
 						# end # option.run.IntergranularMixingPsd
