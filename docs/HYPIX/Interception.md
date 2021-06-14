@@ -4,25 +4,14 @@
 
 # INTERCEPTION MODEL
 
-The parsimonious physically based interception model is an improvement of Pollacco *et al.* (2013a). The following interception model uses *potential evaporation of a wet canopy* *Δ**Pet~int~,*  *LAI* [-], and *extinction coefficient for solar radiation*, *K~g~* [-] set to 0.5. The *gross precipitation depth* that falls on top of a canopy, [L], is partitioned following Rutter *et al.* (1971) as:
+The parsimonious physically based interception model is an improvement of Pollacco *et al.* (2013a). The following interception model uses *potential evaporation of a wet canopy* (*ΔEvap_Int*),  *LAI* [-], and *extinction coefficient for solar radiation* (*K<sub>g</sub>* [-]) set to 0.5. The *gross precipitation depth* that falls on top of a canopy, [L], is partitioned following Rutter *et al.* (1971) as:
 
 $$
 \varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground}
 $$
 
-where
-
-$$
-\varDelta Pr_{ground}
-$$
-
-[L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and
-
-$$
-\varDelta Pr_{int}
-$$
-
-[L] is the *intercepted precipitation depth.* They are computed as:
+where $$ \varDelta Pr_{ground} $$ [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and $$
+\varDelta Pr_{int} $$ [L] is the *intercepted precipitation depth.* They are computed as:
 
 $$
 \begin{cases}                                                               \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr\\\end{cases}\,\,
@@ -36,20 +25,8 @@ G_{apFrac}=1-\,\,e^{-K_g×LAI}
 
 $$
 
-The foliage of the canopy is considered as a water storage filled up to a depth *Sint* [L], *with a saturated storage capacity*, 
-
-$$
-Sint_{sat}
-
-$$
-
- [L]. When the canopy is fully saturated (
-$$
-Sint=Sint_{sat}
-
-$$
-
-), then any excess of $\varDelta Pr_{int}$ overflows, $\varDelta Pr_{over}$$ [L], to the soil surface. The amount of water that reaches the soil surface is the *throughfall precipitation* [L]:
+The foliage of the canopy is considered as a water storage filled up to a depth *Sint* [L], *with a saturated storage capacity*, $$
+Sint_{sat} $$ [L]. When the canopy is fully saturated ($$Sint=Sint_{sat}$$), then any excess of $\varDelta Pr_{int}$ overflows, $\varDelta Pr_{over}$$ [L], to the soil surface. The amount of water that reaches the soil surface is the *throughfall precipitation* [L]:
 
 $$
 \varDelta Pr_{through}=\varDelta Pr_{ground}+\varDelta Pr_{over}
