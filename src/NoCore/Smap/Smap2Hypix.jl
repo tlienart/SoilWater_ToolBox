@@ -55,7 +55,7 @@ module smap2hypix
             println(iSite , "=", SoilName_Layer[iSite], " =", SoilName_2_SiteName[SoilName_Layer[iSite]])
             iSiteName = SoilName_2_SiteName[SoilName_Layer[iSite]]
 
-            Path_Output =  path.Home * "//INPUT//DataHyPix//JULES//" * iSiteName
+            Path_Output =  path.Home * "//INPUT//Data_Hypix//JULES//" * iSiteName
 
                # SMAP-HYDRO PARAMETERS ====
                   hydroSmap = hydroStruct.HYDROSTRUCT(N) # Making a structure

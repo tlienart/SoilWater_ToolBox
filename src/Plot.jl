@@ -16,7 +16,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDROPARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab, Path_Plot_θΨK, Path_Model_Name; N_Se=1000)
+		function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, IdSelect, hydro, KunsatModel_Lab, Path_Plot_θΨK, Path_Model_Name; N_Se=1000)
 			println("  ==  START: Plotting HydroParam  ==")
 	
 					
@@ -42,7 +42,7 @@ module plot
 					end # iΨ
 
 				# == Title == 
-					Title =  string(Id_Select[iZ]) * "_" * string(option.hydro.HydroModel) * "_" * string(option.hydro.σ_2_Ψm)
+					Title =  string(IdSelect[iZ]) * "_" * string(option.hydro.HydroModel) * "_" * string(option.hydro.σ_2_Ψm)
 
 				# == Ticks ==
 					Ticks = Int64.(Ψ_θΨ[iZ,1:N_θΨ[iZ]])
@@ -128,7 +128,7 @@ module plot
 
 				# Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * Title * ".svg" 
 				
-				Path = Path_Plot_θΨK * "Lab_ThetaH_" * string(Path_Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
+				Path = Path_Plot_θΨK * "Lab_ThetaH_" * string(Path_Model_Name) * "_" * string(IdSelect[iZ]) * ".svg" 
 	
 				save(Path, Fig)
 	
@@ -224,7 +224,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_IMP_MODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_IMP_MODEL(Id_Select, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd, Path)
+		function PLOT_IMP_MODEL(IdSelect, Rpart, N_Psd, ∑Psd, Psd, N_SoilSelect, hydro, paramPsd, Path)
 			println("  ==  START: PLOT_IMP_MODEL  ==")	
 
 			for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End
@@ -281,7 +281,7 @@ module plot
 
 
 				Plot = Plots.plot(Plot_∑Psd_Rpart, Plot_Rpart_Psd, Plot_NormMixing_Rpart, layout = (3,1))
-				Path = Path * "IMP_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"
+				Path = Path * "IMP_" * string(option.hydro.HydroModel) * "_" *string(IdSelect[iZ]) * ".svg"
 				Plots.savefig(Plot, Path)
 				println("    ~  $(Path) ~")
 			end # for iZ
@@ -293,7 +293,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_IMP_ΘΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, Id_Select, hydroPsd, hydro, Path; N_Se= 100)
+		function PLOT_PSD_θΨ(Ψ_θΨ, Ψ_Rpart, θ_θΨ, θ_Rpart, N_θΨ, N_SoilSelect, N_Psd, IdSelect, hydroPsd, hydro, Path; N_Se= 100)
 		
 			println("  ==  START: Plotting PLOT_PSD_θΨ  ==")
 
@@ -348,7 +348,7 @@ module plot
 					ylabel!(L"\theta \ [cm^3 cm^{-3}]")
 					Plots.plot!(xlims =(Ψ_θΨ_Min*cst.Mm_2_Cm, Ψ_θΨ_Max*cst.Mm_2_Cm), ylims =(0.0, θ_θΨ_Max), xscale= :log10, size=(800,400))
 
-				Path = Path * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
+				Path = Path * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(IdSelect[iZ]) * ".svg"     
 				Plot = Plots.plot(Plot_θ_Ψ_Psd)
 				Plots.savefig(Plot, Path)
 				println("    ~  $(Path) ~")
@@ -372,12 +372,12 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_∑INFILT(Id_Select, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput, Path)
+		function PLOT_∑INFILT(IdSelect, N_Infilt, N_SoilSelect, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput, Path)
 		println("  ==  START: PLOT_∑INFILT  == \n")
 		
 			for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
 				# << PLOT 1 >>
-					Title = " iZ= $(Id_Select[iZ])"
+					Title = " iZ= $(IdSelect[iZ])"
 					# Plot_∑infilt_Obs
 
 						Label ="Obs_$(string(option.infilt.DataSingleDoubleRing))_Ring"
@@ -407,7 +407,7 @@ module plot
 						Plots.xlabel!(L"Time [minutes]")
 						Plots.ylabel!(L"\sum infiltration \ [mm]")      
 						
-					Path = Path * "INFIL_" * string(option.infilt.Model)  *  "_" * string(Id_Select[iZ]) *  ".svg"
+					Path = Path * "INFIL_" * string(option.infilt.Model)  *  "_" * string(IdSelect[iZ]) *  ".svg"
 
 				Plots.savefig(Plot_∑infilt_Obs, Path)
 				println("    ~  $(Path) ~")
@@ -421,7 +421,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT_θΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_∑INFILT_θΨ(hydroInfilt, Id_Select, N_SoilSelect, Param, Path; hydro=[], N_Se=100)
+		function PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_SoilSelect, Param, Path; hydro=[], N_Se=100)
 		println("  ==  START: PLOT_∑INFILT_θΨ  ==")
 
 			θ_Infilt      = Array{Float64}(undef, (N_Se))
@@ -499,7 +499,7 @@ module plot
 							Plots.ylabel!(L" K (\psi) \ [cm \ h^{-1}]")
 							Plots.plot!(xlims = (Ψ_θΨ_Min*cst.Mm_2_Cm, Ψ_θΨ_Max*cst.Mm_2_Cm), ylims = (10^-2.0, K_Ψ_Max * cst.MmS_2_CmH), xscale= :log10,  yscale= :log10, legend=:bottomleft, size=(800,400))
 
-					Path = Path * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(Id_Select[iZ]) * ".svg"     
+					Path = Path * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(IdSelect[iZ]) * ".svg"     
 					Plot = Plots.plot(Plot_θ_Ψ, Plot_K_Ψ)
 					Plots.savefig(Plot, Path)
 					println("    ~  $(Path) ~")

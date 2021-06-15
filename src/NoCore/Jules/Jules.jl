@@ -46,7 +46,7 @@ module jules
          for iSiteName in SiteName
 
             # Making a new pathHyPix if not exist
-               Path_Output =  pathHyPix.Home * "//INPUT//DataHyPix//JULES//" * iSiteName
+               Path_Output =  pathHyPix.Home * "//INPUT//Data_Hypix//JULES//" * iSiteName
                mkpath(Path_Output) 
                
             # dictionary which correspond SiteName to VCSNgridnumber

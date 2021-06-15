@@ -33,6 +33,19 @@ module kunsat
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : θ_2_KUNSAT
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	  function θ_2_KUNSAT(optionₘ, θ₁, iZ::Int64, hydroParam)
+			if  optionₘ.HydroModel == :Kosugi
+				Se = wrc.θ_2_Se(θ₁, iZ, hydroParam)
+				return Kunsat = Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam)
+			else
+				error("$( optionₘ.HydroModel) model for θ_2_KUNSAT is not yet available")
+			end
+		end # function θ_2_KUNSAT
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Se_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
@@ -67,19 +80,6 @@ module kunsat
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : θ_2_KUNSAT
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	  function θ_2_KUNSAT(optionₘ, θ₁, iZ::Int64, hydroParam)
-			if  optionₘ.HydroModel == :Kosugi
-				Se = wrc.θ_2_Se(θ₁, iZ, hydroParam)
-				return Kunsat = Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam)
-			else
-				error("$( optionₘ.HydroModel) model for θ_2_KUNSAT is not yet available")
-			end
-		end # function θ_2_KUNSAT
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function ∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
@@ -108,17 +108,6 @@ module kunsat
 			end
 		end
 
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : θψ_2_K
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨ_2_KUNSAT(optionₘ, param, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
-				if  optionₘ.HydroModel == :Kosugi
-					return Kunsat = kunsat.kg.θΨ_2_KUNSAT(optionₘ, param, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil")
-				else
-					error("$( optionₘ.HydroModel) model for θψ_2_KUNSAT is not yet available")
-				end
-
-			end  # function: θψ_2_K
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -237,97 +226,7 @@ module kunsat
 
 			return ∂Kunsat_Mat∂θ + ∂Kunsat_Mac∂θ
 			end #  ∂K∂θ
-
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : θψ_2_K
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		"""Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017"""
-
-			function θΨ_2_KUNSAT(optionₘ, param, Se_Max, iZ::Int64, hydroParam, RockFragment::Float64; TopsoilSubsoil="Topsoil", θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], Rtol= 10^-8.0)
-
-				# So it will be independent of the Rock Fragments
-					if θs / (1.0 - RockFragment) - θsMacMat / (1.0 - RockFragment)  ≥ param.hydro.θs_θsMacMat # Bimodal
-						FlagBimodal = true
-					else
-						FlagBimodal = false
-					end
-
-				# Correct for rock treshold	
-				RockFragment_Treshold = 0.4
-				if RockFragment > RockFragment_Treshold
-
-					RockFragment2 = max(2 * RockFragment_Treshold - RockFragment, 0.0)
-
-					θs = (θs / (1.0 - RockFragment)) * (1.0 - RockFragment2)
-					
-					θsMacMat = (θsMacMat / (1.0 - RockFragment)) * (1.0 - RockFragment2)
-
-					θr = (θr / (1.0 - RockFragment)) * (1.0 - RockFragment2)
-				end				
-
-				if (TopsoilSubsoil=="Topsoil")
-					if FlagBimodal
-                  τ₁          = 5.007
-                  τ₂          = 0.969
-                  τ₃          = 0.787
-                  τ₁Mac       = 4.734
-                  τ₂Mac       = 0.511
-						τ₃Mac       = 0.041
-						σMac = 0.322
-					else
-                  τ₁ = 5.859
-                  τ₂ = 0.967
-                  τ₃ = 0.530
-					end
-
-				elseif (TopsoilSubsoil=="Subsoil")
-					if FlagBimodal
-                  τ₁          = 6.444
-                  τ₂          = 0.859
-                  τ₃          = 0.408
-                  τ₁Mac       = 3.973
-						τ₂Mac       = 0.642
-                  τ₃Mac       = 0.729
-						σMac = 1.272
-					else # Unimodal  
-                  τ₁          = 6.484
-                  τ₂          = 0.854
-                  τ₃          = 0.316		
-					end
-				end # TopsoilSubsoil
-
-            # τ₁    = max(min(4.57 * (θsMacMat - θr) + 2.012, 6.4926), 1.4793)
-            # τ₂    = max(min(0.050 * τ₁ + 0.242, 0.9), 0.1119)
-            # τ₃    = max(min(-0.1479 * τ₁ + 1.011, 0.8), 0.0116)
-            # τ₁Mac = max(min(-1.135 * (θsMacMat - θr) + 1.431, 4.9749), 0.0049)
-            # τ₂Mac = max(min(0.405 * τ₂, 0.5896), 0.0122)
-            # τ₃Mac = max(min(0.525 * τ₃, 0.7305), 0.0071)
-
-				T1 = 10.0 ^ - τ₁
-				T2 = 2.0 * (1.0 - τ₂)
-				T3 =  1.0 / (1.0 - τ₃)
-
-				Kunsat_Uni(Se) =  T1 * ((θsMacMat - θr) ^ T3) * ((cst.Y / Ψm) / (exp( erfcinv(2.0 * Se) * σ * √2.0 )) ) ^ T2
-	
-				if FlagBimodal
-					T1Mac = 10.0 ^ - τ₁Mac 
-					T2mac = 2.0 * (1.0 - τ₂Mac)
-					T3mac = 1.0 / (1.0 - τ₃Mac)
-					Kunsat_Bim(Se) = T1Mac * ((θs - θsMacMat) ^ T3mac) * ((cst.Y / ΨmMac) / ( exp( erfcinv(2.0 * Se) * σMac * √2.0))) ^ T2mac 
-					
-					Kunsat_Bimodal(Se) = Kunsat_Uni(Se) + Kunsat_Bim(Se) 
-					return Kunsat_Model = cst.KunsatModel * QuadGK.quadgk(Se -> Kunsat_Bimodal(Se), 0.0, Se_Max)[1]
-				else
-					return Kunsat_Model = cst.KunsatModel * QuadGK.quadgk(Se -> Kunsat_Uni(Se), 0.0, Se_Max)[1]
-				end   
-
-				Kunsat_Model = min(max(hydroParam.Ks_Min[iZ], Kunsat_Model), hydroParam.Ks_Max[iZ])
-
-			end # function θΨ_2_KUNSAT
-	end # module kg 
-	# =============================================================
-
+	end # module kg
 
 	# =============================================================
 	#		MODULE VAN GENUCHTEN

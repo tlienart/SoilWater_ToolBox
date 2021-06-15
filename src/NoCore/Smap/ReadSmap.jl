@@ -19,7 +19,7 @@ module readSmap
          RockDepth    ::Vector{Float64}
          MaxRootingDepth ::Vector{Float64}
       end
-      function SMAP(Id_Select_True, N_SoilSelect, Path)
+      function SMAP(IdSelect_True, N_SoilSelect, Path)
          println("    ~  $(Path) ~")
 
          # Read data
@@ -32,25 +32,25 @@ module readSmap
             Data = sortslices(Data, dims=1)
          
          IsTopsoil, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "IsTopsoil")
-         IsTopsoil = 	Int64.(IsTopsoil[Id_Select_True])
+         IsTopsoil = 	Int64.(IsTopsoil[IdSelect_True])
 
          Soilname, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
-         Soilname = Soilname[Id_Select_True] # Selecting the data
+         Soilname = Soilname[IdSelect_True] # Selecting the data
 
          RockClass, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockClass")
-         RockClass = RockClass[Id_Select_True] # Selecting the data
+         RockClass = RockClass[IdSelect_True] # Selecting the data
 
          Depth, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "depth_mm")
-         Depth = Float64.(Depth[Id_Select_True]) # Selecting the data
+         Depth = Float64.(Depth[IdSelect_True]) # Selecting the data
 
          RockFragment, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Stone_Prop")
-         RockFragment = Float64.(RockFragment[Id_Select_True]) # Selecting the data
+         RockFragment = Float64.(RockFragment[IdSelect_True]) # Selecting the data
 
          RockDepth, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockDepth_mm")
-         RockDepth = Float64.(RockDepth[Id_Select_True]) # Selecting the data
+         RockDepth = Float64.(RockDepth[IdSelect_True]) # Selecting the data
 
          MaxRootingDepth, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "MaxRootingDepth_mm")
-         MaxRootingDepth = Float64.(MaxRootingDepth[Id_Select_True]) # Selecting the data
+         MaxRootingDepth = Float64.(MaxRootingDepth[IdSelect_True]) # Selecting the data
 
          smap = SMAP_STRUCT(Depth, IsTopsoil, Soilname, RockFragment, RockClass, RockDepth, MaxRootingDepth)			
       return smap

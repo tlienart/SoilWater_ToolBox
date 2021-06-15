@@ -8,7 +8,7 @@ module tableSmap
    	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function θΨK(hydro, hydroOther, Id_Select, KunsatModel_Lab, N_SoilSelect, smap, Path)
+         function θΨK(hydro, hydroOther, IdSelect, KunsatModel_Lab, N_SoilSelect, smap, Path)
             println("    ~  $(Path) ~")
 
             Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydro)
@@ -27,7 +27,7 @@ module tableSmap
                pushfirst!(FieldName_String, string("Id")) 
                push!(FieldName_String, string("KunsatModel"))
                
-            CSV.write(Path, Tables.table([Id_Select smap.Soilname[1:N_SoilSelect] smap.Depth[1:N_SoilSelect] Matrix]), header=FieldName_String )
+            CSV.write(Path, Tables.table([IdSelect smap.Soilname[1:N_SoilSelect] smap.Depth[1:N_SoilSelect] Matrix]), header=FieldName_String )
       
          return nothing
          end  # function:  θΨK
@@ -43,7 +43,7 @@ module tableSmap
    JulesModel_VangenuchtenJules = ["ThetaS_VgJules[mm3 mm-3]";"ThetaR_VgJules[mm3 mm-3]";"n_VgJules[-]";"Hvg_VgJules[mm]"; "Ks_VgJules[mm s-1]";"3300mm";"10000mm"]
 
    """
-      function SMAP(optionₘ, Id_Select, N_SoilSelect, smap, param, path)
+      function SMAP(optionₘ, IdSelect, N_SoilSelect, smap, param, path)
          println("    ~  $(path.Table_Smap) ~")
 
          # Header
@@ -66,7 +66,7 @@ module tableSmap
          if Option_BrooksCorey # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "BrooksCorey"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.ModelName * "_" * path.tableSmap.Table_θΨK₀
             
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"λbc";"Ψbc"; "Ks"; "Ψga"]
@@ -96,7 +96,7 @@ module tableSmap
          if  Option_ClappHornberger # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "ClappHornberger"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.ModelName * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
 
@@ -127,7 +127,7 @@ module tableSmap
          if Option_VanGenuchten # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "Vangenuchten"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.ModelName * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"N";"Ψvg"; "Ks"]
@@ -157,7 +157,7 @@ module tableSmap
          if Option_VanGenuchtenJules # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "VangenuchtenJules"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.ModelName * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"N";"Ψvg"; "Ks"]
@@ -187,7 +187,7 @@ module tableSmap
          if Option_Kosugi # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "Kosugi"
 
-            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.Model_Name * "_" * path.tableSmap.Table_θΨK₀ 
+            Path_θΨ =  path.FileSoilHydro_Table₁ * string(HydroModel_θΨ) *  "_" * string(optionₘ.σ_2_Ψm) *  "_" * path.option.ModelName * "_" * path.tableSmap.Table_θΨK₀ 
 
             if isfile(Path_θΨ)
                Select_θΨ =["θs";"θr";"Ks";"Ψm";"σ";"σMac";"ΨmMac";"θsMacMat"; "θsMacMat_ƞ"]
@@ -240,7 +240,7 @@ module tableSmap
 
          
       # COMBINING OUTPUTS   
-         Output = Tables.table([string.(Id_Select[1:N_SoilSelect]) smap.Soilname[1:N_SoilSelect] smap.Depth[1:N_SoilSelect] smap.IsTopsoil[1:N_SoilSelect] smap.RockFragment[1:N_SoilSelect] smap.RockDepth[1:N_SoilSelect] smap.MaxRootingDepth[1:N_SoilSelect] Data[1:N_SoilSelect,:]])
+         Output = Tables.table([string.(IdSelect[1:N_SoilSelect]) smap.Soilname[1:N_SoilSelect] smap.Depth[1:N_SoilSelect] smap.IsTopsoil[1:N_SoilSelect] smap.RockFragment[1:N_SoilSelect] smap.RockDepth[1:N_SoilSelect] smap.MaxRootingDepth[1:N_SoilSelect] Data[1:N_SoilSelect,:]])
       
          CSV.write(path.Table_Smap, Output, header=Header)	
 

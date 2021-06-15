@@ -22,44 +22,44 @@ module tool
 	# =============================================================
 	#		MODULE: array
 	# =============================================================
-	module array
-		export SEARCH_INDEX, SEARCH_INDEX2
+	# module array
+	# 	export SEARCH_INDEX, SEARCH_INDEX2
 
-		function SEARCH_INDEX(Array, SearchValue)
-			N = length(Array)
-			iSearchValue = 1
-			Value_SearchValue=1.
-			Err_2 = 100000000000000.
+	# 	function SEARCH_INDEX(Array, SearchValue)
+	# 		N = length(Array)
+	# 		iSearchValue = 1
+	# 		Value_SearchValue=1.
+	# 		Err_2 = 100000000000000.
 			
-			for i = 1:N
-				Err_1 = abs(Array[i] - SearchValue)
+	# 		for i = 1:N
+	# 			Err_1 = abs(Array[i] - SearchValue)
 			
-				if Err_1 < Err_2
-					iSearchValue = i
-					Value_SearchValue = Array[i]
-					Err_2 = Err_1
-				end
-			end
-			return iSearchValue
-		end # function SEARCH_INDEX
+	# 			if Err_1 < Err_2
+	# 				iSearchValue = i
+	# 				Value_SearchValue = Array[i]
+	# 				Err_2 = Err_1
+	# 			end
+	# 		end
+	# 		return iSearchValue
+	# 	end # function SEARCH_INDEX
 
-		function SEARCH_INDEX2(Find, Array, N )
-			i = 2
-			FlagBreak = false
-			while !(FlagBreak)
-				if (Array[i-1] <= Find <= Array[i]) || (i == N) 
-					FlagBreak = true
-					break
-				else 
-					i += 1
-					FlagBreak = false
-				end # if
-			end # while
+	# 	function SEARCH_INDEX2(Find, Array, N )
+	# 		i = 2
+	# 		FlagBreak = false
+	# 		while !(FlagBreak)
+	# 			if (Array[i-1] <= Find <= Array[i]) || (i == N) 
+	# 				FlagBreak = true
+	# 				break
+	# 			else 
+	# 				i += 1
+	# 				FlagBreak = false
+	# 			end # if
+	# 		end # while
 			
-			return i, Array[i] 
-		end  # function SEARCH_INDEX2
+	# 		return i, Array[i] 
+	# 	end  # function SEARCH_INDEX2
 
-	end  # module: array
+	# end  # module: array
 	# ............................................................
 
 
@@ -67,10 +67,8 @@ module tool
 	#		MODULE: readWrite
 	# =============================================================
 	module readWrite
-		import ..tool
 		import DelimitedFiles
-		import Dates: value, DateTime
-		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, DATA_2_ΔTnew, STRUCT_2_FIELDNAME_PARAM
+		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_HEADER_FAST
@@ -91,6 +89,7 @@ module tool
 			end
 		return Data_Output, N_X
 		end # function READ_HEADER
+
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_HEADER
@@ -125,50 +124,37 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_ROW_SELECT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_ROW_SELECT( Id_Select::Vector{Int64}, Data, Header,  Name::String, N_SoilSelect::Int64; N_Point_Max=1000, DataSelect=true)
-			# READ DATA
-				N_X, N_Y = size(Data) # Size of the array
+			function READ_ROW_SELECT(IdSelect::Vector{Int64}, Data, Header, Name::String, N_SoilSelect::Int64; N_Point_Max=1000)
 
-			# Get the ID of the data
-				Id_Data = Int64.(Data[1:end,1])
-
-			# Getting the column which matches the name of the header
-				Name = replace(Name, " " => "") # Remove white spaces
-
-				iColumn = Int64(findfirst(isequal(Name), Header)[1])
-		
-				Data_Output = Float64.(Data[1:end,iColumn])
+				Data_Output, N_X = READ_HEADER_FAST(Data, Header, Name)
 
 			# ===========================================
 			# Only keeping data which is selected
 			# ===========================================
-				if DataSelect == true
-					Data_Select = Array{Float64}(undef, (N_SoilSelect, N_Point_Max))
-					N_Point = zeros(Int64, N_SoilSelect) 
-					
-					iSelect = 1; iPoint = 1
-					# For all soils in the file
-					for i = 1:N_X
-						if Id_Data[i] == Id_Select[iSelect] # Only append Ids which correspond to the selected one
-							Data_Select[iSelect,iPoint] = Data_Output[i]
-							# append!(Data_Select, Data_Output[i])
-							N_Point[iSelect] += 1
-							iPoint += 1
-						end
+				Id_Data = Int64.(Data[1:end,1])
 
-						# Since there are many Data_Output with the same Id only update Id_Select if we are changing soils and Id_Select[iSelect] == Id_Data[i]
-						if i ≤ N_X -1
-							if Id_Data[i+1] > Id_Data[i] && Id_Select[iSelect] == Id_Data[i] && iSelect ≤ N_SoilSelect -1
-								iSelect += 1
-								iPoint = 1
-							end # if:
-						end # if: i â‰¤ N_X
-					end # for: i = 1:N_X
-				else
-					Data_Select = Data_Output
-					N_Point = N_X
-				end # DataSelect
+				Data_Select = fill(0.0::Float64, (N_SoilSelect, N_Point_Max))
+				N_Point     = fill(0::Int64, N_SoilSelect)
+				iSelect = 1; iPoint = 1
 
+				# For all soils in the file
+				for i = 1:N_X
+					if Id_Data[i] == IdSelect[iSelect] # Only append Ids which correspond to the selected one
+						Data_Select[iSelect,iPoint] = Data_Output[i]
+						# append!(Data_Select, Data_Output[i])
+						N_Point[iSelect] += 1
+						iPoint += 1
+					end
+
+					# Since there are many Data_Output with the same Id only update IdSelect if we are changing soils and IdSelect[iSelect] == Id_Data[i]
+					if i ≤ N_X -1
+						if Id_Data[i+1] > Id_Data[i] && IdSelect[iSelect] == Id_Data[i] && iSelect ≤ N_SoilSelect -1
+							iSelect += 1
+							iPoint = 1
+						end # if:
+					end # if: i ≤ N_X -1
+				end # for: i = 1:N_X
+	
 		return Data_Select, N_Point
 		end # function READ_ROW_SELECT
 
@@ -196,7 +182,6 @@ module tool
 		#		FUNCTION : STRUCT_2_FIELDNAMES
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function STRUCT_2_FIELDNAME(N_SoilSelect, Structure)
-
 				FieldName_Array = propertynames(Structure)
 
 				N_FieldName = length(FieldName_Array)
@@ -228,55 +213,55 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : STRUCT_2_FIELDNAMES
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function STRUCT_2_FIELDNAME_PARAM(Structure)
-			N_FieldName = length(Structure.FieldName) - 1
+		# function STRUCT_2_FIELDNAME_PARAM(Structure)
+		# 	N_FieldName = length(Structure.FieldName) - 1
 
-			Matrix = Array{Float64}(undef, (N_FieldName))
+		# 	Matrix = Array{Float64}(undef, (N_FieldName))
 			
-			for i=1:N_FieldName
-				Struct_Array = getfield(Structure, Structure.FieldName[i])
-				Matrix[i] = Struct_Array
-			end
+		# 	for i=1:N_FieldName
+		# 		Struct_Array = getfield(Structure, Structure.FieldName[i])
+		# 		Matrix[i] = Struct_Array
+		# 	end
 
-			FieldName_String = Array{String}(undef, N_FieldName)
-			i=1
-			for FieldNames in Structure.FieldName
-				FieldName_String[i] =  String(FieldNames)
-				if i == N_FieldName
-					break
-				end
-				i += 1
-			end
-			return Matrix, FieldName_String
-		end # function STRUCT_2_FIELDNAME
+		# 	FieldName_String = Array{String}(undef, N_FieldName)
+		# 	i=1
+		# 	for FieldNames in Structure.FieldName
+		# 		FieldName_String[i] =  String(FieldNames)
+		# 		if i == N_FieldName
+		# 			break
+		# 		end
+		# 		i += 1
+		# 	end
+		# 	return Matrix, FieldName_String
+		# end # function STRUCT_2_FIELDNAME
 			
 			
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : matching data with different timesteps
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DATA_2_ΔTnew(∑T, N_iT, ∑T_Reduced)
-			True = falses(N_iT) # Reserving memory
-			iT = 1
-			for iTreduced = 1:length(∑T_Reduced)	
-				while ∑T_Reduced[iTreduced] ≥ ∑T[iT]
-					iT += 1
-				end
+		# function DATA_2_ΔTnew(∑T, N_iT, ∑T_Reduced)
+		# 	True = falses(N_iT) # Reserving memory
+		# 	iT = 1
+		# 	for iTreduced = 1:length(∑T_Reduced)	
+		# 		while ∑T_Reduced[iTreduced] ≥ ∑T[iT]
+		# 			iT += 1
+		# 		end
 
-				# @show iT
-				if iT ≤ N_iT
-					True[iT] = true
-				else
-					exit
-				end
-			end # for iTθ
+		# 		# @show iT
+		# 		if iT ≤ N_iT
+		# 			True[iT] = true
+		# 		else
+		# 			exit
+		# 		end
+		# 	end # for iTθ
 
-			# More accurate ∑T_Reduced
-			∑T_Reduced = ∑T[True[1:N_iT]]
+		# 	# More accurate ∑T_Reduced
+		# 	∑T_Reduced = ∑T[True[1:N_iT]]
 
-			N_∑T_Reduced = count(True[1:N_iT])
+		# 	N_∑T_Reduced = count(True[1:N_iT])
 
-			return N_∑T_Reduced, True
-		end  # function: function SELECT_OUTPUT_ΔT
+		# 	return N_∑T_Reduced, True
+		# end  # function: function SELECT_OUTPUT_ΔT
 		
 	end  # module readWrite ************************
 	# ............................................................

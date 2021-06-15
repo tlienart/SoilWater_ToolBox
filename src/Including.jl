@@ -16,7 +16,6 @@
             include("Packages.jl")
         end # option.other.DownloadPackage
         include("Tool.jl")
-        include("Hypix\\Other\\Sitename.jl")
         include("Path.jl")
         include("Cst.jl")
         include("Param.jl")
@@ -27,6 +26,7 @@
         include("Optim\\Optimize.jl")
         include("reading.jl")
         include("Table.jl")
+        include("hydro\\θψ2Ks.jl")
 
         if !(option.run.Hypix)
             include("Hydro\\Φ.jl")

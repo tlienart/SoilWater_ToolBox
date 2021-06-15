@@ -16,7 +16,7 @@ module plotSmap
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          #		FUNCTION : HYDROPARAM
          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, Id_Select, hydro, KunsatModel_Lab, path; N_Se=1000, smap=[])
+         function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, IdSelect, hydro, KunsatModel_Lab, path; N_Se=1000, smap=[])
             println("  ==  START: Plotting HydroParam  ==")
       
             Flag_OtherData1 = true
@@ -36,7 +36,7 @@ module plotSmap
             Ψ_θΨ_Min = 0.0
 
             if Flag_OtherData1
-               Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataSoilHydraulic\\Smap20210226\\Smap20210226_ClappHornberger_Constrained_A_Table_ThetaHK.csv"
+               Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_ClappHornberger_Constrained_A_Table_ThetaHK.csv"
 
                option.hydro.HydroModel = :ClappHornberger
                   # Structure of the hydroparameters
@@ -45,14 +45,14 @@ module plotSmap
                   option.hydro.HydroModel = :ClappHornberger
                      hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
 
-               Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataSoilHydraulic\\Smap20210226\\Smap20210226_Loam.csv"
+               Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_Loam.csv"
                   option.hydro.HydroModel = :ClappHornberger
                   # Structure of the hydroparameters
                      hydroData2 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
                   # Populate the values of the parameters
                      hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
 
-                 Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\DataSoilHydraulic\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
+                 Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
                   option.hydro.HydroModel = :VangenuchtenJules
                   # Structure of the hydroparameters
                      hydroData3 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
@@ -229,7 +229,7 @@ module plotSmap
                trim!(Fig.layout)
                leg.tellheight = true
                
-               Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.Model_Name) * "_" * string(Id_Select[iZ]) * ".svg" 
+               Path = path.plotSoilwater.Plot_θΨK * "Lab_ThetaH_" * string(path.option.ModelName) * "_" * string(IdSelect[iZ]) * ".svg" 
       
                save(Path, Fig)
      

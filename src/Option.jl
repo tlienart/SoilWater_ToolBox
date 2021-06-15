@@ -40,6 +40,7 @@ module options
 		DownloadPackage::Bool
 		Ploting::Bool
 		PlotVscode::Bool
+		DataPrivateShare::String
 	end
 
 	# mutable struct ROCKFRAGMENT
@@ -181,30 +182,31 @@ module options
 				# Plotting
 					Ploting   = false # <true>* plot; <false> no plotting
 					PlotVscode = false # <true>* plot shown in VScode; <false>
+					DataPrivateShare = "Private" # <"Private"> data kept private in GitHub; <"Share"> date share in GitHub
 
-			other = OTHER(DownloadPackage, Ploting, PlotVscode)
+			other = OTHER(DownloadPackage, Ploting, PlotVscode, DataPrivateShare)
 
 
 			# =============================================================
 			# 		DATA
 			#      What data do we have ?
 			# =============================================================
-				HydroParam = false
-				Infilt = false
-				θΨ = false
-				Kθ = false
-				Psd = false
-				RockFragment = false
-				TotalPorosity = false
+            HydroParam    = false
+            Infilt        = true
+            θΨ            = true
+            Kθ            = true
+            Psd           = true
+            RockFragment  = false
+            TotalPorosity = false
 
-				Pr = false
-				Pet = false
-				θobs = false
+            Pr            = false
+            Pet           = false
+            θobs          = false
 
 			data = DATA(HydroParam,	Infilt,	θΨ,	Kθ, Psd, RockFragment, TotalPorosity,Pr, Pet, θobs)
 
 			# =============================================================
-			# 		READ DATA
+			# 		DATA FROM
 			#      How to read data ?
 			# =============================================================
 				Smap = false
@@ -223,7 +225,7 @@ module options
             InfiltBest             = false
             RockFragment           = false
             Temporary              = false
-            Hypix                  = true
+            Hypix                  = false
 
 			run = RUN(ChangeHydroModel, ρb_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockFragment, Temporary, Hypix)
 				
