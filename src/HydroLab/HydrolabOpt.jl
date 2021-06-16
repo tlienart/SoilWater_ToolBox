@@ -144,11 +144,12 @@ module hydrolabOpt
 			else
 				Nse_Aver = Nse_θΨ_Aver
 			end
-			
-			println("\n    ==  Optimizing Hydraulic parameters == ")
-			println("    	~  Nse_θΨ = $(round(Nse_θΨ_Aver,digits=3)),  Nse_KΨ = $(round(Nse_KΨ_Aver,digits=3)), Nse = $(round(Nse_Aver,digits=3))  ~")
 
-			println("    	~  Rmse_θΨ = $(round(Rmse_θΨ_Aver,digits=4)),  Rlmse_KΨ = $(round(Rmse_KΨ_Aver,digits=4)), Rmse = $(round(Rmse_Aver,digits=4))  ~ \n")
+			println("	=== === Optimizing Hydraulic parameters === ")
+			println("    		~  Nse_θΨ = $(round(Nse_θΨ_Aver,digits=3)),  Nse_KΨ = $(round(Nse_KΨ_Aver,digits=3)), Nse = $(round(Nse_Aver,digits=3))  ~")
+
+			println("    		~  Rmse_θΨ = $(round(Rmse_θΨ_Aver,digits=4)),  Rlmse_KΨ = $(round(Rmse_KΨ_Aver,digits=4)), Rmse = $(round(Rmse_Aver,digits=4))  ~ \n")
+			println( "	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === ===")
 
 	return hydro, hydroOther
 	end  # function: HYPIXOPT_START

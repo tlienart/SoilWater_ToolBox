@@ -7,13 +7,13 @@ module Φ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Φ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ρB_2_Φ(N_SoilSelect, RockW, ρ_Rock, ρbSoil, ρp_Fine)
+		function ρB_2_Φ(N_SoilSelect, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
 
 			Φ = Array{Float64}(undef, (N_SoilSelect))
 
 			for iZ=1:N_SoilSelect
-				# Vrock = RockW[iZ] / ρ_Rock[iZ]
-				Φ[iZ] = 1.0 - (RockW[iZ] * ρbSoil[iZ] / ρ_Rock[iZ]) - ((1.0 - RockW[iZ]) *ρbSoil[iZ] / ρp_Fine[iZ])
+				# Vrock = RockFragment[iZ] / ρₚ_Rock[iZ]
+				Φ[iZ] = 1.0 - (RockFragment[iZ] * ρᵦ_Soil[iZ] / ρₚ_Rock[iZ]) - ((1.0 - RockFragment[iZ]) *ρᵦ_Soil[iZ] / ρₚ_Fine[iZ])
 			end # for
 			
 			return Φ

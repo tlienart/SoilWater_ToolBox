@@ -4,7 +4,6 @@
 module params
 
 	mutable struct GLOBALPARAM
-		N_iZ_Run
 		N_iZ_Plot_Start
 		N_iZ_Plot_End
 	end
@@ -162,11 +161,10 @@ module params
 	#		GLOBAL PARAMETERS
 	# =============================================================
 		# Global param 
-			N_iZ_Run = 100000 # maximum number of soils to be simulated (good for testing)
 			N_iZ_Plot_Start  = 1 # Starting of iZ to be plotted
 			N_iZ_Plot_End    = 100000 # End of iZ to be plotted
 
-		globalparam = GLOBALPARAM(N_iZ_Run, N_iZ_Plot_Start, N_iZ_Plot_End)
+		globalparam = GLOBALPARAM(N_iZ_Plot_Start, N_iZ_Plot_End)
 	
 
 	# =============================================================

@@ -8,7 +8,14 @@ module checking
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function CHECKING(option, optionₘ, optim)
         # CHECKING FOR UNCONSISTENCY WITH OPTIONS
-			if optionₘ.HydroModel==:Kosugi && "θsMacMat" ∈ optim.ParamOpt
+
+			if option.run.HydroLabθΨ ≠ :No && !option.data.θΨ
+				error("*** If option.run.HydroLabθΨ => option.data.θΨ ***")
+
+			elseif option.run.RockCorrection && option.rockFragment.RockInjectedIncluded==:Injected && !(option.run.RockCorrection && option.rockFragment.RockInjectedIncluded==:Injectedy)
+				error("*** If option.run.RockCorrection && option.rockFragment.RockInjectedIncluded==:Injected =>  option.run.RockCorrection OR option.rockFragment.RockInjectedIncluded==:Injectedy ***")
+
+			elseif optionₘ.HydroModel==:Kosugi && "θsMacMat" ∈ optim.ParamOpt
 				error("*** optionₘ.HydroModel==:Kosugi && optionₘ.HydroModel==:Bimodal THAN optionₘ.HydroModel == :Φ ***")
 					
 			elseif optionₘ.θrOpt≠:Opt && "θr" ∈ optim.ParamOpt

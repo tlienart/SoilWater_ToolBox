@@ -4,9 +4,8 @@
 module paths
 
 	mutable struct INPUT_SMAP
-		HydroParam_ThetaH::String
+		LookupTable_RockWetability::String
 		Smap::String
-		SmapLookupTableWettable::String
 	end
 
 	mutable struct INPUT_SOILWATER
@@ -20,6 +19,8 @@ module paths
 		Kunsat::String
 		Kunsat_Model::String
 		Psd::String
+		SoilInformation::String
+		Φ::String
 		Ψθ::String
 	end # struct INPUT_SOILWATER
 
@@ -128,7 +129,7 @@ module paths
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PATHS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PATH(iSim, opt; IdName=["Temporary"])
+	function PATH(iSim, opt; Soilname=["Temporary"])
 		Home2 = @__DIR__
 
 		# perform cs..
@@ -150,7 +151,7 @@ module paths
 		# Paths
 			FileDataSoilhydro_Input = Home * "INPUT/Data_SoilWater/" * SiteName_Soilhyro * "/" * SiteName_Soilhyro * "_"
 
-			FileSoilHydro_Table₁ = Home * "/OUTPUT/SoilHydro/" * SiteName_Soilhyro * "/Table/" 
+			FileSoilHydro_Table₁ = Home * "/OUTPUT/SoilWater/" * SiteName_Soilhyro * "/Table/" 
 				mkpath(FileSoilHydro_Table₁) 
 
 		# =============================================================
@@ -167,6 +168,8 @@ module paths
             Kunsat             = "KunsatH.csv"
             Kunsat_Model       = "Kunsat_H_model.csv"
             Psd                = "Psd.csv"
+            SoilInformation    = "SoilInformation.csv"
+            Φ                  = "TotalPorosity.csv"
             Ψθ                 = "ThetaH.csv"
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -175,30 +178,31 @@ module paths
             ConvertModel       = FileDataSoilhydro_Input * ConvertModel
             HydroParam_Infilt  = FileDataSoilhydro_Input * HydroParam_Infilt
             HydroParam_ThetaH  = FileDataSoilhydro_Input * HydroParam_ThetaH
-            IdSelect          = FileDataSoilhydro_Input * IdSelect
+            IdSelect           = FileDataSoilhydro_Input * IdSelect
             Infiltration       = FileDataSoilhydro_Input * Infiltration
             Infiltration_Param = FileDataSoilhydro_Input * Infiltration_Param
             Kunsat             = FileDataSoilhydro_Input * Kunsat
             Kunsat_Model       = FileDataSoilhydro_Input * Kunsat_Model
             Psd                = FileDataSoilhydro_Input * Psd
+            SoilInformation    = FileDataSoilhydro_Input * SoilInformation
+            Φ                  = FileDataSoilhydro_Input * Φ
             Ψθ                 = FileDataSoilhydro_Input * Ψθ
 
-			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Kunsat_Model, Psd, Ψθ)		
+			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Kunsat_Model, Psd, SoilInformation, Φ, Ψθ)		
 				
 		# =============================================================
 		#		INPUT_SMAP
 		#		None core
 		# =============================================================
-			# Smap input path				
+			# Smap input path
+				LookupTable_RockWetability = "LookupTable_RockWetability.csv"				
 				Smap                    = "Layer.csv"
-				SmapLookupTableWettable = "LookupTable_Stone.csv"
-
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+            LookupTable_RockWetability = FileDataSoilhydro_Input * LookupTable_RockWetability
 				Smap = FileDataSoilhydro_Input * Smap
-				SmapLookupTableWettable = FileDataSoilhydro_Input * SmapLookupTableWettable
 
-			inputSmap = INPUT_SMAP(HydroParam_ThetaH, Smap, SmapLookupTableWettable)
+			inputSmap = INPUT_SMAP(LookupTable_RockWetability, Smap)
 				
 
 		# =============================================================
@@ -260,7 +264,7 @@ module paths
 		# =============================================================
 		#		PLOT SOILWATER
 		# =============================================================
-			FileSoilHydro_Plot = Home * "/OUTPUT/SoilHydro/" * SiteName_Soilhyro * "/Plots/"
+			FileSoilHydro_Plot = Home * "/OUTPUT/SoilWater/" * SiteName_Soilhyro * "/Plots/"
 
 			Plot_θΨK = FileSoilHydro_Plot * "/Lab/" 
 				mkpath(Plot_θΨK)
@@ -307,7 +311,7 @@ module paths
 				ProjectName_Hypix = "JULES" # "JULES"; "LYSIMETERS" 
 			
 				# IdName_Hypix = "Lincoln" # "TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; "Lincoln";
-				IdName_Hypix = IdName[iSim]
+				IdName_Hypix = Soilname[iSim]
 		
 			# HYPIX INPUT JULES	
 				JulesMetadata = "JULES_LinkingData.csv"
@@ -369,7 +373,7 @@ module paths
 				ProjectName_Hypix = "JULES" # "JULES"; "LYSIMETERS" 
 				
 			# IdName_Hypix = "Lincoln" # "TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; "Lincoln";
-				IdName_Hypix = IdName[iSim]
+				IdName_Hypix = Soilname[iSim]
 	
 			# HYPIX INPUT JULES	
 				JulesMetadata = "JULES_LinkingData.csv"

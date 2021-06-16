@@ -4,13 +4,12 @@
 module reading
 	import ..tool
 	import  DelimitedFiles
-
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ID
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ID(;PathIdSlect, PathOptionSelect, PathModelName, N_iZ_Run)
+		function ID(;PathIdSlect, PathOptionSelect, PathModelName)
 			println("    ~  $(PathIdSlect) ~")
 
 			# Read data
@@ -26,14 +25,14 @@ module reading
 
 				Id = Int64.(Id)
 
-			# IdName is optional
-				IdName = []
+			# Soilname is optional
+				Soilname = []
 				try
-					IdName, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "IdName")
+					Soilname, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
 				catch # If not available
-					IdName = fill("", N_iZ_All)
+					Soilname = fill("", N_iZ_All)
 					for i=1:N_iZ_All
-						IdName[i] = PathModelName  * "_" * string(Id[i])
+						Soilname[i] = PathModelName  * "_" * string(Id[i])
 					end
 				end
 		
@@ -51,97 +50,36 @@ module reading
 			N_SoilSelect = sum(Id_True)
 
 			IdSelect = Id[IdSelect_True]
-			IdName = IdName[IdSelect_True]
-
-			# Simulate the first 1:N_iZ_Run runs
-				N_SoilSelect₂ = Int(min(N_SoilSelect, N_iZ_Run))
-
-				if N_SoilSelect₂ < N_SoilSelect
-					IdSelect = Id[1:N_SoilSelect₂]
-					IdName = IdName[1:N_SoilSelect₂]
-				end  # if: N_SoilSelect₂ < N_SoilSelect
-		
-		return IdSelect, IdSelect_True, IdName, N_SoilSelect
+			Soilname = Soilname[IdSelect_True]
+	
+		return IdSelect, IdSelect_True, Soilname, N_SoilSelect
 		end  # function: ID
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : θΨ
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨ(IdSelect, N_SoilSelect, Path)
+	#		FUNCTION : bulk density
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function BULKDENSITY(IdSelect, N_SoilSelect, Path)
 			println("    ~  $(Path) ~")
 
 			# Read data
 				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
 				Header = Data[1,1:end]
-			# Remove first row
+			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,begin:end]
 			# Sort data
-				Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
+				Data = sortslices(Data, dims=1)
 
-			# Get the data of interest
-				Ψ_θΨ, N_θΨ  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_SoilSelect)
+			ρᵦ_Soil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "BulkDensitySoil[g_cm-3]",  N_SoilSelect, N_Point_Max=1)
+
+			ρₚ_Fine, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "ParticleDensity_Fine[g_cm-3]",  N_SoilSelect, N_Point_Max=1)
+
+			ρₚ_Rock, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Density_Rock[g_cm-3]", N_SoilSelect, N_Point_Max=1)
 			
-				θ_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta", N_SoilSelect)
-
-		return θ_θΨ, Ψ_θΨ, N_θΨ
-		end  # function: θΨ
-
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : KUNSATΨ
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function KUNSATΨ(IdSelect, N_SoilSelect, path)
-				# Determeining where to read the data
-				if isfile(path.inputSoilwater.Kunsat)
-					Path = path.inputSoilwater.Kunsat
-				elseif isfile(path.inputSoilwater.Kunsat_Model)
-					Path = path.inputSoilwater.Kunsat_Model
-				else
-					error("\n SoilWater-ToolBox input error: No Kunsat data. You coud derive K(θ) from Kosugi model with option.UsePointKosugiBimodal \n")
-				end
-				println("    ~  $(Path) ~")
-
-				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
-
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first READ_ROW_SELECT
-					Data = Data[2:end,begin:end]
-				# Sort data
-					Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
-				
-				Ψ_KΨ, N_KΨ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_SoilSelect)
-				
-				K_KΨ, ~    = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Kunsat[mm_s]", N_SoilSelect)
-			return K_KΨ, Ψ_KΨ, N_KΨ 
-			end  # function: θΨ
-
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : PSD
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD(IdSelect, N_SoilSelect, Path) # TODO make sure that the particles are ordered from smalest to largest
-				println("    ~  $(Path) ~")
-
-				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first RockWettable
-					Data = Data[2:end,begin:end]
-				# Sort data
-					Data = sortslices(Data, dims=1)
-
-            Diameter_Psd, N_Psd = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Diameter[mm]", N_SoilSelect)
-
-            ∑Psd , ~            = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Psd", N_SoilSelect)
-
-				Rpart = @. Diameter_Psd / 2.0
-			return Rpart, ∑Psd, N_Psd
-			end  # function: PSD
+			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", N_SoilSelect, N_Point_Max=1)
+		return RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine
+		end # function: BulkDensity
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,43 +130,113 @@ module reading
 			β , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Beta[-]", N_SoilSelect; N_Point_Max=1)
 
 			infiltParam = INFILT(RingRadius, θ_Ini, γ, β)
-
 		return Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam
 		end  # function: INFILTRATION
 
 
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : KUNSATΨ
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function KUNSATΨ(IdSelect, N_SoilSelect, path)
+				# Determeining where to read the data
+				if isfile(path.inputSoilwater.Kunsat)
+					Path = path.inputSoilwater.Kunsat
+				elseif isfile(path.inputSoilwater.Kunsat_Model)
+					Path = path.inputSoilwater.Kunsat_Model
+				else
+					error("\n SoilWater-ToolBox input error: No Kunsat data. You coud derive K(θ) from Kosugi model with option.UsePointKosugiBimodal \n")
+				end
+				println("    ~  $(Path) ~")
+
+				# Read data
+					Data = DelimitedFiles.readdlm(Path, ',')
+
+				# Read header
+					Header = Data[1,1:end]
+				# Remove first READ_ROW_SELECT
+					Data = Data[2:end,begin:end]
+				# Sort data
+					Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
+				
+				Ψ_KΨ, N_KΨ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_SoilSelect)
+				
+				K_KΨ, ~    = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Kunsat[mm_s]", N_SoilSelect)
+			return K_KΨ, Ψ_KΨ, N_KΨ 
+			end  # function: θΨ
+
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : BULKDENSITY_FINEEARTH_ROCKFRAGMENT
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function BULKDENSITY_FINEEARTH_ROCKFRAGMENT(IdSelect_True, N_SoilSelect, Path)
-		# 	# Load data
-		# 		Data = JuliaDB.loadtable(Path)
+	#		FUNCTION : θΨ
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function θΨ(IdSelect, N_SoilSelect, Path)
+			println("    ~  $(Path) ~")
 
-		# 		# Getting the data
-		# 			ρb_Fe_Rf = JuliaDB.select(Data, :BulkDensity_FineEarth_RockFragment_g_cm3)
-		# 			ρb_Fe_Rf = ρb_Fe_Rf[IdSelect_True]
+			# Read data
+				Data = DelimitedFiles.readdlm(Path, ',')
+			# Read header
+				Header = Data[1,1:end]
+			# Remove first row
+				Data = Data[2:end,begin:end]
+			# Sort data
+				Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
 
-		# 			ρb_Fe = JuliaDB.select(Data,:BulkDensity_FineEarth_g_cm3)
-		# 			ρb_Fe_Rf = ρb_Fe_Rf[IdSelect_True]
+			# Get the data of interest
+				Ψ_θΨ, N_θΨ  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_SoilSelect)
+			
+				θ_θΨ, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta", N_SoilSelect)
+		return θ_θΨ, Ψ_θΨ, N_θΨ
+		end  # function: θΨ
 
-		# 			ρp_Fe = JuliaDB.select(Data,:ParticleDensity_FineEarth_g_cm3)
-		# 			ρb_Fe_Rf = ρb_Fe_Rf[IdSelect_True]
 
-		# 			ρ_Rf = JuliaDB.select(Data,:Density_RockFragment_g_cm3)
-		# 			Rf_01 = JuliaDB.select(Data,:RockFragment_0_1)
-		# 			Rf_Rlarge = JuliaDB.select(Data,:RockFragment_Rlarge_mm)
-		# 			Rf_Rsmall = JuliaDB.select(Data,:RockFragment_Rsmall_mm)
-		# 			Rf_Wetability = JuliaDB.select(Data, :RockFragment_Wettability_mm_mm2)
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : PSD
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function PSD(IdSelect, N_SoilSelect, Path) # TODO make sure that the particles are ordered from smalest to largest
+				println("    ~  $(Path) ~")
 
-		# 	return
-		# end  # function: name
+				# Read data
+					Data = DelimitedFiles.readdlm(Path, ',')
+				# Read header
+					Header = Data[1,1:end]
+				# Remove first RockWetability
+					Data = Data[2:end,begin:end]
+				# Sort data
+					Data = sortslices(Data, dims=1)
 
+            Diameter_Psd, N_Psd = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Diameter[mm]", N_SoilSelect)
+
+            ∑Psd , ~            = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Psd", N_SoilSelect)
+
+				Rpart = @. Diameter_Psd / 2.0
+			return Rpart, ∑Psd, N_Psd
+			end  # function: PSD
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION :SOIL_INOFRMATION
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function SOIL_INFORMATION(IdSelect, N_SoilSelect, Path)
+				println("    ~  $(Path) ~")
+
+				# Read data
+					Data = DelimitedFiles.readdlm(Path, ',')
+				# Read header
+					Header = Data[1,1:end]
+				# Remove first READ_ROW_SELECT
+					Data = Data[2:end,begin:end]
+				# Sort data
+					Data = sortslices(Data, dims=1)
+				
+				IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_SoilSelect, N_Point_Max=1)
+				
+				RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_SoilSelect, N_Point_Max=1)
+			return IsTopsoil, RockClass
+			end # function: SOIL_INOFRMATION
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : ρ_Ψθ
+	#		FUNCTION : bulk density
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BULKDENSITY(IdSelect, N_SoilSelect, Path)
+		function TOTAL_POROSITY(IdSelect, N_SoilSelect, Path)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -240,18 +248,13 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1)
 
-			ρbSoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "BulkDensitySoil[g_cm-3]",  N_SoilSelect)
+			Φ, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "TotalPorosity[0-1]", N_SoilSelect, N_Point_Max=1)
 			
-			ρp_Fine, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "ParticleDensity_Fine[g_cm-3]",  N_SoilSelect)
-
-			ρ_Rock, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Density_Rock[g_cm-3]", N_SoilSelect)
-			
-			RockW, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Rock%", N_SoilSelect)
-
-		return RockW, ρ_Rock, ρbSoil, ρp_Fine
+			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", N_SoilSelect, N_Point_Max=1)
+		return RockFragment, Φ
 		end # function: BulkDensity
 
-	
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θψ_FILE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -281,8 +284,7 @@ module reading
 
 				for iZ=1:N_SoilSelect
 					N_θΨ[iZ] += 2
-				end
-					
+				end		
 		return N_θΨ, θ_θΨ, Ψ_θΨ
 		end  # function: θψ_FILE
 	
@@ -332,11 +334,6 @@ module reading
 
 		return structures, N_SoilSelect
 		end  # function: READ_STRUCT
-
-
-
-
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -470,14 +467,14 @@ module reading
 			optim = OPTIM(Param_Name,ParamOpt_Min,ParamOpt_Max,Param_Min,Param_Max,ParamOpt,NparamOpt,Flag_Opt,ParamOpt_LogTransform)
 
 		if Flag_Opt == true
-			println("		=== === Optimizing the following parameters === ===")
-			println("			Model=" , optionₘ.HydroModel)
-			println("			NparamOpt=" , NparamOpt)
-			println("			ParamOpt= " ,  optim.ParamOpt)
-			println("			Min_Value= " , optim.ParamOpt_Min)
-			println("			Max_Value= " , optim.ParamOpt_Max)
-			println("			LogTransform = " , optim.ParamOpt_LogTransform)
-			println("		=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n \n")
+			println("	=== === Optimizing the following parameters === ===")
+			println("		Model=" , optionₘ.HydroModel)
+			println("		NparamOpt=" , NparamOpt)
+			println("		ParamOpt= " ,  optim.ParamOpt)
+			println("		Min_Value= " , optim.ParamOpt_Min)
+			println("		Max_Value= " , optim.ParamOpt_Max)
+			println("		LogTransform = " , optim.ParamOpt_LogTransform)
+			println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n")
 		end
 
 	return hydro, optim
@@ -722,14 +719,14 @@ module reading
 				# θs_Min=θs_Min, θs_Max=θs_Max
 
 				if Flag_Opt == true
-					println("		=== === Optimizing the following parameters === ===")
-					println("			NparamOpt=" , NparamOpt)
-					println("			ParamOpt= " , optim.ParamOpt_Type .* optim.ParamOpt)
-					println("			Min_Value= " , optim.ParamOpt_Min)
-					println("			Max_Value= " , optim.ParamOpt_Max)
-					println("			Hydro_HorizonEq= " , optim.ParamOpt_HorizonEq)
-					println("			LogTransform = " , optim.ParamOpt_LogTransform)
-					println("		=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n \n")
+					println("	=== === Optimizing the following parameters === ===")
+					println("		NparamOpt=" , NparamOpt)
+					println("		ParamOpt= " , optim.ParamOpt_Type .* optim.ParamOpt)
+					println("		Min_Value= " , optim.ParamOpt_Min)
+					println("		Max_Value= " , optim.ParamOpt_Max)
+					println("		Hydro_HorizonEq= " , optim.ParamOpt_HorizonEq)
+					println("		LogTransform = " , optim.ParamOpt_LogTransform)
+					println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n")
 				end
 		return hydro, hydroHorizon, optim, veg
 		end  # function: HYPIX_PARAM
@@ -1017,6 +1014,140 @@ module reading
 
 	end  # module: readingHypix
 	# .........................................................
+
+	
+	
+	# =============================================================
+	#		module non Core : smap
+	# =============================================================
+	module smap
+	   import ..tool
+   	import Polynomials, DelimitedFiles
+		   export SMAP, ROCKFRAGMENT_WETTABLE_STRUCT
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION :SMAP
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			struct SMAP_STRUCT
+				Depth        ::Vector{Float64}
+				IsTopsoil    ::Vector{Int64}
+				Soilname     ::Vector{String}
+				RockFragment ::Vector{Float64}
+				RockClass    ::Vector{String}
+				RockDepth    ::Vector{Float64}
+				MaxRootingDepth ::Vector{Float64}
+			end
+			function SMAP(IdSelect_True, N_SoilSelect, Path)
+				println("    ~  $(Path) ~")
+
+				# Read data
+					Data = DelimitedFiles.readdlm(Path, ',')
+				# Read header
+					Header = Data[1,1:end]
+				# Remove first READ_ROW_SELECT
+					Data = Data[2:end,begin:end]
+				# Sort data
+					Data = sortslices(Data, dims=1)
+				
+				IsTopsoil, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "IsTopsoil")
+				IsTopsoil = 	Int64.(IsTopsoil[IdSelect_True])
+
+				Soilname, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
+				Soilname = Soilname[IdSelect_True] # Selecting the data
+
+				RockClass, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockClass")
+				RockClass = RockClass[IdSelect_True] # Selecting the data
+
+				Depth, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "depth_mm")
+				Depth = Float64.(Depth[IdSelect_True]) # Selecting the data
+
+				RockFragment, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Stone_Prop")
+				RockFragment = Float64.(RockFragment[IdSelect_True]) # Selecting the data
+
+				RockDepth, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockDepth_mm")
+				RockDepth = Float64.(RockDepth[IdSelect_True]) # Selecting the data
+
+				MaxRootingDepth, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "MaxRootingDepth_mm")
+				MaxRootingDepth = Float64.(MaxRootingDepth[IdSelect_True]) # Selecting the data
+
+				smap = SMAP_STRUCT(Depth, IsTopsoil, Soilname, RockFragment, RockClass, RockDepth, MaxRootingDepth)			
+			return smap
+			end  # function: SMAP
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : ROCKFRAGMENT_WETTABLE
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			struct ROCKFRAGMENT_WETTABLE_STRUCT
+				# RockClass::Array{String}
+				RockClass_Dict::Dict{String, Int64} 
+				Ψ_Rf::Array{Float64} 
+				θ_Rf::Array{Float64}
+				N_Ψ::Array{Int64}
+				N_RockClass::Int64
+				RockClass_Polynomial_Array::Array{} 
+			end
+			function ROCKFRAGMENT_WETTABLE(Path)
+				println("    ~  $(Path) ~")
+				
+				# Read data
+					Data = DelimitedFiles.readdlm(Path, ',')
+				# Read header
+					Header = Data[1,1:end]
+				# Remove first READ_ROW_SELECT
+					Data = Data[2:end,begin:end]
+				# Sort data
+					RockClass, N_RockClass = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockClass")
+
+					RockClass_Unique = unique(RockClass)
+					
+					N_RockClass = length(RockClass_Unique)
+
+					# Dictionary
+					RockClass_Dict = Dict("a"=>9999)
+					for i=1:N_RockClass
+						RockClass_Dict[RockClass_Unique[i]] = i
+					end
+
+					Ψ₂, N₂ = tool.readWrite.READ_HEADER_FAST(Data, Header, "H[mm]")
+					θ₂, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Theta[0-1]") 
+
+					Ψ_Rf = zeros(Int64,(N_RockClass, 100))
+					θ_Rf = zeros(Float64,(N_RockClass, 100))
+					N_Ψ = zeros(Int64,(N_RockClass))
+
+					iRockClass=1 ; iΨ=1
+					for i=1:N₂
+						if RockClass[i] == RockClass_Unique[iRockClass]
+							Ψ_Rf[iRockClass,iΨ] = Ψ₂[i]
+							θ_Rf[iRockClass,iΨ] = θ₂[i]
+						else
+							N_Ψ[iRockClass]  = iΨ -1
+							iRockClass += 1
+							iΨ = 1
+							Ψ_Rf[iRockClass,iΨ] = Ψ₂[i]
+							θ_Rf[iRockClass,iΨ] = θ₂[i]
+						end
+						iΨ += 1
+					end # for i=1:N
+
+					N_Ψ[iRockClass]  = iΨ - 1
+
+				RockClass_Polynomial_Array = []
+				for iRockClass=1:N_RockClass
+					RockClass_Polynomial = Polynomials.fit(log1p.(Ψ_Rf[iRockClass,1:N_Ψ[iRockClass]]), θ_Rf[iRockClass,1:N_Ψ[iRockClass]])
+					X = log1p.(Ψ_Rf[iRockClass,1:N_Ψ[iRockClass]])
+
+					Coeffs = Polynomials.coeffs(RockClass_Polynomial)
+				
+					RockClass_Polynomial_Array = push!(RockClass_Polynomial_Array, [Coeffs])
+				end
+
+			return rfWetable = ROCKFRAGMENT_WETTABLE_STRUCT(RockClass_Dict, Ψ_Rf, θ_Rf, N_Ψ, N_RockClass, RockClass_Polynomial_Array)	
+			end  # function: ROCKFRAGMENT_WETTABLE
+		
+	end  # module: smap
+	# ............................................................
 
 end  # module: reading
 # ............................................................		

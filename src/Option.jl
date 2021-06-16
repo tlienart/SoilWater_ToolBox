@@ -4,17 +4,19 @@
 module options
 	# What available data we have?
 	struct DATA
+		BulkDensity::Bool
 		HydroParam::Bool
 		Infilt::Bool
-		θΨ::Bool
 		Kθ::Bool
-		Psd::Bool
-		RockFragment::Bool
-		TotalPorosity::Bool
-
-		Pr::Bool
 		Pet::Bool
+		Pr::Bool
+		Psd::Bool
+		RockWetability::Bool
+		Smap::Bool
+		SoilInformation::Bool
+		TotalPorosity::Bool
 		θobs::Bool
+		θΨ::Bool
 	end # struct DATA
 
 	# What model wanting to run
@@ -24,7 +26,7 @@ module options
 		IntergranularMixingPsd::Bool
 		HydroLabθΨ::Symbol
 		InfiltBest::Bool
-		RockFragment::Bool
+		RockCorection::Bool
 		Temporary::Bool
 
 		Hypix::Bool
@@ -42,12 +44,6 @@ module options
 		PlotVscode::Bool
 		DataPrivateShare::String
 	end
-
-	# mutable struct ROCKFRAGMENT
-	# 	rockFragment
-	# 	RockInjected
-	# 	RockWettable
-	# end
 	mutable struct SMAP
 		CorrectStone
 		CorrectStoneWetability
@@ -86,6 +82,10 @@ module options
 		Plot_θr
 		Plot_IMP_Model
 		Table_Psd_θΨ_θ
+	end
+	mutable struct  ROCKFRAGMENT
+		RockInjectedIncluded::Symbol
+		RockWetability::Bool
 	end
 	mutable struct INFILT
 		DataSingleDoubleRing  
@@ -127,7 +127,7 @@ module options
 		σ_2_θr
 		θs_Opt
 		Optimisation::Bool
-		θobs
+		θobs::Bool
 		θobs_Average::Bool
 		θobs_Hourly::Bool
 		Signature_Run
@@ -162,6 +162,7 @@ module options
 			infilt::INFILT
 			other::OTHER
 			psd::PSD
+			rockFragment::ROCKFRAGMENT
 			run::RUN
 			smap::SMAP
 		end # struct OPTION
@@ -191,19 +192,21 @@ module options
 			# 		DATA
 			#      What data do we have ?
 			# =============================================================
-            HydroParam    = false
-            Infilt        = true
-            θΨ            = true
-            Kθ            = true
-            Psd           = true
-            RockFragment  = false
-            TotalPorosity = false
+            BulkDensity     = true
+            HydroParam      = false
+            Infilt          = true
+            Kθ              = true
+            Pet             = false
+            Pr              = false
+            Psd             = true
+            RockWetability  = true
+            Smap            = true
+            SoilInformation = true
+            TotalPorosity   = true
+            θobs            = false
+            θΨ              = true
 
-            Pr            = false
-            Pet           = false
-            θobs          = false
-
-			data = DATA(HydroParam,	Infilt,	θΨ,	Kθ, Psd, RockFragment, TotalPorosity,Pr, Pet, θobs)
+			data = DATA(BulkDensity, HydroParam, Infilt, Kθ ,Pet ,Pr, Psd, RockWetability, Smap, SoilInformation, TotalPorosity, θobs, θΨ)
 
 			# =============================================================
 			# 		DATA FROM
@@ -221,23 +224,22 @@ module options
             ChangeHydroModel       = false
             ρb_2_Φ                 = false
             IntergranularMixingPsd = false
-            HydroLabθΨ             = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+            HydroLabθΨ             = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
             InfiltBest             = false
-            RockFragment           = false
+            RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Temporary              = false
             Hypix                  = false
 
-			run = RUN(ChangeHydroModel, ρb_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockFragment, Temporary, Hypix)
+			run = RUN(ChangeHydroModel, ρb_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockCorection, Temporary, Hypix)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
 			# =============================================================
 				# Rocks options
-				# 	RockFragment = true # <true> make correction for rock fragment; <false> no correction for rock fragment
-				# 	RockInjected = true # <true> rocks are injected in to the fine soils; <false> rocks are included in the bulk BulkDensity_Infilt
-				# 	RockWettable = true # <true> rocks are wettable; <false> 
+					RockInjectedIncluded = :Injected # <:Injected> rocks fragments are injected/forced into the fine soils; <Included> rocks are included in the bulk BulkDensity
+					RockWetability = true # <true> rocks are wettable; <false> rocks are mot wettable 
 
-				# rockfragment = ROCKFRAGMENT(RockFragment, RockInjected, RockWettable)
+				rockFragment = ROCKFRAGMENT(RockInjectedIncluded, RockWetability)
 				
 
 			# =============================================================
@@ -247,7 +249,7 @@ module options
 					CorrectStone = false # <true> or <false>
 					CorrectStoneWetability = false # <true> or <false>
 					UsePointKosugiBimodal = false # <true> or <false>
-					CombineData = true # <true> or <false>
+					CombineData = false # <true> or <false>
 					Plot_Kunsat = false  # <true> or <false>
 
 					AddPointKosugiBimodal = !(UsePointKosugiBimodal)
@@ -421,7 +423,7 @@ module options
 			# =============================================================
 			#		GLOBAL OPTION
 			# ===========================================================
-				option = OPTION(data, dataFrom, hydro, hyPix, infilt, other, psd, run, smap)
+				option = OPTION(data, dataFrom, hydro, hyPix, infilt, other, psd, rockFragment, run, smap)
 
 		return option
 		end  # function: OPTION

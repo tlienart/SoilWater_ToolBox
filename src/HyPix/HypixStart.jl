@@ -11,7 +11,7 @@ module hypixStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_START(IdName, option, param, path)
+	function HYPIX_START(Soilname, option, param, path)
 
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
@@ -23,7 +23,7 @@ module hypixStart
 
 
 			# READING STRUCTURE OF PATH
-				path = paths.PATH(iSim, option; IdName=IdName)
+				path = paths.PATH(iSim, option; Soilname=Soilname)
 
 				println("\n			==== ==== ===  $(path.hyPix.IdName_Hypix) 	=== ==== ====\n")
 
@@ -213,7 +213,7 @@ module hypixStart
 				# Writing values of veg parameters
 				table.hyPix.VEG(veg, iSim, path.hyPix)
 
-				table.hyPix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, iSim, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average, IdName[param.hyPix.iSim_Start:param.hyPix.iSim_End], path.hyPix)		
+				table.hyPix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, iSim, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average, Soilname[param.hyPix.iSim_Start:param.hyPix.iSim_End], path.hyPix)		
 
 				if option.hyPix.Table_Discretization
 					table.hyPix.DISCRETIZATION(discret, N_iZ, Z[1:N_iZ], path.hyPix)

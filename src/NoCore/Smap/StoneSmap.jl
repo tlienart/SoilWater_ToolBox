@@ -3,21 +3,9 @@
 # =============================================================
 module stoneSmap
    using Polynomials
-   export STONECORRECTION
+   export CORECTION_θΨ
 
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : STONECORRECTION_NONEWETABLE
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function STONECORRECTION(N_SoilSelect, N_θΨ, smap, θ_θΨ, Ψ_θΨ)
 
-         for iZ = 1:N_SoilSelect 
-            for iθ=1:N_θΨ[iZ]
-               θ_θΨ[iZ,iθ] =  θ_θΨ[iZ,iθ] * (1.0 - smap.RockFragment[iZ])
-            end # for iθ=1:N_θΨ[iZ]
-         end #  for iZ = 1:N_SoilSelect
-         
-      return  θ_θΨ
-      end  # function: STONECORRECTION_NONEWETABLE
 
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

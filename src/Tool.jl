@@ -67,7 +67,8 @@ module tool
 	#		MODULE: readWrite
 	# =============================================================
 	module readWrite
-		import DelimitedFiles
+		using Base: String
+import DelimitedFiles
 		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -133,9 +134,14 @@ module tool
 			# ===========================================
 				Id_Data = Int64.(Data[1:end,1])
 
-				Data_Select = fill(0.0::Float64, (N_SoilSelect, N_Point_Max))
 				N_Point     = fill(0::Int64, N_SoilSelect)
 				iSelect = 1; iPoint = 1
+
+				if typeof(Data_Output[1]) == SubString{String}
+					Data_Select = fill("A"::String, (N_SoilSelect, N_Point_Max))
+				else
+					Data_Select = fill(0.0::Float64, (N_SoilSelect, N_Point_Max))
+				end
 
 				# For all soils in the file
 				for i = 1:N_X
