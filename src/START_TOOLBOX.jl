@@ -103,54 +103,52 @@ function START_TOOLBOX()
 			hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_SoilSelect)
 			hydroOther = hydroStruct.HYDRO_OTHERS(N_SoilSelect)
 
-		# Reading the physical feasible parameter space
+		# Reading the physical feasible parameter space of the hydraulic parameters
 			hydro, optim = reading.HYDRO_PARAM(option.hydro, hydro, N_SoilSelect, path.inputSoilwater.HydroParam_ThetaH)
 
 		# Checking the data
 			checking.CHECKING(option, option.hydro, optim)
 
 		# Need to correct the θ(Ψ) curve for rock fragment
-		if option.run.RockCorrection && option.rockFragment.RockInjectedIncluded==:Injected
-			θ_θΨ = rockFragment.CORECTION_θΨ!(N_SoilSelect, N_θΨ, RockFragment, θ_θΨ)
+		if option.run.RockCorection && option.rockFragment.RockInjectedIncluded==:Injected
+			θ_θΨ = rockFragment.injectRock.CORECTION_θΨ!(N_SoilSelect, N_θΨ, RockFragment, θ_θΨ)
 		end # if: option.rockFragment.RockInjectedIncluded == :Injected
 
-		# if option.dataFrom.Smap
-		# 	hydroParam, optim = stoneSmap.STONECORRECTION_HYDRO(hydro, N_SoilSelect, optim, smap)
-		# end
+		# Computing Total Porosity Φ
+		if option.run.ρᵦ_2_Φ
+			hydro.Φ = rockFragment.ρᵦ_2_Φ(N_SoilSelect, option, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
 
-		# plotOther.PLOT_σ_2_θr()
-		# plotOther.SE_Ψ_CONSTRAINED()
-		# plotOther.σ_ψM_SCEARIO()
-
-		# If the hydraulic parameters were already derived than get the data from file instead or rerunning the model	
-		if option.run.HydroLabθΨ == :File
-			println("    ~ HydroLab HydroParam reading from file ~")
-			hydro = reading.HYDROPARAM(IdSelect, N_SoilSelect, hydro)
-		else
-		# Total Porosity= Φ
-			if option.run.ρb_2_Φ
-				hydro.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
-			end
-
-			if option.hydro.KunsatΨ
-				hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
-
-			else
-				hydro, hydroOther =  hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
-			end # option.hydro.KunsatΨ
-
-			# SPATIAL CASE FOR BROOKS AND COREY
-				if option.hydro.HydroModel==:BrooksCorey || option.hydro.HydroModel==:ClappHornberger
-					for iZ=1:N_SoilSelect
-						hydro.Ψga[iZ] = wrc.GREEN_AMPT(option.hydro, iZ, hydro)
-					end
-				end #  option.hydro.HydroModel
-			end # option.run.HydroLabθΨ
-			println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
-		else
-			hydro = []
+		elseif option.rockFragment.RockInjectedIncluded == :Injected && option.data.TotalPorosity
+			hydro.Φ = rockFragment.injectRock.CORECTION_Φ!(N_SoilSelect, RockFragment, Φ)
 		end
 
+		if option.hydro.KunsatΨ
+			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, K_KΨ=K_KΨ, Ψ_KΨ=Ψ_KΨ, N_KΨ=N_KΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
+
+		else
+			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_SoilSelect=N_SoilSelect, ∑Psd=∑Psd, θ_θΨ=θ_θΨ, Ψ_θΨ=Ψ_θΨ, N_θΨ=N_θΨ, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
+		end # option.hydro.KunsatΨ
+
+		# Spatial case
+		if option.hydro.HydroModel==:BrooksCorey || option.hydro.HydroModel==:ClappHornberger
+			for iZ=1:N_SoilSelect
+				hydro.Ψga[iZ] = wrc.GREEN_AMPT(option.hydro, iZ, hydro)
+			end
+		end #  option.hydro.HydroModel
+
+	println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
+	else
+			hydro = []
+	end # option.run.HydroLabθΨ
+
+# If the hydraulic parameters were already derived than get the data from file instead or rerunning the model	
+		# if option.run.HydroLabθΨ == :File
+		# 	println("    ~ HydroLab HydroParam reading from file ~")
+		# 	hydro = reading.HYDROPARAM(IdSelect, N_SoilSelect, hydro)
+		# else
+				# if option.dataFrom.Smap
+		# 	hydroParam, optim = stoneSmap.STONECORRECTION_HYDRO(hydro, N_SoilSelect, optim, smap)
+		# end
 		# ------------------------END: running HydroLab---------------------------  
 	
 	
@@ -183,7 +181,7 @@ function START_TOOLBOX()
 	if option.dataFrom.Smap
 		if option.smap.CorrectStone
 			println("=\n  				~~~~ Stone correction ~~~~~ \n")
-			θ_θΨ = rockFragment.CORECTION_θΨ!(N_SoilSelect, N_θΨ, smap.RockFragment, θ_θΨ)
+			θ_θΨ = rockFragment.injectRock.CORECTION_θΨ!(N_SoilSelect, N_θΨ, smap.RockFragment, θ_θΨ)
 		end
 		if option.smap.CorrectStoneWetability
 			θ_θΨ = stoneSmap.STONECORRECTION_WETTABLE(N_SoilSelect, N_θΨ, rfWetable, smap, θ_θΨ, Ψ_θΨ)
@@ -230,8 +228,8 @@ function START_TOOLBOX()
 			hydroPsd, optim_Psd = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.inputSoilwater.HydroParam_ThetaH)
 
 		# Total Porosity= Φ
-		if option.run.ρb_2_Φ
-			hydroPsd.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
+		if option.run.ρᵦ_2_Φ
+			hydroPsd.Φ = rockFragment.ρᵦ_2_Φ(N_SoilSelect, option, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
 		end
 
 		# PSD model
@@ -264,7 +262,7 @@ function START_TOOLBOX()
 			hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(hydroPsd, N_SoilSelect, path.inputSoilwater.HydroParam_Infilt)
 
 		# Total Porosity= Φ
-			hydroInfilt.Φ = Φ.ρB_2_Φ(N_SoilSelect, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
+			hydroInfilt.Φ = rockFragment.ρᵦ_2_Φ(N_SoilSelect, option, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
 
 		# Running infiltration model
 			infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltStart.START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, IdSelect, infiltParam, N_Infilt, N_SoilSelect, Tinfilt)

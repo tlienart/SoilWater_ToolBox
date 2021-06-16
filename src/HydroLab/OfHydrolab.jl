@@ -5,7 +5,7 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_WRC_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro; Wof = 0.5) 
+		function OF_WRC_KUNSAT(option, optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim; Wof = 0.5) 
 
 			# === OF θΨ ====
 				θ_Obs = Array{Float64}(undef, N_θΨ[iZ])
@@ -19,7 +19,7 @@ module ofHydrolab
 				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨ[iZ]], θ_Sim[1:N_θΨ[iZ]])
 
 			# === OF Kunsat ====
-			if optionHydro.KunsatΨ || optionHydro.Kunsat_JustRun
+			if optionₘ.KunsatΨ || optionₘ.Kunsat_JustRun
 				if "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else
@@ -46,7 +46,7 @@ module ofHydrolab
 			else		
 				Of = Of_θΨ
 				Of_Kunsat = 0.0
-			end #  optionHydro.KunsatΨ
+			end #  optionₘ.KunsatΨ
 
 		return Of, Of_θΨ, Of_Kunsat
 		end # function OF_WRC_KUNSAT
@@ -56,7 +56,7 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_RMSE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionHydro) 
+		function OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim) 
 
 		# === OF θΨ ====
 			θ_Obs = Array{Float64}(undef, N_θΨ[iZ])
@@ -70,7 +70,7 @@ module ofHydrolab
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨ[iZ]], θ_Sim[1:N_θΨ[iZ]])
 
 		# === OF Kunsat ====
-			if optionHydro.KunsatΨ ||optionHydro.Kunsat_JustRun
+			if optionₘ.KunsatΨ ||optionₘ.Kunsat_JustRun
 				if  "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else
@@ -92,7 +92,7 @@ module ofHydrolab
 			else		
 				Rmse = Rmse_θΨ
 				Rmse_KΨ = 0.0
-			end #  optionHydro.KunsatΨ
+			end #  optionₘ.KunsatΨ
 
 	return Rmse, Rmse_KΨ, Rmse_θΨ
 	end # OF_RMSE

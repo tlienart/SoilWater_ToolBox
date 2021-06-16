@@ -112,16 +112,16 @@ module hydrolabOpt
 			# OPTIMIZATION: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				Optimization = BlackBoxOptim.bboptimize(X -> hydrolabOpt.OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent)
+				Optimization = BlackBoxOptim.bboptimize(X -> hydrolabOpt.OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, option, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent)
 
 				X = BlackBoxOptim.best_candidate(Optimization)
 
 				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
 
 				# STATISTICS
-					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionₘ) 
+					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(option, optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim) 
 
-					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionₘ) 
+					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim) 
 
 					hydroOther.Nse[iZ]    = 1.0 - Of
 					hydroOther.Nse_θΨ[iZ] = 1.0 - Of_θΨ
@@ -158,13 +158,13 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ)
+		function OF_HYDROLAB(X, hydro, iZ, K_KΨ, N_KΨ, N_θΨ, optim, option, optionₘ, θ_θΨ, Ψ_KΨ, Ψ_θΨ)
 
 			# New optimized which are put into the matching veg or hydro parameters
 				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
 		
 			# Weighted Objective Function
-				Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim, optionₘ) 
+				Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(option, optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim) 
 				
 		return Of
 		end  # function: OF_HYPIX

@@ -22,7 +22,7 @@ module options
 	# What model wanting to run
 	mutable struct RUN
 		ChangeHydroModel::Bool
-		ρb_2_Φ ::Bool
+		ρᵦ_2_Φ ::Bool
 		IntergranularMixingPsd::Bool
 		HydroLabθΨ::Symbol
 		InfiltBest::Bool
@@ -222,7 +222,7 @@ module options
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false
-            ρb_2_Φ                 = false
+            ρᵦ_2_Φ                 = true
             IntergranularMixingPsd = false
             HydroLabθΨ             = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
             InfiltBest             = false
@@ -230,7 +230,7 @@ module options
             Temporary              = false
             Hypix                  = false
 
-			run = RUN(ChangeHydroModel, ρb_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockCorection, Temporary, Hypix)
+			run = RUN(ChangeHydroModel, ρᵦ_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockCorection, Temporary, Hypix)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
@@ -271,7 +271,7 @@ module options
 					Ks_MinMaxFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
 						
 				# Have WE Kunsat(ψ)DATA
-					KunsatΨ         = false #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
+					KunsatΨ         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 						KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
 						Kunsat_JustRun = false
 
