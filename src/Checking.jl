@@ -57,8 +57,8 @@ module checking
 			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) && optionₘ.KunsatΨ && option.dataFrom.Smap
 				error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN optionₘ.KunsatΨ=false OR UsePointKosugiBimodal = true")
 
-			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) &&  "Ks" ∈ optim.ParamOpt && option.Smap
-				error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN Ks ∉ optim.ParamOpt")
+			# elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) &&  "Ks" ∈ optim.ParamOpt && option.Smap
+			# 	error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN Ks ∉ optim.ParamOpt")
 			end # Check error
 
     	return nothing
