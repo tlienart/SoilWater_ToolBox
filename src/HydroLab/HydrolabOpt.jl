@@ -19,7 +19,7 @@ module hydrolabOpt
 
 			# CORRECTING Θr ~~~
 				if ("θr" ∈ optim.ParamOpt)
-					hydro.θr_Max[iZ] = max( min(θ_Min-0.005, hydro.θr_Max[iZ]), hydro.θr_Min[iZ]) # Maximum value of θr
+					hydro.θr_Max[iZ] = max( min(θ_Min-0.005, hydro.θr_Max[iZ]), hydro.θr_Min[iZ] ) # Maximum value of θr
 
 					# Changing the feasible range of θr
 					iθr = findfirst(isequal("θr"), optim.ParamOpt)[1]
@@ -73,7 +73,6 @@ module hydrolabOpt
 				end # optionₘ.θsOpt
 				
 			# CORRECTING Ks
-
 				# TEST IF EXIST Ψ=0
 				if ("Ks" ∈ optim.ParamOpt)
 					if minimum(Ψ_KΨobs[iZ,1:N_θΨobs[iZ]]) < eps(1000.0)
@@ -150,9 +149,9 @@ module hydrolabOpt
 
 			println("    		~  Rmse_θΨ = $(round(Rmse_θΨ_Aver,digits=4)),  Rlmse_KΨ = $(round(Rmse_KΨ_Aver,digits=4)), Rmse = $(round(Rmse_Aver,digits=4))  ~ \n")
 			println( "	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === ===")
-
 	return hydro, hydroOther
 	end  # function: HYPIXOPT_START
+
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -169,6 +168,7 @@ module hydrolabOpt
 		return Of
 		end  # function: OF_HYPIX
 
+		
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM

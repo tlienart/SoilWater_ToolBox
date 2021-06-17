@@ -40,10 +40,10 @@ module plot
 	
 					# _______________________ START: Plotting _______________________
 								
-					Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000), fontsize=12, font="Sans")
-								
+					Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=16)
+					
 					#  == Plot_θ_Ψ  ==
-						Axis1 = Axis(Fig[1,1], title="θ(Ψ)", titlesize=24, xlabel="ln(1 + Ψ) [kPa]", ylabel="θ [mm³ mm⁻³]", backgroundcolor=:white)
+						Axis1 = Axis(Fig[1,1], title="θ(Ψ)", titlesize=24, xlabel="ln(1 + Ψ) [kPa]", ylabel="θ [mm³ mm⁻³]", xlabelsize=10, backgroundcolor=:white)
 
 						xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Max ))
 						ylims!(Axis1, 0.0, 0.75)
@@ -72,10 +72,10 @@ module plot
 
 						Fig_Kθsim = lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_Sim[1:N_Se].*cst.MmS_2_MmH), color=:blue, linewidth=3)
 
-						Fig_TotalPorosity = scatter!(Fig[1,1], [log1p.(cst.Mm_2_kPa .* 0.0)], [hydro.Ks[iZ]], color=:green, markersize=20, marker ='●')
+						Fig_Ks = scatter!(Fig[1,2], [log1p.(cst.Mm_2_kPa .* 0.0)], [hydro.Ks[iZ] * cst.cst.MmS_2_MmH], color=:green, markersize=20, marker ='●')
 					end
 						
-					Leg = Fig[1, end+1] = Legend(Fig, [Fig_θΨobs, Fig_θΨsim, Fig_TotalPorosity, Fig_Kθobs, Fig_Kθsim, Fig_TotalPorosity], ["θobs(Ψ)", "θsim(Ψ)", "Φ", "Kobs(Ψ)", "Ksim(Ψ)", "Ksₛᵢₘ"])
+					Leg = Fig[1, end+1] = Legend(Fig, [Fig_θΨobs, Fig_θΨsim, Fig_TotalPorosity, Fig_Kθobs, Fig_Kθsim, Fig_Ks], ["θobs(Ψ)", "θsim(Ψ)", "Φ", "Kobs(Ψ)", "Ksim(Ψ)", "Ksₛᵢₘ"])
 
 					Fig[2, 1:2] = Leg
 					trim!(Fig.layout)
@@ -86,12 +86,12 @@ module plot
 					save(Path, Fig)
 	
 					# Displaying figure in VScode
-					if option.other.PlotVscode
-						display(Fig)
-					end
+					# if option.other.PlotVscode
+					# 	display(Fig)
+					# end
 
 					println("    ~  $(Path) ~")
-				return nothing
+				
 				end # for iZ
 				
 			# ------------------------END: Plotting---------------------------  

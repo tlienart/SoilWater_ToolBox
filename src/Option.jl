@@ -35,7 +35,6 @@ module options
 		Smap::Bool
 		Jules::Bool
 	end
-
 	mutable struct OTHER
 		DownloadPackage::Bool
 		Ploting::Bool
