@@ -125,7 +125,7 @@ import DelimitedFiles
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_ROW_SELECT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_ROW_SELECT(IdSelect::Vector{Int64}, Data, Header, Name::String, N_SoilSelect::Int64; N_Point_Max=1000)
+			function READ_ROW_SELECT(IdSelect::Vector{Int64}, Data, Header, Name::String, N_iZ::Int64; N_Point_Max=1000)
 
 				Data_Output, N_X = READ_HEADER_FAST(Data, Header, Name)
 
@@ -134,13 +134,13 @@ import DelimitedFiles
 			# ===========================================
 				Id_Data = Int64.(Data[1:end,1])
 
-				N_Point     = fill(0::Int64, N_SoilSelect)
+				N_Point     = fill(0::Int64, N_iZ)
 				iSelect = 1; iPoint = 1
 
 				if typeof(Data_Output[1]) == SubString{String}
-					Data_Select = fill("A"::String, (N_SoilSelect, N_Point_Max))
+					Data_Select = fill("A"::String, (N_iZ, N_Point_Max))
 				else
-					Data_Select = fill(0.0::Float64, (N_SoilSelect, N_Point_Max))
+					Data_Select = fill(0.0::Float64, (N_iZ, N_Point_Max))
 				end
 
 				# For all soils in the file
@@ -154,7 +154,7 @@ import DelimitedFiles
 
 					# Since there are many Data_Output with the same Id only update IdSelect if we are changing soils and IdSelect[iSelect] == Id_Data[i]
 					if i ≤ N_X -1
-						if Id_Data[i+1] > Id_Data[i] && IdSelect[iSelect] == Id_Data[i] && iSelect ≤ N_SoilSelect -1
+						if Id_Data[i+1] > Id_Data[i] && IdSelect[iSelect] == Id_Data[i] && iSelect ≤ N_iZ -1
 							iSelect += 1
 							iPoint = 1
 						end # if:
@@ -187,19 +187,19 @@ import DelimitedFiles
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : STRUCT_2_FIELDNAMES
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function STRUCT_2_FIELDNAME(N_SoilSelect, Structure)
+			function STRUCT_2_FIELDNAME(N_iZ, Structure)
 				FieldName_Array = propertynames(Structure)
 
 				N_FieldName = length(FieldName_Array)
 
 				# Matrix
-					Matrix = Array{Float64}(undef, (N_SoilSelect, N_FieldName))
+					Matrix = Array{Float64}(undef, (N_iZ, N_FieldName))
 
 					i = 1
 					for FieldName in FieldName_Array
 						Struct_Array = getfield(Structure, FieldName)
 		
-						Matrix[1:N_SoilSelect,i] .= Struct_Array
+						Matrix[1:N_iZ,i] .= Struct_Array
 						i += 1
 					end
 				

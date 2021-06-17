@@ -6,10 +6,10 @@ module timeTransSteady
 	#		FUNCTION : ∑INFIlT_2_TIMETRANSSTEADY
 	#		Determening from the data when the transition between transit and steady occures
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-	function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_SoilSelect, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint=4, CorrectLinear=true) 
+	function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_iZ, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint=4, CorrectLinear=true) 
 
 		# FOR EVERY SOIL
-		for iZ=1:N_SoilSelect
+		for iZ=1:N_iZ
 
 			Flag_Break = false
 

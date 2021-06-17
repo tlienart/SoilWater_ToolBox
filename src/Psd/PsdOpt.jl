@@ -8,14 +8,14 @@ module psdOpt
 	#       PSD_RUN_ALLMODEL
 	# 		THIS WILL RUN FOR ALL MODELS
 	# =========================================
-		function PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+		function PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 			
-			θ_Rpart = Array{Float64}(undef, (N_SoilSelect, N_Psd_Max))
-			Ψ_Rpart = Array{Float64}(undef, (N_SoilSelect, N_Psd_Max))
+			θ_Rpart = Array{Float64}(undef, (N_iZ, N_Psd_Max))
+			Ψ_Rpart = Array{Float64}(undef, (N_iZ, N_Psd_Max))
 
-			for iZ = 1:N_SoilSelect
+			for iZ = 1:N_iZ
 					θ_Rpart[iZ,1:N_Psd[iZ]], Ψ_Rpart[iZ,1:N_Psd[iZ]] = psdFunc.PSD_MODEL(iZ, Psd[iZ,1:N_Psd[iZ]], ∑Psd[iZ,1:N_Psd[iZ]], Rpart[iZ,1:N_Psd[iZ]], N_Psd[iZ], θs_Psd[iZ], θr_Psd[iZ], paramPsd)
-			end # for iZ = 1:N_SoilSelect
+			end # for iZ = 1:N_iZ
 
 			return θ_Rpart, Ψ_Rpart
 		end # function PSD_RUN_ALLMODEL
@@ -31,11 +31,11 @@ module psdOpt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		imp FUNCTION : OPTIMIZATION_SINGLE_SOIL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
-				θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-				Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+			function OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+				θ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
+				Ψ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
 				
-				for iZ = 1:N_SoilSelect
+				for iZ = 1:N_iZ
 					if !(option.psd.∑Psd_2_ξ1)
 					
 						SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
@@ -58,18 +58,18 @@ module psdOpt
 						paramPsd.∑Psd_2_ξ2_β2[iZ] = BlackBoxOptim.best_candidate(Optimization)[3]
 						paramPsd.Subclay[iZ]      = BlackBoxOptim.best_candidate(Optimization)[4]
 					end # if option.psd.
-				end	# for iZ = 1:N_SoilSelect
+				end	# for iZ = 1:N_iZ
 				
 				# Compute the optimal values
-				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 
 				# Optimal ξ2
-				for iZ = 1:N_SoilSelect
+				for iZ = 1:N_iZ
 					paramPsd.ξ2[iZ] = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iZ,paramPsd.∑Psd_2_ξ2_Size[iZ]]; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iZ], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iZ])
 				end
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_iZ, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
 			end # function: OPTIMIZATION_SINGLE_SOIL
@@ -78,17 +78,17 @@ module psdOpt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		imp FUNCTION : OPTIMIZATION_ALL_SOIL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+			function OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		imp FUNCTION : OF_ALL_SOIL
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					function OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = param.psd.imp.ξ1, ∑Psd_2_ξ2_β1 = param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2 = param.psd.imp.∑Psd_2_ξ2_β2, Subclay = param.psd.imp.Subclay)
+					function OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_iZ, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = param.psd.imp.ξ1, ∑Psd_2_ξ2_β1 = param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2 = param.psd.imp.∑Psd_2_ξ2_β2, Subclay = param.psd.imp.Subclay)
 
-						θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-						Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+						θ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
+						Ψ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
 
-						for iZ = 1:N_SoilSelect
+						for iZ = 1:N_iZ
 							paramPsd.ξ1[iZ]           = ξ1
 							paramPsd.∑Psd_2_ξ2_β1[iZ] = ∑Psd_2_ξ2_β1
 							paramPsd.∑Psd_2_ξ2_β2[iZ] = ∑Psd_2_ξ2_β2
@@ -96,7 +96,7 @@ module psdOpt
 						end
 
 						Of = 0.0
-						for iZ = 1:N_SoilSelect
+						for iZ = 1:N_iZ
 							θ_Rpart[iZ,1:N_Psd[iZ]], Ψ_Rpart[iZ,1:N_Psd[iZ]] = psdFunc.PSD_MODEL(iZ, Psd[iZ,1:N_Psd[iZ]], ∑Psd[iZ,1:N_Psd[iZ]], Rpart[iZ,1:N_Psd[iZ]], N_Psd[iZ], θs_Psd[iZ], θr_Psd[iZ], paramPsd)
 
 							θΨ =  Array{Float64}(undef, (N_Psd[iZ]))
@@ -106,7 +106,7 @@ module psdOpt
 							end
 
 							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
-						end # for iZ = 1:N_SoilSelect
+						end # for iZ = 1:N_iZ
 						return Of
 					end  # function OF_ALL_SOIL
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,10 +115,10 @@ module psdOpt
 				if !(option.psd.∑Psd_2_ξ1)	
 					SearchRange = [ (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
-					Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, paramPsd, hydro; ∑Psd_2_ξ2_β1 = P[1], ∑Psd_2_ξ2_β2 = P[2], Subclay = P[3])
+					Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_iZ, θs_Psd, θr_Psd, paramPsd, hydro; ∑Psd_2_ξ2_β1 = P[1], ∑Psd_2_ξ2_β2 = P[2], Subclay = P[3])
 					; SearchRange = SearchRange, NumDimensions = 3, TraceMode = :silent)
 
-					for iZ=N_SoilSelect
+					for iZ=N_iZ
 						paramPsd.∑Psd_2_ξ2_β1[iZ] = BlackBoxOptim.best_candidate(Optimization)[1]
 						paramPsd.∑Psd_2_ξ2_β2[iZ] = BlackBoxOptim.best_candidate(Optimization)[2]
 						paramPsd.Subclay[iZ]      = BlackBoxOptim.best_candidate(Optimization)[3]
@@ -127,10 +127,10 @@ module psdOpt
 				elseif option.psd.∑Psd_2_ξ1
 					SearchRange =  [(param.psd.imp.ξ1_Min, param.psd.imp.ξ1_Max), (param.psd.imp.∑Psd_2_ξ2_β1_Min, param.psd.imp.∑Psd_2_ξ2_β1_Max), (param.psd.imp.∑Psd_2_ξ2_β2_Min, param.psd.imp.∑Psd_2_ξ2_β2_Max), (param.psd.imp.Subclay_Min, param.psd.imp.Subclay_Max) ]
 
-					Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = P[1], ∑Psd_2_ξ2_β1 = P[2] ,∑Psd_2_ξ2_β2 = P[3], Subclay = P[4])
+					Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_iZ, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = P[1], ∑Psd_2_ξ2_β1 = P[2] ,∑Psd_2_ξ2_β2 = P[3], Subclay = P[4])
 					; SearchRange = SearchRange, NumDimensions = 4, TraceMode = :silent)
 
-					for iZ=N_SoilSelect
+					for iZ=N_iZ
 						paramPsd.ξ1[iZ]           = BlackBoxOptim.best_candidate(Optimization)[1]
 						paramPsd.∑Psd_2_ξ2_β1[iZ] = BlackBoxOptim.best_candidate(Optimization)[2]
 						paramPsd.∑Psd_2_ξ2_β2[iZ] = BlackBoxOptim.best_candidate(Optimization)[3]
@@ -139,15 +139,15 @@ module psdOpt
 				end # if option.psd.
 
 				# Compute the optimal values
-				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 
 				# Optimal ξ2
-				for iZ = 1:N_SoilSelect
+				for iZ = 1:N_iZ
 					paramPsd.ξ2[iZ] = psdFunc.imp.∑PSD_2_ξ2(∑Psd[iZ,paramPsd.∑Psd_2_ξ2_Size[iZ]]; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iZ], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iZ])
 				end
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_iZ, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
 			end # function OPTIMIZATION_ALL_SOIL
@@ -191,24 +191,24 @@ module psdOpt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		chang FUNCTION : OPTIMIZATION_SINGLE_SOIL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
-				θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-				Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+			function OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+				θ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
+				Ψ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
 				
-				for iZ = 1:N_SoilSelect
+				for iZ = 1:N_iZ
 					SearchRange = [ (param.psd.chan.ξ1_Min, param.psd.chan.ξ1_Max) ]
 
 					Optimization = BlackBoxOptim.bboptimize(P->OF_SINGLE_SOIL(iZ, Psd[iZ,1:N_Psd[iZ]], ∑Psd[iZ,1:N_Psd[iZ]], Rpart[iZ,1:N_Psd[iZ]], N_Psd[iZ], θs_Psd[iZ], θr_Psd[iZ], paramPsd, hydro; ξ1=P[1])
 					; SearchRange = SearchRange, NumDimensions=1, TraceMode = :silent)
 
 					paramPsd.ξ1[iZ] = BlackBoxOptim.best_candidate(Optimization)[1]
-				end	# for iZ = 1:N_SoilSelect
+				end	# for iZ = 1:N_iZ
 				
 				# **Compute the optimal values**
-				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(N_iZ, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
 			end # function: OPTIMIZATION_SINGLE_SOIL
@@ -217,21 +217,21 @@ module psdOpt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		chang FUNCTION : OPTIMIZATION_ALL_SOIL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+			function OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		chang FUNCTION : OF_ALL_SOIL
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-					function OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = paramPsd.ξ1)
-						θ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-						Ψ_Rpart = zeros(Float64, (N_SoilSelect, N_Psd_Max))
+					function OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_iZ, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = paramPsd.ξ1)
+						θ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
+						Ψ_Rpart = zeros(Float64, (N_iZ, N_Psd_Max))
 
-						for iZ = 1:N_SoilSelect
+						for iZ = 1:N_iZ
 							paramPsd.ξ1[iZ] = ξ1
 						end
 
 						Of = 0.0
-						for iZ = 1:N_SoilSelect
+						for iZ = 1:N_iZ
 							θ_Rpart[iZ,1:N_Psd[iZ]], Ψ_Rpart[iZ,1:N_Psd[iZ]] = psdFunc.PSD_MODEL(iZ, Psd[iZ,1:N_Psd[iZ]], ∑Psd[iZ,1:N_Psd[iZ]], Rpart[iZ,1:N_Psd[iZ]], N_Psd[iZ], θs_Psd[iZ], θr_Psd[iZ], paramPsd)
 
 							θΨ = zeros(Float64, N_Psd[iZ])
@@ -241,25 +241,25 @@ module psdOpt
 							end
 
 							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
-						end # for iZ = 1:N_SoilSelect
+						end # for iZ = 1:N_iZ
 						return Of
 					end  # function OF_ALL_SOIL
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 				SearchRange = [ (param.psd.chan.ξ1_Min, param.psd.chan.ξ1_Max) ]
 
-				Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_SoilSelect, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = P[1])
+				Optimization = BlackBoxOptim.bboptimize(P->OF_ALL_SOIL(Psd, ∑Psd, Rpart, N_Psd, N_Psd_Max, N_iZ, θs_Psd, θr_Psd, paramPsd, hydro; ξ1 = P[1])
 				; SearchRange = SearchRange, NumDimensions=1, TraceMode = :silent)
 
-				for iZ=1:N_SoilSelect
+				for iZ=1:N_iZ
 					paramPsd.ξ1[iZ] = BlackBoxOptim.best_candidate(Optimization)[1]
 				end
 
 				# **Compute the optimal values**
-				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_SoilSelect, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
+				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd, hydro)
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
+				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(N_iZ, N_Psd, Ψ_Rpart, θ_Rpart, hydro)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
 			end # function OPTIMIZATION_ALL_SOIL

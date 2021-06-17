@@ -27,10 +27,6 @@
         include("reading.jl")
         include("Table.jl")
         include("hydro/θψ2Ks.jl")
-
-        if !(option.run.Hypix)
-            include("Hydro/Φ.jl")
-        end
         include("Checking.jl")
         include("Hydro/Kunsat.jl")
         include("Stats.jl")

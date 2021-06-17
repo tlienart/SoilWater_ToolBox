@@ -16,7 +16,7 @@ module plotSmap
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          #		FUNCTION : HYDROPARAM
          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function HYDROPARAM(Ψ_θΨ, Ψ_KΨ, θ_θΨ, N_θΨ, N_SoilSelect, N_KΨ, K_KΨ, IdSelect, hydro, KunsatModel_Lab, path; N_Se=1000, smap=[])
+         function HYDROPARAM(Ψ_θΨobs, Ψ_KΨobs, θ_θΨobs, N_θΨobs, N_iZ, N_KΨobs, K_KΨobs, IdSelect, hydro, Kₛ_Model, path; N_Se=1000, smap=[])
             println("  ==  START: Plotting HydroParam  ==")
       
             Flag_OtherData1 = true
@@ -33,14 +33,14 @@ module plotSmap
             Kunsat_OtherData3 = fill(0.0,N_Se)
             θobs =[]
 
-            Ψ_θΨ_Min = 0.0
+            Ψ_θΨobs_Min = 0.0
 
             if Flag_OtherData1
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_ClappHornberger_Constrained_A_Table_ThetaHK.csv"
 
                option.hydro.HydroModel = :ClappHornberger
                   # Structure of the hydroparameters
-                     hydroData = hydroStruct.HYDROSTRUCT(N_SoilSelect)  
+                     hydroData = hydroStruct.HYDROSTRUCT(N_iZ)  
                   # Populate the values of the parameters
                   option.hydro.HydroModel = :ClappHornberger
                      hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
@@ -48,25 +48,25 @@ module plotSmap
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_Loam.csv"
                   option.hydro.HydroModel = :ClappHornberger
                   # Structure of the hydroparameters
-                     hydroData2 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+                     hydroData2 = hydroStruct.HYDROSTRUCT(N_iZ)
                   # Populate the values of the parameters
                      hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
 
                  Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
                   option.hydro.HydroModel = :VangenuchtenJules
                   # Structure of the hydroparameters
-                     hydroData3 = hydroStruct.HYDROSTRUCT(N_SoilSelect)
+                     hydroData3 = hydroStruct.HYDROSTRUCT(N_iZ)
                   # Populate the values of the parameters
                      hydroData3, ~ = reading.READ_STRUCT(hydroData3, Path) 
 
             end # if Flag_OtherData
 
-            for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_SoilSelect)	
-               Ψ_θΨ_Max = maximum(Ψ_θΨ[iZ,N_θΨ[iZ]]) + 100000.0
+            for iZ = param.globalparam.N_iZ_Plot_Start: min(param.globalparam.N_iZ_Plot_End, N_iZ)	
+               Ψ_θΨobs_Max = maximum(Ψ_θΨobs[iZ,N_θΨobs[iZ]]) + 100000.0
 
-               Ψ_Sim = expm1.(range(log1p(Ψ_θΨ_Min), stop=log1p(Ψ_θΨ_Max), length=N_Se)) 
+               Ψ_Sim = expm1.(range(log1p(Ψ_θΨobs_Min), stop=log1p(Ψ_θΨobs_Max), length=N_Se)) 
 
-               θ_θΨ_Max = hydro.Φ[iZ]
+               θ_θΨobs_Max = hydro.Φ[iZ]
 
                # Simulated 
                   for iΨ = 1:N_Se
@@ -128,16 +128,16 @@ module plotSmap
 
                   Axis1 = Axis(Fig[1,1], resolution = (1000, 700))
 
-                  xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨ_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨ_Max * 1.1))
+                  xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Max * 1.1))
                   ylims!(Axis1, 0.0, 0.75)
    
-                  Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])))
+                  Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]])))
                   Axis1.xlabel = "ln(1 + Ψ) [kPa]"
                   Axis1.ylabel =  "θ [mm³ mm⁻³]"
                   Axis1.title = Title
                   Axis1.titlesize= 24
 
-                  P_Smap= scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨ[iZ,1:N_θΨ[iZ]]), Float64.(θ_θΨ[iZ,1:N_θΨ[iZ]]), color=:blue, markersize=15, marker = '■', label="Smap")
+                  P_Smap= scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), Float64.(θ_θΨobs[iZ,1:N_θΨobs[iZ]]), color=:blue, markersize=15, marker = '■', label="Smap")
 
                   # Plot_θ_Ψ: Simulated
                      # lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:blue, linewidth=2, label="Sim")
@@ -170,7 +170,7 @@ module plotSmap
                option.hydro.KunsatΨ = true
                if option.hydro.KunsatΨ
                      Axis2 = Axis(Fig[1,2])
-                     Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨ[iZ,1:N_θΨ[iZ]])))
+                     Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]])))
                      Yticks = 1:1:6
                      Axis2.yticks = (Yticks,string.(Yticks))
                      Axis2.xlabel = "ln(1 + Ψ) [kPa]"
@@ -189,8 +189,8 @@ module plotSmap
                   else
                       Axis2 = Axis(Fig[1,2])
 
-                     K_Ψ_Max = maximum(K_KΨ[iZ,1:N_KΨ[iZ]])
-                     xlims!(Axis2, log1p.(cst.Mm_2_kPa*Ψ_θΨ_Min), log1p.(Ψ_θΨ_Max*cst.Mm_2_kPa))
+                     K_Ψ_Max = maximum(K_KΨobs[iZ,1:N_KΨobs[iZ]])
+                     xlims!(Axis2, log1p.(cst.Mm_2_kPa*Ψ_θΨobs_Min), log1p.(Ψ_θΨobs_Max*cst.Mm_2_kPa))
                      ylims!(Axis2,  (log1p(0.0), log1p(K_Ψ_Max* cst.MmS_2_CmH * 1.1)))
                      Axis2.xlabel = "ln(1 + Ψ) [kPa]"
                      Axis2.ylabel =  "ln ( 1 + K (Ψ) ) [cm h⁻¹]"
@@ -202,8 +202,8 @@ module plotSmap
                      scatter!(Fig[1,2], log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH) ,Y, color=:yellow, markersize=15, marker = '■', label=Label )
 
                   # PlotK_Ψ: K(Ψ) obs
-                     X = Ψ_KΨ[iZ,1:N_KΨ[iZ]]
-                     Y = K_KΨ[iZ,1:N_KΨ[iZ]]
+                     X = Ψ_KΨobs[iZ,1:N_KΨobs[iZ]]
+                     Y = K_KΨobs[iZ,1:N_KΨobs[iZ]]
                      Label = "Obs"
                      scatter!(Fig[1,2], log1p.(X.* cst.Mm_2_kPa) , log1p.(Y.*cst.MmS_2_CmH) ,Y, color=:red, markersize=10, marker = '■', label=Label )
 

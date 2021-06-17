@@ -24,7 +24,7 @@ module readSmap
                Data = sortslices(Data, dims=1)
 
             # Read data of interest
-               Id₂, N_SoilSelect = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
+               Id₂, N_iZ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
 
                Soilname₂, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
 
@@ -32,7 +32,7 @@ module readSmap
                θData = []
                for iHeader in Header
                   if occursin("wrc", iHeader)
-                     θ₀, N_SoilSelect = tool.readWrite.READ_HEADER_FAST(Data, Header, iHeader)
+                     θ₀, N_iZ = tool.readWrite.READ_HEADER_FAST(Data, Header, iHeader)
 
                      iHeader = replace(iHeader, "wrc" => "")
                      iHeader = replace(iHeader, "kpa" => "")
@@ -44,30 +44,30 @@ module readSmap
                      append!(Ψdata, iHeader_Float)
 
                      try
-                        θData = hcat(θData[1:N_SoilSelect, :], θ₀[1:N_SoilSelect])
+                        θData = hcat(θData[1:N_iZ, :], θ₀[1:N_iZ])
                      catch
-                        θData = θ₀[1:N_SoilSelect]
+                        θData = θ₀[1:N_iZ]
                      end
                   end # occursin("wrc", iHeader)
                end # for iHeader in Header
 
-               θ_θΨ₂ = zeros(Float64, N_SoilSelect, length(Ψdata))
-               Ψ_θΨ₂ = zeros(Float64, N_SoilSelect, length(Ψdata))
-               N_θΨ₂ = zeros(Int64, N_SoilSelect)
+               θ_θΨobs₂ = zeros(Float64, N_iZ, length(Ψdata))
+               Ψ_θΨobs₂ = zeros(Float64, N_iZ, length(Ψdata))
+               N_θΨobs₂ = zeros(Int64, N_iZ)
     
-               for iZ=1:N_SoilSelect
+               for iZ=1:N_iZ
                   iΨ_Count = 1
                   for iΨ=1:length(Ψdata)
                      if !isnan(θData[iZ, iΨ])
-                        Ψ_θΨ₂[iZ, iΨ_Count] = Ψdata[iΨ]
-                        θ_θΨ₂[iZ, iΨ_Count] = θData[iZ, iΨ]
-                        N_θΨ₂[iZ] += 1
+                        Ψ_θΨobs₂[iZ, iΨ_Count] = Ψdata[iΨ]
+                        θ_θΨobs₂[iZ, iΨ_Count] = θData[iZ, iΨ]
+                        N_θΨobs₂[iZ] += 1
                         iΨ_Count += 1
                      end #  !isnan(θData[iZ, iΨ])
                   end # iΨ
                end # iZ
 
-         return Id₂, N_θΨ₂, Soilname₂, θ_θΨ₂, Ψ_θΨ₂
+         return Id₂, N_θΨobs₂, Soilname₂, θ_θΨobs₂, Ψ_θΨobs₂
          end  # function: DATA2D
    
 end  # module: readSmap

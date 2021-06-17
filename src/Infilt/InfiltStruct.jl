@@ -20,14 +20,14 @@ module infiltStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTSTRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTSTRUCT(N_SoilSelect)
+		function INFILTSTRUCT(N_iZ)
          FieldName           = Array{Symbol}(undef, 1) # Need to put
-         Sorptivity          = zeros(Float64, N_SoilSelect)
-         iT_TransSteady_Data = zeros(Int64, N_SoilSelect)
-         T_TransSteady_Data  = zeros(Float64, N_SoilSelect)
-         Nse_Trans           = zeros(Float64, N_SoilSelect)
-         Nse_Steady          = zeros(Float64, N_SoilSelect)
-         Nse                 = zeros(Float64, N_SoilSelect)
+         Sorptivity          = zeros(Float64, N_iZ)
+         iT_TransSteady_Data = zeros(Int64, N_iZ)
+         T_TransSteady_Data  = zeros(Float64, N_iZ)
+         Nse_Trans           = zeros(Float64, N_iZ)
+         Nse_Steady          = zeros(Float64, N_iZ)
+         Nse                 = zeros(Float64, N_iZ)
 			
 			return infiltOutput = INFILT(Sorptivity, iT_TransSteady_Data, T_TransSteady_Data, Nse_Trans, Nse_Steady, Nse)
 

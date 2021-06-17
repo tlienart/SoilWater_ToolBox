@@ -61,9 +61,9 @@ module smap2hypix
                   hydroSmap = hydroStruct.HYDROSTRUCT(N) # Making a structure
 
                   # Abstracting data
-                  hydroSmap, N_SoilSelect =  reading.READ_STRUCT(hydroSmap, Path_Input; iStart=iLayer_Start[iSite], iEnd=iLayer_End[iSite])
+                  hydroSmap, N_iZ =  reading.READ_STRUCT(hydroSmap, Path_Input; iStart=iLayer_Start[iSite], iEnd=iLayer_End[iSite])
 
-                  for iZ=1:N_SoilSelect
+                  for iZ=1:N_iZ
                      hydroSmap.Ks[iZ] = Ks_FactorReduce * hydroSmap.Ks[iZ]
                   end
 
@@ -108,7 +108,7 @@ module smap2hypix
 
                      vegSmap.Zroot = min(vegSmap.Zroot, ZrootDepth_Max[1])
 
-                     vegSmap, N_SoilSelect = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
+                     vegSmap, N_iZ = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
 
                      Path = Path_Output * "//" * SoilName_2_SiteName[SoilName_Layer[iSite]] * "_Vegetation.csv"
 

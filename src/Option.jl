@@ -4,7 +4,6 @@
 module options
 	# What available data we have?
 	struct DATA
-		BulkDensity::Bool
 		HydroParam::Bool
 		Infilt::Bool
 		Kθ::Bool
@@ -14,15 +13,14 @@ module options
 		RockWetability::Bool
 		Smap::Bool
 		SoilInformation::Bool
-		TotalPorosity::Bool
 		θobs::Bool
 		θΨ::Bool
+		Φmethod::Symbol
 	end # struct DATA
 
 	# What model wanting to run
 	mutable struct RUN
 		ChangeHydroModel::Bool
-		ρᵦ_2_Φ ::Bool
 		IntergranularMixingPsd::Bool
 		HydroLabθΨ::Symbol
 		InfiltBest::Bool
@@ -181,8 +179,8 @@ module options
 					DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 				# Plotting
-					Ploting   = false # <true>* plot; <false> no plotting
-					PlotVscode = false # <true>* plot shown in VScode; <false>
+					Ploting   = true # <true>* plot; <false> no plotting
+					PlotVscode = true # <true>* plot shown in VScode; <false>
 					DataPrivateShare = "Private" # <"Private"> data kept private in GitHub; <"Share"> date share in GitHub
 
 			other = OTHER(DownloadPackage, Ploting, PlotVscode, DataPrivateShare)
@@ -192,21 +190,20 @@ module options
 			# 		DATA
 			#      What data do we have ?
 			# =============================================================
-            BulkDensity     = true
-            HydroParam      = false
-            Infilt          = true
-            Kθ              = true
-            Pet             = false
-            Pr              = false
-            Psd             = true
-            RockWetability  = true
-            Smap            = true
-            SoilInformation = true
-            TotalPorosity   = true
-            θobs            = false
-            θΨ              = true
+            HydroParam      = false # <true> ; <false>
+            Infilt          = true # <true> ; <false>
+            Kθ              = true # <true> ; <false>
+            Pet             = false # <true> ; <false>
+            Pr              = false # <true> ; <false>
+            Psd             = true # <true> ; <false>
+            RockWetability  = true # <true> ; <false>
+            Smap            = true # <true> ; <false>
+            SoilInformation = true # <true> ; <false>
+            θobs            = false # <true> ; <false>
+            θΨ              = true # <true> ; <false>
+            Φmethod         = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
 
-			data = DATA(BulkDensity, HydroParam, Infilt, Kθ ,Pet ,Pr, Psd, RockWetability, Smap, SoilInformation, TotalPorosity, θobs, θΨ)
+			data = DATA( HydroParam, Infilt, Kθ ,Pet ,Pr, Psd, RockWetability, Smap, SoilInformation, θobs, θΨ,  Φmethod )
 
 			# =============================================================
 			# 		DATA FROM
@@ -222,7 +219,6 @@ module options
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false
-            ρᵦ_2_Φ                 = true
             IntergranularMixingPsd = false
             HydroLabθΨ             = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
             InfiltBest             = false
@@ -230,13 +226,13 @@ module options
             Temporary              = false
             Hypix                  = false
 
-			run = RUN(ChangeHydroModel, ρᵦ_2_Φ, IntergranularMixingPsd,	HydroLabθΨ,	InfiltBest,	RockCorection, Temporary, Hypix)
+			run = RUN(ChangeHydroModel, IntergranularMixingPsd,HydroLabθΨ,	InfiltBest,	RockCorection, Temporary, Hypix)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
 			# =============================================================
 				# Rocks options
-					RockInjectedIncluded = :Injected # <:Injected> rocks fragments are injected/forced into the fine soils; <Included> rocks are included in the bulk BulkDensity
+					RockInjectedIncluded = :InjectRock # <:InjectRock> rocks fragments are injected/forced into the fine soils; <Included> rocks are included in the bulk BulkDensity
 					RockWetability = true # <true> rocks are wettable; <false> rocks are mot wettable 
 
 				rockFragment = ROCKFRAGMENT(RockInjectedIncluded, RockWetability)

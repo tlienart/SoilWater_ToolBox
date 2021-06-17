@@ -14,6 +14,7 @@ function PACKAGES(Option_PackageUpdate)
 
 	# PACKAGES
 		PACKAGE_MANAGER("Revise")
+		PACKAGE_MANAGER("Polynomial")
 		PACKAGE_MANAGER("Tables")
 		PACKAGE_MANAGER("BlackBoxOptim")
 		PACKAGE_MANAGER("DataFrames")

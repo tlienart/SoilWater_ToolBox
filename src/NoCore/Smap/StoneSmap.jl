@@ -3,7 +3,7 @@
 # =============================================================
 module stoneSmap
    using Polynomials
-   export CORECTION_θΨ
+   export STONECORRECTION_HYDRO
 
 
 
@@ -51,7 +51,7 @@ module stoneSmap
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : STONECORRECTION_WETABLE
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function STONECORRECTION_WETTABLE(N_SoilSelect, N_θΨ, rfWetable, smap, θ_θΨ, Ψ_θΨ)
+   function CORECTION_θΨ_WETABLE!(N_SoilSelect, N_θΨ, rfWetable, smap, θ_θΨ, Ψ_θΨ)
       for iZ = 1:N_SoilSelect
          
          iRockClass = rfWetable.RockClass_Dict[smap.RockClass[iZ]]

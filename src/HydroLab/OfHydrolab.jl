@@ -5,18 +5,18 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_WRC_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_WRC_KUNSAT(option, optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim; Wof = 0.5) 
+		function OF_WRC_KUNSAT(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim; Wof = 0.5) 
 
 			# === OF θΨ ====
-				θ_Obs = Array{Float64}(undef, N_θΨ[iZ])
-				θ_Sim = Array{Float64}(undef, N_θΨ[iZ])
+				θ_Obs = Array{Float64}(undef, N_θΨobs[iZ])
+				θ_Sim = Array{Float64}(undef, N_θΨobs[iZ])
 
-				for iΨ = 1:N_θΨ[iZ]
-					θ_Obs[iΨ] = θ_θΨ[iZ,iΨ]
-					θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,  Ψ_θΨ[iZ,iΨ], iZ, hydro)
-				end # for iΨ = 1:N_θΨ[iZ]
+				for iΨ = 1:N_θΨobs[iZ]
+					θ_Obs[iΨ] = θ_θΨobs[iZ,iΨ]
+					θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,  Ψ_θΨobs[iZ,iΨ], iZ, hydro)
+				end # for iΨ = 1:N_θΨobs[iZ]
 
-				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨ[iZ]], θ_Sim[1:N_θΨ[iZ]])
+				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 			# === OF Kunsat ====
 			if optionₘ.KunsatΨ || optionₘ.Kunsat_JustRun
@@ -27,16 +27,16 @@ module ofHydrolab
 				end
 
 				# Of_Kunsat = 0.0
-				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iZ])
-				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iZ])
+				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨobs[iZ])
+				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨobs[iZ])
 
-				for iΨ = iStart:N_KΨ[iZ]
-					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨ[iZ,iΨ])
+				for iΨ = iStart:N_KΨobs[iZ]
+					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨobs[iZ,iΨ])
 						
-					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨ[iZ,iΨ], iZ, hydro))
-				end # for iΨ = 1:N_KΨ[iZ]
+					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨobs[iZ,iΨ], iZ, hydro))
+				end # for iΨ = 1:N_KΨobs[iZ]
 
-				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln[iStart:N_KΨ[iZ]], Kunsat_Sim_Ln[iStart:N_KΨ[iZ]])			
+				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln[iStart:N_KΨobs[iZ]], Kunsat_Sim_Ln[iStart:N_KΨobs[iZ]])			
 
 				if option.hydro.Kunsat_JustRun
 					Of = Of_θΨ
@@ -56,18 +56,18 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_RMSE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_RMSE(optionₘ, iZ, θ_θΨ, Ψ_θΨ, N_θΨ, K_KΨ, Ψ_KΨ, N_KΨ, hydro, optim) 
+		function OF_RMSE(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
 		# === OF θΨ ====
-			θ_Obs = Array{Float64}(undef, N_θΨ[iZ])
-			θ_Sim = Array{Float64}(undef, N_θΨ[iZ])
+			θ_Obs = Array{Float64}(undef, N_θΨobs[iZ])
+			θ_Sim = Array{Float64}(undef, N_θΨobs[iZ])
 
-			for iΨ = 1:N_θΨ[iZ]
-				θ_Obs[iΨ] = θ_θΨ[iZ,iΨ]
-				θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ_θΨ[iZ,iΨ], iZ, hydro)
-			end # for iΨ = 1:N_θΨ[iZ]
+			for iΨ = 1:N_θΨobs[iZ]
+				θ_Obs[iΨ] = θ_θΨobs[iZ,iΨ]
+				θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ_θΨobs[iZ,iΨ], iZ, hydro)
+			end # for iΨ = 1:N_θΨobs[iZ]
 
-			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨ[iZ]], θ_Sim[1:N_θΨ[iZ]])
+			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 		# === OF Kunsat ====
 			if optionₘ.KunsatΨ ||optionₘ.Kunsat_JustRun
@@ -77,16 +77,16 @@ module ofHydrolab
 					iStart = 2
 				end
 
-				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨ[iZ])
-				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨ[iZ])
+				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨobs[iZ])
+				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨobs[iZ])
 
-				for iΨ = iStart:N_KΨ[iZ]
-					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨ[iZ,iΨ])
+				for iΨ = iStart:N_KΨobs[iZ]
+					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨobs[iZ,iΨ])
 						
-					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨ[iZ,iΨ], iZ, hydro))
-				end # for iΨ = 1:N_KΨ[iZ]
+					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨobs[iZ,iΨ], iZ, hydro))
+				end # for iΨ = 1:N_KΨobs[iZ]
 
-				Rmse_KΨ = stats.RMSE(Kunsat_Obs_Ln[iStart:N_KΨ[iZ]], Kunsat_Sim_Ln[iStart:N_KΨ[iZ]])
+				Rmse_KΨ = stats.RMSE(Kunsat_Obs_Ln[iStart:N_KΨobs[iZ]], Kunsat_Sim_Ln[iStart:N_KΨobs[iZ]])
 
 				Rmse = (Rmse_θΨ + Rmse_KΨ) * 0.5
 			else		

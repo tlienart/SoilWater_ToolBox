@@ -77,10 +77,10 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NASH_SUTCLIFFE_θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NASH_SUTCLIFFE_θΨ(N_SoilSelect, N_Data, Ψ_Sim, θ_Sim, hydro)
-			Nse = zeros(Float64, N_SoilSelect)
+		function NASH_SUTCLIFFE_θΨ(N_iZ, N_Data, Ψ_Sim, θ_Sim, hydro)
+			Nse = zeros(Float64, N_iZ)
 
-			for iZ = 1:N_SoilSelect	
+			for iZ = 1:N_iZ	
 				θΨ = zeros(Float64, N_Data[iZ])
 				for iRpart = 1:N_Data[iZ]
 					θΨ[iRpart] = wrc. Ψ_2_θDual(optionₘ,Ψ_Sim[iZ,iRpart], iZ, hydro)
@@ -89,8 +89,8 @@ module stats
 			end
 
 			# Cumulating the objective function to get the overview
-			Nse_Mean = round(Statistics.mean(max.(Nse[1:N_SoilSelect],0.0)), digits=3)  # in case of negative value then it is set to 0
-			Nse_Std  = round(Statistics.std(max.(Nse[1:N_SoilSelect],0.0)), digits=3)   # in case of negative value then it is set to 0
+			Nse_Mean = round(Statistics.mean(max.(Nse[1:N_iZ],0.0)), digits=3)  # in case of negative value then it is set to 0
+			Nse_Std  = round(Statistics.std(max.(Nse[1:N_iZ],0.0)), digits=3)   # in case of negative value then it is set to 0
 
 			return Nse, Nse_Mean, Nse_Std
 		end # function NASH_SUTCLIFFE_θΨ

@@ -9,20 +9,21 @@ module table
 	#		FUNCTION : TABLE_EXTRAPOINTS_K
 	# 		Tabular values of the PSD model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TABLE_ID(N_SoilSelect::Int64, Path::String)
+		function TABLE_ID(N_iZ::Int64, Path::String)
 			println("    ~  $(Path) ~")
 
-			IdSelect = collect(1:1:N_SoilSelect)
+			IdSelect = collect(1:1:N_iZ)
 
-			Select = fill(1::Int64, N_SoilSelect)
+			Select = fill(1::Int64, N_iZ)
 
 			FieldName_String = ["Id", path.option.Select]
 
-			Output = Tables.table( [IdSelect[1:N_SoilSelect] Select[1:N_SoilSelect]] )
+			Output = Tables.table( [IdSelect[1:N_iZ] Select[1:N_iZ]] )
 			
 			CSV.write(Path, Output, header=FieldName_String, delim=',')
 		return nothing
 		end  # function:  TABLE_ID
+
 
 	# =============================================================
 	#		MODULE: hydroLab
@@ -35,23 +36,19 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK(hydro, hydroOther, IdSelect, KunsatModel_Lab, N_SoilSelect::Int64, Path)
+			function θΨK(hydro, hydroOther, IdSelect, Kₛ_Model, N_iZ::Int64, Path)
 				println("    ~  $(Path) ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydro)
+				Matrix₁, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydro)
 
-				Matrix2, FieldName_String2 = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroOther)
+				Matrix₂, FieldName_String2 = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroOther)
 
-				# Concatenating matrices
-				Matrix = hcat(Matrix, Matrix2)
+				Header = vcat("Id", FieldName_String, FieldName_String2, "KsModel")
 
-				Matrix = hcat(Matrix, KunsatModel_Lab)
-
-				FieldName_String = vcat("Id", FieldName_String, FieldName_String2, "KunsatModel")
-
-				Output = Tables.table([IdSelect Matrix])
-
-				CSV.write(Path, Output, header=FieldName_String, delim=',' )
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+					DelimitedFiles.writedlm(io, [IdSelect Matrix₁ Matrix₂ Kₛ_Model], ",")
+				end
 			return nothing
 			end  # function:  θΨK
 
@@ -60,7 +57,7 @@ module table
 		#		FUNCTION : TABLE_θΨK
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_θΨ(optionₘ, hydro, IdSelect, N_SoilSelect::Int64, Path, Ψ_Table; Orientation="Horizontal")
+			function TABLE_EXTRAPOINTS_θΨ(optionₘ, hydro, IdSelect, N_iZ::Int64, Path, Ψ_Table; Orientation="Horizontal")
 				println("    ~  $(Path) ~")
 
 				N_Ψ = Int64(length(Ψ_Table))
@@ -74,9 +71,9 @@ module table
 						pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 							
 					# Computing θ at required θ
-						θ₂ = fill(0.0::Float64, (N_SoilSelect, N_Ψ))
+						θ₂ = fill(0.0::Float64, (N_iZ, N_Ψ))
 
-						for iZ=1:N_SoilSelect
+						for iZ=1:N_iZ
 							for iΨ =1:N_Ψ
 								Ψ₂ = Ψ_Table[iΨ]
 								θ₂[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
@@ -87,13 +84,13 @@ module table
 
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
 					FieldName_String = ["Id","H[mm]","Theta"]
-					N = N_Ψ * N_SoilSelect
+					N = N_Ψ * N_iZ
 					Id₂ = Vector{Int64}(undef, N)
 					Ψ₂  = Vector{Float64}(undef,  N)
 					θ₂  = Vector{Float64}(undef, N)
 					iCount = 1
 
-					for iZ=1:N_SoilSelect
+					for iZ=1:N_iZ
 						for iΨ =1:N_Ψ
 							Id₂[iCount] = IdSelect[iZ]
 							Ψ₂[iCount] = Ψ_Table[iΨ]
@@ -118,7 +115,7 @@ module table
 		#		FUNCTION : TABLE_EXTRAPOINTS_K
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, IdSelect, K_Table, KunsatModel_Lab, N_SoilSelect::Int64, Path::String)
+			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, IdSelect, K_Table, Kₛ_Model, N_iZ::Int64, Path::String)
 				println("    ~  $(Path) ~")
 
 				N_K = Int64(length(K_Table))
@@ -127,15 +124,15 @@ module table
 				FieldName_String =["Id", "H[mm]" ,"Kunsat[mm_s]"]
 							
 			# Computing K at required Ψ
-				N = N_K *N_SoilSelect
+				N = N_K *N_iZ
 				Id₂     = Vector{Int64}(undef, N)
 				Ψ₂      = Vector{Float64}(undef,  N)
 				Kunsat₂ = Vector{Float64}(undef, N)
 				iCount  = 1
 				hydroParam₂ = deepcopy(hydroParam)
-				for iZ=1:N_SoilSelect
+				for iZ=1:N_iZ
 					for iK =1:N_K
-						hydroParam₂.Ks[iZ] = KunsatModel_Lab[iZ]
+						hydroParam₂.Ks[iZ] = Kₛ_Model[iZ]
 
 						Id₂[iCount] = IdSelect[iZ]
 						Ψ₂[iCount] = K_Table[iK]
@@ -166,10 +163,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD(IdSelect, N_SoilSelect::Int64, paramPsd, Path)
+			function PSD(IdSelect, N_iZ::Int64, paramPsd, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect,  paramPsd)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ,  paramPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
@@ -185,10 +182,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK_PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_SoilSelect::Int64, Path)
+			function θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_iZ::Int64, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroPsd)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroPsd)
 
 				Matrix = hcat(Matrix, KunsatModel_Psd)
 
@@ -210,7 +207,7 @@ module table
 		#		FUNCTION : PSD_θΨ_θ
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD_θΨ_θ(hydroPsd, IdSelect, N_SoilSelect::Int64, param, Path::String)
+			function PSD_θΨ_θ(hydroPsd, IdSelect, N_iZ::Int64, param, Path::String)
 				println("    ~  $Path ~")
 
 				N_Ψ = Int64(length(param.psd.Ψ_Table))
@@ -224,8 +221,8 @@ module table
 					pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 				
 				# Computing θ at required θ
-					θ = Array{Float64}(undef, (N_SoilSelect, N_Ψ))
-					for iZ=1:N_SoilSelect
+					θ = Array{Float64}(undef, (N_iZ, N_Ψ))
+					for iZ=1:N_iZ
 						for iΨ =1:N_Ψ
 							Ψ = param.psd.Ψ_Table[iΨ]
 							θ[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ, iZ, hydroPsd)
@@ -263,10 +260,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDRO_INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYDRO_INFILT(hydroInfilt, IdSelect, KunsatModel_Infilt, N_SoilSelect::Int64, Path)
+			function HYDRO_INFILT(hydroInfilt, IdSelect, KunsatModel_Infilt, N_iZ::Int64, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect, hydroInfilt)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroInfilt)
 
 				Matrix = hcat(Matrix, KunsatModel_Infilt)
 				
@@ -286,10 +283,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : infilt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function INFILT(IdSelect, N_SoilSelect, infiltOutput, Path)
+			function INFILT(IdSelect, N_iZ, infiltOutput, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_SoilSelect::Int64, infiltOutput)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ::Int64, infiltOutput)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
@@ -476,19 +473,19 @@ module table
 				Path = pathHyPix.Table_θΨ * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
-				N_θΨ = Int64(length(param.hyPix.ploting.θΨ_Table))
+				N_θΨobs = Int64(length(param.hyPix.ploting.θΨ_Table))
 
 				# Writting the Header
-					FieldName_String = fill(""::String, N_θΨ)
+					FieldName_String = fill(""::String, N_θΨobs)
 
-					for i =1:N_θΨ
+					for i =1:N_θΨobs
 						FieldName_String[i] = string(param.hyPix.ploting.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
 					end
 					pushfirst!(FieldName_String, string("Layer")) # Write the "Id" at the very begenning
 				
 				# Computing θ at required θ
-					θ_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
-					for iZ=1:N_iHorizon, iΨ =1:N_θΨ
+					θ_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨobs))
+					for iZ=1:N_iHorizon, iΨ =1:N_θΨobs
 							Ψ_Mod =param.hyPix.ploting.θΨ_Table[iΨ]
 							θ_Mod[iZ, iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ_Mod, iZ, hydroHorizon)
 					end # iZ
@@ -503,7 +500,7 @@ module table
 						DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
 						for iZ = 1:N_iHorizon
 							# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
-							DelimitedFiles.writedlm(io, [θ_Mod[iZ, 1:N_θΨ+1]], ",")
+							DelimitedFiles.writedlm(io, [θ_Mod[iZ, 1:N_θΨobs+1]], ",")
 						end # i
 					end # Path
 			return nothing	
@@ -518,19 +515,19 @@ module table
 				Path = pathHyPix.Table_KΨ * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
-				N_θΨ = Int64(length(param.hyPix.ploting.θΨ_Table))
+				N_θΨobs = Int64(length(param.hyPix.ploting.θΨ_Table))
 
 				# Writting the Header
-					FieldName_String = fill(""::String, N_θΨ)
+					FieldName_String = fill(""::String, N_θΨobs)
 
-					for i =1:N_θΨ
+					for i =1:N_θΨobs
 						FieldName_String[i] = string(param.hyPix.ploting.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
 					end
 					pushfirst!(FieldName_String, string("Layer Cm/H")) # Write the "Id" at the very begenning
 				
 				# Computing θ at required θ
-					K_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨ))
-					for iZ=1:N_iHorizon, iΨ =1:N_θΨ
+					K_Mod = fill(0.0::Float64, (N_iHorizon, N_θΨobs))
+					for iZ=1:N_iHorizon, iΨ =1:N_θΨobs
 							Ψ_Mod =param.hyPix.ploting.θΨ_Table[iΨ]
 							K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_CmH
 					end # iZ
@@ -544,7 +541,7 @@ module table
 					open(Path, "w") do io
 						DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
 						for iZ = 1:N_iHorizon
-							DelimitedFiles.writedlm(io, [K_Mod[iZ,1:N_θΨ+1]], ",")
+							DelimitedFiles.writedlm(io, [K_Mod[iZ,1:N_θΨobs+1]], ",")
 						end # i
 					end # Path
 			return nothing	

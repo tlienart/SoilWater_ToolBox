@@ -8,10 +8,10 @@ module psdInitialize
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PSD_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_SoilSelect, param)			
+	function PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, param)			
 		# Compute new N_Psd to take into account when ∑Psd 
 		# Correction for N_Psd such that to determine the real maximum Rpart size
-			for iZ=1:N_SoilSelect
+			for iZ=1:N_iZ
 				N_Psd_New = 1
 				for iPsd = 1:N_Psd[iZ]
 					if ∑Psd[iZ, iPsd] >= 0.99999
@@ -24,24 +24,24 @@ module psdInitialize
 			end # looping over soils
 
 		# MAximum number of Psd data
-			N_Psd_Max = maximum(N_Psd[1:N_SoilSelect])
+			N_Psd_Max = maximum(N_Psd[1:N_iZ])
 
 
 		# Compute PSD from ∑PSD
-			Psd = zeros(Float64, (N_SoilSelect, N_Psd_Max))
-			for iZ=1:N_SoilSelect
+			Psd = zeros(Float64, (N_iZ, N_Psd_Max))
+			for iZ=1:N_iZ
 				Psd[iZ, 1:N_Psd[iZ]] = ∑PSD_2_PSD(∑Psd[iZ,1:N_Psd[iZ]], N_Psd[iZ])
-			end # iZ=1:N_SoilSelect
+			end # iZ=1:N_iZ
 
 		# DERIVING THE STRUCTURE PARAMETERS
-			paramPsd = psdStruct.PSDSTRUCT(N_SoilSelect)
+			paramPsd = psdStruct.PSDSTRUCT(N_iZ)
 
 		# COMPUTING θr FROM PSD DATA
-		hydroPsd, paramPsd = psdThetar.PSD_2_θr(∑Psd, hydro, hydroPsd, N_SoilSelect, param, paramPsd)
+		hydroPsd, paramPsd = psdThetar.PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, param, paramPsd)
 			
 		# COMPUTING θs FROM TOTAL POROSITY
-			θs_Psd = Array{Float64}(undef, N_SoilSelect)
-			for iZ=1:N_SoilSelect
+			θs_Psd = Array{Float64}(undef, N_iZ)
+			for iZ=1:N_iZ
 				θs_Psd[iZ] = param.hydro.Coeff_Φ_2_θs * hydroPsd.Φ[iZ]
 				hydroPsd.θs[iZ] = θs_Psd[iZ]
 				hydroPsd.θr[iZ] = paramPsd.θr_Psd[iZ]
