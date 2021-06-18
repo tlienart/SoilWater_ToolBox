@@ -120,7 +120,7 @@ module hydrolabOpt
 				# STATISTICS
 					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
-					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
+					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
 					hydroOther.Nse[iZ]    = 1.0 - Of
 					hydroOther.Nse_θΨ[iZ] = 1.0 - Of_θΨ
@@ -170,7 +170,7 @@ module hydrolabOpt
 	#		FUNCTION : PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
-				for iParam = 1:optim.NparamOpt
+		for iParam = 1:optim.NparamOpt
 			# Determening if parameters are Log transformed
 				if (optim.ParamOpt_LogTransform[iParam]) && !(optim.ParamOpt[iParam]=="Ψm" && optionₘ.σ_2_Ψm == :Constrained)
 					Paramₐ = expm1(X[iParam])

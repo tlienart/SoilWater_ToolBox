@@ -137,15 +137,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KUNSATΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function KUNSATΨ(IdSelect, N_iZ, path)
-				# Determeining where to read the data
-				if isfile(path.inputSoilwater.Kunsat)
-					Path = path.inputSoilwater.Kunsat
-				elseif isfile(path.inputSoilwater.Kunsat_Model)
-					Path = path.inputSoilwater.Kunsat_Model
-				else
-					error("\n SoilWater-ToolBox input error: No Kunsat data. You coud derive K(θ) from Kosugi model with option.UsePointKosugiBimodal \n")
-				end
+			function KUNSATΨ(IdSelect, N_iZ, Path)
 				println("    ~  $(Path) ~")
 
 				# Read data
@@ -183,7 +175,7 @@ module reading
 			# Get the data of interest
 				Ψ_θΨobs, N_θΨobs  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_iZ)
 			
-				θ_θΨobs, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta", N_iZ)
+				θ_θΨobs, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta[0-1]", N_iZ)
 		return θ_θΨobs, Ψ_θΨobs, N_θΨobs
 		end  # function: θΨ
 

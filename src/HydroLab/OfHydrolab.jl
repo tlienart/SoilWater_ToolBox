@@ -50,7 +50,7 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_RMSE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_RMSE(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
+		function OF_RMSE(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
 		# === OF θΨ ====
 			θ_Obs = fill(0.0::Float64, N_θΨobs[iZ])
@@ -64,7 +64,7 @@ module ofHydrolab
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 		# === OF Kunsat ====
-			if optionₘ.KsOpt ||optionₘ.Kunsat_JustRun
+			if optionₘ.KsOpt ||option.run.HydroLabθΨ==:Run
 				if  "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else

@@ -2,7 +2,7 @@
 #		MODULE: table
 # =============================================================
 module table
-	import Tables, CSV
+	import DelimitedFiles
 	export TABLE_ID
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,9 +18,14 @@ module table
 
 			FieldName_String = ["Id", path.option.Select]
 
-			Output = Tables.table( [IdSelect[1:N_iZ] Select[1:N_iZ]] )
+			# Output = Tables.table( [IdSelect[1:N_iZ] Select[1:N_iZ]] )
 			
-			CSV.write(Path, Output, header=FieldName_String, delim=',')
+			# CSV.write(Path, Output, header=FieldName_String, delim=',')
+
+			open(Path, "w") do io
+				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+				DelimitedFiles.writedlm(io, [IdSelect[1:N_iZ] Select[1:N_iZ]], ",")
+			end
 		return nothing
 		end  # function:  TABLE_ID
 
@@ -30,7 +35,7 @@ module table
 	# =============================================================
 	module hydroLab
 		import  ...tool, ...wrc, ...kunsat
-		import DelimitedFiles, Tables, CSV
+		import DelimitedFiles
 		export θΨK
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,11 +91,11 @@ module table
 						end
 
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
-					FieldName_String = ["Id","H[mm]","Theta[-]"]
+					FieldName_String = ["Id","H[mm]","Theta[0-1]"]
 					N = N_Ψ * N_iZ
-					Id₂ = Vector{Int64}(undef, N)
-					Ψ₂  = Vector{Float64}(undef,  N)
-					θ₂  = Vector{Float64}(undef, N)
+					Id₂ = fill(0::Int64, N)
+					Ψ₂  = fill(0.0::Float64, N)
+					θ₂  = fill(0.0::Float64, N)
 					iCount = 1
 
 					for iZ=1:N_iZ
@@ -113,13 +118,12 @@ module table
 		return nothing
 		end  # function:  θΨ
 
-
 		
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : TABLE_EXTRAPOINTS_K
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, IdSelect, K_Table, Kₛ_Model, N_iZ::Int64, Path::String)
+			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, IdSelect, K_Table, N_iZ::Int64, Path::String)
 				println("    ~  $(Path) ~")
 
 				N_K = Int64(length(K_Table))
@@ -129,25 +133,25 @@ module table
 							
 			# Computing K at required Ψ
 				N = N_K *N_iZ
-				Id₂     = Vector{Int64}(undef, N)
-				Ψ₂      = Vector{Float64}(undef,  N)
-				Kunsat₂ = Vector{Float64}(undef, N)
+				Id₂     = fill(0::Int64, N)
+				Ψ₂      = fill(0.0::Float64, N)
+				Kunsat₂ = fill(0.0::Float64, N)
 				iCount  = 1
 				hydroParam₂ = deepcopy(hydroParam)
 				for iZ=1:N_iZ
 					for iK =1:N_K
-						hydroParam₂.Ks[iZ] = Kₛ_Model[iZ]
-
 						Id₂[iCount] = IdSelect[iZ]
 						Ψ₂[iCount] = K_Table[iK]
 						Kunsat₂[iCount] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ₂[iCount], iZ, hydroParam₂)
 
-						iCount+=1
+						iCount += 1
 					end # iΨ
 				end # iZ
 
-				Output = Tables.table([string.(Id₂[1:N]) Ψ₂[1:N] Kunsat₂[1:N]])
-				CSV.write(Path, Output, header=FieldName_String, delim=',')
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+					DelimitedFiles.writedlm(io, [Id₂[1:N] Ψ₂[1:N] Kunsat₂[1:N]], ",")
+				end
 				
 		return nothing
 		end  # function:  θΨ
@@ -193,7 +197,7 @@ module table
 				Matrix = hcat(Matrix, KunsatModel_Psd)
 
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
-				push!(FieldName_String, "Kunsat_Model")
+				push!(FieldName_String, "Table_KΨ")
 
 				Matrix =  round.(Matrix, digits=5)
 				open(Path, "w") do io

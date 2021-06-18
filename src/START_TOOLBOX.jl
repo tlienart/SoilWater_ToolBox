@@ -10,7 +10,6 @@ include("Including.jl")
 #		FUNCTION : START_TOOLBOX
 # ==============================================================
 function START_TOOLBOX()
-	 
 	# _______________________ START: option/ param/ path _______________________ 
 		
 		option = options.OPTIONS()
@@ -31,6 +30,37 @@ function START_TOOLBOX()
 				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
 			end # if: option.run.Hypix
 
+		# If we have θ(Ψ) data:
+			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained)
+				θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
+			
+			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained # Ading extra data
+				try
+					@info "\n	*** Reading θ(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
+					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
+				catch
+					@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && param.hydro.σ_2_Ψm==:Constrained => Kosugi simulation not performed yet! \n" 
+					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
+				end 		
+			end  # if: option.data.θΨ
+
+		# If we have K(θ) data:
+			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained)
+				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
+
+			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi 
+				try
+					@info "\n	*** Reading K(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
+					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
+				catch
+					@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi => Kosugi simulation not performed yet! *** \n"
+					if option.hydro.KsOpt 
+						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
+					end
+				end 
+			end  # if: Kθ			
+
+
 		# If we have bulk density and rock fragment data:
 			if option.data.Φmethod == :ρᵦ
 				RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil = reading.BULKDENSITY(IdSelect, N_iZ, path.inputSoilwater.BulkDensity)
@@ -47,16 +77,6 @@ function START_TOOLBOX()
 			if option.data.Infilt
 				Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam = reading.INFILTRATION(IdSelect, N_iZ, path.inputSoilwater.Infiltration, path.inputSoilwater.Infiltration_Param)
 			end  # if: option.data.Infilt
-	
-		# If we have θ(Ψ) data:
-			if option.data.θΨ
-					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
-			end  # if: option.data.θΨ
-
-		# If we have K(θ) data:
-			if option.data.Kθ
-				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path)
-			end  # if: Kθ
 
 		# If we have PSD data:
 			if option.data.Psd
@@ -74,6 +94,8 @@ function START_TOOLBOX()
 			if option.data.SoilInformation
 				IsTopsoil, RockClass = reading.SOIL_INFORMATION(IdSelect, N_iZ, path.inputSoilwater.SoilInformation)
 			end  # if: option.data.SoilInformation
+
+
 
 		#--- NON CORE ----
 			# SMAP if we have information of the wetability of rocks:
@@ -137,7 +159,7 @@ function START_TOOLBOX()
 
 					Kₛ_Model[iZ] = θψ2Ks.θΨ_2_KS(hydro, iZ, param; RockFragment=RockFragment₁, IsTopsoil=IsTopsoil₁)
 
-					if hydro.Ks[iZ] < eps(100.0)
+					if !(option.hydro.KsOpt)
 						hydro.Ks[iZ] = Kₛ_Model[iZ]
 					end #  hydro.Ks[iZ] < eps(100.0)
 				end # if: hydro.Ks[iZ] > eps(10.0)
@@ -153,8 +175,6 @@ function START_TOOLBOX()
 			end #  option.hydro.HydroModel
 
 	println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
-	else
-			hydro = []
 	end # option.run.HydroLabθΨ
 
 # If the hydraulic parameters were already derived than get the data from file instead or rerunning the model	
@@ -202,7 +222,7 @@ function START_TOOLBOX()
 			θ_θΨobs = stoneSmap.CORECTION_θΨ_WETABLE!(N_iZ, N_θΨobs, rfWetable, smap, θ_θΨobs, Ψ_θΨobs)
 		end
 
-		if option.smap.UsePointKosugiBimodal
+		if option.smap.SimulationKosugiθΨK
 			N_θΨobs, θ_θΨobs, Ψ_θΨobs = reading.θψ_FILE(
 				N_iZ, N_θΨobs, param, path.tableSoilwater.TableExtraPoints_θΨ, θ_θΨobs, Ψ_θΨobs)
 		end
@@ -280,23 +300,19 @@ function START_TOOLBOX()
 			# CORE OUTPUT
 				table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
 
-			# Adding extra points to θ(Ψ) if not available
-				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableExtraPoints_θΨ, param.hydro.TableExtraPoints_θΨ)
+			if option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm==:Constrained
+				# Adding extra points to θ(Ψ) if not available
+					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableExtraPoints_θΨ, param.hydro.TableExtraPoints_θΨ)
+	
+					table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.Table_KΨ)
 			
-			# Extra points required by other models
-				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Horizontal")
-
-				# table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, Kₛ_Model, N_iZ, path.inputSoilwater.Kunsat_Model)
+					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
+			end # if: option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
 
 		else
 			tableSmap.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model, N_iZ, smap, path.Table_θΨK)
 
-			if option.smap.AddPointKosugiBimodal && option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
-				# Extra points in θ(Ψ) to reduce none uniqueness
-
-
-
-			end
+	
 			if option.smap.CombineData
 				tableSmap.SMAP(option.hydro, IdSelect, N_iZ, smap, param, path)
 			end

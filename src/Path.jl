@@ -17,7 +17,6 @@ module paths
 		Infiltration::String
 		Infiltration_Param::String
 		Kunsat::String
-		Kunsat_Model::String
 		Psd::String
 		SoilInformation::String
 		Φ::String
@@ -51,14 +50,15 @@ module paths
 	end # struct INPUT_TABLE_SMAP
 
 	mutable struct TABLE_SOILWATER
-		TableExtraPoints_θΨ::String
 		Table_HydroInfilt::String
 		Table_Infilt::String
-		TableComplete_θΨ::String
+		Table_KΨ::String
 		Table_Psd::String
 		Table_Psd_θΨ_θ::String
 		Table_θΨ_Psd::String
 		Table_θΨK::String
+		TableComplete_θΨ::String
+		TableExtraPoints_θΨ::String
 	end # struct INPUT_SOILWATER
 
 		# _______________________ START: hypix _______________________ 
@@ -166,12 +166,10 @@ module paths
             Infiltration       = "Infiltration.csv"
             Infiltration_Param = "InfiltrationParam.csv"
             Kunsat             = "KunsatH.csv"
-            Kunsat_Model       = "Kunsat_H_model.csv"
             Psd                = "Psd.csv"
             SoilInformation    = "SoilInformation.csv"
             Φ                  = "TotalPorosity.csv"
             Ψθ                 = "ThetaH.csv"
-
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             BulkDensity        = FileDataSoilhydro_Input * BulkDensity
@@ -182,13 +180,12 @@ module paths
             Infiltration       = FileDataSoilhydro_Input * Infiltration
             Infiltration_Param = FileDataSoilhydro_Input * Infiltration_Param
             Kunsat             = FileDataSoilhydro_Input * Kunsat
-            Kunsat_Model       = FileDataSoilhydro_Input * Kunsat_Model
             Psd                = FileDataSoilhydro_Input * Psd
             SoilInformation    = FileDataSoilhydro_Input * SoilInformation
             Φ                  = FileDataSoilhydro_Input * Φ
             Ψθ                 = FileDataSoilhydro_Input * Ψθ
 
-			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Kunsat_Model, Psd, SoilInformation, Φ, Ψθ)		
+			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Psd, SoilInformation, Φ, Ψθ)		
 				
 		# =============================================================
 		#		INPUT_SMAP
@@ -223,28 +220,30 @@ module paths
 		#		TABLE_SOILWATER
 		# =============================================================
 			# Output tables soil water
+            Table_KΨ            = "Table_KΨ.csv"
+            Table_HydroInfilt   = "Table_HydroInfilt.csv"
+            Table_Infilt        = "Table_Infilt.csv"
+            Table_Psd           = "Table_Psd.csv"
+            Table_Psd_θΨ_θ      = "Table_PsdTheta.csv"
+            Table_θΨ_Psd        = "Table_PsdHydro.csv"
+            Table_θΨK           = "Table_θΨK.csv"
+            TableComplete_θΨ    = "TableComplete_θΨ.csv"
             TableExtraPoints_θΨ = "TableExtraPoints_θΨ.csv"
-            Table_HydroInfilt    = "Table_HydroInfilt.csv"
-            Table_Infilt         = "Table_Infilt.csv"
-            TableComplete_θΨ       = "TableComplete_θΨ.csv"
-            Table_Psd            = "Table_Psd.csv"
-            Table_Psd_θΨ_θ       = "Table_PsdTheta.csv"
-            Table_θΨ_Psd         = "Table_PsdHydro.csv"
-            Table_θΨK            = "Table_θΨK.csv"
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * SiteName_Soilhyro
 
-				TableExtraPoints_θΨ = FileSoilHydro_Table₁ *  "_" * string(opt.hydro.HydroModel) * "_" * TableExtraPoints_θΨ
-				Table_HydroInfilt    = FileSoilHydro_Table₁ * string(opt.infilt.Model) * "_" *  ModelName  *  "_" * Table_HydroInfilt
-				Table_Infilt         = FileSoilHydro_Table₁ * string(opt.infilt.Model) *  "_" *  ModelName  *  "_" *  Table_Infilt
-				TableComplete_θΨ       = FileSoilHydro_Table₁ *   "_" *  string(opt.psd.HydroModel)  *   "_" *  TableComplete_θΨ
-				Table_Psd            = FileSoilHydro_Table₁ * string(opt.psd.Model) *  "_" * ModelName * "_" * Table_Psd
-				Table_Psd_θΨ_θ       = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * ModelName * "_" *  Table_Psd_θΨ_θ
-				Table_θΨ_Psd         = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * ModelName * "_" * Table_θΨ_Psd
-				Table_θΨK        = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * ModelName * "_" * Table_θΨK
+            Table_HydroInfilt   = FileSoilHydro_Table₁ * string(opt.infilt.Model) * "_" *  ModelName  *  "_" * Table_HydroInfilt
+            Table_Infilt        = FileSoilHydro_Table₁ * string(opt.infilt.Model) *  "_" *  ModelName  *  "_" *  Table_Infilt
+            Table_KΨ            = FileSoilHydro_Table₁ * "_"  *  ModelName * "_" * Table_KΨ
+            Table_Psd           = FileSoilHydro_Table₁ * string(opt.psd.Model) *  "_" * ModelName * "_" * Table_Psd
+            Table_Psd_θΨ_θ      = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * ModelName * "_" *  Table_Psd_θΨ_θ
+            Table_θΨ_Psd        = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * ModelName * "_" * Table_θΨ_Psd
+            Table_θΨK           = FileSoilHydro_Table₁ *  "_" * string(opt.hydro.HydroModel) * "_" * Table_θΨK
+            TableComplete_θΨ    = FileSoilHydro_Table₁ *   "_" *  ModelName * "_" * TableComplete_θΨ
+            TableExtraPoints_θΨ = FileSoilHydro_Table₁ *  "_" *  ModelName * "_" * TableExtraPoints_θΨ
 			
-			tableSoilwater = TABLE_SOILWATER(TableExtraPoints_θΨ, Table_HydroInfilt, Table_Infilt, TableComplete_θΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK)
+			tableSoilwater = TABLE_SOILWATER(Table_HydroInfilt, Table_Infilt, Table_KΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK, TableComplete_θΨ, TableExtraPoints_θΨ)
 
 
 		# =============================================================

@@ -11,6 +11,7 @@ module options
 		Pr::Bool
 		Psd::Bool
 		RockWetability::Bool
+		SimulationKosugiθΨK::Bool
 		Smap::Bool
 		SoilInformation::Bool
 		θobs::Bool
@@ -44,19 +45,17 @@ module options
 	mutable struct SMAP
 		CorrectStone
 		CorrectStoneWetability
-		UsePointKosugiBimodal
-		AddPointKosugiBimodal
 		CombineData
 		Plot_Kunsat
 	end
 	mutable struct HYDRO
-		HydroModel
-		θsOpt
-		θrOpt
-		σ_2_Ψm
-		KsOpt
-		Plot_θΨ
-		Plot_σ_Ψm
+		HydroModel::Symbol
+		θsOpt::Symbol
+		θrOpt::Symbol
+		σ_2_Ψm::Symbol
+		KsOpt::Bool
+		Plot_θΨ::Bool
+		Plot_σ_Ψm::Bool
 	end
 	mutable struct PSD
 		Model
@@ -181,20 +180,21 @@ module options
 			# 		DATA
 			#      What data do we have ?
 			# =============================================================
-            HydroParam      = false # <true> ; <false>
-            Infilt          = true # <true> ; <false>
-            Kθ              = true # <true> ; <false>
-            Pet             = false # <true> ; <false>
-            Pr              = false # <true> ; <false>
-            Psd             = true # <true> ; <false>
-            RockWetability  = true # <true> ; <false>
-            Smap            = true # <true> ; <false>
-            SoilInformation = true # <true> ; <false>
-            θobs            = false # <true> ; <false>
-            θΨ              = true # <true> ; <false>
-            Φmethod         = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
+            HydroParam          = false # <true> ; <false>
+            Infilt              = true # <true> ; <false>
+            Kθ                  = false # <true> ; <false>
+            Pet                 = false # <true> ; <false>
+            Pr                  = false # <true> ; <false>
+            Psd                 = true # <true> ; <false>
+            RockWetability      = true # <true> ; <false>
+            SimulationKosugiθΨK = true # <true> or <false>
+            Smap                = true # <true> ; <false>
+            SoilInformation     = true # <true> ; <false>
+            θobs                = false # <true> ; <false>
+            θΨ                  = true # <true> ; <false>
+            Φmethod             = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
 
-			data = DATA( HydroParam, Infilt, Kθ ,Pet ,Pr, Psd, RockWetability, Smap, SoilInformation, θobs, θΨ,  Φmethod )
+			data = DATA( HydroParam, Infilt, Kθ ,Pet ,Pr, Psd, RockWetability, SimulationKosugiθΨK, Smap, SoilInformation, θobs, θΨ,  Φmethod )
 
 			# =============================================================
 			# 		DATA FROM
@@ -211,7 +211,7 @@ module options
 			# =============================================================
             ChangeHydroModel       = false
             IntergranularMixingPsd = false
-            HydroLabθΨ             = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:No> not available
+            HydroLabθΨ             = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
             InfiltBest             = false
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Temporary              = false
@@ -235,14 +235,10 @@ module options
 				# Smap-Hydro options
 					CorrectStone = false # <true> or <false>
 					CorrectStoneWetability = false # <true> or <false>
-					UsePointKosugiBimodal = false # <true> or <false>
 					CombineData = false # <true> or <false>
 					Plot_Kunsat = false  # <true> or <false>
 
-					AddPointKosugiBimodal = !(UsePointKosugiBimodal)
-
-				smap = SMAP(CorrectStone, CorrectStoneWetability, UsePointKosugiBimodal, AddPointKosugiBimodal, CombineData, Plot_Kunsat)
-
+				smap = SMAP(CorrectStone, CorrectStoneWetability, CombineData, Plot_Kunsat)
 
 			# =============================================================
 			#		HYDRO OPTIONS
@@ -254,7 +250,7 @@ module options
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 
 				#  Optimise Ks 
-					KsOpt         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
+					KsOpt         = true #  <true>* Optimize hydraulic parameters from K(Ψ); <false> 
 
 				# PLOTTING
 					Plot_θΨ   = true
