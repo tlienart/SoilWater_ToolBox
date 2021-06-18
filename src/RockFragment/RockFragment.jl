@@ -15,6 +15,27 @@ module rockFragment
 				return Φ = rockFragment.included.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
 			end
 		end  # function: function ρᵦ_2_Φ
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : STONECORRECTION_WETABLE
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function CORECTION_θΨ_WETABLE!(N_SoilSelect, N_θΨ, rfWetable, smap, θ_θΨ, Ψ_θΨ)
+			for iZ = 1:N_SoilSelect
+				
+				iRockClass = rfWetable.RockClass_Dict[smap.RockClass[iZ]]
+
+				WettableFunction = Polynomials.Polynomial(rfWetable.RockClass_Polynomial_Array[iRockClass][1])
+
+				for iθ=1:N_θΨ[iZ]
+					θ_Wettable = WettableFunction(log1p(Ψ_θΨ[iZ,iθ]))
+
+					θ_θΨ[iZ,iθ] =  θ_θΨ[iZ,iθ] + θ_Wettable * smap.RockFragment[iZ]
+				end # for iθ=1:N_θΨ[iZ]
+			end #  for iZ = 1:N_SoilSelect
+			
+		return  θ_θΨ
+		end  # function: STONECORRECTION_NONEWETABLE
 	
 
 	# =============================================================

@@ -8,17 +8,13 @@ module params
 		N_iZ_Plot_End
 	end
 		mutable struct KG
-			ΨmMac
-			ΨmMac_Min
-			ΨmMac_Max
-			σMac
-			∇_θsMacMat_Min
-			∇_θsMacMat_Max
+			# ΨmMac
+			# σMac
+			# ∇_θsMacMat_Min
+			# ∇_θsMacMat_Max
 			Ψσ_Min
 			Ψσ_Max
 			Ψσ
-			Pσ_1
-			Pσ_2
 		end
 		mutable struct SMAPS
 			Ψ_Table
@@ -28,8 +24,8 @@ module params
 		θs_θsMacMat
 		ΨmacMat
 		Ψ_Max
-		Ψ_Table
-		Ψ_TableComplete
+		TableExtraPoints_θΨ
+		TableComplete_θΨ
 		K_Table
 		kg::KG
 		smap::SMAPS
@@ -171,19 +167,19 @@ module params
 	#		HYDRO PARAMETERS
 	# =============================================================
 		# General parameters
-			Coeff_Φ_2_θs = 0.965 # 0.95
+			Coeff_Φ_2_θs = 0.95 # 0.95
 
 		# Bimodal
-			θs_θsMacMat = 0.05 # Bimodal if θs - θsMacMat > θs_θsMacMat
+			θs_θsMacMat = 0.05 # Treshold when the model is classified as Bimodal if θs - θsMacMat > θs_θsMacMat
 
 		# If σMac and ΨmMac are constants
 			ΨmacMat = 100.0 # 50-150 [mm] determine when matrix and macro domain 
 			Ψ_Max  = 160_000.0 # [mm] min value is 150000 mm and oven dry would be the best value 
 			
 		# Output in tables
-			Ψ_Table = [100.0, 250000.0] # mm
+			TableExtraPoints_θΨ = [100.0, 250000.0] # mm
 
-			Ψ_TableComplete = [0.0, 10.0, 50.0, 1_00.0, 5_00.0, 10_00.0, 50_00.0, 100_00.0, 500_00.0, 1000_00.0, 1500_00.0,  2000_00.0] # mm
+			TableComplete_θΨ = [0.0, 10.0, 50.0, 100.0, 500.0, 1000.0, 2000.0, 3300.0, 4000.0, 5000.0,100_00.0, 500_00.0, 1000_00.0, 1500_00.0,  2000_00.0] # mm
 
 			K_Table =  [0.0, 10.0, 100.0, 500.0, 1000.0, 2000.0, 4000.0, 10000.0] # mm
 
@@ -192,34 +188,30 @@ module params
 		#----------------------
 			# computing ΨmMac and σMac
 				ΨmMac = √ΨmacMat  # [mm]
-					ΨmMac_Min = 1.0  # 50.0[mm]
-					ΨmMac_Max = ΨmacMat # 400.0[mm]
+					# ΨmMac_Min = 1.0  # 50.0[mm]
+					# ΨmMac_Max = ΨmacMat # 400.0[mm]
 
-				σMac = log(ΨmacMat) / (2.0 * 3.0)
+				# σMac = log(ΨmacMat) / (2.0 * 3.0)
 
-				∇_θsMacMat_Min = 0.75
-				∇_θsMacMat_Max = 1.0
+				# ∇_θsMacMat_Min = 0.75
+				# ∇_θsMacMat_Max = 1.0
 
 			# relationship between σ and Ψm
 			# Parameters describing the option.σ_2_Ψm = # <:Constrained> which computes Ψm_Min, Ψm_Max from σ
 				Ψσ_Min =  ΨmMac # 1.0 [mm]
 				Ψσ_Max =  ΨmacMat # [mm]
 				Ψσ = exp((log(Ψσ_Min) + log(Ψσ_Max)) / 2.0)  # 1.0 # [mm] used if option.σ_2_Ψm = # <:UniqueRelationship> 
-				
-			# Depreciated
-				Pσ_1 = 1.45 # 0.5920
-				Pσ_2 = 0.65 # 0.7679
+
+		kg = KG(Ψσ_Min, Ψσ_Max, Ψσ)
 	
 		#----------------------
 		#		smap parameters
 		#----------------------
-		Ψ_Table = [0.0, 500.0, 1000.0, 2000.0, 3300.0, 4000.0,  10000.0,  150000.0 ] # mm
+			Ψ_Table = [0.0, 500.0, 1000.0, 2000.0, 3300.0, 4000.0,  10000.0,  150000.0 ] # mm
 
 		smap = SMAPS(Ψ_Table)
 
-		kg = KG(ΨmMac, ΨmMac_Min, ΨmMac_Max, σMac, ∇_θsMacMat_Min, ∇_θsMacMat_Max, Ψσ_Min, Ψσ_Max, Ψσ, Pσ_1, Pσ_2)
-
-		hydro = HYDROS(Coeff_Φ_2_θs, θs_θsMacMat, ΨmacMat, Ψ_Max, Ψ_Table, Ψ_TableComplete, K_Table, kg, smap)
+		hydro = HYDROS(Coeff_Φ_2_θs, θs_θsMacMat, ΨmacMat, Ψ_Max, TableExtraPoints_θΨ, TableComplete_θΨ, K_Table, kg, smap)
 	
 
 	# =============================================================

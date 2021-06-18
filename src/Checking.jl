@@ -27,9 +27,6 @@ module checking
 			elseif optionₘ.HydroModel == :Kosugi && (optionₘ.σ_2_Ψm ==:Constrained && "Ψm" ∉ optim.ParamOpt) 
 				error("*** optionₘ.σ_2_Ψm ==:Constrained THAN Ψm needs to be optimised ***")
 
-			elseif optionₘ.KsOpt == :Data && "Ks" ∈ optim.ParamOpt
-				error("*** optionₘ.KsOpt == :Data THAN Ks does not need to be optimized ***")
-
 			elseif  (optionₘ.θrOpt==:σ_2_θr) && ("θr" ∈ optim.ParamOpt)
 				error("*** optionₘ.θrOpt==:σ_2_θr THAN θr does not need to be optimized ***") 
 
@@ -45,14 +42,14 @@ module checking
 			elseif  (optionₘ.θrOpt==:ParamPsd) && ("θr"∉ optim.ParamOpt) && !(option.run.IntergranularMixingPsd) # Derive θr frpm PSD
 				error("*** optionₘ.θrOpt==:ParamPsd THAN option.run.IntergranularMixingPsd=true ***")
 			
-			elseif ("Ks" ∈ optim.ParamOpt) && (optionₘ.KunsatΨ==false)
-				error("***  (Ks ∈ optim.ParamOpt) && (KunsatΨ==false) THAN option.KunsatΨ=true ***")
+			elseif ("Ks" ∈ optim.ParamOpt) && (optionₘ.KsOpt==false)
+				error("***  (Ks ∈ optim.ParamOpt) && (KsOpt==false) THAN option.KsOpt=true ***")
 
-        	elseif option.smap.UsePointKosugiBimodal && optionₘ.KunsatΨ && "Ks" ∉ optim.ParamOpt
-            	error("***  Ks  ∉ optim.ParamOpt && option.smap.UsePointKosugiBimodal && optionₘ.KunsatΨ THAN Ks ∈ optim.ParamOpt***")
+        	elseif option.smap.UsePointKosugiBimodal && optionₘ.KsOpt && "Ks" ∉ optim.ParamOpt
+            	error("***  Ks  ∉ optim.ParamOpt && option.smap.UsePointKosugiBimodal && optionₘ.KsOpt THAN Ks ∈ optim.ParamOpt***")
 			
-			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) && optionₘ.KunsatΨ && option.dataFrom.Smap
-				error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN optionₘ.KunsatΨ=false OR UsePointKosugiBimodal = true")
+			elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) && optionₘ.KsOpt && option.dataFrom.Smap
+				error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN optionₘ.KsOpt=false OR UsePointKosugiBimodal = true")
 
 			# elseif  optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) &&  "Ks" ∈ optim.ParamOpt && option.Smap
 			# 	error("optionₘ.HydroModel==:Kosugi && (option.smap.AddPointKosugiBimodal) THEN Ks ∉ optim.ParamOpt")

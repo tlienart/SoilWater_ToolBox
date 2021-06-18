@@ -5,11 +5,11 @@ module ofHydrolab
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_WRC_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
-		function OF_WRC_KUNSAT(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim; Wof = 0.5) 
+		function OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim; Wof = 0.5) 
 
 			# === OF θΨ ====
-				θ_Obs = Array{Float64}(undef, N_θΨobs[iZ])
-				θ_Sim = Array{Float64}(undef, N_θΨobs[iZ])
+				θ_Obs = fill(0.0::Float64, N_θΨobs[iZ])
+				θ_Sim = fill(0.0::Float64, N_θΨobs[iZ])
 
 				for iΨ = 1:N_θΨobs[iZ]
 					θ_Obs[iΨ] = θ_θΨobs[iZ,iΨ]
@@ -19,7 +19,7 @@ module ofHydrolab
 				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 			# === OF Kunsat ====
-			if optionₘ.KunsatΨ || optionₘ.Kunsat_JustRun
+			if optionₘ.KsOpt
 				if "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else
@@ -27,8 +27,8 @@ module ofHydrolab
 				end
 
 				# Of_Kunsat = 0.0
-				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨobs[iZ])
-				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨobs[iZ])
+				Kunsat_Obs_Ln = fill(0.0::Float64, N_KΨobs[iZ])
+				Kunsat_Sim_Ln = fill(0.0::Float64, N_KΨobs[iZ])
 
 				for iΨ = iStart:N_KΨobs[iZ]
 					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨobs[iZ,iΨ])
@@ -37,20 +37,14 @@ module ofHydrolab
 				end # for iΨ = 1:N_KΨobs[iZ]
 
 				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln[iStart:N_KΨobs[iZ]], Kunsat_Sim_Ln[iStart:N_KΨobs[iZ]])			
+				Of = Wof * Of_θΨ + (1.0 - Wof) * Of_Kunsat
 
-				if option.hydro.Kunsat_JustRun
-					Of = Of_θΨ
-				else
-					Of = Wof * Of_θΨ + (1.0 - Wof) * Of_Kunsat
-				end
 			else		
 				Of = Of_θΨ
 				Of_Kunsat = 0.0
-			end #  optionₘ.KunsatΨ
-
+			end #  optionₘ.KsOpt
 		return Of, Of_θΨ, Of_Kunsat
 		end # function OF_WRC_KUNSAT
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,8 +53,8 @@ module ofHydrolab
 		function OF_RMSE(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
 		# === OF θΨ ====
-			θ_Obs = Array{Float64}(undef, N_θΨobs[iZ])
-			θ_Sim = Array{Float64}(undef, N_θΨobs[iZ])
+			θ_Obs = fill(0.0::Float64, N_θΨobs[iZ])
+			θ_Sim = fill(0.0::Float64, N_θΨobs[iZ])
 
 			for iΨ = 1:N_θΨobs[iZ]
 				θ_Obs[iΨ] = θ_θΨobs[iZ,iΨ]
@@ -70,15 +64,15 @@ module ofHydrolab
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 		# === OF Kunsat ====
-			if optionₘ.KunsatΨ ||optionₘ.Kunsat_JustRun
+			if optionₘ.KsOpt ||optionₘ.Kunsat_JustRun
 				if  "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else
 					iStart = 2
 				end
 
-				Kunsat_Obs_Ln = Array{Float64}(undef, N_KΨobs[iZ])
-				Kunsat_Sim_Ln = Array{Float64}(undef, N_KΨobs[iZ])
+				Kunsat_Obs_Ln = fill(0.0::Float64, N_KΨobs[iZ])
+				Kunsat_Sim_Ln = fill(0.0::Float64, N_KΨobs[iZ])
 
 				for iΨ = iStart:N_KΨobs[iZ]
 					Kunsat_Obs_Ln[iΨ] = log1p(K_KΨobs[iZ,iΨ])
@@ -92,7 +86,7 @@ module ofHydrolab
 			else		
 				Rmse = Rmse_θΨ
 				Rmse_KΨ = 0.0
-			end #  optionₘ.KunsatΨ
+			end #  optionₘ.KsOpt
 
 	return Rmse, Rmse_KΨ, Rmse_θΨ
 	end # OF_RMSE

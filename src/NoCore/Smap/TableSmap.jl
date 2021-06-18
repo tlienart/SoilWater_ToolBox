@@ -217,7 +217,7 @@ module tableSmap
       if Option_Kosugi_Table # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
          # HydroModel_θΨ = "Kosugi"
 
-         Path_θΨ =  path.tableSoilwater.Table_KosugiθΨ
+         Path_θΨ =  path.tableSoilwater.TableComplete_θΨ
 
          if isfile(Path_θΨ)
             Select_θΨ = string.(Int64.(param.hydro.smap.Ψ_Table)) .* "mm"

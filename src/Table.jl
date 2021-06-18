@@ -64,7 +64,7 @@ module table
 
 				if Orientation == "Horizontal" # <>=<>=<>=<>=<>=<>
 					# Writting the Header
-						FieldName_String = Vector{String}(undef, (N_Ψ))
+						FieldName_String = fill(""::String, N_Ψ)
 						for i =1:N_Ψ
 							FieldName_String[i] = string(Int64(Ψ_Table[i]) ) * "mm"
 						end
@@ -80,10 +80,13 @@ module table
 							end # iΨ
 						end # iZ
 
-						CSV.write(Path, Tables.table([string.(IdSelect) θ₂]), header=FieldName_String )
+						open(Path, "w") do io
+							DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+							DelimitedFiles.writedlm(io, [Int64.(IdSelect) θ₂], ",")
+						end
 
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
-					FieldName_String = ["Id","H[mm]","Theta"]
+					FieldName_String = ["Id","H[mm]","Theta[-]"]
 					N = N_Ψ * N_iZ
 					Id₂ = Vector{Int64}(undef, N)
 					Ψ₂  = Vector{Float64}(undef,  N)
@@ -100,9 +103,10 @@ module table
 						end # iΨ
 					end # iZ
 
-					Output = Tables.table([string.(Id₂[1:N]) Ψ₂[1:N] θ₂[1:N]])
-					CSV.write(Path, Output, header=FieldName_String, delim=',')
-
+					open(Path, "w") do io
+						DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+						DelimitedFiles.writedlm(io, [Id₂[1:N] Ψ₂[1:N] θ₂[1:N]], ",")
+					end
 				else
 					error("SoilWaterToolBox Error in TABLE_EXTRAPOINTS_θΨ $Orientation not understood")
 				end
@@ -171,7 +175,6 @@ module table
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
 				open(Path, "w") do io
-					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Int64.(IdSelect) round.(Matrix,digits=5)], ",")
 				end
@@ -194,7 +197,6 @@ module table
 
 				Matrix =  round.(Matrix, digits=5)
 				open(Path, "w") do io
-					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [IdSelect Matrix], ",")
 				end

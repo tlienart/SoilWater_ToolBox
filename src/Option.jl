@@ -54,11 +54,7 @@ module options
 		θsOpt
 		θrOpt
 		σ_2_Ψm
-		θs_MinFromData
-		Ks_MinMaxFromData
-		KunsatΨ
 		KsOpt
-		Kunsat_JustRun
 		Plot_θΨ
 		Plot_σ_Ψm
 	end
@@ -72,9 +68,7 @@ module options
 		θsOpt
 		θrOpt
 		σ_2_Ψm
-		KunsatΨ
 		KsOpt
-		Kunsat_JustRun
 		Plot_Psd_θΨ
 		Plot_θr
 		Plot_IMP_Model
@@ -95,9 +89,7 @@ module options
 		θsOpt            
 		θrOpt            
 		σ_2_Ψm          
-		KunsatΨ         
-		KsOpt 
-		Kunsat_JustRun 
+		KsOpt         
 		Plot_Sorptivity        	
 		Plot_SeIni_Range       
 		Plot_∑Infilt           
@@ -178,7 +170,7 @@ module options
 					DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 				# Plotting
-					Ploting   = true # <true>* plot; <false> no plotting
+					Ploting   = false # <true>* plot; <false> no plotting
 					PlotVscode = true # <true>* plot shown in VScode; <false>
 					DataPrivateShare = "Private" # <"Private"> data kept private in GitHub; <"Share"> date share in GitHub
 
@@ -257,24 +249,18 @@ module options
 			# =============================================================
 				# Hydraulic model
 					HydroModel      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
-					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
+					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
 					θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 
-				# Min & Max from data
-					θs_MinFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
-					Ks_MinMaxFromData = false # <false> feasible range from GUI, <true> feasible range derive from data
-						
-				# Have WE Kunsat(ψ)DATA
-					KunsatΨ         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
-						KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
-						Kunsat_JustRun = false
+				#  Optimise Ks 
+					KsOpt         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 
 				# PLOTTING
-				Plot_θΨ   = true
-				Plot_σ_Ψm = false
+					Plot_θΨ   = true
+					Plot_σ_Ψm = false
 					
-				hydro = HYDRO(HydroModel, θsOpt, θrOpt, σ_2_Ψm, θs_MinFromData, Ks_MinMaxFromData, KunsatΨ, KsOpt, Kunsat_JustRun, Plot_θΨ, Plot_σ_Ψm)
+				hydro = HYDRO(HydroModel, θsOpt, θrOpt, σ_2_Ψm, KsOpt, Plot_θΨ, Plot_σ_Ψm)
 
 
 			# =============================================================
@@ -294,9 +280,7 @@ module options
 					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
 					θrOpt           = :ParamPsd # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ  <:No> optimisation of σ & Ψm with no constraints
-					KunsatΨ         = false #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
-						KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
-						Kunsat_JustRun = false
+					KsOpt         = false #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 
 				# PLOTTING
 					Plot_Psd_θΨ    = true # <true>  plot θΨ of PSD; <false>
@@ -306,7 +290,7 @@ module options
 				# TABLE
 					Table_Psd_θΨ_θ = true # <true> derive θ values at prescribed Ψ
 
-				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel, θsOpt, θrOpt, σ_2_Ψm, KunsatΨ, KsOpt, Kunsat_JustRun, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
+				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel, θsOpt, θrOpt, σ_2_Ψm, KsOpt, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
 
 
 			# =============================================================
@@ -325,9 +309,7 @@ module options
 					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
 					θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>		
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
-					KunsatΨ         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
-						KsOpt = :Opt # <:Opt> Optimize Ks (require KunsatΨ=true); <:Data> derived from Max K(Ψ)
-						Kunsat_JustRun = false
+					KsOpt         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 			
 				# Plotting
 					Plot_Sorptivity       = true # <true> or <false>	
@@ -337,7 +319,7 @@ module options
 					Plot_Sorptivity_SeIni = true # <true> computes sorptivity curves as a function of Se <false> no outputs
 
 
-				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel, θsOpt, θrOpt, σ_2_Ψm, KunsatΨ, KsOpt, Kunsat_JustRun, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
+				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel, θsOpt, θrOpt, σ_2_Ψm, KsOpt, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
 
 
 			# =============================================================

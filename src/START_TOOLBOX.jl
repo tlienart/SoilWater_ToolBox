@@ -114,12 +114,12 @@ function START_TOOLBOX()
 		end # if: option.rockFragment.RockInjectedIncluded == :InjectRock
 
 		# OPTIMISING THE HYDRAULIC PARAMETERS
-		if option.hydro.KunsatΨ
+		if option.hydro.KsOpt
 			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs, N_θΨobs=N_θΨobs, K_KΨobs=K_KΨobs, Ψ_KΨobs=Ψ_KΨobs, N_KΨobs=N_KΨobs, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
 
 		else
 			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs, N_θΨobs=N_θΨobs, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
-		end # option.hydro.KunsatΨ
+		end # option.hydro.KsOpt
 
 		# COMPUTE KS FROM Θ(Ψ)
 			Kₛ_Model = fill(0.0::Float64, N_iZ)
@@ -146,11 +146,11 @@ function START_TOOLBOX()
 
 
 		# SPECIAL CASE
-		if option.hydro.HydroModel==:BrooksCorey || option.hydro.HydroModel==:ClappHornberger
-			for iZ=1:N_iZ
-				hydro.Ψga[iZ] = wrc.GREEN_AMPT(option.hydro, iZ, hydro)
-			end
-		end #  option.hydro.HydroModel
+			if option.hydro.HydroModel==:BrooksCorey || option.hydro.HydroModel==:ClappHornberger
+				for iZ=1:N_iZ
+					hydro.Ψga[iZ] = wrc.GREEN_AMPT(option.hydro, iZ, hydro)
+				end
+			end #  option.hydro.HydroModel
 
 	println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
 	else
@@ -163,7 +163,7 @@ function START_TOOLBOX()
 		# 	hydro = reading.HYDROPARAM(IdSelect, N_iZ, hydro)
 		# else
 				# if option.dataFrom.Smap
-		# 	hydroParam, optim = stoneSmap.STONECORRECTION_HYDRO(hydro, N_iZ, optim, smap)
+
 		# end
 		# ------------------------END: running HydroLab---------------------------  
 	
@@ -179,10 +179,10 @@ function START_TOOLBOX()
 				IdSelect = collect(1:1:N_iZ)
 		
 			# Deriving a table of θ(Ψ)
-				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, IdSelect, N_iZ, path.inputSoilwater.Ψθ, param.hydro.Ψ_TableComplete; Orientation="Vertical")
+				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, IdSelect, N_iZ, path.inputSoilwater.Ψθ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
 			
 			# Deriving a table of K(θ)
-				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, IdSelect, param.hydro.Ψ_TableComplete, hydroTranslate.Ks[1:N_iZ], N_iZ::Int64, path.inputSoilwater.Kunsat)
+				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, IdSelect, param.hydro.TableComplete_θΨ, hydroTranslate.Ks[1:N_iZ], N_iZ::Int64, path.inputSoilwater.Kunsat)
 
 			# Creating an Id output required by the program
 				table.TABLE_ID(N_iZ::Int64, path.inputSoilwater.IdSelect)
@@ -204,7 +204,7 @@ function START_TOOLBOX()
 
 		if option.smap.UsePointKosugiBimodal
 			N_θΨobs, θ_θΨobs, Ψ_θΨobs = reading.θψ_FILE(
-				N_iZ, N_θΨobs, param, path.tableSoilwater.Table_ExtraPoints_θΨ, θ_θΨobs, Ψ_θΨobs)
+				N_iZ, N_θΨobs, param, path.tableSoilwater.TableExtraPoints_θΨ, θ_θΨobs, Ψ_θΨobs)
 		end
 	end
 
@@ -276,19 +276,26 @@ function START_TOOLBOX()
 
 	 if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File # <>=<>=<>=<>=<>
 		if !(option.dataFrom.Smap)
-			table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
+
+			# CORE OUTPUT
+				table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
+
+			# Adding extra points to θ(Ψ) if not available
+				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableExtraPoints_θΨ, param.hydro.TableExtraPoints_θΨ)
+			
+			# Extra points required by other models
+				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Horizontal")
+
+				# table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, Kₛ_Model, N_iZ, path.inputSoilwater.Kunsat_Model)
 
 		else
 			tableSmap.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model, N_iZ, smap, path.Table_θΨK)
 
 			if option.smap.AddPointKosugiBimodal && option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
 				# Extra points in θ(Ψ) to reduce none uniqueness
-				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.Table_ExtraPoints_θΨ, param.hydro.Ψ_Table)
 
-				# Extra points required by TopNet
-					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.Table_KosugiθΨ, param.hydro.smap.Ψ_Table)
 
-					table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, Kₛ_Model, N_iZ, path.inputSoilwater.Kunsat_Model)
+
 			end
 			if option.smap.CombineData
 				tableSmap.SMAP(option.hydro, IdSelect, N_iZ, smap, param, path)
@@ -305,7 +312,6 @@ function START_TOOLBOX()
 	println("		=== END: PLOTTING  === \n")
 	 end
 	
-
 
 	 # ------------------------END: plotting---------------------------  
 

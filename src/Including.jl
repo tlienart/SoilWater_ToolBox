@@ -39,7 +39,6 @@
         end
 
         if option.dataFrom.Smap
-            include("NoCore/Smap/StoneSmap.jl")
             include("NoCore/Smap/PlotSmap.jl")
             include("NoCore/Smap/TableSmap.jl")
         end
@@ -47,7 +46,6 @@
         if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File &&  !(option.run.Hypix)
             include("HydroLab/OfHydrolab.jl")
             include("HydroLab/HydrolabOpt.jl")
-            include("Hypix/Other/PlotOther.jl")
         end
         
         if option.run.InfiltBest
@@ -74,7 +72,6 @@
         end # option.other.Ploting
 
         if option.run.Hypix
-            # include("Hypix/PathHypix.jl")
             include("Sorptivity/Sorptivity.jl")
             include("Hypix/Interpolate.jl")
             include("Hypix/Opt/ThetaObs.jl")
@@ -99,7 +96,6 @@
             include("Hypix/Memory.jl")
             include("Hypix/Climate.jl")
             if option.other.Ploting
-                include("Hypix/Other/PlotOther.jl")
                 include("Hypix/PlotHypix.jl")
             end
             include("Hypix/HypixModel.jl")
@@ -108,7 +104,6 @@
         end  # if: option.run.Hypix
 
         if option.dataFrom.Jules
-            include("Hypix/PathHypix.jl")
             include("Hypix/VegStruct.jl")
             include("Hypix/Discretization.jl")
             include("NoCore/Jules/Jules.jl")

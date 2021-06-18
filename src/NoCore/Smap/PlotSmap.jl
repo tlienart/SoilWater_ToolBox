@@ -167,8 +167,8 @@ module plotSmap
                      P_PtotalPorosity = scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:slateblue3, markersize=20, marker ="●")
 
                # == Plot_K_Ψ  ==
-               option.hydro.KunsatΨ = true
-               if option.hydro.KunsatΨ
+               option.hydro.KsOpt = true
+               if option.hydro.KsOpt
                      Axis2 = Axis(Fig[1,2])
                      Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]])))
                      Yticks = 1:1:6
@@ -215,7 +215,7 @@ module plotSmap
                      
                   end
                   
-               end # option.hydro.KunsatΨ 
+               end # option.hydro.KsOpt 
 
                # Fig[3, 1] = Legend(Fig, Axis1, "PLOTS", orientation=:horizontal)
 
