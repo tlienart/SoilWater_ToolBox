@@ -9,7 +9,10 @@ module checking
       function CHECKING(option, optionₘ, optim)
         # CHECKING FOR UNCONSISTENCY WITH OPTIONS
 
-			if option.run.HydroLabθΨ ≠ :No && !option.data.θΨ
+		  if "Ks" ∈ optim.ParamOpt && !(option.data.Kθ) 
+			error("*** If Ks ∈ optim.ParamOpt => option.data.θΨ ***")
+
+		  elseif option.run.HydroLabθΨ ≠ :No && !option.data.θΨ
 				error("*** If option.run.HydroLabθΨ => option.data.θΨ ***")
 
 			elseif option.run.RockCorection && option.rockFragment.RockInjectedIncluded==:InjectRock && !( option.data.BulkDensity && option.data.θΨ)
@@ -41,12 +44,9 @@ module checking
 
 			elseif  (optionₘ.θrOpt==:ParamPsd) && ("θr"∉ optim.ParamOpt) && !(option.run.IntergranularMixingPsd) # Derive θr frpm PSD
 				error("*** optionₘ.θrOpt==:ParamPsd THAN option.run.IntergranularMixingPsd=true ***")
-			
-			elseif ("Ks" ∈ optim.ParamOpt) && (optionₘ.KsOpt==false)
-				error("***  (Ks ∈ optim.ParamOpt) && (KsOpt==false) THAN option.KsOpt=true ***")
 
-        	elseif option.data.SimulationKosugiθΨK && optionₘ.KsOpt && "Ks" ∉ optim.ParamOpt
-            	error("***  Ks  ∉ optim.ParamOpt && option.smap.SimulationKosugiθΨK && optionₘ.KsOpt THAN Ks ∈ optim.ParamOpt***")
+        	elseif option.data.SimulationKosugiθΨK && "Ks" ∉ optim.ParamOpt
+            	error("***  Ks  ∉ optim.ParamOpt && option.smap.SimulationKosugiθΨK THAN Ks ∈ optim.ParamOpt***")
 		
 			end # Check error
 

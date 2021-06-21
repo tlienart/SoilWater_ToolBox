@@ -23,14 +23,21 @@ function START_TOOLBOX()
 
 	# _______________________ START: reading _______________________ 
 	println("----- START READING -----------------------------------------------")
-		# Determine which soils/ profile to run
+		
+		# DERIVING OPTIM PARAMETERS FOR OPTIONS. THIS WILL BE RECOMPUTED: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
+			hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputSoilwater.HydroParam_ThetaH)
+	
+
+		# DETERMINE WHICH SOILS/ PROFILE TO RUN: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.run.Hypix
 				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
 			else
 				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
 			end # if: option.run.Hypix
 
-		# If we have θ(Ψ) data:
+
+		# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained)
 				θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 			
@@ -44,7 +51,8 @@ function START_TOOLBOX()
 				end 		
 			end  # if: option.data.θΨ
 
-		# If we have K(θ) data:
+
+		# IF WE HAVE K(Θ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained)
 				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 
@@ -54,31 +62,32 @@ function START_TOOLBOX()
 					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
 				catch
 					@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi => Kosugi simulation not performed yet! *** \n"
-					if option.hydro.KsOpt 
+					if "Ks" ∈ optim.ParamOpt
 						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 					end
-				end 
+				end # catch
 			end  # if: Kθ			
 
 
-		# If we have bulk density and rock fragment data:
-			if option.data.Φmethod == :ρᵦ
+		# IF WE HAVE BULK DENSITY AND ROCK FRAGMENT DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			if option.data.Φ⍰ == :ρᵦ
 				RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil = reading.BULKDENSITY(IdSelect, N_iZ, path.inputSoilwater.BulkDensity)
 
 				# Φ  corrected for RockFragments
 				Φ = rockFragment.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
-			elseif option.data.Φmethod == :Φ # Total Porosity
+			elseif option.data.Φ⍰ == :Φ # Total Porosity
 				RockFragment, Φ = reading.Φ(IdSelect, N_iZ, path.inputSoilwater.Φ)
 				
 				Φ = rockFragment.injectRock.CORECTION_Φ!(N_iZ, option, RockFragment, Φ)	
-			end # option.data.Φmethod == :ρᵦ
+			end # option.data.Φ⍰ == :ρᵦ
 
-		# if we have Infilt data:
+
+		# IF WE HAVE INFILT DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.Infilt
 				Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam = reading.INFILTRATION(IdSelect, N_iZ, path.inputSoilwater.Infiltration, path.inputSoilwater.Infiltration_Param)
 			end  # if: option.data.Infilt
 
-		# If we have PSD data:
+		# IF WE HAVE PSD DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.Psd
 				Rpart, ∑Psd, N_Psd = reading.PSD(IdSelect, N_iZ, path.inputSoilwater.Psd)
 			else
@@ -90,10 +99,11 @@ function START_TOOLBOX()
 				N_Psd = 0		
 			end  # if: option.data.Psd
 
-		# If we have SoilInformation:
-			if option.data.SoilInformation
-				IsTopsoil, RockClass = reading.SOIL_INFORMATION(IdSelect, N_iZ, path.inputSoilwater.SoilInformation)
-			end  # if: option.data.SoilInformation
+
+		# IF WE HAVE PEDOLOGICAL⍰: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			if option.data.Pedological⍰ ≠ :No
+				IsTopsoil, RockClass = reading.SOIL_INFORMATION(IdSelect, N_iZ, path.inputSoilwater.Pedological⍰)
+			end  # if: option.data.Pedological⍰
 
 
 
@@ -124,11 +134,11 @@ function START_TOOLBOX()
 			checking.CHECKING(option, option.hydro, optim)
 
 		# TRANSFERING Φ -> hydro
-			if option.data.Φmethod ≠ :No
+			if option.data.Φ⍰ ≠ :No
 				for iZ =1:N_iZ 
 					hydro.Φ[iZ] = Φ[iZ]
 				end
-			end # option.data.Φmethod ≠ :No
+			end # option.data.Φ⍰ ≠ :No
 
 		# CORRECT θ(Ψ) FOR ROCK FRAGMENT
 		if option.run.RockCorection && option.rockFragment.RockInjectedIncluded==:InjectRock
@@ -136,12 +146,12 @@ function START_TOOLBOX()
 		end # if: option.rockFragment.RockInjectedIncluded == :InjectRock
 
 		# OPTIMISING THE HYDRAULIC PARAMETERS
-		if option.hydro.KsOpt
+		if "Ks" ∈ optim.ParamOpt
 			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs, N_θΨobs=N_θΨobs, K_KΨobs=K_KΨobs, Ψ_KΨobs=Ψ_KΨobs, N_KΨobs=N_KΨobs, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
 
 		else
 			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs, N_θΨobs=N_θΨobs, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
-		end # option.hydro.KsOpt
+		end # "Ks" ∈ optim.ParamOpt
 
 		# COMPUTE KS FROM Θ(Ψ)
 			Kₛ_Model = fill(0.0::Float64, N_iZ)
@@ -159,7 +169,7 @@ function START_TOOLBOX()
 
 					Kₛ_Model[iZ] = θψ2Ks.θΨ_2_KS(hydro, iZ, param; RockFragment=RockFragment₁, IsTopsoil=IsTopsoil₁)
 
-					if !(option.hydro.KsOpt)
+					if !("Ks" ∈ optim.ParamOpt)
 						hydro.Ks[iZ] = Kₛ_Model[iZ]
 					end #  hydro.Ks[iZ] < eps(100.0)
 				end # if: hydro.Ks[iZ] > eps(10.0)

@@ -7,7 +7,7 @@ module plotSmap
       #		module: makie
       # =============================================================
       module makie
-         import ..cst, ..hydroStruct, ..kunsat, ..reading, ..wrc, ...readSmap
+         import ...cst, ...hydroStruct, ...kunsat, ...reading, ...wrc, ...readSmap
          using Makie
          using CairoMakie
 
@@ -167,8 +167,7 @@ module plotSmap
                      P_PtotalPorosity = scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:slateblue3, markersize=20, marker ="●")
 
                # == Plot_K_Ψ  ==
-               option.hydro.KsOpt = true
-               if option.hydro.KsOpt
+               if o"Ks" ∈ optim.ParamOpt
                      Axis2 = Axis(Fig[1,2])
                      Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]])))
                      Yticks = 1:1:6
@@ -215,7 +214,7 @@ module plotSmap
                      
                   end
                   
-               end # option.hydro.KsOpt 
+               end # "Ks" ∈ optim.ParamOpt 
 
                # Fig[3, 1] = Legend(Fig, Axis1, "PLOTS", orientation=:horizontal)
 

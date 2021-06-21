@@ -72,7 +72,7 @@ module hydrolabOpt
 				end # optionₘ.θsOpt
 				
 			# CORRECTING Ks  ~~~
-				if optionₘ.KsOpt
+				if "Ks" ∈ optim.ParamOpt
 					# test if exist Ψ=0
 					if "Ks" ∈ optim.ParamOpt
 						if minimum(Ψ_KΨobs[iZ,1:N_θΨobs[iZ]]) < eps(100.0)
@@ -103,7 +103,7 @@ module hydrolabOpt
 						hydro.Ks[iZ] = hydro.Ks_Max[iZ]
 
 					end # "Ks" ∈ optim.ParamOpt
-				end # if optionₘ.KsOpt
+				end # if "Ks" ∈ optim.ParamOpt
 			
 			# Updated searchrange
 				SearchRange = optimize.SEARCHRANGE(optionₘ, optim)
@@ -125,7 +125,7 @@ module hydrolabOpt
 					hydroOther.Nse[iZ]    = 1.0 - Of
 					hydroOther.Nse_θΨ[iZ] = 1.0 - Of_θΨ
 
-					if optionₘ.KsOpt
+					if "Ks" ∈ optim.ParamOpt
 						hydroOther.Nse_KΨ[iZ] = 1.0 - Of_Kunsat
 					end
 		end # for iZ = 1:N_iZ
@@ -138,7 +138,7 @@ module hydrolabOpt
 			Rmse_θΨ_Aver = Statistics.mean(hydroOther.Rmse_θΨ[1:N_iZ])
 			Rmse_KΨ_Aver = Statistics.mean(hydroOther.Rmse_KΨ[1:N_iZ])
 				
-			if optionₘ.KsOpt
+			if "Ks" ∈ optim.ParamOpt
 				Nse_Aver = (Nse_θΨ_Aver + Nse_KΨ_Aver) / 2.0
 			else
 				Nse_Aver = Nse_θΨ_Aver

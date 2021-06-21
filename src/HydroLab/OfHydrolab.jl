@@ -19,7 +19,7 @@ module ofHydrolab
 				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 			# === OF Kunsat ====
-			if optionₘ.KsOpt
+			if "Ks" ∈ optim.ParamOpt
 				if "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else
@@ -42,7 +42,7 @@ module ofHydrolab
 			else		
 				Of = Of_θΨ
 				Of_Kunsat = 0.0
-			end #  optionₘ.KsOpt
+			end #  "Ks" ∈ optim.ParamOpt
 		return Of, Of_θΨ, Of_Kunsat
 		end # function OF_WRC_KUNSAT
 
@@ -64,7 +64,7 @@ module ofHydrolab
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 		# === OF Kunsat ====
-			if optionₘ.KsOpt ||option.run.HydroLabθΨ==:Run
+			if "Ks" ∈ optim.ParamOpt ||option.run.HydroLabθΨ==:Run
 				if  "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else
@@ -86,7 +86,7 @@ module ofHydrolab
 			else		
 				Rmse = Rmse_θΨ
 				Rmse_KΨ = 0.0
-			end #  optionₘ.KsOpt
+			end #  "Ks" ∈ optim.ParamOpt
 
 	return Rmse, Rmse_KΨ, Rmse_θΨ
 	end # OF_RMSE

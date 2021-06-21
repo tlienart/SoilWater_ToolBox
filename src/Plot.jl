@@ -57,7 +57,7 @@ module plot
 						Fig_TotalPorosity = scatter!(Fig[1,1], [log1p.(cst.Mm_2_kPa .* 0.0)], [hydro.Φ[iZ]], color=:green, markersize=20, marker ='●')
 
 					# == Plot_K_Ψ  ==
-					if option.hydro.KsOpt
+					if "Ks" ∈ optim.ParamOpt
 						Axis2 = Axis(Fig[1,2], title="K(Ψ)", titlesize=24, xlabel = "ln(1 + Ψ) [kPa]", ylabel = "ln ( 1 + K (Ψ) ) [mm h⁻¹]")
 
 						xlims!(Axis2, log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Max))
@@ -397,11 +397,11 @@ module plot
 
 	# 			θ_θΨobs_Max = hydroInfilt.Φ[iZ] + 0.1
 
-	# 			if option.run.HydroLabθΨ ≠ :No && option.hydro.KsOpt
+	# 			if option.run.HydroLabθΨ ≠ :No && "Ks" ∈ optim.ParamOpt
 	# 				K_Ψ_Max = max(hydroInfilt.Ks[iZ], hydro.Ks[iZ]) * 1.1
 	# 			else
 	# 				K_Ψ_Max = hydroInfilt.Ks[iZ] * 1.1
-	# 			end #  option.hydro.KsOpt
+	# 			end #  "Ks" ∈ optim.ParamOpt
 
 	# 			for iΨ = 1:N_Se
 	# 				θ_Infilt[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydroInfilt)
@@ -411,9 +411,9 @@ module plot
 	# 				if option.run.HydroLabθΨ ≠ :No
 	# 					θ_Obs[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydro)
 
-	# 					if option.run.HydroLabθΨ ≠ :No && option.hydro.KsOpt
+	# 					if option.run.HydroLabθΨ ≠ :No && "Ks" ∈ optim.ParamOpt
 	# 						Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydro)
-	# 					end # option.hydro.KsOpt		
+	# 					end # "Ks" ∈ optim.ParamOpt		
 	# 				end # option.run.HydroLabθΨ ≠ :No
 
 	# 			end # iΨ 
@@ -446,12 +446,12 @@ module plot
 	# 					Plot_K_Ψ = Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 	# 					# Plot_K_Ψ: Sim K_Ψ
-	# 					if option.run.HydroLabθΨ ≠ :No && option.hydro.KsOpt
+	# 					if option.run.HydroLabθΨ ≠ :No && "Ks" ∈ optim.ParamOpt
 	# 						X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 	# 						Y = Kunsat_Obs[1:N_Se] .* cst.MmS_2_CmH
 	# 						Label = "Obs"
 	# 						Plots.plot!(X, Y, seriestype=:line, label=Label, color= :red, lw=2)
-	# 					end # option.hydro.KsOpt
+	# 					end # "Ks" ∈ optim.ParamOpt
 
 	# 					# General attributes
 	# 						Plots.xlabel!("\\psi [cm]")

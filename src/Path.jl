@@ -18,7 +18,7 @@ module paths
 		Infiltration_Param::String
 		Kunsat::String
 		Psd::String
-		SoilInformation::String
+		Pedological⍰::String
 		Φ::String
 		Ψθ::String
 	end # struct INPUT_SOILWATER
@@ -167,7 +167,7 @@ module paths
             Infiltration_Param = "InfiltrationParam.csv"
             Kunsat             = "KunsatH.csv"
             Psd                = "Psd.csv"
-            SoilInformation    = "SoilInformation.csv"
+            Pedological⍰    = "Pedological⍰.csv"
             Φ                  = "TotalPorosity.csv"
             Ψθ                 = "ThetaH.csv"
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,11 +181,11 @@ module paths
             Infiltration_Param = FileDataSoilhydro_Input * Infiltration_Param
             Kunsat             = FileDataSoilhydro_Input * Kunsat
             Psd                = FileDataSoilhydro_Input * Psd
-            SoilInformation    = FileDataSoilhydro_Input * SoilInformation
+            Pedological⍰    = FileDataSoilhydro_Input * Pedological⍰
             Φ                  = FileDataSoilhydro_Input * Φ
             Ψθ                 = FileDataSoilhydro_Input * Ψθ
 
-			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Psd, SoilInformation, Φ, Ψθ)		
+			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Psd, Pedological⍰, Φ, Ψθ)		
 				
 		# =============================================================
 		#		INPUT_SMAP

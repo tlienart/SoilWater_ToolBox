@@ -7,16 +7,16 @@ module options
 		HydroParam::Bool
 		Infilt::Bool
 		Kθ::Bool
+		Pedological⍰::Symbol
 		Pet::Bool
 		Pr::Bool
 		Psd::Bool
 		RockWetability::Bool
 		SimulationKosugiθΨK::Bool
 		Smap::Bool
-		SoilInformation::Bool
 		θobs::Bool
 		θΨ::Bool
-		Φmethod::Symbol
+		Φ⍰::Symbol
 	end # struct DATA
 
 	# What model wanting to run
@@ -53,7 +53,6 @@ module options
 		θsOpt::Symbol
 		θrOpt::Symbol
 		σ_2_Ψm::Symbol
-		KsOpt::Bool
 		Plot_θΨ::Bool
 		Plot_σ_Ψm::Bool
 	end
@@ -67,7 +66,6 @@ module options
 		θsOpt
 		θrOpt
 		σ_2_Ψm
-		KsOpt
 		Plot_Psd_θΨ
 		Plot_θr
 		Plot_IMP_Model
@@ -87,8 +85,7 @@ module options
 		HydroModel       
 		θsOpt            
 		θrOpt            
-		σ_2_Ψm          
-		KsOpt         
+		σ_2_Ψm               
 		Plot_Sorptivity        	
 		Plot_SeIni_Range       
 		Plot_∑Infilt           
@@ -180,21 +177,22 @@ module options
 			# 		DATA
 			#      What data do we have ?
 			# =============================================================
-            HydroParam          = false # <true> ; <false>
-            Infilt              = true # <true> ; <false>
-            Kθ                  = false # <true> ; <false>
-            Pet                 = false # <true> ; <false>
-            Pr                  = false # <true> ; <false>
-            Psd                 = true # <true> ; <false>
-            RockWetability      = true # <true> ; <false>
-            SimulationKosugiθΨK = true # <true> or <false>
-            Smap                = true # <true> ; <false>
-            SoilInformation     = true # <true> ; <false>
-            θobs                = false # <true> ; <false>
-            θΨ                  = true # <true> ; <false>
-            Φmethod             = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
+            HydroParam            = false # <true> ; <false>
+            Infilt                = true # <true> ; <false>
+            Kθ                    = true # <true> ; <false>
+				Pedological⍰ = :Core # <Core>; from traditional data set <Smap> from Smap; <No> no data available
 
-			data = DATA( HydroParam, Infilt, Kθ ,Pet ,Pr, Psd, RockWetability, SimulationKosugiθΨK, Smap, SoilInformation, θobs, θΨ,  Φmethod )
+            Pet                   = false # <true> ; <false>
+            Pr                    = false # <true> ; <false>
+            Psd                   = true # <true> ; <false>
+            RockWetability        = true # <true> ; <false>
+            SimulationKosugiθΨK   = false # <true> or <false>
+            Smap                  = true # <true> ; <false>
+            θobs                  = false # <true> ; <false>
+            θΨ                    = true # <true> ; <false>
+            Φ⍰               = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
+
+			data = DATA( HydroParam, Infilt, Kθ , Pedological⍰, Pet ,Pr, Psd, RockWetability, SimulationKosugiθΨK, Smap,  θobs, θΨ,  Φ⍰ )
 
 			# =============================================================
 			# 		DATA FROM
@@ -249,14 +247,11 @@ module options
 					θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 
-				#  Optimise Ks 
-					KsOpt         = true #  <true>* Optimize hydraulic parameters from K(Ψ); <false> 
-
 				# PLOTTING
 					Plot_θΨ   = true
 					Plot_σ_Ψm = false
 					
-				hydro = HYDRO(HydroModel, θsOpt, θrOpt, σ_2_Ψm, KsOpt, Plot_θΨ, Plot_σ_Ψm)
+				hydro = HYDRO(HydroModel, θsOpt, θrOpt, σ_2_Ψm, Plot_θΨ, Plot_σ_Ψm)
 
 
 			# =============================================================
@@ -276,7 +271,6 @@ module options
 					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
 					θrOpt           = :ParamPsd # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ  <:No> optimisation of σ & Ψm with no constraints
-					KsOpt         = false #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 
 				# PLOTTING
 					Plot_Psd_θΨ    = true # <true>  plot θΨ of PSD; <false>
@@ -286,7 +280,7 @@ module options
 				# TABLE
 					Table_Psd_θΨ_θ = true # <true> derive θ values at prescribed Ψ
 
-				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel, θsOpt, θrOpt, σ_2_Ψm, KsOpt, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
+				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel, θsOpt, θrOpt, σ_2_Ψm, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
 
 
 			# =============================================================
@@ -305,7 +299,6 @@ module options
 					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
 					θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>		
 					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
-					KsOpt         = true #  <true>* Optimize hydraulic parameters from θ(Ψ) & K(Ψ); <false>
 			
 				# Plotting
 					Plot_Sorptivity       = true # <true> or <false>	
@@ -315,7 +308,7 @@ module options
 					Plot_Sorptivity_SeIni = true # <true> computes sorptivity curves as a function of Se <false> no outputs
 
 
-				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel, θsOpt, θrOpt, σ_2_Ψm, KsOpt, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
+				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel, θsOpt, θrOpt, σ_2_Ψm, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
 
 
 			# =============================================================
