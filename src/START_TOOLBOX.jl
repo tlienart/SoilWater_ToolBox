@@ -90,21 +90,24 @@ function START_TOOLBOX()
 		# IF WE HAVE PSD DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.Psd
 				Rpart, ∑Psd, N_Psd = reading.PSD(IdSelect, N_iZ, path.inputSoilwater.Psd)
-			else
-				∑Psd = []
-				# ∑Psd = zeros(Float64, N_iZ, 1)
-				Rpart = []
-				# Rpart = zeros(Float64, N_iZ, 1)
-				# N_Psd = zeros(Float64, N_iZ)	
-				N_Psd = 0		
+			# else
+			# 	∑Psd = []
+			# 	# ∑Psd = zeros(Float64, N_iZ, 1)
+			# 	Rpart = []
+			# 	# Rpart = zeros(Float64, N_iZ, 1)
+			# 	# N_Psd = zeros(Float64, N_iZ)	
+			# 	N_Psd = 0		
 			end  # if: option.data.Psd
 
 
 		# IF WE HAVE PEDOLOGICAL⍰: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.Pedological⍰ ≠ :No
-				IsTopsoil, RockClass = reading.SOIL_INFORMATION(IdSelect, N_iZ, path.inputSoilwater.Pedological⍰)
-			end  # if: option.data.Pedological⍰
+			if option.data.Pedological⍰ == :Core
+				IsTopsoil, RockClass = reading.PEDOLOGICAL(IdSelect, N_iZ, path.inputSoilwater.Pedological⍰)
+			
+			elseif option.data.Pedological⍰ == :Smap
+				IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname = reading.smap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
 
+			end  # if: option.data.Pedological⍰
 
 
 		#--- NON CORE ----
@@ -113,10 +116,6 @@ function START_TOOLBOX()
 					rfWetable = reading.smap.ROCKFRAGMENT_WETTABLE(path.inputSmap.LookupTable_RockWetability)	
 				end  # if: option.data.RockWetability
 
-			# SMAP if we have information of Smap:
-				# if option.data.Smap
-				# 	smap = read.smap.SMAP(IdSelect_True, N_iZ, path.inputSmap.Smap)
-				# end # option.dataFrom.Smap
 
 	println("----- END READING ----------------------------------------------- \n")
 	# ------------------------END: reading---------------------------
@@ -141,9 +140,16 @@ function START_TOOLBOX()
 			end # option.data.Φ⍰ ≠ :No
 
 		# CORRECT θ(Ψ) FOR ROCK FRAGMENT
-		if option.run.RockCorection && option.rockFragment.RockInjectedIncluded==:InjectRock
-			θ_θΨobs = rockFragment.injectRock.CORECTION_θΨ!(N_iZ, N_θΨobs, RockFragment, θ_θΨobs)
-		end # if: option.rockFragment.RockInjectedIncluded == :InjectRock
+		if option.run.RockCorection
+			if option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock
+				θ_θΨobs = rockFragment.injectRock.CORECTION_θΨ!(N_iZ, N_θΨobs, RockFragment, θ_θΨobs)
+			end #  option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock
+
+			if option.rockFragment.CorrectStoneWetability
+				θ_θΨobs = rockFragment.CORECTION_θΨ_WETABLE!(N_iZ, N_θΨobs, rfWetable, RockClass, RockFragment, θ_θΨobs, Ψ_θΨobs)
+			end # option.rockFragment.CorrectStoneWetability
+		end # if:option.run.RockCorection
+
 
 		# OPTIMISING THE HYDRAULIC PARAMETERS
 		if "Ks" ∈ optim.ParamOpt
@@ -151,6 +157,7 @@ function START_TOOLBOX()
 
 		else
 			hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs, N_θΨobs=N_θΨobs, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
+
 		end # "Ks" ∈ optim.ParamOpt
 
 		# COMPUTE KS FROM Θ(Ψ)
@@ -221,22 +228,6 @@ function START_TOOLBOX()
 			else # TODO: Needs to be removed
 				N_iZ = 1
 			end # Option
-			
-
-	if option.dataFrom.Smap
-		if option.smap.CorrectStone
-			println("=\n  				~~~~ Stone correction ~~~~~ \n")
-			θ_θΨobs = rockFragment.injectRock.CORECTION_θΨ!(N_iZ, N_θΨobs, smap.RockFragment, θ_θΨobs)
-		end
-		if option.smap.CorrectStoneWetability
-			θ_θΨobs = stoneSmap.CORECTION_θΨ_WETABLE!(N_iZ, N_θΨobs, rfWetable, smap, θ_θΨobs, Ψ_θΨobs)
-		end
-
-		if option.smap.SimulationKosugiθΨK
-			N_θΨobs, θ_θΨobs, Ψ_θΨobs = reading.θψ_FILE(
-				N_iZ, N_θΨobs, param, path.tableSoilwater.TableExtraPoints_θΨ, θ_θΨobs, Ψ_θΨobs)
-		end
-	end
 
 	if option.dataFrom.Jules
 		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)

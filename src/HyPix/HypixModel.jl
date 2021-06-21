@@ -42,7 +42,7 @@ module hypixModel
 		end # option.hyPix.RootWaterUptake
 
 		# if option.hyPix.Evaporation 
-		# 	N_iEvapo = evaporation.N_IEVAPO(N_iZ, veg, Z) # Depth where evaporation can occure
+		# 	N_iEvapo = evaporation.N_IEVAPO(N_iZ, veg, Z) # Smap_Depth where evaporation can occure
 		# end # option.hyPix.Evaporation
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED

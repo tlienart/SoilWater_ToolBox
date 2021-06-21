@@ -13,7 +13,6 @@ module options
 		Psd::Bool
 		RockWetability::Bool
 		SimulationKosugiθΨK::Bool
-		Smap::Bool
 		θobs::Bool
 		θΨ::Bool
 		Φ⍰::Symbol
@@ -43,8 +42,6 @@ module options
 		DataPrivateShare::String
 	end
 	mutable struct SMAP
-		CorrectStone
-		CorrectStoneWetability
 		CombineData
 		Plot_Kunsat
 	end
@@ -71,9 +68,9 @@ module options
 		Plot_IMP_Model
 		Table_Psd_θΨ_θ
 	end
-	mutable struct  ROCKFRAGMENT
-		RockInjectedIncluded::Symbol
-		RockWetability::Bool
+	mutable struct ROCKFRAGMENT
+		CorectStoneRockWetability::Bool
+		RockInjectedIncluded⍰::Symbol
 	end
 	mutable struct INFILT
 		DataSingleDoubleRing  
@@ -172,7 +169,6 @@ module options
 
 			other = OTHER(DownloadPackage, Ploting, PlotVscode, DataPrivateShare)
 
-
 			# =============================================================
 			# 		DATA
 			#      What data do we have ?
@@ -180,19 +176,17 @@ module options
             HydroParam            = false # <true> ; <false>
             Infilt                = true # <true> ; <false>
             Kθ                    = true # <true> ; <false>
-				Pedological⍰ = :Core # <Core>; from traditional data set <Smap> from Smap; <No> no data available
-
+				Pedological⍰ 			= :Smap # <:Core>; from traditional data set <:Smap> from Smap; <No> no data available
             Pet                   = false # <true> ; <false>
             Pr                    = false # <true> ; <false>
             Psd                   = true # <true> ; <false>
             RockWetability        = true # <true> ; <false>
             SimulationKosugiθΨK   = false # <true> or <false>
-            Smap                  = true # <true> ; <false>
             θobs                  = false # <true> ; <false>
             θΨ                    = true # <true> ; <false>
-            Φ⍰               = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
+            Φ⍰               		 = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
 
-			data = DATA( HydroParam, Infilt, Kθ , Pedological⍰, Pet ,Pr, Psd, RockWetability, SimulationKosugiθΨK, Smap,  θobs, θΨ,  Φ⍰ )
+			data = DATA( HydroParam, Infilt, Kθ , Pedological⍰, Pet ,Pr, Psd, RockWetability, SimulationKosugiθΨK, θobs, θΨ,  Φ⍰ )
 
 			# =============================================================
 			# 		DATA FROM
@@ -221,22 +215,21 @@ module options
 			#	   ROCK FRAGMENT OPTIONS
 			# =============================================================
 				# Rocks options
-					RockInjectedIncluded = :InjectRock # <:InjectRock> rocks fragments are injected/forced into the fine soils; <Included> rocks are included in the bulk BulkDensity
-					RockWetability = true # <true> rocks are wettable; <false> rocks are mot wettable 
+					CorectStoneRockWetability = true # <true> rocks are wettable; <false> rocks are mot wettable 
 
-				rockFragment = ROCKFRAGMENT(RockInjectedIncluded, RockWetability)
+					RockInjectedIncluded⍰ = :InjectRock # <:InjectRock> rocks fragments are injected/forced into the fine soils; <Included> rocks are included in the bulk BulkDensity
+
+				rockFragment = ROCKFRAGMENT(CorectStoneRockWetability, RockInjectedIncluded⍰)
 				
 
 			# =============================================================
 			#		SMAP OPTIONS
 			# =============================================================
 				# Smap-Hydro options
-					CorrectStone = false # <true> or <false>
-					CorrectStoneWetability = false # <true> or <false>
 					CombineData = false # <true> or <false>
 					Plot_Kunsat = false  # <true> or <false>
 
-				smap = SMAP(CorrectStone, CorrectStoneWetability, CombineData, Plot_Kunsat)
+				smap = SMAP(CombineData, Plot_Kunsat)
 
 			# =============================================================
 			#		HYDRO OPTIONS

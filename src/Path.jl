@@ -167,7 +167,7 @@ module paths
             Infiltration_Param = "InfiltrationParam.csv"
             Kunsat             = "KunsatH.csv"
             Psd                = "Psd.csv"
-            Pedological⍰    = "Pedological⍰.csv"
+            Pedological⍰      = "Pedological.csv"
             Φ                  = "TotalPorosity.csv"
             Ψθ                 = "ThetaH.csv"
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,7 +193,7 @@ module paths
 		# =============================================================
 			# Smap input path
 				LookupTable_RockWetability = "LookupTable_RockWetability.csv"				
-				Smap                    = "Layer.csv"
+				Smap                    	= "SmapLayer.csv"
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             LookupTable_RockWetability = FileDataSoilhydro_Input * LookupTable_RockWetability

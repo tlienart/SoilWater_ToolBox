@@ -203,10 +203,11 @@ module reading
 			return Rpart, ∑Psd, N_Psd
 			end  # function: PSD
 
+
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION :SOIL_INOFRMATION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function SOIL_INFORMATION(IdSelect, N_iZ, Path)
+			function PEDOLOGICAL(IdSelect, N_iZ, Path)
 				println("    ~  $(Path) ~")
 
 				# Read data
@@ -248,9 +249,9 @@ module reading
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : θψ_FILE
+	#		FUNCTION : θψ_ADDPOINTS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θψ_FILE(N_iZ, N_θΨobs::Int64, param, Path::String, θ_θΨobs, Ψ_θΨobs)
+		function θψ_ADDPOINTS(N_iZ, N_θΨobs::Int64, param, Path::String, θ_θΨobs, Ψ_θΨobs)
 			# Read data
 				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
@@ -278,7 +279,7 @@ module reading
 					N_θΨobs[iZ] += 2
 				end		
 		return N_θΨobs, θ_θΨobs, Ψ_θΨobs
-		end  # function: θψ_FILE
+		end  # function: θψ_ADDPOINTS
 	
 
 
@@ -1017,19 +1018,7 @@ module reading
    	import Polynomials, DelimitedFiles
 		   export SMAP, ROCKFRAGMENT_WETTABLE_STRUCT
 
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION :SMAP
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			struct SMAP_STRUCT
-				Depth        ::Vector{Float64}
-				IsTopsoil    ::Vector{Int64}
-				Soilname     ::Vector{String}
-				RockFragment ::Vector{Float64}
-				RockClass    ::Vector{String}
-				RockDepth    ::Vector{Float64}
-				MaxRootingDepth ::Vector{Float64}
-			end
-			function SMAP(IdSelect_True, N_iZ, Path)
+			function SMAP(IdSelect, N_iZ, Path)
 				println("    ~  $(Path) ~")
 
 				# Read data
@@ -1041,31 +1030,38 @@ module reading
 				# Sort data
 					Data = sortslices(Data, dims=1)
 				
-				IsTopsoil, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "IsTopsoil")
-				IsTopsoil = 	Int64.(IsTopsoil[IdSelect_True])
+				IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ, N_Point_Max=1)
+				IsTopsoil = 	Int64.(IsTopsoil[1:N_iZ])
 
-				Soilname, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
-				Soilname = Soilname[IdSelect_True] # Selecting the data
+				Soilname, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Soilname", N_iZ, N_Point_Max=1)
+			
+				RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ, N_Point_Max=1)
+				
+				Smap_Depth, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "depth_mm", N_iZ, N_Point_Max=1)
 
-				RockClass, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockClass")
-				RockClass = RockClass[IdSelect_True] # Selecting the data
+				RockFragment, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Stone_Prop", N_iZ, N_Point_Max=1)
 
-				Depth, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "depth_mm")
-				Depth = Float64.(Depth[IdSelect_True]) # Selecting the data
+				Smap_RockDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockDepth_mm", N_iZ, N_Point_Max=1)
 
-				RockFragment, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Stone_Prop")
-				RockFragment = Float64.(RockFragment[IdSelect_True]) # Selecting the data
+				Smap_MaxRootingDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "MaxRootingDepth_mm", N_iZ, N_Point_Max=1)
 
-				RockDepth, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockDepth_mm")
-				RockDepth = Float64.(RockDepth[IdSelect_True]) # Selecting the data
-
-				MaxRootingDepth, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "MaxRootingDepth_mm")
-				MaxRootingDepth = Float64.(MaxRootingDepth[IdSelect_True]) # Selecting the data
-
-				smap = SMAP_STRUCT(Depth, IsTopsoil, Soilname, RockFragment, RockClass, RockDepth, MaxRootingDepth)			
-			return smap
+				# smap = SMAP_STRUCT(Smap_Depth, IsTopsoil, Soilname, RockFragment, RockClass, Smap_RockDepth, Smap_MaxRootingDepth)			
+			return IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname
 			end  # function: SMAP
 
+
+		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# #		FUNCTION :SMAP
+		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# 	struct SMAP_STRUCT
+		# 		Smap_Depth        ::Vector{Float64}
+		# 		IsTopsoil    ::Vector{Int64}
+		# 		Soilname     ::Vector{String}
+		# 		RockFragment ::Vector{Float64}
+		# 		RockClass    ::Vector{String}
+		# 		Smap_RockDepth    ::Vector{Float64}
+		# 		Smap_MaxRootingDepth ::Vector{Float64}
+		# 	end
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ROCKFRAGMENT_WETTABLE
@@ -1095,12 +1091,13 @@ module reading
 					
 					N_RockClass = length(RockClass_Unique)
 
-					# Dictionary
+				# Dictionary
 					RockClass_Dict = Dict("a"=>9999)
 					for i=1:N_RockClass
 						RockClass_Dict[RockClass_Unique[i]] = i
 					end
 
+				# Read data
 					Ψ₂, N₂ = tool.readWrite.READ_HEADER_FAST(Data, Header, "H[mm]")
 					θ₂, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Theta[0-1]") 
 
@@ -1139,7 +1136,71 @@ module reading
 			end  # function: ROCKFRAGMENT_WETTABLE
 		
 	end  # module: smap
-	# ............................................................
+	# ...........................................................
+	
+	module nsdr
+	   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #		FUNCTION : θψLAB_2D_2_1D
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function θψLAB_2D_2_1D(Path)
+				println("    ~  $(Path) ~")
 
+				# Read data
+					Data = DelimitedFiles.readdlm(Path, ',')
+				# Read header
+					Header = Data[1,1:end]
+				# Remove first READ_ROW_SELECT
+					Data = Data[2:end,begin:end]
+				# Sort data
+					Data = sortslices(Data, dims=1)
+
+				# Read data of interest
+					Id₂, N_iZ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
+
+					Soilname₂, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
+
+					Ψdata = []
+					θData = []
+					for iHeader in Header
+						if occursin("wrc", iHeader)
+							θ₀, N_iZ = tool.readWrite.READ_HEADER_FAST(Data, Header, iHeader)
+
+							iHeader = replace(iHeader, "wrc" => "")
+							iHeader = replace(iHeader, "kpa" => "")
+							iHeader = replace(iHeader, " " => "")
+							iHeader_Float=  parse(Float64, iHeader)
+
+							iHeader_Float = iHeader_Float * cst.kPa_2_Mm
+
+							append!(Ψdata, iHeader_Float)
+
+							try
+								θData = hcat(θData[1:N_iZ, :], θ₀[1:N_iZ])
+							catch
+								θData = θ₀[1:N_iZ]
+							end
+						end # occursin("wrc", iHeader)
+					end # for iHeader in Header
+
+					θ_θΨobs₂ = zeros(Float64, N_iZ, length(Ψdata))
+					Ψ_θΨobs₂ = zeros(Float64, N_iZ, length(Ψdata))
+					N_θΨobs₂ = zeros(Int64, N_iZ)
+	
+					for iZ=1:N_iZ
+						iΨ_Count = 1
+						for iΨ=1:length(Ψdata)
+							if !isnan(θData[iZ, iΨ])
+								Ψ_θΨobs₂[iZ, iΨ_Count] = Ψdata[iΨ]
+								θ_θΨobs₂[iZ, iΨ_Count] = θData[iZ, iΨ]
+								N_θΨobs₂[iZ] += 1
+								iΨ_Count += 1
+							end #  !isnan(θData[iZ, iΨ])
+						end # iΨ
+					end # iZ
+
+			return Id₂, N_θΨobs₂, Soilname₂, θ_θΨobs₂, Ψ_θΨobs₂
+		end  # function: θψLAB_2D_2_1D
+		
+	end
 end  # module: reading
 # ............................................................		

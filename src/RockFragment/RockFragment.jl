@@ -8,10 +8,10 @@ module rockFragment
 	#		FUNCTION :  ρᵦ_2_Φ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
-			if option.rockFragment.RockInjectedIncluded == :InjectRock
+			if option.rockFragment.RockInjectedIncluded⍰  == :InjectRock
 				return Φ = rockFragment.injectRock.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
 
-			elseif option.rockFragment.RockInjectedIncluded == :Included
+			elseif option.rockFragment.RockInjectedIncluded⍰  == :Included
 				return Φ = rockFragment.included.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
 			end
 		end  # function: function ρᵦ_2_Φ
@@ -20,21 +20,19 @@ module rockFragment
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : STONECORRECTION_WETABLE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function CORECTION_θΨ_WETABLE!(N_SoilSelect, N_θΨ, rfWetable, smap, θ_θΨ, Ψ_θΨ)
-			for iZ = 1:N_SoilSelect
-				
-				iRockClass = rfWetable.RockClass_Dict[smap.RockClass[iZ]]
+		function CORECTION_θΨ_WETABLE!(N_iZ, N_θΨobs, rfWetable, RockClass, RockFragment, θ_θΨobs, Ψ_θΨobs)
+			for iZ = 1:N_iZ	
+				iRockClass = rfWetable.RockClass_Dict[RockClass[iZ]]
 
 				WettableFunction = Polynomials.Polynomial(rfWetable.RockClass_Polynomial_Array[iRockClass][1])
 
-				for iθ=1:N_θΨ[iZ]
-					θ_Wettable = WettableFunction(log1p(Ψ_θΨ[iZ,iθ]))
+				for iθ=1:N_θΨobs[iZ]
+					θ_Wettable = WettableFunction(log1p(Ψ_θΨobs[iZ,iθ]))
 
-					θ_θΨ[iZ,iθ] =  θ_θΨ[iZ,iθ] + θ_Wettable * smap.RockFragment[iZ]
-				end # for iθ=1:N_θΨ[iZ]
-			end #  for iZ = 1:N_SoilSelect
-			
-		return  θ_θΨ
+					θ_θΨobs[iZ,iθ] =  θ_θΨobs[iZ,iθ] + θ_Wettable * RockFragment[iZ]
+				end # for iθ=1:N_θΨobs[iZ]
+			end #  for iZ = 1:N_iZ			
+		return  θ_θΨobs
 		end  # function: STONECORRECTION_NONEWETABLE
 	
 
@@ -56,6 +54,7 @@ module rockFragment
 			return  θ_θΨobs
 			end  # function: STONECORRECTION_NONEWETABLE
 
+			
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION :  CORECTION_Φ!
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

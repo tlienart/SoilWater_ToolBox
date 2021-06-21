@@ -22,12 +22,12 @@ module tableSmap
 
                FieldName_String = vcat(FieldName_String, FieldName_String2)
 
-               pushfirst!(FieldName_String, string("Depth"))
+               pushfirst!(FieldName_String, string("Smap_Depth"))
                pushfirst!(FieldName_String, string("SoilName"))
                pushfirst!(FieldName_String, string("Id")) 
                push!(FieldName_String, string("KunsatModel"))
                
-            CSV.write(Path, Tables.table([IdSelect smap.Soilname[1:N_iZ] smap.Depth[1:N_iZ] Matrix]), header=FieldName_String )
+            CSV.write(Path, Tables.table([IdSelect smap.Soilname[1:N_iZ] smap.Smap_Depth[1:N_iZ] Matrix]), header=FieldName_String )
       
          return nothing
          end  # function:  θΨK
@@ -240,7 +240,7 @@ module tableSmap
 
          
       # COMBINING OUTPUTS   
-         Output = Tables.table([string.(IdSelect[1:N_iZ]) smap.Soilname[1:N_iZ] smap.Depth[1:N_iZ] smap.IsTopsoil[1:N_iZ] smap.RockFragment[1:N_iZ] smap.RockDepth[1:N_iZ] smap.MaxRootingDepth[1:N_iZ] Data[1:N_iZ,:]])
+         Output = Tables.table([string.(IdSelect[1:N_iZ]) smap.Soilname[1:N_iZ] smap.Smap_Depth[1:N_iZ] smap.IsTopsoil[1:N_iZ] smap.RockFragment[1:N_iZ] smap.Smap_RockDepth[1:N_iZ] smap.Smap_MaxRootingDepth[1:N_iZ] Data[1:N_iZ,:]])
       
          CSV.write(path.Table_Smap, Output, header=Header)	
 

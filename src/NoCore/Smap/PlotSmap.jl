@@ -111,9 +111,9 @@ module plotSmap
                   end # iΨ
 
                # == Title == 
-                  Title = smap.Soilname[iZ]  * "_" * string(Int64(floor(smap.Depth[iZ]))) * "_" * string(option.hydro.HydroModel)
+                  Title = smap.Soilname[iZ]  * "_" * string(Int64(floor(smap.Smap_Depth[iZ]))) * "_" * string(option.hydro.HydroModel)
 
-                  Title = smap.Soilname[iZ]  * "  " * string(Int64(floor(smap.Depth[iZ]))) * " mm"
+                  Title = smap.Soilname[iZ]  * "  " * string(Int64(floor(smap.Smap_Depth[iZ]))) * " mm"
                   # Title = Title  * "_" * string(option.hydro.σ_2_Ψm)
 
       
