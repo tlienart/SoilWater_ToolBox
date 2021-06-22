@@ -71,12 +71,12 @@ function START_TOOLBOX()
 
 			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi 
 				try
-					@info "\n	*** Reading K(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
-					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
+					@info "\n	*** Reading K(Ψ) data from $(path.tableSoilwater.TableComplete_KΨ) *** \n"
+					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_KΨ)
 				catch
 					@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi => Kosugi simulation not performed yet! *** \n"
 					if "Ks" ∈ optim.ParamOpt
-						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
+						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.Table_KΨ)
 					end
 				end # catch
 			end  # if: Kθ			
@@ -301,7 +301,7 @@ function START_TOOLBOX()
 
 			# When optimising other model than Kosugi we do not have a model for σ_2_Ψm⍰. Therefore we assume that θ(Ψ) and K(θ) derived by Kosugi from very dry to very wet are physical points
 			if option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained
-				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.Table_KΨ)
+				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.TableComplete_KΨ)
 		
 				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
 			end # if: option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰ == :Constrained
