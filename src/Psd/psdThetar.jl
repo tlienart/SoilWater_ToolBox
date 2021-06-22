@@ -13,7 +13,7 @@ module psdThetar
 
 				Err_θr_Psd = zeros(Float64, N_iZ)
 
-				if option.psd.Psd_2_θr==:Opt && option.run.HydroLabθΨ ≠ :No
+				if option.psd.Psd_2_θr==:Opt && option.run.HydroLabθΨ⍰ ≠ :No
 					paramPsd = OPTIMIZE_PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, param, paramPsd)
 							
 				elseif option.psd.Psd_2_θr == :ParamPsd # <>=<>=<>=<>=<>
@@ -42,7 +42,7 @@ module psdThetar
 					end
 
 				# STATISTICS
-					if option.psd.Psd_2_θr==:Opt && option.run.HydroLabθΨ ≠ :No
+					if option.psd.Psd_2_θr==:Opt && option.run.HydroLabθΨ⍰ ≠ :No
 						Nse_θr_Psd = stats.NASH_SUTCLIFFE_EFFICIENCY(;Obs=hydro.θr[1:N_iZ], Sim=paramPsd.θr_Psd[1:N_iZ])
 
 						for iZ=1:N_iZ

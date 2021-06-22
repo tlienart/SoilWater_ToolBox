@@ -24,11 +24,9 @@ module params
 		θs_θsMacMat
 		ΨmacMat
 		Ψ_Max
-		TableExtraPoints_θΨ
 		TableComplete_θΨ
 		K_Table
 		kg::KG
-		smap::SMAPS
 	end
 
 		mutable struct IMP
@@ -142,7 +140,8 @@ module params
 			hydro::HYDROS
 			psd::PSDS
 			infilt::INFILTS
-			hyPix::HYPIXS 
+			hyPix::HYPIXS
+			smap::SMAPS 
 		end
 
 	#__________________________________________________________________
@@ -177,8 +176,6 @@ module params
 			Ψ_Max  = 160_000.0 # [mm] min value is 150000 mm and oven dry would be the best value 
 			
 		# Output in tables
-			TableExtraPoints_θΨ = [100.0, 250000.0] # mm
-
 			TableComplete_θΨ = [0.0, 10.0, 50.0, 100.0, 500.0, 1000.0, 2000.0, 3300.0, 4000.0, 5000.0,100_00.0, 500_00.0, 1000_00.0, 1500_00.0,  2000_00.0] # mm
 
 			K_Table =  [0.0, 10.0, 100.0, 500.0, 1000.0, 2000.0, 4000.0, 10000.0] # mm
@@ -197,12 +194,14 @@ module params
 				# ∇_θsMacMat_Max = 1.0
 
 			# relationship between σ and Ψm
-			# Parameters describing the option.σ_2_Ψm = # <:Constrained> which computes Ψm_Min, Ψm_Max from σ
+			# Parameters describing the option.σ_2_Ψm⍰ = # <:Constrained> which computes Ψm_Min, Ψm_Max from σ
 				Ψσ_Min =  ΨmMac # 1.0 [mm]
 				Ψσ_Max =  ΨmacMat # [mm]
-				Ψσ = exp((log(Ψσ_Min) + log(Ψσ_Max)) / 2.0)  # 1.0 # [mm] used if option.σ_2_Ψm = # <:UniqueRelationship> 
+				Ψσ = exp((log(Ψσ_Min) + log(Ψσ_Max)) / 2.0)  # 1.0 # [mm] used if option.σ_2_Ψm⍰ = # <:UniqueRelationship> 
 
-		kg = KG(Ψσ_Min, Ψσ_Max, Ψσ)
+			kg = KG(Ψσ_Min, Ψσ_Max, Ψσ)
+		
+		hydro = HYDROS(Coeff_Φ_2_θs, θs_θsMacMat, ΨmacMat, Ψ_Max, TableComplete_θΨ, K_Table, kg)
 	
 		#----------------------
 		#		smap parameters
@@ -211,7 +210,6 @@ module params
 
 		smap = SMAPS(Ψ_Table)
 
-		hydro = HYDROS(Coeff_Φ_2_θs, θs_θsMacMat, ΨmacMat, Ψ_Max, TableExtraPoints_θΨ, TableComplete_θΨ, K_Table, kg, smap)
 	
 
 	# =============================================================
@@ -379,7 +377,7 @@ module params
 	# =============================================================
 	#		PARAMETERS
 	# =============================================================
-		param = PARAM(globalparam, hydro, psd, infilt, hyPix)
+		param = PARAM(globalparam, hydro, psd, infilt, hyPix, smap)
 
 	return param
 	end # param

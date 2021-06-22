@@ -64,7 +64,7 @@ module ofHydrolab
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 		# === OF Kunsat ====
-			if "Ks" ∈ optim.ParamOpt ||option.run.HydroLabθΨ==:Run
+			if "Ks" ∈ optim.ParamOpt ||option.run.HydroLabθΨ⍰==:Run
 				if  "Ks" ∈ optim.ParamOpt
 					iStart = 1
 				else

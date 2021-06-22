@@ -76,12 +76,12 @@ module hypixOpt
 			ParamOpt_Max₂ = copy(optim.ParamOpt_Max)
 
 			# Making sure that for constrained optimisation Ψm is between 0 & 1
-			if (option.hyPix.σ_2_Ψm==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
+			if (option.hyPix.σ_2_Ψm⍰==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
 				iψm = findfirst(isequal("Ψm"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iψm] = 0.0
 				ParamOpt_Max₂[iψm] = 1.0
-			end # option.hyPix.σ_2_Ψm==:Constrained
+			end # option.hyPix.σ_2_Ψm⍰==:Constrained
 
 			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt ≠ :No)
 				iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
@@ -140,7 +140,7 @@ module hypixOpt
 			# ==================== SPECIAL CASE ====================
 
 			# RELATIONSHIP BETWEEN σ AND Ψm
-			if (option.hyPix.σ_2_Ψm ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
+			if (option.hyPix.σ_2_Ψm⍰ ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
 		
 				# <>=<>=<>=<>=<>=<> Horizons wanting to optimize the selected hydraulic parameter
 					iParam = findfirst(isequal("σ"), optim.ParamOpt)[1]
@@ -154,7 +154,7 @@ module hypixOpt
 					for iZ = iHorizon_Start:iHorizon_End
 						hydroHorizon.Ψm[iZ] = hydroHorizon.Ψm[iHorizon_Start]
 					end  # for iZ
-			end # option.hyPix.σ_2_Ψm ≠ :No
+			end # option.hyPix.σ_2_Ψm⍰ ≠ :No
 
 			#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
 				if option.hyPix.σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)

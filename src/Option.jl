@@ -20,19 +20,18 @@ module options
 
 	# What model wanting to run
 	mutable struct RUN
-		ChangeHydroModel::Bool
-		IntergranularMixingPsd::Bool
-		HydroLabθΨ::Symbol
-		InfiltBest::Bool
-		RockCorection::Bool
-		Temporary::Bool
-
-		Hypix::Bool
+      ChangeHydroModel::Bool
+      HydroLabθΨ⍰::Symbol
+      Hypix::Bool
+      InfiltBest::Bool
+      IntergranularMixingPsd ::Bool
+      RockCorection::Bool
+		Smap::Bool
+      Temporary::Bool
 	end
 
 	# How to input the data
 	mutable struct DATAFROM
-		Smap::Bool
 		Jules::Bool
 	end
 	mutable struct OTHER
@@ -42,14 +41,14 @@ module options
 		DataPrivateShare::String
 	end
 	mutable struct SMAP
-		CombineData
 		Plot_Kunsat
 	end
 	mutable struct HYDRO
-		HydroModel::Symbol
-		θsOpt::Symbol
-		θrOpt::Symbol
-		σ_2_Ψm::Symbol
+		HydroModel⍰::Symbol
+		HydroModel_List::Vector{Symbol}
+		θsOpt⍰::Symbol
+		θrOpt⍰::Symbol
+		σ_2_Ψm⍰::Symbol
 		Plot_θΨ::Bool
 		Plot_σ_Ψm::Bool
 	end
@@ -59,10 +58,10 @@ module options
 		Psd_2_θr
 		∑Psd_2_ξ1
 		HydroParam
-		HydroModel
-		θsOpt
-		θrOpt
-		σ_2_Ψm
+		HydroModel⍰
+		θsOpt⍰
+		θrOpt⍰
+		σ_2_Ψm⍰
 		Plot_Psd_θΨ
 		Plot_θr
 		Plot_IMP_Model
@@ -79,10 +78,10 @@ module options
 		SortivityVersion     
 		SorptivitySplitModel  
 		SorptivityModel      
-		HydroModel       
-		θsOpt            
-		θrOpt            
-		σ_2_Ψm               
+		HydroModel⍰       
+		θsOpt⍰            
+		θrOpt⍰            
+		σ_2_Ψm⍰               
 		Plot_Sorptivity        	
 		Plot_SeIni_Range       
 		Plot_∑Infilt           
@@ -105,7 +104,7 @@ module options
 		Flag_ReRun
 		Qbottom_Correction
 		Lai_2_SintMax
-		σ_2_Ψm
+		σ_2_Ψm⍰
 		σ_2_θr
 		θs_Opt
 		Optimisation::Bool
@@ -181,7 +180,7 @@ module options
             Pr                    = false # <true> ; <false>
             Psd                   = true # <true> ; <false>
             RockWetability        = true # <true> ; <false>
-            SimulationKosugiθΨK   = false # <true> or <false>
+            SimulationKosugiθΨK   = true # <true> or <false>
             θobs                  = false # <true> ; <false>
             θΨ                    = true # <true> ; <false>
             Φ⍰               		 = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
@@ -192,31 +191,30 @@ module options
 			# 		DATA FROM
 			#      How to read data ?
 			# =============================================================
-				Smap = false
 				Jules = false
 
-			dataFrom = DATAFROM(Smap, Jules)
+			dataFrom = DATAFROM(Jules)
 
 			# =============================================================
 			# 		RUN
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false
-            IntergranularMixingPsd = false
-            HydroLabθΨ             = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            InfiltBest             = false
+            HydroLabθΨ⍰           = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
+            Hypix                  = false # <true>; <false>
+            InfiltBest             = false # <true>; <false>
+            IntergranularMixingPsd = false # <true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
-            Temporary              = false
-            Hypix                  = false
+            Smap             = true  # <true>; <false>
+            Temporary              = false # <true>; <false>
 
-			run = RUN(ChangeHydroModel, IntergranularMixingPsd,HydroLabθΨ,	InfiltBest,	RockCorection, Temporary, Hypix)
+			run = RUN(ChangeHydroModel, HydroLabθΨ⍰, Hypix, InfiltBest, IntergranularMixingPsd, RockCorection, Smap, Temporary)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
 			# =============================================================
 				# Rocks options
 					CorectStoneRockWetability = true # <true> rocks are wettable; <false> rocks are mot wettable 
-
 					RockInjectedIncluded⍰ = :InjectRock # <:InjectRock> rocks fragments are injected/forced into the fine soils; <Included> rocks are included in the bulk BulkDensity
 
 				rockFragment = ROCKFRAGMENT(CorectStoneRockWetability, RockInjectedIncluded⍰)
@@ -226,25 +224,25 @@ module options
 			#		SMAP OPTIONS
 			# =============================================================
 				# Smap-Hydro options
-					CombineData = false # <true> or <false>
 					Plot_Kunsat = false  # <true> or <false>
 
-				smap = SMAP(CombineData, Plot_Kunsat)
+				smap = SMAP(Plot_Kunsat)
 
 			# =============================================================
 			#		HYDRO OPTIONS
 			# =============================================================
 				# Hydraulic model
-					HydroModel      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
-					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
-					θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
-					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
+				HydroModel⍰      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
+				HydroModel_List = [:Kosugi; :Vangenuchten; :BrooksCorey; :ClappHornberger; :VangenuchtenJules]
+					θsOpt⍰           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
+					θrOpt⍰           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
+					σ_2_Ψm⍰          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 
 				# PLOTTING
 					Plot_θΨ   = true
 					Plot_σ_Ψm = false
 					
-				hydro = HYDRO(HydroModel, θsOpt, θrOpt, σ_2_Ψm, Plot_θΨ, Plot_σ_Ψm)
+				hydro = HYDRO(HydroModel⍰, HydroModel_List, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_θΨ, Plot_σ_Ψm)
 
 
 			# =============================================================
@@ -260,10 +258,10 @@ module options
 					
 				# Fitting the psd function to a hydraulic model			
 					HydroParam      = true # <true> Optimize the hydraulic parameters from θ(Ψ)psd OR <false>
-					HydroModel      = :Kosugi 		# <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>
-					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
-					θrOpt           = :ParamPsd # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>
-					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ  <:No> optimisation of σ & Ψm with no constraints
+					HydroModel⍰      = :Kosugi 		# <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>
+					θsOpt⍰           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
+					θrOpt⍰           = :ParamPsd # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>
+					σ_2_Ψm⍰          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ  <:No> optimisation of σ & Ψm with no constraints
 
 				# PLOTTING
 					Plot_Psd_θΨ    = true # <true>  plot θΨ of PSD; <false>
@@ -273,7 +271,7 @@ module options
 				# TABLE
 					Table_Psd_θΨ_θ = true # <true> derive θ values at prescribed Ψ
 
-				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel, θsOpt, θrOpt, σ_2_Ψm, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
+				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
 
 
 			# =============================================================
@@ -288,10 +286,10 @@ module options
 					SorptivityModel      = :Parlange # <:Parlange> strong non-linear diffusivity;  <:Crank> constant diffusivity; <:Philip_Knight> dirac delta-function diffusivity; <:Brutsaert> moderate non-linear diffusivity,
 				
 				# Deriving hydraulic parameters from infiltration tests
-					HydroModel      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>
-					θsOpt           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
-					θrOpt           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>		
-					σ_2_Ψm          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
+					HydroModel⍰      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>
+					θsOpt⍰           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs;
+					θrOpt⍰           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>		
+					σ_2_Ψm⍰          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 			
 				# Plotting
 					Plot_Sorptivity       = true # <true> or <false>	
@@ -301,7 +299,7 @@ module options
 					Plot_Sorptivity_SeIni = true # <true> computes sorptivity curves as a function of Se <false> no outputs
 
 
-				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel, θsOpt, θrOpt, σ_2_Ψm, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
+				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
 
 
 			# =============================================================
@@ -338,7 +336,7 @@ module options
 					Lai_2_SintMax = false # <true> derive Sint_Sat from LAI_2_SINTMAX; <false> derive from input file
 
 				# Step wise optimization
-					σ_2_Ψm = :No  # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
+					σ_2_Ψm⍰ = :No  # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 					σ_2_θr = true # <true> derive θr from σ <false>
 					θs_Opt = :No #  <:θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 
@@ -376,7 +374,7 @@ module options
 						Plot_WaterBalance = true
 						Plot_ΔT           = true
 
-			hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm, σ_2_θr, θs_Opt, Optimisation, θobs,θobs_Average, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
+			hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm⍰, σ_2_θr, θs_Opt, Optimisation, θobs,θobs_Average, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
 
 
 			# =============================================================

@@ -6,16 +6,16 @@ module kunsat
 	#		FUNCTION : Ψ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				return Kunsat = kunsat.kg.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :Vangenuchten ||  optionₘ.HydroModel == :VangenuchtenJules
+			elseif  optionₘ.HydroModel⍰ == :Vangenuchten ||  optionₘ.HydroModel⍰ == :VangenuchtenJules
 				return Kunsat = kunsat.vg.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :BrooksCorey
+			elseif  optionₘ.HydroModel⍰ == :BrooksCorey
 				return Kunsat = kunsat.bc.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :ClappHornberger
+			elseif  optionₘ.HydroModel⍰ == :ClappHornberger
 				return Kunsat = kunsat.ch.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for Ψ_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for Ψ_2_KUNSAT is not yet available")
 			end
 		end # function Ψ_2_KUNSAT
 
@@ -24,10 +24,10 @@ module kunsat
 	#		FUNCTION : ΨSE_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam)
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				return Kunsat = kunsat.kg.ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for ΨSE_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for ΨSE_2_KUNSAT is not yet available")
 			end
 		end # function Ψ_2_KUNSAT
 
@@ -36,11 +36,11 @@ module kunsat
 	#		FUNCTION : θ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function θ_2_KUNSAT(optionₘ, θ₁, iZ::Int64, hydroParam)
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				Se = wrc.θ_2_Se(θ₁, iZ, hydroParam)
 				return Kunsat = Se_2_KUNSAT(optionₘ, Se, iZ, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for θ_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for θ_2_KUNSAT is not yet available")
 			end
 		end # function θ_2_KUNSAT
 
@@ -51,16 +51,16 @@ module kunsat
 	  function Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
 			Se = max(min(Se, 1.0), 0.0)
 
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				return Kunsat = kunsat.kg.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :Vangenuchten
+			elseif  optionₘ.HydroModel⍰ == :Vangenuchten
 				return Kunsat = kunsat.vg.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :BrooksCorey
+			elseif  optionₘ.HydroModel⍰ == :BrooksCorey
 				return Kunsat = kunsat.bc.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :ClappHornberger
+			elseif  optionₘ.HydroModel⍰ == :ClappHornberger
 				return Kunsat = kunsat.ch.Se_2_KUNSAT(optionₘ, Se, iZ::Int64, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for Se_2_KUNSAT is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for Se_2_KUNSAT is not yet available")
 			end
 		end # function Se_2_KUNSAT
 	
@@ -71,10 +71,10 @@ module kunsat
 	  function Se_2_KR(optionₘ, Se, iZ::Int64, hydroParam)
 			Se = max(min(Se, 1.0), 0.0)
 
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				return Kunsat = kunsat.kg.Se_2_KR(optionₘ, Se, iZ::Int64, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for Se_2_KR is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for Se_2_KR is not yet available")
 			end
 		end # function Se_2_KUNSAT
 
@@ -83,16 +83,16 @@ module kunsat
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function ∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				return ∂Kunsat = kunsat.kg.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :Vangenuchten
+			elseif  optionₘ.HydroModel⍰ == :Vangenuchten
 				return ∂Kunsat = kunsat.vg.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :BrooksCorey
+			elseif  optionₘ.HydroModel⍰ == :BrooksCorey
 				return ∂Kunsat = kunsat.bc.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif  optionₘ.HydroModel == :ClappHornberger
+			elseif  optionₘ.HydroModel⍰ == :ClappHornberger
 				return ∂Kunsat = kunsat.ch.∂K∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for ∂K∂Ψ is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for ∂K∂Ψ is not yet available")
 			end
 		end # function ∂K∂Ψ
 
@@ -101,10 +101,10 @@ module kunsat
 	#		FUNCTION : ∂K∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function ∂K∂θ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			if  optionₘ.HydroModel == :Kosugi
+			if  optionₘ.HydroModel⍰ == :Kosugi
 				return ∂Kunsat = kunsat.kg.∂K∂θ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$( optionₘ.HydroModel) model for ∂K∂θ is not yet available")
+				error("$( optionₘ.HydroModel⍰) model for ∂K∂θ is not yet available")
 			end
 		end
 

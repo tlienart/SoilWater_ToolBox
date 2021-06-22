@@ -240,7 +240,7 @@ module plot
 
 
 	# 			Plot = Plots.plot(Plot_∑Psd_Rpart, Plot_Rpart_Psd, Plot_NormMixing_Rpart, layout = (3,1))
-	# 			Path = Path * "IMP_" * string(option.hydro.HydroModel) * "_" *string(IdSelect[iZ]) * ".svg"
+	# 			Path = Path * "IMP_" * string(option.hydro.HydroModel⍰) * "_" *string(IdSelect[iZ]) * ".svg"
 	# 			Plots.savefig(Plot, Path)
 	# 			println("    ~  $(Path) ~")
 	# 		end # for iZ
@@ -286,7 +286,7 @@ module plot
 	# 				Plot_θ_Ψ_Psd = Plots.plot!(X ,Y, seriestype=:scatter, label=Label, color= :violet, shape= :circle, markersize=4)
 
 	# 			# Plot_θ_Ψ: Observed
-	# 			if option.run.HydroLabθΨ ≠ :No 
+	# 			if option.run.HydroLabθΨ⍰ ≠ :No 
 	# 				X = Ψ_θΨobs[iZ,1:N_θΨobs[iZ]] .* cst.Mm_2_Cm
 	# 				Y = θ_θΨobs[iZ,1:N_θΨobs[iZ]]
 	# 				Label = "LabObs"
@@ -307,7 +307,7 @@ module plot
 	# 				ylabel!(L"\theta \ [cm^3 cm^{-3}]")
 	# 				Plots.plot!(xlims =(Ψ_θΨobs_Min*cst.Mm_2_Cm, Ψ_θΨobs_Max*cst.Mm_2_Cm), ylims =(0.0, θ_θΨobs_Max), xscale= :log10, size=(800,400))
 
-	# 			Path = Path * "Psd_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(IdSelect[iZ]) * ".svg"     
+	# 			Path = Path * "Psd_ThetaH_" * string(option.hydro.HydroModel⍰) * "_" *string(IdSelect[iZ]) * ".svg"     
 	# 			Plot = Plots.plot(Plot_θ_Ψ_Psd)
 	# 			Plots.savefig(Plot, Path)
 	# 			println("    ~  $(Path) ~")
@@ -397,7 +397,7 @@ module plot
 
 	# 			θ_θΨobs_Max = hydroInfilt.Φ[iZ] + 0.1
 
-	# 			if option.run.HydroLabθΨ ≠ :No && "Ks" ∈ optim.ParamOpt
+	# 			if option.run.HydroLabθΨ⍰ ≠ :No && "Ks" ∈ optim.ParamOpt
 	# 				K_Ψ_Max = max(hydroInfilt.Ks[iZ], hydro.Ks[iZ]) * 1.1
 	# 			else
 	# 				K_Ψ_Max = hydroInfilt.Ks[iZ] * 1.1
@@ -408,13 +408,13 @@ module plot
 
 	# 				Kunsat_Infilt[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydroInfilt)
 
-	# 				if option.run.HydroLabθΨ ≠ :No
+	# 				if option.run.HydroLabθΨ⍰ ≠ :No
 	# 					θ_Obs[iΨ] = wrc.Ψ_2_θDual(optionₘ,Ψ[iΨ], iZ, hydro)
 
-	# 					if option.run.HydroLabθΨ ≠ :No && "Ks" ∈ optim.ParamOpt
+	# 					if option.run.HydroLabθΨ⍰ ≠ :No && "Ks" ∈ optim.ParamOpt
 	# 						Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ[iΨ], iZ, hydro)
 	# 					end # "Ks" ∈ optim.ParamOpt		
-	# 				end # option.run.HydroLabθΨ ≠ :No
+	# 				end # option.run.HydroLabθΨ⍰ ≠ :No
 
 	# 			end # iΨ 
 
@@ -426,12 +426,12 @@ module plot
 	# 					Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 	# 				# Plot_θ_Ψ: Observed
-	# 				if option.run.HydroLabθΨ ≠ :No
+	# 				if option.run.HydroLabθΨ⍰ ≠ :No
 	# 					X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 	# 					Y = θ_Obs[1:N_Se]
 	# 					Label = "Obs"
 	# 					Plot_θ_Ψ = Plots.plot!(X ,Y, seriestype=:line, label=Label, color= :red, lw=2)
-	# 				end # option.run.HydroLabθΨ ≠ :No
+	# 				end # option.run.HydroLabθΨ⍰ ≠ :No
 
 	# 				# Plot_θ_Ψ: General attributes
 	# 					Plots.xlabel!("\\psi [cm]")
@@ -446,7 +446,7 @@ module plot
 	# 					Plot_K_Ψ = Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 	# 					# Plot_K_Ψ: Sim K_Ψ
-	# 					if option.run.HydroLabθΨ ≠ :No && "Ks" ∈ optim.ParamOpt
+	# 					if option.run.HydroLabθΨ⍰ ≠ :No && "Ks" ∈ optim.ParamOpt
 	# 						X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 	# 						Y = Kunsat_Obs[1:N_Se] .* cst.MmS_2_CmH
 	# 						Label = "Obs"
@@ -458,7 +458,7 @@ module plot
 	# 						Plots.ylabel!(L" K (\psi) \ [cm \ h^{-1}]")
 	# 						Plots.plot!(xlims = (Ψ_θΨobs_Min*cst.Mm_2_Cm, Ψ_θΨobs_Max*cst.Mm_2_Cm), ylims = (10^-2.0, K_Ψ_Max * cst.MmS_2_CmH), xscale= :log10,  yscale= :log10, legend=:bottomleft, size=(800,400))
 
-	# 				Path = Path * "Infilt_ThetaH_" * string(option.hydro.HydroModel) * "_" *string(IdSelect[iZ]) * ".svg"     
+	# 				Path = Path * "Infilt_ThetaH_" * string(option.hydro.HydroModel⍰) * "_" *string(IdSelect[iZ]) * ".svg"     
 	# 				Plot = Plots.plot(Plot_θ_Ψ, Plot_K_Ψ)
 	# 				Plots.savefig(Plot, Path)
 	# 				println("    ~  $(Path) ~")

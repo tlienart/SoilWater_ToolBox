@@ -81,7 +81,7 @@ module psdStruct
 			return paramPsd = CHANG(ξ1, Psd_2_θr_α1, Psd_2_θr_α2, θr_Psd, Err_θr_Psd, Nse)
 
 			# return paramPsd = tool.readWrite.FIELDNAME_2_STRUCT_VECT(CHANG, paramPsd) # Saving the FieldNames
-		end # option.hydro.HydroModel
+		end # option.hydro.HydroModel⍰
 	end #  function HYDROSTRUCT
 	
 end # module psdStruct

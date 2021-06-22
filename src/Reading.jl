@@ -353,12 +353,12 @@ module reading
 			Data = Data[2:end,begin:end]
 
 		# Reading the Model data
-			HydroModel, Ndata   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MODEL")
+			HydroModel⍰, Ndata   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MODEL")
 
 		# Determening which parameters correspond to the selected model
 		iSelectModel = [] 
 		for i=1:Ndata
-			if HydroModel[i] == string(optionₘ.HydroModel)
+			if HydroModel⍰[i] == string(optionₘ.HydroModel⍰)
 				append!(iSelectModel, i)
 			end
 		end
@@ -461,7 +461,7 @@ module reading
 
 		if Flag_Opt == true
 			println("	=== === Optimizing the following parameters === ===")
-			println("		Model=" , optionₘ.HydroModel)
+			println("		Model=" , optionₘ.HydroModel⍰)
 			println("		NparamOpt=" , NparamOpt)
 			println("		ParamOpt= " ,  optim.ParamOpt)
 			println("		Min_Value= " , optim.ParamOpt_Min)
@@ -693,17 +693,17 @@ module reading
 				NparamOpt = length(ParamOpt)
 
 				# CHECKING FOR UNCONSISTENCY WITH OPTIONS	
-				if Flag_Opt && option.hyPix.σ_2_Ψm ≠ :No && "Ψm" ∈ ParamOpt
+				if Flag_Opt && option.hyPix.σ_2_Ψm⍰ ≠ :No && "Ψm" ∈ ParamOpt
 					iψm = findfirst(isequal("Ψm"), ParamOpt)[1]
 
-					if option.hyPix.σ_2_Ψm==:UniqueRelationship && "Ψm" ∈ ParamOpt
-						error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm==:UniqueRelationship) && (Optimise=Ψm)!")
+					if option.hyPix.σ_2_Ψm⍰==:UniqueRelationship && "Ψm" ∈ ParamOpt
+						error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==:UniqueRelationship) && (Optimise=Ψm)!")
 
-					elseif option.hyPix.σ_2_Ψm==:Constrained && !("Ψm" ∈ ParamOpt)
-						error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm==:Constrained) && (not Optimising=Ψm)!")
+					elseif option.hyPix.σ_2_Ψm⍰==:Constrained && !("Ψm" ∈ ParamOpt)
+						error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==:Constrained) && (not Optimising=Ψm)!")
 
-					elseif option.hyPix.σ_2_Ψm==:Constrained && ParamOpt_LogTransform[iψm]==1
-						error("*** option.hyPix.σ_2_Ψm==:Constrained CANNOT log transforme Ψm") 
+					elseif option.hyPix.σ_2_Ψm⍰==:Constrained && ParamOpt_LogTransform[iψm]==1
+						error("*** option.hyPix.σ_2_Ψm⍰==:Constrained CANNOT log transforme Ψm") 
 					end
 				end # Flag_Opt
 
@@ -1007,136 +1007,7 @@ module reading
 
 	end  # module: readingHypix
 	# .........................................................
-
 	
-	
-	# =============================================================
-	#		module non Core : smap
-	# =============================================================
-	module smap
-	   import ..tool
-   	import Polynomials, DelimitedFiles
-		   export SMAP, ROCKFRAGMENT_WETTABLE_STRUCT
-
-			function SMAP(IdSelect, N_iZ, Path)
-				println("    ~  $(Path) ~")
-
-				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first READ_ROW_SELECT
-					Data = Data[2:end,begin:end]
-				# Sort data
-					Data = sortslices(Data, dims=1)
-				
-				IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ, N_Point_Max=1)
-				IsTopsoil = 	Int64.(IsTopsoil[1:N_iZ])
-
-				Soilname, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Soilname", N_iZ, N_Point_Max=1)
-			
-				RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ, N_Point_Max=1)
-				
-				Smap_Depth, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "depth_mm", N_iZ, N_Point_Max=1)
-
-				RockFragment, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Stone_Prop", N_iZ, N_Point_Max=1)
-
-				Smap_RockDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockDepth_mm", N_iZ, N_Point_Max=1)
-
-				Smap_MaxRootingDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "MaxRootingDepth_mm", N_iZ, N_Point_Max=1)
-
-				# smap = SMAP_STRUCT(Smap_Depth, IsTopsoil, Soilname, RockFragment, RockClass, Smap_RockDepth, Smap_MaxRootingDepth)			
-			return IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname
-			end  # function: SMAP
-
-
-		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# #		FUNCTION :SMAP
-		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# 	struct SMAP_STRUCT
-		# 		Smap_Depth        ::Vector{Float64}
-		# 		IsTopsoil    ::Vector{Int64}
-		# 		Soilname     ::Vector{String}
-		# 		RockFragment ::Vector{Float64}
-		# 		RockClass    ::Vector{String}
-		# 		Smap_RockDepth    ::Vector{Float64}
-		# 		Smap_MaxRootingDepth ::Vector{Float64}
-		# 	end
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : ROCKFRAGMENT_WETTABLE
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			struct ROCKFRAGMENT_WETTABLE_STRUCT
-				# RockClass::Array{String}
-				RockClass_Dict::Dict{String, Int64} 
-				Ψ_Rf::Array{Float64} 
-				θ_Rf::Array{Float64}
-				N_Ψ::Array{Int64}
-				N_RockClass::Int64
-				RockClass_Polynomial_Array::Array{} 
-			end
-			function ROCKFRAGMENT_WETTABLE(Path)
-				println("    ~  $(Path) ~")
-				
-				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first READ_ROW_SELECT
-					Data = Data[2:end,begin:end]
-				# Sort data
-					RockClass, N_RockClass = tool.readWrite.READ_HEADER_FAST(Data, Header, "RockClass")
-
-					RockClass_Unique = unique(RockClass)
-					
-					N_RockClass = length(RockClass_Unique)
-
-				# Dictionary
-					RockClass_Dict = Dict("a"=>9999)
-					for i=1:N_RockClass
-						RockClass_Dict[RockClass_Unique[i]] = i
-					end
-
-				# Read data
-					Ψ₂, N₂ = tool.readWrite.READ_HEADER_FAST(Data, Header, "H[mm]")
-					θ₂, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Theta[0-1]") 
-
-					Ψ_Rf = zeros(Int64,(N_RockClass, 100))
-					θ_Rf = zeros(Float64,(N_RockClass, 100))
-					N_Ψ = zeros(Int64,(N_RockClass))
-
-					iRockClass=1 ; iΨ=1
-					for i=1:N₂
-						if RockClass[i] == RockClass_Unique[iRockClass]
-							Ψ_Rf[iRockClass,iΨ] = Ψ₂[i]
-							θ_Rf[iRockClass,iΨ] = θ₂[i]
-						else
-							N_Ψ[iRockClass]  = iΨ -1
-							iRockClass += 1
-							iΨ = 1
-							Ψ_Rf[iRockClass,iΨ] = Ψ₂[i]
-							θ_Rf[iRockClass,iΨ] = θ₂[i]
-						end
-						iΨ += 1
-					end # for i=1:N
-
-					N_Ψ[iRockClass]  = iΨ - 1
-
-				RockClass_Polynomial_Array = []
-				for iRockClass=1:N_RockClass
-					RockClass_Polynomial = Polynomials.fit(log1p.(Ψ_Rf[iRockClass,1:N_Ψ[iRockClass]]), θ_Rf[iRockClass,1:N_Ψ[iRockClass]])
-					X = log1p.(Ψ_Rf[iRockClass,1:N_Ψ[iRockClass]])
-
-					Coeffs = Polynomials.coeffs(RockClass_Polynomial)
-				
-					RockClass_Polynomial_Array = push!(RockClass_Polynomial_Array, [Coeffs])
-				end
-
-			return rfWetable = ROCKFRAGMENT_WETTABLE_STRUCT(RockClass_Dict, Ψ_Rf, θ_Rf, N_Ψ, N_RockClass, RockClass_Polynomial_Array)	
-			end  # function: ROCKFRAGMENT_WETTABLE
-		
-	end  # module: smap
-	# ...........................................................
 	
 	module nsdr
 	   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

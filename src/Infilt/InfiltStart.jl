@@ -18,7 +18,7 @@ module infiltStart
 			println( "iZ= $iZ")
 
 			# No optimization required running from hydro derived from laboratory
-			if option.infilt.OptimizeRun == :Run && option.run.HydroLabθΨ ≠ :No #<>=<>=<>=<>=<>
+			if option.infilt.OptimizeRun == :Run && option.run.HydroLabθΨ⍰ ≠ :No #<>=<>=<>=<>=<>
 				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
 				 
@@ -34,7 +34,7 @@ module infiltStart
 				end # option.infilt.Model
 
 
-			elseif option.infilt.OptimizeRun == :RunOptKs && option.run.HydroLabθΨ ≠ :No #<>=<>=<>=<>=<>	
+			elseif option.infilt.OptimizeRun == :RunOptKs && option.run.HydroLabθΨ⍰ ≠ :No #<>=<>=<>=<>=<>	
 				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
 				
@@ -48,9 +48,9 @@ module infiltStart
 				hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
 
-			elseif option.infilt.OptimizeRun == :Opt && option.infilt.HydroModel == :Kosugi # <>=<>=<>=<>=<>	
+			elseif option.infilt.OptimizeRun == :Opt && option.infilt.HydroModel⍰ == :Kosugi # <>=<>=<>=<>=<>	
 
-				if option.infilt.σ_2_Ψm == :Constrained
+				if option.infilt.σ_2_Ψm⍰ == :Constrained
 					SearchRange =[ (hydroInfilt.σ_Min[iZ], hydroInfilt.σ_Max[iZ]), (0.0, 1.0), (log10(hydroInfilt.Ks_Min[iZ]), log10(hydroInfilt.Ks_Max[iZ]))]
 
 					Optimization = BlackBoxOptim.bboptimize(P -> OF_INFILT_2_HYDRO(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; σ=P[1], Ψm=P[2], Ks=10.0^P[3])[1]; SearchRange=SearchRange, NumDimensions=3, TraceMode=:silent)
@@ -69,7 +69,7 @@ module infiltStart
 					hydroInfilt.σ[iZ]  = BlackBoxOptim.best_candidate(Optimization)[1]
 					hydroInfilt.Ψm[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[2]
 					hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[3]
-				end # option.infilt.σ_2_Ψm
+				end # option.infilt.σ_2_Ψm⍰
 	
 			else
 				error("ERROR SoilWaterToolBox = $(option.infilt.Model) not found")

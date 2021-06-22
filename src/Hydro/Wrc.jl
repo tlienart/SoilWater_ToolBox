@@ -26,18 +26,18 @@ module wrc
 	#		FUNCTION : Ψ_2_θDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_θDual(optionₘ, Ψ₁, iZ, hydroParam)
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return θ₂ = wrc.kg. Ψ_2_θDual(optionₘ,Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :Vangenuchten
+			elseif optionₘ.HydroModel⍰ == :Vangenuchten
 				return θ₂ = wrc.vg.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :VangenuchtenJules
+			elseif optionₘ.HydroModel⍰ == :VangenuchtenJules
 				return θ₂ = wrc.vgJules.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :BrooksCorey
+			elseif optionₘ.HydroModel⍰ == :BrooksCorey
 				return θ₂ = wrc.bc.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :ClappHornberger
+			elseif optionₘ.HydroModel⍰ == :ClappHornberger
 				return θ₂ = wrc.ch.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for Ψ_2_θDual is not yet available")
+				error("$(optionₘ.HydroModel⍰) model for Ψ_2_θDual is not yet available")
 			end
 		end # function Ψ_2_θDual
 
@@ -46,18 +46,18 @@ module wrc
 	#		FUNCTION : Ψ_2_SeDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return Se = wrc.kg.Ψ_2_SeDual(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :Vangenuchten
+			elseif optionₘ.HydroModel⍰ == :Vangenuchten
 				return Se = wrc.vg.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :VangenuchtenJules
+			elseif optionₘ.HydroModel⍰ == :VangenuchtenJules
 				return θ₂ = wrc.vgJules.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :BrooksCorey
+			elseif optionₘ.HydroModel⍰ == :BrooksCorey
 				return Se = wrc.bc.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :ClappHornberger
+			elseif optionₘ.HydroModel⍰ == :ClappHornberger
 				return Se = wrc.ch.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for Ψ_2_SeDual is not yet available")
+				error("$(optionₘ.HydroModel⍰) model for Ψ_2_SeDual is not yet available")
 			end # function Ψ_2_θDual
 		end
 
@@ -66,16 +66,16 @@ module wrc
 	#		FUNCTION : θ_2_ΨDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θ_2_ΨDual(optionₘ, θ₁, iZ, hydroParam)
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return Ψ₁ = wrc.kg.θ_2_ΨDual(optionₘ, θ₁, iZ, hydroParam)
-			elseif optionₘ.HydroModel == :Vangenuchten
+			elseif optionₘ.HydroModel⍰ == :Vangenuchten
 				return Ψ₁ = wrc.vg.θ_2_Ψ(θ₁, iZ, hydroParam)
-			elseif optionₘ.HydroModel == :BrooksCorey
+			elseif optionₘ.HydroModel⍰ == :BrooksCorey
 				return Ψ₁ = wrc.bc.θ_2_Ψ(θ₁, iZ, hydroParam)
-			elseif optionₘ.HydroModel == :ClappHornberger
+			elseif optionₘ.HydroModel⍰ == :ClappHornberger
 				return Ψ₁ = wrc.ch.θ_2_Ψ(θ₁, iZ, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for θ_2_ΨDual is not yet available")
+				error("$(optionₘ.HydroModel⍰) model for θ_2_ΨDual is not yet available")
 			end # function θ_2_ΨDual
 		end
 
@@ -84,10 +84,10 @@ module wrc
 	#		FUNCTION : Se_2_ΨDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Se_2_ΨDual(optionₘ, Se₁, iZ, hydroParam)
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return Ψ₁ = wrc.kg.Se_2_ΨDual(optionₘ, Se₁, iZ, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for Se_2_ΨDual is not yet available")
+				error("$(optionₘ.HydroModel⍰) model for Se_2_ΨDual is not yet available")
 			end # function Se_2_ΨDual
 		end
 
@@ -96,16 +96,16 @@ module wrc
 	#		FUNCTION : ∂θ∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)	
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return ∂θ∂Ψ = wrc.kg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :Vangenuchten
+			elseif optionₘ.HydroModel⍰ == :Vangenuchten
 				return ∂θ∂Ψ = wrc.vg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :BrooksCorey
+			elseif optionₘ.HydroModel⍰ == :BrooksCorey
 				return ∂θ∂Ψ = wrc.bc.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :ClappHornberger
+			elseif optionₘ.HydroModel⍰ == :ClappHornberger
 				return ∂θ∂Ψ = wrc.ch.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for ∂θ∂Ψ is not yet available")	
+				error("$(optionₘ.HydroModel⍰) model for ∂θ∂Ψ is not yet available")	
 			end
 		end # function ∂θ∂Ψ
 
@@ -114,10 +114,10 @@ module wrc
 	#		FUNCTION : ∂Ψ∂θ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Ψ∂θ(optionₘ, θ₁, iZ::Int64, hydroParam)	
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return ∂Ψ∂θ = wrc.kg.∂Ψ∂θ(optionₘ, θ₁, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for ∂Ψ∂θ is not yet available")	
+				error("$(optionₘ.HydroModel⍰) model for ∂Ψ∂θ is not yet available")	
 			end
 		end # function ∂Ψ∂θ
 
@@ -126,10 +126,10 @@ module wrc
 	#		FUNCTION : ∂Se∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)	
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return ∂Se∂Ψ = wrc.kg.∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for ∂Se∂Ψ is not yet available")	
+				error("$(optionₘ.HydroModel⍰) model for ∂Se∂Ψ is not yet available")	
 			end
 		end # function ∂Se∂Ψ
 
@@ -138,10 +138,10 @@ module wrc
 	#		FUNCTION : ∂Se∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Ψ∂Se(optionₘ, Se₁, iZ::Int64, hydroParam)	
-			if optionₘ.HydroModel == :Kosugi
+			if optionₘ.HydroModel⍰ == :Kosugi
 				return ∂Se∂Ψ = wrc.kg.∂Ψ∂Se(optionₘ, Se₁, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for ∂Ψ∂Se is not yet available")
+				error("$(optionₘ.HydroModel⍰) model for ∂Ψ∂Se is not yet available")
 			end
 		end # function ∂Se∂Ψ
 
@@ -150,12 +150,12 @@ module wrc
 	#		FUNCTION : GREEN-AMPT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
-			if optionₘ.HydroModel == :BrooksCorey
+			if optionₘ.HydroModel⍰ == :BrooksCorey
 				return Ψga = wrc.bc.GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
-			elseif optionₘ.HydroModel == :ClappHornberger
+			elseif optionₘ.HydroModel⍰ == :ClappHornberger
 				return Ψga = wrc.ch.GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
 			else
-				error("$(optionₘ.HydroModel) model for GREEN_AMPT is not yet available")
+				error("$(optionₘ.HydroModel⍰) model for GREEN_AMPT is not yet available")
 			end
 		end # function: GREEN_AMPT
 

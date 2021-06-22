@@ -46,10 +46,12 @@ module paths
 	end # PLOT_SOILWATER
 
 	mutable struct TABLE_SMAP
-		Table_θΨK₀::String
+		Table_Smap::String
+		Table_θΨK::String
 	end # struct INPUT_TABLE_SMAP
 
 	mutable struct TABLE_SOILWATER
+		FileSoilHydro_Table₁::String
 		Table_HydroInfilt::String
 		Table_Infilt::String
 		Table_KΨ::String
@@ -58,7 +60,6 @@ module paths
 		Table_θΨ_Psd::String
 		Table_θΨK::String
 		TableComplete_θΨ::String
-		TableExtraPoints_θΨ::String
 	end # struct INPUT_SOILWATER
 
 		# _______________________ START: hypix _______________________ 
@@ -181,7 +182,7 @@ module paths
             Infiltration_Param = FileDataSoilhydro_Input * Infiltration_Param
             Kunsat             = FileDataSoilhydro_Input * Kunsat
             Psd                = FileDataSoilhydro_Input * Psd
-            Pedological⍰    = FileDataSoilhydro_Input * Pedological⍰
+            Pedological⍰    	= FileDataSoilhydro_Input * Pedological⍰
             Φ                  = FileDataSoilhydro_Input * Φ
             Ψθ                 = FileDataSoilhydro_Input * Ψθ
 
@@ -210,7 +211,6 @@ module paths
 				σ_ψM_Scenario           = "σ_ψM_Scenario.csv"
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 				σ_ψM_Scenario      = FileDataSoilhydro_Input * σ_ψM_Scenario
 				
 			inputTemporary = INPUT_TEMPORARY(σ_ψM_Scenario)
@@ -228,7 +228,6 @@ module paths
             Table_θΨ_Psd        = "Table_PsdHydro.csv"
             Table_θΨK           = "Table_θΨK.csv"
             TableComplete_θΨ    = "TableComplete_θΨ.csv"
-            TableExtraPoints_θΨ = "TableExtraPoints_θΨ.csv"
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * SiteName_Soilhyro
@@ -237,27 +236,26 @@ module paths
             Table_Infilt        = FileSoilHydro_Table₁ * string(opt.infilt.Model) *  "_" *  ModelName  *  "_" *  Table_Infilt
             Table_KΨ            = FileSoilHydro_Table₁ * "_"  *  ModelName * "_" * Table_KΨ
             Table_Psd           = FileSoilHydro_Table₁ * string(opt.psd.Model) *  "_" * ModelName * "_" * Table_Psd
-            Table_Psd_θΨ_θ      = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * ModelName * "_" *  Table_Psd_θΨ_θ
-            Table_θΨ_Psd        = FileSoilHydro_Table₁ * string(opt.psd.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * ModelName * "_" * Table_θΨ_Psd
-            Table_θΨK           = FileSoilHydro_Table₁ *  "_" * string(opt.hydro.HydroModel) * "_" * Table_θΨK
+            Table_Psd_θΨ_θ      = FileSoilHydro_Table₁ * string(opt.psd.HydroModel⍰) *  "_" * ModelName * "_" *  Table_Psd_θΨ_θ
+            Table_θΨ_Psd        = FileSoilHydro_Table₁ * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * ModelName * "_" * Table_θΨ_Psd
+            Table_θΨK           = FileSoilHydro_Table₁ *  "_" * string(opt.hydro.HydroModel⍰) * "_" * Table_θΨK
             TableComplete_θΨ    = FileSoilHydro_Table₁ *   "_" *  ModelName * "_" * TableComplete_θΨ
-            TableExtraPoints_θΨ = FileSoilHydro_Table₁ *  "_" *  ModelName * "_" * TableExtraPoints_θΨ
 			
-			tableSoilwater = TABLE_SOILWATER(Table_HydroInfilt, Table_Infilt, Table_KΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK, TableComplete_θΨ, TableExtraPoints_θΨ)
+			tableSoilwater = TABLE_SOILWATER(FileSoilHydro_Table₁, Table_HydroInfilt, Table_Infilt, Table_KΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK, TableComplete_θΨ)
 
 
 		# =============================================================
 		#		TABLE_SMAP
 		# =============================================================
 			# Output tables smap
-				Table_θΨK₀           = "Table_ThetaHK.csv"
+            Table_θΨK = "Table_SmapThetaHK.csv"
 
-				Table_θΨK            = FileSoilHydro_Table₁ * string(opt.hydro.HydroModel) *  "_" * string(opt.hydro.σ_2_Ψm) *  "_" * ModelName * "_" * Table_θΨK₀
+            Table_θΨK = FileSoilHydro_Table₁ * "_" * string(opt.hydro.HydroModel⍰) * "_" * Table_θΨK
 
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				Table_Smap =  FileSoilHydro_Table₁ * "Smap.csv"
+				Table_Smap =  FileSoilHydro_Table₁ * "Table_Smap.csv"
 
-				tableSmap = TABLE_SMAP(Table_θΨK)
+				tableSmap = TABLE_SMAP(Table_Smap, Table_θΨK)
 
 				
 		# =============================================================

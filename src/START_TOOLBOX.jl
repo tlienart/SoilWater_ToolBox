@@ -38,30 +38,30 @@ function START_TOOLBOX()
 
 
 		# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained)
+			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
 				θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 			
-			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained # Ading extra data
+			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained # Ading extra data
 				try
 					@info "\n	*** Reading θ(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
 					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
 				catch
-					@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && param.hydro.σ_2_Ψm==:Constrained => Kosugi simulation not performed yet! \n" 
+					@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModell⍰≠:Kosugi && param.hydro.σ_2_Ψm⍰==:Constrained => Kosugi simulation not performed yet! \n" 
 					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 				end 		
 			end  # if: option.data.θΨ
 
 
 		# IF WE HAVE K(Θ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm==:Constrained)
+			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
 				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 
-			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi 
+			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi 
 				try
 					@info "\n	*** Reading K(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
 					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
 				catch
-					@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi => Kosugi simulation not performed yet! *** \n"
+					@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi => Kosugi simulation not performed yet! *** \n"
 					if "Ks" ∈ optim.ParamOpt
 						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 					end
@@ -90,13 +90,6 @@ function START_TOOLBOX()
 		# IF WE HAVE PSD DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.Psd
 				Rpart, ∑Psd, N_Psd = reading.PSD(IdSelect, N_iZ, path.inputSoilwater.Psd)
-			# else
-			# 	∑Psd = []
-			# 	# ∑Psd = zeros(Float64, N_iZ, 1)
-			# 	Rpart = []
-			# 	# Rpart = zeros(Float64, N_iZ, 1)
-			# 	# N_Psd = zeros(Float64, N_iZ)	
-			# 	N_Psd = 0		
 			end  # if: option.data.Psd
 
 
@@ -105,7 +98,7 @@ function START_TOOLBOX()
 				IsTopsoil, RockClass = reading.PEDOLOGICAL(IdSelect, N_iZ, path.inputSoilwater.Pedological⍰)
 			
 			elseif option.data.Pedological⍰ == :Smap
-				IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname = reading.smap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
+				IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname = readSmap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
 
 			end  # if: option.data.Pedological⍰
 
@@ -113,17 +106,30 @@ function START_TOOLBOX()
 		#--- NON CORE ----
 			# SMAP if we have information of the wetability of rocks:
 				if option.data.RockWetability
-					rfWetable = reading.smap.ROCKFRAGMENT_WETTABLE(path.inputSmap.LookupTable_RockWetability)	
+					rfWetable = readSmap.ROCKFRAGMENT_WETTABLE(path.inputSmap.LookupTable_RockWetability)	
 				end  # if: option.data.RockWetability
 
 
 	println("----- END READING ----------------------------------------------- \n")
 	# ------------------------END: reading---------------------------
-	
-	# _______________________ START: running HydroLabθΨ _______________________ 
-	if option.run.HydroLabθΨ ≠ :No
-	println("----- START RUNNING HYDROLABΘΨ -----------------------------------------------")
 
+	# ++++++++++++++++++++++ SCENARIOS ++++++++++++++++++++++++++++++++++++++++++
+	N_Scenarios = 1
+	if option.run.Smap
+		Scenarios = option.hydro.HydroModel_List
+		N_Scenarios =	length(Scenarios)
+	end 
+	for iSim =1:N_Scenarios
+		if option.run.Smap
+			option.hydro.HydroModel⍰ = Scenarios[iSim]
+			path = paths.PATH(1, option)
+			println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios")
+		end
+
+	# _______________________ START: running HydroLabθΨ _______________________ 
+	if option.run.HydroLabθΨ⍰ ≠ :No
+	println("----- START RUNNING HYDROLABΘΨ -----------------------------------------------")
+	
 		# STRUCTURES
 			hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
 			hydroOther = hydroStruct.HYDRO_OTHERS(N_iZ)
@@ -162,7 +168,7 @@ function START_TOOLBOX()
 
 		# COMPUTE KS FROM Θ(Ψ)
 			Kₛ_Model = fill(0.0::Float64, N_iZ)
-			if option.hydro.HydroModel == :Kosugi
+			if option.hydro.HydroModel⍰ == :Kosugi
 				println("\n	=== === Computing model Ks === === ")
 
 				IsTopsoil₁ = 0.0 ; RockFragment₁ = 0.0
@@ -181,28 +187,23 @@ function START_TOOLBOX()
 					end #  hydro.Ks[iZ] < eps(100.0)
 				end # if: hydro.Ks[iZ] > eps(10.0)
 				println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~ === === ")
-			end # if: option.hydro.HydroModel == :Kosugi 
+			end # if: option.hydro.HydroModel⍰ == :Kosugi 
 
 
 		# SPECIAL CASE
-			if option.hydro.HydroModel==:BrooksCorey || option.hydro.HydroModel==:ClappHornberger
+			if option.hydro.HydroModel⍰==:BrooksCorey || option.hydro.HydroModel⍰==:ClappHornberger
 				for iZ=1:N_iZ
 					hydro.Ψga[iZ] = wrc.GREEN_AMPT(option.hydro, iZ, hydro)
 				end
-			end #  option.hydro.HydroModel
+			end #  option.hydro.HydroModel⍰
 
 	println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
-	end # option.run.HydroLabθΨ
+	end # option.run.HydroLabθΨ⍰
 
 # If the hydraulic parameters were already derived than get the data from file instead or rerunning the model	
-		# if option.run.HydroLabθΨ == :File
+		# if option.run.HydroLabθΨ⍰ == :File
 		# 	println("    ~ HydroLab HydroParam reading from file ~")
 		# 	hydro = reading.HYDROPARAM(IdSelect, N_iZ, hydro)
-		# else
-				# if option.dataFrom.Smap
-
-		# end
-		# ------------------------END: running HydroLab---------------------------  
 	
 	
 
@@ -235,8 +236,6 @@ function START_TOOLBOX()
 	end  # if: option.START_JULES()
 
 	
-
-
 	if option.run.IntergranularMixingPsd  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	println("=== START: PSD MODEL  ===")
 		# Structure of hydroPsd
@@ -295,47 +294,43 @@ function START_TOOLBOX()
 
 	 # _______________________ START: table _______________________ 
 
-	 if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File # <>=<>=<>=<>=<>
-		if !(option.dataFrom.Smap)
+	 if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File # <>=<>=<>=<>=<>
+		# CORE OUTPUT
+			table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
 
-			# CORE OUTPUT
-				table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
+			# When optimising other model than Kosugi we do not have a model for σ_2_Ψm⍰. Therefore we assume that θ(Ψ) and K(θ) derived by Kosugi from very dry to very wet are physical points
+			if option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained
+				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.Table_KΨ)
+		
+				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
+			end # if: option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰ == :Constrained
 
-			if option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm==:Constrained
-				# Adding extra points to θ(Ψ) if not available
-					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableExtraPoints_θΨ, param.hydro.TableExtraPoints_θΨ)
-	
-					table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.Table_KΨ)
-			
-					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
-			end # if: option.hydro.HydroModel == :Kosugi && option.hydro.σ_2_Ψm == :Constrained
+			# IF SMAP OUTPUTS
+			if option.run.Smap
+				tableSmap.θΨK(hydro, hydroOther, IdSelect, Kₛ_Model, N_iZ, path.tableSmap.Table_θΨK, Smap_Depth, Soilname)
 
-		else
-			tableSmap.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model, N_iZ, smap, path.Table_θΨK)
-
-	
-			if option.smap.CombineData
-				tableSmap.SMAP(option.hydro, IdSelect, N_iZ, smap, param, path)
-			end
-		end
+				# When all the models are performed
+				if iSim==length(Scenarios)
+					tableSmap.SMAP(hydro, IdSelect, IsTopsoil, N_iZ, option.hydro, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname)
+				end
+			end # option.run.Smap
+		
+		end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
 	 # ------------------------END: table--------------------------- 
 	 
 	 # _______________________ START: plotting _______________________ 
 
-	 if option.other.Ploting && !option.run.Hypix
-	println("		=== START: PLOTTING  ===")
-		plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, option, option.hydro, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+		if option.other.Ploting && !option.run.Hypix
+			println("		=== START: PLOTTING  ===")
+				plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, option, option.hydro, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
 
-	println("		=== END: PLOTTING  === \n")
-	 end
+			println("		=== END: PLOTTING  === \n")
+		end
 	
 
 	 # ------------------------END: plotting---------------------------  
 
 
-
-
-		end # option.run.HydroLabθΨ 
 
 		if option.run.IntergranularMixingPsd # <>=<>=<>=<>=<>
 			table.psd.PSD(IdSelect[1:N_iZ], N_iZ, paramPsd, path.tableSoilwater.Table_Psd)
@@ -363,7 +358,7 @@ function START_TOOLBOX()
 	# 	# 	plotSmap.PLOT_KUNSAT(hydro, N_iZ, smap; N_Se= 1000)
 	# 	# end
 
-	# 	if option.run.HydroLabθΨ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
+	# 	if option.run.HydroLabθΨ⍰ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
 
 	# 		if option.dataFrom.Smap
 	# 			plotSmap.makie.HYDROPARAM(Ψ_θΨobs, Ψ_KΨobs, θ_θΨobs, N_θΨobs, N_iZ, N_KΨobs, K_KΨobs, IdSelect, hydro, Kₛ_Model, path; smap=smap)
@@ -372,7 +367,7 @@ function START_TOOLBOX()
 	# 		else
 	# 			plot.lab.HYDROPARAM(Ψ_θΨobs, Ψ_KΨobs, θ_θΨobs, N_θΨobs, N_iZ, N_KΨobs, K_KΨobs, IdSelect, hydro, Kₛ_Model, path.plotSoilwater.Plot_θΨK, path.option.ModelName)
 	# 		end	
-	# 	end # option.run.HydroLabθΨ
+	# 	end # option.run.HydroLabθΨ⍰
 	# 	if option.run.IntergranularMixingPsd && option.psd.Plot_θr # <>=<>=<>=<>=<>
 	# 		plot.psd.PLOT_θr(∑Psd, N_iZ, hydro, hydroPsd, path.plotSoilwater.Plot_Psd_θr, path.plotSoilwater.Plot_IMP_model)
 	# 	end
@@ -394,11 +389,11 @@ function START_TOOLBOX()
 	# 	# end
 
 	# 	if option.run.InfiltBest && option.infilt.Plot_θΨ
-	# 		if option.run.HydroLabθΨ ≠ :No
+	# 		if option.run.HydroLabθΨ⍰ ≠ :No
 	# 			plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, path.plotSoilwater.Plot_∑infilt_θΨ; hydro=hydro)
 	# 		else
 	# 			plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, path.plotSoilwater.Plot_∑infilt_θΨ)
-	# 		end # option.run.HydroLabθΨ
+	# 		end # option.run.HydroLabθΨ⍰
 	# 	end # option.run.InfiltBest
 
 	# println("=== END: PLOTTING  === \n")
@@ -406,6 +401,8 @@ function START_TOOLBOX()
 
 	# Playing sounds...
 		println("\007")
+
+	end #iSim
 
 end  # function: START_TOOLBOX
 # ..............................................................

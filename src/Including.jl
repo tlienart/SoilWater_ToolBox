@@ -31,19 +31,20 @@
         include("Checking.jl")
         include("Stats.jl")
         include("RockFragment/RockFragment.jl")
-        include("NoCore/Smap/ReadSmap.jl")
 
         if !(option.run.Hypix)
-
             include("Psd/PsdThetar.jl")
         end
 
-        if option.dataFrom.Smap
-            include("NoCore/Smap/PlotSmap.jl")
+        if option.run.Smap
+            include("NoCore/Smap/ReadSmap.jl")
             include("NoCore/Smap/TableSmap.jl")
+            if option.other.Ploting
+                include("NoCore/Smap/PlotSmap.jl")
+            end
         end
 
-        if option.run.HydroLabθΨ ≠ :No && option.run.HydroLabθΨ ≠ :File &&  !(option.run.Hypix)
+        if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File &&  !(option.run.Hypix)
             include("HydroLab/OfHydrolab.jl")
             include("HydroLab/HydrolabOpt.jl")
         end
