@@ -20,6 +20,19 @@ function START_TOOLBOX()
 
 	# ------------------------END: option/ param/ path---------------------------
 
+	# ++++++++++++++++++++++ SCENARIOS ++++++++++++++++++++++++++++++++++++++++++
+	N_Scenarios = 1
+	if option.run.Smap
+		Scenarios = option.hydro.HydroModel_List
+		N_Scenarios =	length(Scenarios)
+	end 
+	for iSim =1:N_Scenarios
+		if option.run.Smap
+			option.hydro.HydroModel⍰ = Scenarios[iSim]
+			path = paths.PATH(1, option)
+			println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios \n \n")
+		end
+
 
 	# _______________________ START: reading _______________________ 
 	println("----- START READING -----------------------------------------------")
@@ -41,22 +54,22 @@ function START_TOOLBOX()
 			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
 				θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 			
-			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained # Ading extra data
+			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained # Ading extra data
 				try
 					@info "\n	*** Reading θ(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
 					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
 				catch
-					@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModell⍰≠:Kosugi && param.hydro.σ_2_Ψm⍰==:Constrained => Kosugi simulation not performed yet! \n" 
+					@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠:Kosugi && param.hydro.σ_2_Ψm⍰==:Constrained => Kosugi simulation not performed yet! \n" 
 					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 				end 		
 			end  # if: option.data.θΨ
 
 
 		# IF WE HAVE K(Θ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
-				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
+			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
+				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.Table_KΨ)
 
-			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi 
+			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi 
 				try
 					@info "\n	*** Reading K(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
 					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
@@ -109,22 +122,10 @@ function START_TOOLBOX()
 					rfWetable = readSmap.ROCKFRAGMENT_WETTABLE(path.inputSmap.LookupTable_RockWetability)	
 				end  # if: option.data.RockWetability
 
-
 	println("----- END READING ----------------------------------------------- \n")
 	# ------------------------END: reading---------------------------
 
-	# ++++++++++++++++++++++ SCENARIOS ++++++++++++++++++++++++++++++++++++++++++
-	N_Scenarios = 1
-	if option.run.Smap
-		Scenarios = option.hydro.HydroModel_List
-		N_Scenarios =	length(Scenarios)
-	end 
-	for iSim =1:N_Scenarios
-		if option.run.Smap
-			option.hydro.HydroModel⍰ = Scenarios[iSim]
-			path = paths.PATH(1, option)
-			println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios")
-		end
+
 
 	# _______________________ START: running HydroLabθΨ _______________________ 
 	if option.run.HydroLabθΨ⍰ ≠ :No
