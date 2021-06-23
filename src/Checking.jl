@@ -7,7 +7,8 @@ module checking
    #		FUNCTION : CHECKING
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function CHECKING(option, optionₘ, optim)
-        # CHECKING FOR UNCONSISTENCY WITH OPTIONS
+
+        # ------------ CHECKING HydroLabθΨ---------------------
 
 		  if "Ks" ∈ optim.ParamOpt && !(option.data.Kθ) 
 			error("*** If Ks ∈ optim.ParamOpt => option.data.θΨ ***")
@@ -50,6 +51,11 @@ module checking
 
         	elseif option.data.SimulationKosugiθΨK && "Ks" ∉ optim.ParamOpt
             	error("***  Ks  ∉ optim.ParamOpt && option.smap.SimulationKosugiθΨK THAN Ks ∈ optim.ParamOpt***")
+
+			# ------------ CHECKING Smap_2_Hypix---------------------
+
+			elseif option.run.Smap2Hypix && (option.data.Pedological⍰ ≠ :Smap)
+				error("*** option.run.Smap2Hypix => option.data.Pedological⍰ == :Smap ***")
 		
 			end # Check error
 

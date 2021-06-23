@@ -36,9 +36,12 @@
             include("Psd/PsdThetar.jl")
         end
 
-        if option.run.Smap
+        if option.data.Pedological⍰ == :Smap
+            include("Hypix/VegStruct.jl")
+            include("Hypix/Discretization.jl")
             include("NoCore/Smap/ReadSmap.jl")
             include("NoCore/Smap/TableSmap.jl")
+            include("NoCore/Smap/Smap2Hypix.jl")
             if option.other.Ploting
                 include("NoCore/Smap/PlotSmap.jl")
             end

@@ -63,6 +63,10 @@ module paths
 		TableComplete_KΨ::String
 	end # struct INPUT_SOILWATER
 
+	mutable struct SMAP_2_HYPIX
+		Path_Smap2Hypix::String
+	end
+
 		# _______________________ START: hypix _______________________ 
 	
 			mutable struct PATHYPIXS
@@ -117,17 +121,17 @@ module paths
 		# ------------------------END: hypix---------------------------  
 
 		mutable struct PATHS
+			Home
+			hyPix::PATHYPIXS
 			inputSmap::INPUT_SMAP
 			inputSoilwater::INPUT_SOILWATER
 			inputTemporary::INPUT_TEMPORARY
 			option::OPTIONS
 			plotSoilwater::PLOT_SOILWATER
+			smap2Hypix::SMAP_2_HYPIX
 			tableSmap::TABLE_SMAP
 			tableSoilwater::TABLE_SOILWATER
-			hyPix::PATHYPIXS
-			Home
 		end
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PATHS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -260,7 +264,20 @@ module paths
 
 				tableSmap = TABLE_SMAP(Table_Smap, Table_θΨK)
 
-				
+		# =============================================================
+		#		PATH SMAP_2_HYPIX
+		# =============================================================
+			# Output tables smap
+
+			Path_Smap2Hypix = Home *"OUTPUT/Smap2Hypix"
+			mkpath(Path_Smap2Hypix)
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		smap2Hypix = SMAP_2_HYPIX(Path_Smap2Hypix)
+
+
+		
 		# =============================================================
 		#		PLOT SOILWATER
 		# =============================================================
@@ -502,7 +519,7 @@ module paths
 					Plot_Ψmin_Ψmax,
 					Plot_θ∂θ∂Ψ)
 
-		path = PATHS(inputSmap, inputSoilwater, inputTemporary, option, plotSoilwater, tableSmap, tableSoilwater, hyPix, Home)
+		path = PATHS(Home, hyPix, inputSmap, inputSoilwater, inputTemporary, option, plotSoilwater, smap2Hypix, tableSmap, tableSoilwater)
 
 	return path
 	end # function PATHS			

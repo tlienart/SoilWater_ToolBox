@@ -8,122 +8,110 @@ module smap2hypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : SMAP_2_HYDRO
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function SMAP_2_HYPIX(SoilName_2_SiteName, SiteName_2_θini, path)
+      function SMAP_2_HYPIX(N_iZ, optionₘ, param, path, Smap_Depth, Smap_MaxRootingDepth, Soilname)
+         # Reducing Ks
+            Ks_FactorReduce = 0.1
 
-      # Reducing Ks
-         Ks_FactorReduce = 0.1
+         # Hydraulic structures
+            hydroSmap = hydroStruct.HYDROSTRUCT(optionₘ, N_iZ) # Making a structure
 
-      # DERIVING HYDRAULIC PARAMETER
-         IgnoreSoil = "Rang_81a.2" #TODO remove 
+         # Index of each soil profile in the spreadsheet
+            iSoilProfile_End, iSoilProfile_Start, N_SoilProfile, Soilname_SoilProfile = SMAP_SOILPROFILE(N_iZ, Soilname)
 
-         
-         # Read data
-             Path_Input ="D:\\DATAraw\\JULESdata\\HydraulicParam\\Jules_HydroParam_Kosugi_NoStones.csv"
-            Data = DelimitedFiles.readdlm(Path_Input, ',')
-            Header = Data[1,1:end]
-            Data = Data[2:end,begin:end]
-      
-            Zlayer, N  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Depth_mm")
-            SoilName, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "SoilName")
-            ZrootDepth_Max, ~= tool.readWrite.READ_HEADER_FAST(Data, Header, "MaxRootingDepth_mm")
+         # Input path of the hydraulic parameters
+            Path_Input =  path.tableSoilwater.FileSoilHydro_Table₁ *  "_" * "Kosugi" *  "_" * "Table_SmapThetaHK.csv"
 
-         # Determening iSite when soil changes
-            iLayer_End = []
-            iLayer_Start = [1]
-            SoilName_Initial = SoilName[1]
-            SoilName_Layer = [SoilName[1]]
+         # For every soil profile
+         for iSoilProfile=1:N_SoilProfile
+
+            # Making directory
+               Path_Output = path.smap2Hypix.Path_Smap2Hypix * "/" * Soilname[iSoilProfile] 
+               mkpath(Path_Output)
+
+            # Reading the hydraulic parameters of each soil profile
+               hydroSmap, N_iSoilProfile = reading.READ_STRUCT(hydroSmap, Path_Input; iStart=iSoilProfile_Start[iSoilProfile], iEnd=iSoilProfile_End[iSoilProfile])
+
+               Path_Output₂ = Path_Output * "/HypixHydro" * "_" * Soilname[iSoilProfile] * ".csv"
+               TABLE_HYDRO_VEG(hydroSmap, N_iSoilProfile, Path_Output₂)
+            
+            # Getting the depth of soils
+                Smap_Depth_Soil = Smap_Depth[iSoilProfile_Start[iSoilProfile]:iSoilProfile_End[iSoilProfile]]
+
+            # Discretisation
+               LAYER_DISCRETISATION(param, Path_Output, Smap_Depth_Soil, Soilname[iSoilProfile])
+            
+            # Vegetation parameter
+               vegSmap = vegStruct.VEGSTRUCT()
+
+               # Abstracting data
+               Path_Vegetaion ="D:\\DATAraw\\JULESdata\\Vegetation\\Vegetation.csv"
+               
+               vegSmap, N_iZ = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
+
+               vegSmap.Zroot = min(vegSmap.Zroot, Smap_MaxRootingDepth[1])
+
+               Path_Output₂ = Path_Output * "/Vegetation" * "_" * Soilname[iSoilProfile] * ".csv"
+
+               TABLE_HYDRO_VEG(vegSmap, 1, Path_Output₂)
+         end #  iSoilProfile=1:N_SoilProfile      
+   
+      return nothing
+      end  # function: SMAP_2_HYDRO
+
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #		FUNCTION : DISCRETISATION
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         function LAYER_DISCRETISATION(param, Path_Output, Smap_Depth_Soil, Soilname₀)
+            iLayers = collect(1:1:length(Smap_Depth_Soil))
+
+            Path_Output₂ = Path_Output * "/Layer" * "_" * string(Soilname₀) * ".csv"
+            TABLE_DISCRETIZATION(Path_Output₂, Smap_Depth_Soil, iLayers)
+                  
+            # Automatic Disscretizing of SoilProfiles per soil =====
+               SoilProfile, Z = discretization.DISCRETISATION_AUTO(param, N_Layer=length(Smap_Depth_Soil), Zlayer=Smap_Depth_Soil, Zroot=800.0)
+
+               Path_Output₃ = Path_Output * "/Discretization_2" * "_" * string(Soilname₀) * ".csv"
+               TABLE_DISCRETIZATION(Path_Output₃, SoilProfile, Z)
+
+            return nothing
+         end  # function: DISCRETISATION
+
+
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #		FUNCTION : SMAP_SOIL_iSoilProfile
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         function SMAP_SOILPROFILE(N_iZ, Soilname)
+            iSoilProfile_End = []
+            iSoilProfile_Start = [1]
+            Soilname_Initial = Soilname[1]
+            Soilname_SoilProfile = [Soilname[1]]
             i = 1
-
-            Nsoil = 1
-            for iSoilName in SoilName
+            N_SoilProfile = 1
+            for iSoilname in Soilname
                # if soil changes
-               if iSoilName ≠ SoilName_Initial
-                  append!(iLayer_Start, i)
-                  append!(iLayer_End, i-1)
-                  push!(SoilName_Layer, iSoilName)
+               if iSoilname ≠ Soilname_Initial
+                  append!(iSoilProfile_Start, i)
+                  append!(iSoilProfile_End, i-1)
+                  push!(Soilname_SoilProfile, iSoilname)
 
-                  SoilName_Initial = SoilName[i] # New soil
-                  Nsoil += 1
-               elseif  i == N
-                  append!(iLayer_End, i)  
+                  Soilname_Initial = Soilname[i] # New soil
+                  N_SoilProfile += 1
+               elseif  i == N_iZ
+                  append!(iSoilProfile_End, i)  
                end  # if: name
                i += 1
-            end # iSoilName
-         
-        
-         for iSite = 1:Nsoil
-            println(iSite , "=", SoilName_Layer[iSite], " =", SoilName_2_SiteName[SoilName_Layer[iSite]])
-            iSiteName = SoilName_2_SiteName[SoilName_Layer[iSite]]
-
-            Path_Output =  path.Home * "//INPUT//Data_Hypix//JULES//" * iSiteName
-
-               # SMAP-HYDRO PARAMETERS ====
-                  hydroSmap = hydroStruct.HYDROSTRUCT(N) # Making a structure
-
-                  # Abstracting data
-                  hydroSmap, N_iZ =  reading.READ_STRUCT(hydroSmap, Path_Input; iStart=iLayer_Start[iSite], iEnd=iLayer_End[iSite])
-
-                  for iZ=1:N_iZ
-                     hydroSmap.Ks[iZ] = Ks_FactorReduce * hydroSmap.Ks[iZ]
-                  end
-
-                  Path = Path_Output * "//" * SoilName_2_SiteName[SoilName_Layer[iSite]] * "_HypixHydro.csv"
-
-                  N_iLayers = iLayer_End[iSite] - iLayer_Start[iSite] + 1
-
-                  TABLE_HYDRO_VEG(hydroSmap, N_iLayers, Path)
-
-                # COMPUTING θᵢₙᵢ ===
-                  Path_SmapHydro = Path_Output * "//" * iSiteName * "_HypixHydro.csv"
-                     
-                  Path_Output_θini =  Path_Output * "//" * iSiteName * "_ThetaIni.csv"
-
-                  θᵢₙᵢ = SiteName_2_θini[iSiteName]
-                     
-                  θᵢₙᵢ_Layer = COMPUTE_θINI(hydroSmap, iSiteName, Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
- 
-
-             # DISCRETISATION ====
-               # Abstracting layers per soil =====
-                  Zlayer_Soil = Zlayer[iLayer_Start[iSite] : iLayer_End[iSite]]
-                  Path = Path_Output *  "//" * SoilName_2_SiteName[SoilName_Layer[iSite]] * "_Layer.csv"
-                  Layer = collect(1:1:length( Zlayer_Soil))
-
-                  TABLE_DISCRETIZATION(Layer, Path, Zlayer_Soil, θᵢₙᵢ_Layer)
-                  
-               # Automatic Disscretizing of layers per soil =====
-                  Layer, Z, θᵢₙᵢ_Cell = discretization.DISCRETISATION_AUTO(Nlayer=length(Zlayer_Soil), Zlayer=Zlayer_Soil, Zroot=800.0, θᵢₙᵢ=θᵢₙᵢ_Layer)
-
-                  Path = Path_Output * "//" * SoilName_2_SiteName[SoilName_Layer[iSite]] * "_Discretization_2.csv"
-
-                  TABLE_DISCRETIZATION(Layer, Path, Z, θᵢₙᵢ_Cell)
+            end # iSoilname
+            
+            return iSoilProfile_End, iSoilProfile_Start, N_SoilProfile, Soilname_SoilProfile
+         end  # function: SMAP_SOIL_iSoilProfile
 
 
-               # VEGETATION PARAMETERS
-                  # Vegetation parameters per soil ====
-                     vegSmap = vegStruct.VEGSTRUCT()
-
-                     # Abstracting data
-                     Path_Vegetaion ="D:\\DATAraw\\JULESdata\\Vegetation\\Vegetation.csv"
-
-                     vegSmap.Zroot = min(vegSmap.Zroot, ZrootDepth_Max[1])
-
-                     vegSmap, N_iZ = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
-
-                     Path = Path_Output * "//" * SoilName_2_SiteName[SoilName_Layer[iSite]] * "_Vegetation.csv"
-
-                     TABLE_HYDRO_VEG(vegSmap, 1, Path)
-            end
-      
-   return nothing
-   end  # function: SMAP_2_HYDRO
-
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : COMPUTE_θINI
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function COMPUTE_θINI(hydroSmap, iSiteName, Path_Output_θini, Path_SmapHydro, θᵢₙᵢ)
          # READING HYDRAULIC PARAMETERS
-            # Deriving the number of soil layers
+            # Deriving the number of soil SoilProfiles
             println(Path_SmapHydro)
                Data = DelimitedFiles.readdlm(Path_SmapHydro, ',')
 
@@ -138,7 +126,7 @@ module smap2hypix
 
             Se = wrc.θ_2_Se(θ₁[1], 1, hydroSmap)
 
-            # Assuming that all layers have the same Se
+            # Assuming that all SoilProfiles have the same Se
             for iZ=2:N_iZ
                θ₁[iZ] = wrc.Se_2_θ(Se, iZ, hydroSmap)
             end
@@ -147,7 +135,7 @@ module smap2hypix
             iZ = collect(1:1:N_iZ)
 
          # Writing to file
-            Header = ["iZ";"θini"; "Layer"]
+            Header = ["iZ";"θini"; "SoilProfile"]
 
             Output = Tables.table( [iZ θ₁ iZ])
       
@@ -160,33 +148,33 @@ module smap2hypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : TABLE_DISCRETIZATION
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function TABLE_DISCRETIZATION(Layer, Path, Z, θᵢₙᵢ)
-         Header = ["iZ";"Z";"θini"; "Layer"]
+      function TABLE_DISCRETIZATION(Path, Z, iLayers)
+         Header = ["iZ";"Z"; "Layer"]
 
          iZ = collect(1:1:length(Z))
 
-         Output = Tables.table( [iZ Z θᵢₙᵢ Layer])
-
-         CSV.write(Path, Output, header=Header)	 
+         open(Path, "w") do io
+				DelimitedFiles.writedlm(io,[Header] , ",") # Header
+				DelimitedFiles.writedlm(io, [iZ Z iLayers], ",")
+			end # open
       return nothing
       end  # function: TABLE
 
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : TABLE_DISCRETIZATION
+	#		FUNCTION : HYDRO_VEG
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TABLE_HYDRO_VEG(hydroSmap, N_iLayers, Path)
+		function TABLE_HYDRO_VEG(hydroSmap, N_iSoilProfiles, Path)
 			println("			~ $(Path) ~")
 
-			Id = 1:1:N_iLayers
+			Id = 1:1:N_iSoilProfiles
 
-			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iLayers, hydroSmap)
+			Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iSoilProfiles, hydroSmap)
 					
 			pushfirst!(FieldName_String, string("iSite")) # Write the "Id" at the very begenning
 
 			open(Path, "w") do io
-				DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
-				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+				DelimitedFiles.writedlm(io,[FieldName_String] , ",") # Header
 				DelimitedFiles.writedlm(io, [Int64.(Id) Matrix], ",")
 			end # open
       return nothing

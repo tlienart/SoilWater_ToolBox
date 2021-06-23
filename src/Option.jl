@@ -27,6 +27,7 @@ module options
       IntergranularMixingPsd ::Bool
       RockCorection::Bool
 		Smap::Bool
+		Smap2Hypix::Bool
       Temporary::Bool
 	end
 
@@ -200,15 +201,16 @@ module options
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false
-            HydroLabθΨ⍰           = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
+            HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
             Hypix                  = false # <true>; <false>
             InfiltBest             = false # <true>; <false>
             IntergranularMixingPsd = false # <true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
-            Smap             = true  # <true>; <false>
+            Smap                   = false  # <true>; <false>
+            Smap2Hypix             = true
             Temporary              = false # <true>; <false>
 
-			run = RUN(ChangeHydroModel, HydroLabθΨ⍰, Hypix, InfiltBest, IntergranularMixingPsd, RockCorection, Smap, Temporary)
+			run = RUN(ChangeHydroModel, HydroLabθΨ⍰, Hypix, InfiltBest, IntergranularMixingPsd, RockCorection, Smap, Smap2Hypix, Temporary)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
@@ -233,7 +235,8 @@ module options
 			# =============================================================
 				# Hydraulic model
 				HydroModel⍰      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
-				HydroModel_List = [:Kosugi; :Vangenuchten; :BrooksCorey; :ClappHornberger; :VangenuchtenJules]
+				# HydroModel_List = [:Kosugi; :Vangenuchten; :BrooksCorey; :ClappHornberger; :VangenuchtenJules]
+				HydroModel_List = [:Kosugi]
 					θsOpt⍰           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
 					θrOpt⍰           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
 					σ_2_Ψm⍰          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints

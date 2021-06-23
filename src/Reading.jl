@@ -279,8 +279,7 @@ module reading
 					N_θΨobs[iZ] += 2
 				end		
 		return N_θΨobs, θ_θΨobs, Ψ_θΨobs
-		end  # function: θψ_ADDPOINTS
-	
+		end  # function: θψ_ADDPOINTS+
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -304,24 +303,19 @@ module reading
 			# Reading the Model data
 			for iFieldname in propertynames(structures)
 
-				# Putting the values of Output_Vector into structures					
+				# Putting the values of Output_Vector into structures
+				Output_Vector = fill(0.0::Float64, N_iZ)					
 				try
 					Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
-
-					# Putting the values of OutPutData into the the structures hydroData
-						if length(Output_Vector) == 1 # Not a vector
-							Output_Vector = Output_Vector[1]
-						end
-
-						setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
 				catch
 					# @warn "SoilWater-ToolBox: cannong find $iFieldname"
 					Output_Vector = fill(0.0::Float64, N_iZ)
-					if length(Output_Vector) == 1 # Not a vector
-                  Output_Vector = Output_Vector[1]
-               end
-	
+				end
+
+				try
 					setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
+				catch
+					setfield!(structures, Symbol(iFieldname), Float64(Output_Vector[1]))
 				end
 			end
 

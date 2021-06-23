@@ -18,22 +18,21 @@
 				# Sort data
 					Data = sortslices(Data, dims=1)
 				
-				IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ, N_Point_Max=1)
+				IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ; N_Point_Max=1)
 				IsTopsoil = 	Int64.(IsTopsoil[1:N_iZ])
 
-				Soilname, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Soilname", N_iZ, N_Point_Max=1)
+				Soilname, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Soilname", N_iZ; N_Point_Max=1)
 			
-				RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ, N_Point_Max=1)
+				RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ; N_Point_Max=1)
 				
-				Smap_Depth, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "depth_mm", N_iZ, N_Point_Max=1)
+				Smap_Depth, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "depth_mm", N_iZ; N_Point_Max=1)
 
-				RockFragment, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Stone_Prop", N_iZ, N_Point_Max=1)
+				RockFragment, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Stone_Prop", N_iZ; N_Point_Max=1)
 
-				Smap_RockDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockDepth_mm", N_iZ, N_Point_Max=1)
+				Smap_RockDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockDepth_mm", N_iZ; N_Point_Max=1)
 
-				Smap_MaxRootingDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "MaxRootingDepth_mm", N_iZ, N_Point_Max=1)
-
-				# smap = SMAP_STRUCT(Smap_Depth, IsTopsoil, Soilname, RockFragment, RockClass, Smap_RockDepth, Smap_MaxRootingDepth)			
+				Smap_MaxRootingDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "MaxRootingDepth_mm", N_iZ; N_Point_Max=1)
+		
 			return IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname
 			end  # function: SMAP
 

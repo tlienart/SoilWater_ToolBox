@@ -60,17 +60,68 @@ module discretization
 	#		FUNCTION : DISCRETISATION_AUTO
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	""" 
-					DISCRETISATION_AUTO(Nlayer, Zlayer)
+					DISCRETISATION_AUTO(N_Layer, Zlayer Zroot)
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
-		function DISCRETISATION_AUTO(; Nlayer, Zlayer, Zroot, θᵢₙᵢ)
+		function DISCRETISATION_AUTO(param; N_Layer, Zlayer, Zroot)
 
-			ΔZlayer = fill(0.0::Float64, Nlayer)
+			ΔZlayer = fill(0.0::Float64, N_Layer)
 
 			# Computing ΔZlayer
 				ΔZlayer[1]= Zlayer[1]
-				for iZ = 2:Nlayer
+				for iZ = 2:N_Layer
+					ΔZlayer[iZ] = Zlayer[iZ] - Zlayer[iZ-1]
+				end # for
+
+			# Computing the number of discretization
+            ΔZcell    = []
+            Layer     = []
+				for iLayer =1:N_Layer
+
+					if  Zlayer[iLayer] < Zroot
+						ΔZ_Max = param.hyPix.ΔZrz_Max
+					else
+						ΔZ_Max = param.hyPix.ΔZdeep_max
+					end
+
+					Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell
+					ΔZcell₀ = ΔZlayer[iLayer] / Float64(Nsplit)
+
+					for iDiscret=1:Nsplit
+						append!(ΔZcell, ΔZcell₀)
+                  append!(Layer, iLayer)
+					end
+				end # ilayer
+				N = length(ΔZcell)
+
+			# Computing the ∑ΔZcell
+				Z = fill(0.0::Float64, N)
+
+				Z[1] = ΔZcell[1]
+				for iZ=2:N
+					Z[iZ] = Z[iZ-1] + ΔZcell[iZ]
+				end
+			
+		return Layer, Z
+		end  # function: DISCRETISATION_AUTO
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : DISCRETISATION_AUTO_θini
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	""" 
+					DISCRETISATION_AUTO(N_Layer, Zlayer)
+
+	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
+	"""
+		function DISCRETISATION_AUTO_θini(; N_Layer, Zlayer, Zroot, θᵢₙᵢ)
+
+			ΔZlayer = fill(0.0::Float64, N_Layer)
+
+			# Computing ΔZlayer
+				ΔZlayer[1]= Zlayer[1]
+				for iZ = 2:N_Layer
 					ΔZlayer[iZ] = Zlayer[iZ] - Zlayer[iZ-1]
 				end # for
 
@@ -78,7 +129,7 @@ module discretization
             ΔZcell    = []
             Layer     = []
             θᵢₙᵢ_Cell = []
-				for iLayer =1:Nlayer
+				for iLayer =1:N_Layer
 
 					if  Zlayer[iLayer] < Zroot
 						ΔZ_Max = param.hyPix.ΔZrz_Max

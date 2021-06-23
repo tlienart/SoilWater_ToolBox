@@ -32,6 +32,7 @@ function START_TOOLBOX()
 			path = paths.PATH(1, option)
 			println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios \n \n")
 		end
+	#..............................................................................
 
 
 	# _______________________ START: reading _______________________ 
@@ -53,7 +54,7 @@ function START_TOOLBOX()
 		# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
 				θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
-			
+
 			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained # Ading extra data
 				try
 					@info "\n	*** Reading θ(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
@@ -64,10 +65,9 @@ function START_TOOLBOX()
 				end 		
 			end  # if: option.data.θΨ
 
-
 		# IF WE HAVE K(Θ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
-				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.Table_KΨ)
+				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 
 			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi 
 				try
@@ -76,7 +76,7 @@ function START_TOOLBOX()
 				catch
 					@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi => Kosugi simulation not performed yet! *** \n"
 					if "Ks" ∈ optim.ParamOpt
-						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.Table_KΨ)
+						K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, Path.inputSoilwater.Kunsat)
 					end
 				end # catch
 			end  # if: Kθ			
@@ -123,14 +123,15 @@ function START_TOOLBOX()
 				end  # if: option.data.RockWetability
 
 	println("----- END READING ----------------------------------------------- \n")
+	
 	# ------------------------END: reading---------------------------
+	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
 	# _______________________ START: running HydroLabθΨ _______________________ 
 	if option.run.HydroLabθΨ⍰ ≠ :No
 	println("----- START RUNNING HYDROLABΘΨ -----------------------------------------------")
-	
 		# STRUCTURES
 			hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
 			hydroOther = hydroStruct.HYDRO_OTHERS(N_iZ)
@@ -200,45 +201,36 @@ function START_TOOLBOX()
 
 	println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
 	end # option.run.HydroLabθΨ⍰
+	# ------------------------END: running HydroLabθΨ--------------------------
 
-# If the hydraulic parameters were already derived than get the data from file instead or rerunning the model	
-		# if option.run.HydroLabθΨ⍰ == :File
-		# 	println("    ~ HydroLab HydroParam reading from file ~")
-		# 	hydro = reading.HYDROPARAM(IdSelect, N_iZ, hydro)
-	
-	
 
-		if option.run.ChangeHydroModel
-			# Creating 
-			hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
-			
-			hydroTranslate, N_iZ = reading.READ_STRUCT(hydroTranslate, path.inputSoilwater.ConvertModel)
-			
-			# Temporary Id
-				IdSelect = collect(1:1:N_iZ)
+	
+	# _______________________ START: ChangeHydroModel _______________________ 
+	if option.run.ChangeHydroModel
+		# Creating 
+		hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
 		
-			# Deriving a table of θ(Ψ)
-				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, IdSelect, N_iZ, path.inputSoilwater.Ψθ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
-			
-			# Deriving a table of K(θ)
-				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, IdSelect, param.hydro.TableComplete_θΨ, hydroTranslate.Ks[1:N_iZ], N_iZ::Int64, path.inputSoilwater.Kunsat)
-
-			# Creating an Id output required by the program
-				table.TABLE_ID(N_iZ::Int64, path.inputSoilwater.IdSelect)
-			
-		elseif !(option.run.Hypix)
-			else # TODO: Needs to be removed
-				N_iZ = 1
-			end # Option
-
-	if option.dataFrom.Jules
-		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)
-		smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName, SiteName_2_θini, path)	
-	end  # if: option.START_JULES()
-
+		hydroTranslate, N_iZ = reading.READ_STRUCT(hydroTranslate, path.inputSoilwater.ConvertModel)
+		
+		# Temporary Id
+			IdSelect = collect(1:1:N_iZ)
 	
-	if option.run.IntergranularMixingPsd  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	println("=== START: PSD MODEL  ===")
+		# Deriving a table of θ(Ψ)
+			table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, IdSelect, N_iZ, path.inputSoilwater.Ψθ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
+		
+		# Deriving a table of K(θ)
+			table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, IdSelect, param.hydro.TableComplete_θΨ, hydroTranslate.Ks[1:N_iZ], N_iZ::Int64, path.inputSoilwater.Kunsat)
+
+		# Creating an Id output required by the program
+			table.TABLE_ID(N_iZ::Int64, path.inputSoilwater.IdSelect)
+	end # Option
+	# ------------------------END: ChangeHydroModel---------------------------  	
+
+
+
+	# _______________________ START: IntergranularMixingPsd _______________________ 
+	if option.run.IntergranularMixingPsd 
+		println("=== START: PSD MODEL  ===")
 		# Structure of hydroPsd
 			hydroPsd = hydroStruct.HYDROSTRUCT(N_iZ)
 			hydroOther_Psd = hydroStruct.HYDRO_OTHERS(N_iZ)
@@ -257,21 +249,22 @@ function START_TOOLBOX()
 		if  option.psd.HydroParam
 			hydroPsd, hydroOther_Psd = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_Rpart, Ψ_θΨobs=Ψ_Rpart, N_θΨobs=N_Psd, hydro=hydroPsd, hydroOther=hydroOther_Psd, option=option, optionₘ=option.psd, optim=optim_Psd)
 		end
-
 	
-		println("=== END  : DERIVING HYDRO PARAMETERS  === \n")
-
-	println("=== END : PSD MODEL  === \n")
+		println("=== END : PSD MODEL  === \n")
 	else
 		θ_Rpart = zeros(Float64, N_iZ,1)
 		Ψ_Rpart = zeros(Float64, N_iZ,1)
 		hydroPsd = hydroStruct.HYDROSTRUCT(option.psd, N_iZ)
 		N_Psd = zeros(Float64, N_iZ)
 
-	end # option.run.IntergranularMixingPsd ...............................................................................
+	end
+	# ------------------------END: IntergranularMixingPsd---------------------------  
 
-	
-	if option.run.InfiltBest  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+	# _______________________ START: Infiltration _______________________ 
+
+	if option.run.InfiltBest
 	println("=== START: INFILTRATION  ===")
 		# Structure of hydroInfilt
 			hydroInfilt = hydroStruct.HYDROSTRUCT(N_iZ)
@@ -289,11 +282,36 @@ function START_TOOLBOX()
 		hydroInfilt = []
 	end # option.run.InfiltBest
 
+	# ------------------------END: Infiltration---------------------------
+
+		
+	
+	# _______________________ START: HyPix _______________________ 
 	if option.run.Hypix
 		hypixStart.HYPIX_START(Soilname, option, param, path)
 	end # option.run.Hypix
+	# ------------------------END: HyPix---------------------------
 
-	 # _______________________ START: table _______________________ 
+
+	# _______________________ START: Jules _______________________ 
+
+	if option.dataFrom.Jules
+		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)
+		# smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName, SiteName_2_θini, path)	
+	end  # if: option.START_JULES()
+	
+	# ------------------------END: Jules---------------------------  
+
+	# _______________________ START: Smap_2_HyPix ______________________
+	if option.run.Smap2Hypix
+		smap2hypix.SMAP_2_HYPIX(N_iZ, option.hydro, param, path, Smap_Depth, Smap_MaxRootingDepth, Soilname)
+	end  # if: Smap2Hypix 
+
+	# ------------------------END: Smap_2_HyPix---------------------------  
+
+
+	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	# _______________________ START: table _______________________ 
 
 	 if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File # <>=<>=<>=<>=<>
 		# CORE OUTPUT
@@ -317,7 +335,8 @@ function START_TOOLBOX()
 			end # option.run.Smap
 		
 		end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
-	 # ------------------------END: table--------------------------- 
+	 # ------------------------END: table---------------------------
+	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 	 
 	 # _______________________ START: plotting _______________________ 
 
@@ -328,9 +347,8 @@ function START_TOOLBOX()
 			println("		=== END: PLOTTING  === \n")
 		end
 	
-
 	 # ------------------------END: plotting---------------------------  
-
+	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 
 
 		if option.run.IntergranularMixingPsd # <>=<>=<>=<>=<>
