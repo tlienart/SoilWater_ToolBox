@@ -13,9 +13,6 @@ module checking
 		  if "Ks" ∈ optim.ParamOpt && !(option.data.Kθ) 
 			error("*** If Ks ∈ optim.ParamOpt => option.data.θΨ ***")
 
-		  	elseif option.run.Smap && option.data.Pedological⍰≠:Smap
-				error("*** If option.run.Smap => option.data.Pedological==Smap ***")
-
 			elseif option.run.HydroLabθΨ⍰ ≠ :No && !option.data.θΨ
 				error("*** If option.run.HydroLabθΨ⍰ => option.data.θΨ ***")
 
@@ -52,10 +49,24 @@ module checking
         	elseif option.data.SimulationKosugiθΨK && "Ks" ∉ optim.ParamOpt
             	error("***  Ks  ∉ optim.ParamOpt && option.smap.SimulationKosugiθΨK THAN Ks ∈ optim.ParamOpt***")
 
+			# ------------ CHECKING Infiltration model--------------------
+			elseif option.run.Infilt && !(option.data.Infilt)
+				error("***  option.run.Infilt => option.data.Infilt ***")
+
+			# ------------ CHECKING Smap--------------------
+			elseif option.run.Smap && option.data.Pedological⍰≠:Smap
+				error("*** If option.run.Smap => option.data.Pedological==Smap ***")
+
+			elseif option.rockFragment.CorectStoneRockWetability && !(option.run.Smap)
+				@warn("*** If option.data.RockWetability ⇒ option.run.Smap ***")
+	
+
 			# ------------ CHECKING Smap_2_Hypix---------------------
 
 			elseif option.run.Smap2Hypix && (option.data.Pedological⍰ ≠ :Smap)
 				error("*** option.run.Smap2Hypix => option.data.Pedological⍰ == :Smap ***")
+
+
 		
 			end # Check error
 

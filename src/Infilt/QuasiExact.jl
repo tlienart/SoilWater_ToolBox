@@ -16,16 +16,16 @@ module quasiExact
 	#		FUNCTION : INFILTRATION3D_2_1D
 	# 		= TRANSFORMS INFILTRATION_3D TO INFILTRATION_1D =
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T; θ_Ini= infiltParam.θ_Ini[iZ])
+	function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; θ_Ini= infiltParam.θ_Ini[iZ])
 
 		Δθ = hydroInfilt.θs[iZ] - θ_Ini
 
-		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, optionₘ)
+		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, option.infilt)
 
 		for iT = 1:N_Infilt[iZ]
 			∑Infilt_1D[iZ,iT] = ∑Infilt_3D[iZ,iT] - (T[iZ,iT] * infiltParam.γ[iZ] * Sorptivity ^ 2.0) / (infiltParam.RingRadius[iZ] * Δθ)
 		end
-		return ∑Infilt_1D
+	return ∑Infilt_1D
 	end # function : INFILTRATION3D_2_1D
 
 
@@ -40,7 +40,7 @@ module quasiExact
 
 			ΔI_η = Time_η * infiltParam.γ[iZ]
 
-			return ∑Infilt_3D = INFILTTRATIONη_2_1D(Infilt_η, K_θini, Sorptivity, T, ΔK) + ΔI_η * (Sorptivity ^ 4.0) / (2.0 * infiltParam.RingRadius[iZ] * Δθ * (ΔK ^ 2.0))
+		return ∑Infilt_3D = INFILTTRATIONη_2_1D(Infilt_η, K_θini, Sorptivity, T, ΔK) + ΔI_η * (Sorptivity ^ 4.0) / (2.0 * infiltParam.RingRadius[iZ] * Δθ * (ΔK ^ 2.0))
 		end # function :  INFILTTRATIONη_2_3D
 
 
@@ -58,15 +58,15 @@ module quasiExact
 	# 		COMPUTE INFILTRATION_3D FROM OPTIMIZED HYDRAULIC PARAMETERS
 	# 		Solving quasiexact solution
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-		function HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, T; Infilt_η_Max_Start=0.5)
+		function HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; Infilt_η_Max_Start=0.5)
 
 			Infilt_η = Array{Float64}(undef, N_Infilt[iZ])
 
-			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, optionₘ)
+			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt)
 
 			Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 
-			K_θini = kunsat.Se_2_KUNSAT(optionₘ, Se_Ini, iZ, hydroInfilt)
+			K_θini = kunsat.Se_2_KUNSAT(option.infilt, Se_Ini, iZ, hydroInfilt)
 
 			ΔK = hydroInfilt.Ks[iZ] - K_θini
 
@@ -114,7 +114,7 @@ module quasiExact
 				# Transforming INFILTTRATIONη to INFILTRATION3D 
 					∑Infilt_3D[iZ,iT] =  INFILTTRATIONη_2_3D(Infilt_η[iT], infiltParam, iZ, K_θini, Sorptivity, T[iZ,iT], Time_η, ΔK, Δθ)
 			end
-			return ∑Infilt_3D
+		return ∑Infilt_3D
 		end # function: HYDRO_2_INFILTRATION3D
 
 
@@ -122,11 +122,11 @@ module quasiExact
 	#		FUNCTION : OF_QUASIEXACT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	function OF_QUASIEXACT(∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, T; W=0.8)
+	function OF_QUASIEXACT(∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T; W=0.8)
 
 		Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
 		
-		K_θini = kunsat.Se_2_KUNSAT(optionₘ, Se_Ini, iZ, hydroInfilt)
+		K_θini = kunsat.Se_2_KUNSAT(option.infilt, Se_Ini, iZ, hydroInfilt)
 
 		Kr_θini = K_θini / hydroInfilt.Ks[iZ]
 		
@@ -134,7 +134,7 @@ module quasiExact
 		
 		Δθ = hydroInfilt.θs[iZ] - infiltParam.θ_Ini[iZ]
 		
-		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, optionₘ)
+		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt)
 
 		Left_Term = zeros(Float64, N_Infilt[iZ])
 
@@ -165,8 +165,7 @@ module quasiExact
 			end #  Right_Term[iT] > 0.0
 		end #  Right_Term[iT] > 0.0
 
-		return Wof = (W * Of_Trans / Float64(iT_TransSteady-1)) + ((1.0 - W) * Of_Stead / Float64(N_Infilt[iZ] - iT_TransSteady + 1)) + Of_Penalty
-	
+	return Wof = (W * Of_Trans / Float64(iT_TransSteady-1)) + ((1.0 - W) * Of_Stead / Float64(N_Infilt[iZ] - iT_TransSteady + 1)) + Of_Penalty
 	end # function: OF_INFILT_2_HYDRO
 	
 

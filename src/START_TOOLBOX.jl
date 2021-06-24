@@ -88,6 +88,7 @@ function START_TOOLBOX()
 
 				# Φ  corrected for RockFragments
 				Φ = rockFragment.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
+
 			elseif option.data.Φ⍰ == :Φ # Total Porosity
 				RockFragment, Φ = reading.Φ(IdSelect, N_iZ, path.inputSoilwater.Φ)
 				
@@ -118,7 +119,7 @@ function START_TOOLBOX()
 
 		#--- NON CORE ----
 			# SMAP if we have information of the wetability of rocks:
-				if option.data.RockWetability
+				if option.data.RockWetability && option.run.Smap
 					rfWetable = readSmap.ROCKFRAGMENT_WETTABLE(path.inputSmap.LookupTable_RockWetability)	
 				end  # if: option.data.RockWetability
 
@@ -127,7 +128,13 @@ function START_TOOLBOX()
 	# ------------------------END: reading---------------------------
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+	# _______________________ START:preperation for all model _______________________ 
 
+
+
+
+
+	# ------------------------END: preperation for all models---------------------------  
 
 	# _______________________ START: running HydroLabθΨ _______________________ 
 	if option.run.HydroLabθΨ⍰ ≠ :No
@@ -208,7 +215,7 @@ function START_TOOLBOX()
 	# _______________________ START: ChangeHydroModel _______________________ 
 	if option.run.ChangeHydroModel
 		# Creating 
-		hydroTranslate = hydroStruct.HYDROSTRUCT(1000)
+		hydroTranslate = hydroStruct.HYDROSTRUCT(option.hydro, 1000)
 		
 		hydroTranslate, N_iZ = reading.READ_STRUCT(hydroTranslate, path.inputSoilwater.ConvertModel)
 		
@@ -264,23 +271,29 @@ function START_TOOLBOX()
 
 	# _______________________ START: Infiltration _______________________ 
 
-	if option.run.InfiltBest
+	if option.run.Infilt
 	println("=== START: INFILTRATION  ===")
-		# Structure of hydroInfilt
-			hydroInfilt = hydroStruct.HYDROSTRUCT(N_iZ)
+		# STRUCTURES
+			hydroInfilt = hydroStruct.HYDROSTRUCT(option.infilt, N_iZ)
 			hydroOther_Infilt = hydroStruct.HYDRO_OTHERS(N_iZ)
-			hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(hydroPsd, N_iZ, path.inputSoilwater.HydroParam_Infilt)
+			hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(option.psd, hydroInfilt, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
 
-		# Total Porosity= Φ
-			hydroInfilt.Φ = rockFragment.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
+		# CHECKING THE DATA
+			checking.CHECKING(option, option.infilt, optim)
 
-		# Running infiltration model
-			infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltStart.START_INFILTRATION(∑Infilt_Obs, ∑Psd, hydro, hydroInfilt, IdSelect, infiltParam, N_Infilt, N_iZ, Tinfilt)
+		# TRANSFERING Φ -> hydro
+			for iZ =1:N_iZ 
+				hydroInfilt.Φ[iZ] = Φ[iZ]
+			end
 
+		# RUNNING INFILTRATION MODEL
+		if @isdefined hydro
+			infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltStart.START_INFILTRATION(∑Infilt_Obs=∑Infilt_Obs, ∑Psd=∑Psd, hydro=hydro, hydroInfilt=hydroInfilt, infiltParam=infiltParam, N_Infilt=N_Infilt, N_iZ=N_iZ, option=option, param=param,Tinfilt=Tinfilt)
+		else
+			infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltStart.START_INFILTRATION(∑Infilt_Obs=∑Infilt_Obs, ∑Psd=∑Psd, hydroInfilt=hydroInfilt, infiltParam=infiltParam, N_Infilt=N_Infilt, N_iZ=N_iZ, option=option, param=param, Tinfilt=Tinfilt)
+		end
 	println("=== END  : INFILTRATION  === \n")
-	else
-		hydroInfilt = []
-	end # option.run.InfiltBest
+	end # option.run.Infilt
 
 	# ------------------------END: Infiltration---------------------------
 
@@ -332,9 +345,15 @@ function START_TOOLBOX()
 				if iSim==length(Scenarios)
 					tableSmap.SMAP(hydro, IdSelect, IsTopsoil, N_iZ, option.hydro, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname)
 				end
-			end # option.run.Smap
-		
+			end # option.run.Smap	
 		end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
+
+		if option.run.Infilt # <>=<>=<>=<>=<>
+			table.infilt.HYDRO_INFILT(hydroInfilt, IdSelect, N_iZ, path.tableSoilwater.Table_HydroInfilt)
+
+			table.infilt.INFILT(IdSelect, N_iZ, infiltOutput, path.tableSoilwater.Table_Infilt)
+		end # option.run.Infilt
+
 	 # ------------------------END: table---------------------------
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 	 
@@ -363,11 +382,6 @@ function START_TOOLBOX()
 			end
 		end # option.run.IntergranularMixingPsd
 
-		if option.run.InfiltBest # <>=<>=<>=<>=<>
-			table.infilt.HYDRO_INFILT(hydroInfilt, IdSelect, KunsatModel_Infilt, N_iZ, path.tableSoilwater.Table_HydroInfilt)
-
-			table.infilt.INFILT(IdSelect, N_iZ, infiltOutput, path.tableSoilwater.Table_Infilt)
-		end # option.run.InfiltBest
 
 	# PRINT OUTPUT ======================================================================================
 	# if option.other.Ploting && !option.run.Hypix
@@ -399,21 +413,21 @@ function START_TOOLBOX()
 	# 	if option.run.IntergranularMixingPsd && option.psd.Plot_Psd_θΨ && option.psd.HydroParam # <>=<>=<>=<>=<>
 	# 		plot.psd.PLOT_PSD_θΨ(Ψ_θΨobs, Ψ_Rpart, θ_θΨobs, θ_Rpart, N_θΨobs, N_iZ, N_Psd, IdSelect, hydroPsd, hydro, path.plotSoilwater.Plot_Psd_θΨ)
 	# 	end
-	# 	if option.run.InfiltBest && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
+	# 	if option.run.Infilt && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
 	# 		plot.infilt.PLOT_∑INFILT(IdSelect, N_Infilt, N_iZ, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput, path.plotSoilwater.Plot_∑infilt_Opt )
 	# 	end
-	# 	# if option.run.InfiltBest && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
+	# 	# if option.run.Infilt && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
 	# 	# Removing GRUtils software to avoid conflict
 	# 	# 	# plot.infilt.PLOT_∑INFILT_SEINI(hydroInfilt, IdSelect, infiltOutput, infiltParam, N_iZ)
 	# 	# end
 
-	# 	if option.run.InfiltBest && option.infilt.Plot_θΨ
+	# 	if option.run.Infilt && option.infilt.Plot_θΨ
 	# 		if option.run.HydroLabθΨ⍰ ≠ :No
 	# 			plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, path.plotSoilwater.Plot_∑infilt_θΨ; hydro=hydro)
 	# 		else
 	# 			plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, path.plotSoilwater.Plot_∑infilt_θΨ)
 	# 		end # option.run.HydroLabθΨ⍰
-	# 	end # option.run.InfiltBest
+	# 	end # option.run.Infilt
 
 	# println("=== END: PLOTTING  === \n")
 	# end # if option.other.Ploting

@@ -53,7 +53,7 @@ module sorptivity
 
 				# Scaled sorptivity based on Se
 					function SORPTIVITY_Se_η(Se, hydroInfilt, iZ, Se_Ini)
-						return Sorptivity_Se_η = DIFFUSIVITY_Se_η(Se, iZ, hydroInfilt, optionₘ) * FLUXCONC(Se, Se_Ini)
+						return Sorptivity_Se_η = DIFFUSIVITY_Se_η(Se, iZ, hydroInfilt, optionₘ) * FLUXCONC(option, Se, Se_Ini)
 					end # SORPTIVITY_Se_η
 
 					Sorptivity_Se_η = QuadGK.quadgk(Se -> SORPTIVITY_Se_η(Se, hydroInfilt, iZ, Se_Ini), Se_Ini, SeIni_⬙, rtol=Rtol)[1]
@@ -64,7 +64,7 @@ module sorptivity
 
 						Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₂, iZ, hydroInfilt)
 
-						return Sorptivity_Se_Ψ_η = kunsat.Se_2_KR(optionₘ, Se, iZ, hydroInfilt) * FLUXCONC(Se, Se_Ini)
+						return Sorptivity_Se_Ψ_η = kunsat.Se_2_KR(optionₘ, Se, iZ, hydroInfilt) * FLUXCONC(option, Se, Se_Ini)
 					end # SORPTIVITY_Se_Ψ
 
 					Sorptivity_Se_Ψ_η = QuadGK.quadgk(Ψ_η -> SORPTIVITY_Se_Ψ_η(Ψ_η, hydroInfilt, iZ, Se_Ini), ΨSat_η, Ψ⬙_η, rtol=Rtol)[1]
@@ -107,7 +107,7 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : FLUXXCONCENTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function FLUXCONC(Se, Se_Ini)
+		function FLUXCONC(option, Se, Se_Ini)
 			if option.infilt.SorptivityModel == :Parlange # <>=<>=<>=<>=<> soils with strong non-linear diffusivity behaviors
 				return FluxConc = (1.0 + Se - 2.0 * Se_Ini) # to avoid numerical problems it is set analyticaly
 

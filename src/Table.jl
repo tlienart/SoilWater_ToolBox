@@ -266,19 +266,18 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDRO_INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYDRO_INFILT(hydroInfilt, IdSelect, KunsatModel_Infilt, N_iZ::Int64, Path)
+			function HYDRO_INFILT(hydroInfilt, IdSelect, N_iZ::Int64, Path)
 				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroInfilt)
 
-				Matrix = hcat(Matrix, KunsatModel_Infilt)
+				# Matrix = hcat(Matrix, KunsatModel_Infilt)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 				push!(FieldName_String, string("Kunsat_θΨ"))
 
 				Matrix =  round.(Matrix, digits=10)
 				open(Path, "w") do io
-					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
 					DelimitedFiles.writedlm(io, [IdSelect Matrix], ",")
 				end

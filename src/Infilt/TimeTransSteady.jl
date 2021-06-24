@@ -6,8 +6,8 @@ module timeTransSteady
 	#		FUNCTION : ∑INFIlT_2_TIMETRANSSTEADY
 	#		Determening from the data when the transition between transit and steady occures
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~		
-	function  ∑INFIlT_2_TIMETRANSSTEADY(T, N_iZ, N_Infilt, infiltOutput, ∑Infilt_Obs; N_LastInfiltPoint=4, CorrectLinear=true) 
-
+	function  ∑INFIlT_2_TIMETRANSSTEADY(∑Infilt_Obs, infiltOutput, N_Infilt, N_iZ, param, T; N_LastInfiltPoint=4, CorrectLinear=true) 
+		
 		# FOR EVERY SOIL
 		for iZ=1:N_iZ
 
@@ -23,8 +23,10 @@ module timeTransSteady
 				iStart = N_Infilt[iZ] - N_LastInfiltPoint + 1
 				iEnd = N_Infilt[iZ]
 
-				Intercept, Slope = stats.LINEAR_REGRESSION(T[iZ,iStart:iEnd], ∑Infilt_Obs[iZ,iStart:iEnd])
-
+				
+					Intercept, Slope = stats.LINEAR_REGRESSION(T[iZ,iStart:iEnd], ∑Infilt_Obs[iZ,iStart:iEnd])
+					# error("*** Most probaby a problem with SELECT_ID of infiltration data ***")
+		
 			# Starting from the last soils
 				for i =1:N_Infilt[iZ] - N_LastInfiltPoint - 1
 					iModel = N_Infilt[iZ] - N_LastInfiltPoint - i

@@ -8,7 +8,7 @@ module infiltInitialize
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILT_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_iZ, Tinfilt)
+		function INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_iZ, param, Tinfilt)
 
 			# CORRECTION FOR θr & θs
 				for iZ=1:N_iZ
@@ -46,7 +46,7 @@ module infiltInitialize
 				infiltOutput = infiltStruct.INFILTSTRUCT(N_iZ)
 
 			# DETERMENING WHEN STEADY STATE OCCURES
-				infiltOutput = timeTransSteady.∑INFIlT_2_TIMETRANSSTEADY(T, N_iZ, N_Infilt, infiltOutput, ∑Infilt_Obs) 
+				infiltOutput = timeTransSteady.∑INFIlT_2_TIMETRANSSTEADY(∑Infilt_Obs, infiltOutput, N_Infilt, N_iZ, param, T) 
 
 			# Initializing Infilt		
 				∑Infilt_3D = Array{Float64}(undef, (N_iZ, N_Infilt_Max))

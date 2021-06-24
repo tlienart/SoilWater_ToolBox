@@ -52,7 +52,7 @@
             include("HydroLab/HydrolabOpt.jl")
         end
         
-        if option.run.InfiltBest
+        if option.run.Infilt
             include("Sorptivity/Sorptivity.jl")            
             include("Infilt/BestFunc.jl")
             include("Infilt/OfBest.jl")
@@ -60,8 +60,8 @@
             include("Infilt/TimeTransSteady.jl")
             include("Infilt/InfiltStruct.jl")
             include("Infilt/InfiltInitialize.jl")
-            include("Infilt/InfiltStart.jl")
-        end # option.run.InfiltBest
+            include("Infilt/Infilt_START.jl")
+        end # option.run.Infilt
         
         if option.run.IntergranularMixingPsd
             include("Psd/PsdStruct.jl")
