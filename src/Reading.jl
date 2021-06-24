@@ -262,7 +262,7 @@ module reading
 				N_Ψ = Int64(length(param.hydro.Ψ_Table))
 
 			# Writting the Header
-				FieldName_String = Array{String}(undef, (N_Ψ))
+				FieldName_String = fill(""::String, (N_Ψ))
 				for iΨ =1:N_Ψ
 					FieldName_String[iΨ] = string(Int64(param.hydro.Ψ_Table[iΨ]) ) * "mm"
 

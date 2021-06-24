@@ -197,7 +197,7 @@ module tool
 				N_FieldName = length(FieldName_Array)
 
 				# Matrix
-					Matrix = Array{Float64}(undef, (N_iZ, N_FieldName))
+					Matrix = fill(0.0::Float64, (N_iZ, N_FieldName))
 
 					i = 1
 					for FieldName in FieldName_Array
@@ -226,7 +226,7 @@ module tool
 		# function STRUCT_2_FIELDNAME_PARAM(Structure)
 		# 	N_FieldName = length(Structure.FieldName) - 1
 
-		# 	Matrix = Array{Float64}(undef, (N_FieldName))
+		# 	Matrix = fill(0.0::Float64, (N_FieldName))
 			
 		# 	for i=1:N_FieldName
 		# 		Struct_Array = getfield(Structure, Structure.FieldName[i])

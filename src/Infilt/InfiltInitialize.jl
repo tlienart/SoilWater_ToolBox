@@ -32,7 +32,7 @@ module infiltInitialize
 			# TIME FLUX CORRECTION
 				N_Infilt_Max = maximum(N_Infilt[1:N_iZ])
 
-				T = Array{Float64}(undef, (N_iZ, N_Infilt_Max))
+				T = fill(0.0::Float64, (N_iZ, N_Infilt_Max))
 				for iZ=1:N_iZ
 					# T[iZ,1] = ( (Tinfilt[iZ,1] ^0.5 + (0.0)^0.5) / 2.0 ) ^ 2.0
 					T[iZ,1] = Tinfilt[iZ,1]
@@ -49,8 +49,8 @@ module infiltInitialize
 				infiltOutput = timeTransSteady.∑INFIlT_2_TIMETRANSSTEADY(∑Infilt_Obs, infiltOutput, N_Infilt, N_iZ, param, T) 
 
 			# Initializing Infilt		
-				∑Infilt_3D = Array{Float64}(undef, (N_iZ, N_Infilt_Max))
-				∑Infilt_1D = Array{Float64}(undef, (N_iZ, N_Infilt_Max))
+				∑Infilt_3D = fill(0.0::Float64, (N_iZ, N_Infilt_Max))
+				∑Infilt_1D = fill(0.0::Float64, (N_iZ, N_Infilt_Max))
 
 			return T, infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D
 

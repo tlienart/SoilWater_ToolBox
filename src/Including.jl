@@ -47,7 +47,7 @@
             end
         end
 
-        if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File &&  !(option.run.Hypix)
+        if !(option.run.Hypix)
             include("HydroLab/OfHydrolab.jl")
             include("HydroLab/HydrolabOpt.jl")
         end
@@ -68,7 +68,7 @@
             include("Psd/PsdInitialize.jl")
             include("Psd/PsdFunc.jl")
             include("Psd/PsdOpt.jl")
-            include("Psd/PsdStart.jl")
+            include("Psd/Psd_START.jl")
         end # option.run.IntergranularMixingPsd
 
         if option.other.Ploting && !(option.run.Hypix)

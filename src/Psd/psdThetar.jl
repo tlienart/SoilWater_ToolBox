@@ -9,7 +9,7 @@ module psdThetar
 		# =========================================
 		#       MAIN PSD -> θr 
 		# =========================================
-			function PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, param, paramPsd)
+			function PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, option, param, paramPsd)
 
 				Err_θr_Psd = zeros(Float64, N_iZ)
 
@@ -17,7 +17,7 @@ module psdThetar
 					paramPsd = OPTIMIZE_PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, param, paramPsd)
 							
 				elseif option.psd.Psd_2_θr == :ParamPsd # <>=<>=<>=<>=<>
-					θr_Psd =  Array{Float64}(undef, N_iZ)
+					θr_Psd =  fill(0.0::Float64, N_iZ)
 					for iZ=1:N_iZ
 						paramPsd.θr_Psd[iZ] = PSD_2_θr_FUNC(∑Psd, hydroPsd, iZ, param)
 					end
@@ -27,7 +27,7 @@ module psdThetar
 				
 				else # if θr is not being optimised <>=<>=<>=<>=<>
 					
-					θr_Psd =  Array{Float64}(undef, N_iZ)
+					θr_Psd =  fill(0.0::Float64, N_iZ)
 					fill!(paramPsd.θr_Psd, param.hydroPsd.θr)
 					fill!(paramPsd.Psd_2_θr_α1, 0.0) 
 					fill!(paramPsd.Psd_2_θr_α2, 0.0)

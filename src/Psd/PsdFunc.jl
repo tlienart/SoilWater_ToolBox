@@ -5,23 +5,23 @@ module psdFunc
 	# =========================================
    	#       PSD MODELS
 	# ========================================
-		function PSD_MODEL(iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, paramPsd)
+		function PSD_MODEL(iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, option, param, paramPsd)
  		
-			if option.psd.Model == :IMP
+			if option.psd.Model⍰ == :IMP
 				# Correction for the small PSD
 				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, paramPsd.Subclay[iZ], N_Psd)  		
 
 				# Computing ξ2 from Psd
-					ξ2 = imp.∑PSD_2_ξ2(∑Psd[paramPsd.∑Psd_2_ξ2_Size[iZ]]; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iZ], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iZ])
+					ξ2 = imp.∑PSD_2_ξ2(∑Psd[paramPsd.∑Psd_2_ξ2_Size[iZ]], param; ∑Psd_2_ξ2_β1=paramPsd.∑Psd_2_ξ2_β1[iZ], ∑Psd_2_ξ2_β2=paramPsd.∑Psd_2_ξ2_β2[iZ])
 
 					
 				# Computing θ from Psd
-					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iZ], ξ2) 
+					θ_Rpart = imp.RPART_2_θ(θs_Psd, θr_Psd, Psd, param, Rpart, N_Psd, paramPsd.ξ1[iZ], ξ2) 
 					
 				# Computing Ψ from Psd
-					Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd) 	# Computing  from Psd
+					Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd, param) 	# Computing  from Psd
 	
-			elseif option.psd.Model == :Chang2019Model
+			elseif option.psd.Model⍰ == :Chang2019Model
 				# Computing θ from Psd
 					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iZ]) 
 				
@@ -47,7 +47,7 @@ module psdFunc
 		# =========================================
 		#      Rpart -> Ψ_Rpart
 		# =========================================
-			function RPART_2_ΨRPART(Rpart, N_Psd) 
+			function RPART_2_ΨRPART(Rpart, N_Psd, param) 
 				Ψ_Rpart = zeros(Float64, N_Psd)
 				
 				# It is to be noted that
@@ -61,7 +61,7 @@ module psdFunc
 		# =========================================
 		#      INTERGRANULARMIXING MODELS
 		# =========================================
-			function INTERGRANULARMIXING(Rpart, ξ1, ξ2)
+			function INTERGRANULARMIXING(param, Rpart, ξ1, ξ2)
 				return IntergranularMixing = min(max(ξ1 * exp(-(Rpart ^ -ξ2)), 0.0), param.psd.imp.ξ_Max)
 			end # function INTERGRANULARMIXING
 
@@ -69,7 +69,7 @@ module psdFunc
 		# =========================================
 		#      UNIVERSAL INTERGRANULARMIXING MODEL
 		# =========================================
-			function ∑PSD_2_ξ2(∑Psd; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
+			function ∑PSD_2_ξ2(∑Psd, param; ∑Psd_2_ξ2_β1=param.psd.imp.∑Psd_2_ξ2_β1, ∑Psd_2_ξ2_β2=param.psd.imp.∑Psd_2_ξ2_β2)
 				return ξ2 = min(∑Psd_2_ξ2_β1 * exp(∑Psd_2_ξ2_β2 * ∑Psd), param.psd.imp.ξ2_Max)   # ξ2 = ∑Psd_2_ξ2_β1 + (∑Psd_2_ξ2_β2 * ∑Psd) 
 			end # function ∑PSD_2_ξ2
 
@@ -81,19 +81,19 @@ module psdFunc
 		# =========================================
 		#       Rpart -> θ
 		# =========================================
-			function RPART_2_θ(θs, θr_Psd, Psd, Rpart, N_Psd, ξ1, ξ2)
+			function RPART_2_θ(θs, θr_Psd, Psd, param, Rpart, N_Psd, ξ1, ξ2)
 				θ_Rpart = zeros(Float64, N_Psd)
 
 				# Computing the divisor
-					∑θRpart = Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
+					∑θRpart = Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(param, Rpart[1], ξ1, ξ2))
 					for iRpart=2:N_Psd
-						∑θRpart +=  Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
+						∑θRpart +=  Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(param, Rpart[iRpart], ξ1, ξ2))
 					end
 			
 				# Computing the dividend
-					θ_Rpart[1] =  Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(Rpart[1], ξ1, ξ2))
+					θ_Rpart[1] =  Psd[1] / (Rpart[1] ^ INTERGRANULARMIXING(param, Rpart[1], ξ1, ξ2))
 					for iRpart=2:N_Psd
-						θ_Rpart[iRpart] = θ_Rpart[iRpart-1] + Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(Rpart[iRpart], ξ1, ξ2))
+						θ_Rpart[iRpart] = θ_Rpart[iRpart-1] + Psd[iRpart] / (Rpart[iRpart] ^ INTERGRANULARMIXING(param, Rpart[iRpart], ξ1, ξ2))
 					end
 
 				# Computing θ_Rpart

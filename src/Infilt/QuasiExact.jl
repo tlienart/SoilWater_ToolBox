@@ -60,7 +60,7 @@ module quasiExact
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 		function HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; Infilt_η_Max_Start=0.5)
 
-			Infilt_η = Array{Float64}(undef, N_Infilt[iZ])
+			Infilt_η = fill(0.0::Float64, N_Infilt[iZ])
 
 			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt)
 

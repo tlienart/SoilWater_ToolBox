@@ -213,7 +213,7 @@ module table
 		#		FUNCTION : PSD_θΨ_θ
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD_θΨ_θ(hydroPsd, IdSelect, N_iZ::Int64, param, Path::String)
+			function PSD_θΨ_θ(IdSelect, hydroPsd, N_iZ::Int64, option, param, Path::String)
 				println("    ~  $Path ~")
 
 				N_Ψ = Int64(length(param.psd.Ψ_Table))
@@ -227,11 +227,11 @@ module table
 					pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 				
 				# Computing θ at required θ
-					θ = Array{Float64}(undef, (N_iZ, N_Ψ))
+					θ = fill(0.0::Float64, (N_iZ, N_Ψ))
 					for iZ=1:N_iZ
 						for iΨ =1:N_Ψ
 							Ψ = param.psd.Ψ_Table[iΨ]
-							θ[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ,Ψ, iZ, hydroPsd)
+							θ[iZ, iΨ] = wrc. Ψ_2_θDual(option.psd, Ψ, iZ, hydroPsd)
 						end # iΨ
 					end # iZ
 

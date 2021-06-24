@@ -54,7 +54,7 @@ module options
 		Plot_σ_Ψm::Bool
 	end
 	mutable struct PSD
-		Model
+		Model⍰::Symbol
 		OptimizePsd
 		Psd_2_θr
 		∑Psd_2_ξ1
@@ -73,22 +73,21 @@ module options
 		RockInjectedIncluded⍰::Symbol
 	end
 	mutable struct INFILT
-		DataSingleDoubleRing  
-		OptimizeRun  
-		Model
-		BestUniv_Continous::Bool                	
-		SortivityVersion     
-		SorptivitySplitModel  
-		SorptivityModel      
-		HydroModel⍰       
-		θsOpt⍰            
-		θrOpt⍰            
-		σ_2_Ψm⍰               
-		Plot_Sorptivity        	
-		Plot_SeIni_Range       
-		Plot_∑Infilt           
-		Plot_θΨ                
-		Plot_Sorptivity_SeIni  
+		DataSingleDoubleRing⍰::Symbol  
+		OptimizeRun⍰::Symbol  
+		Model⍰::Symbol
+		BestUniv_Continous::Bool                	  
+		SorptivitySplitModel⍰::Symbol  
+		SorptivityModel⍰::Symbol     
+		HydroModel⍰::Symbol       
+		θsOpt⍰::Symbol            
+		θrOpt⍰::Symbol            
+		σ_2_Ψm⍰::Symbol               
+		Plot_Sorptivity::Bool        	
+		Plot_SeIni_Range::Bool       
+		Plot_∑Infilt::Bool           
+		Plot_θΨ::Bool                
+		Plot_Sorptivity_SeIni::Bool  
 	end
 	mutable struct HYPIX
 		ClimateDataTimestep
@@ -182,7 +181,7 @@ module options
             Pr                    = false # <true> ; <false>
             Psd                   = true # <true> ; <false>
             RockWetability        = true # <true> ; <false>
-            SimulationKosugiθΨK   = true # <true> or <false>
+            SimulationKosugiθΨK   = false # <true> or <false>
             θobs                  = false # <true> ; <false>
             θΨ                    = true # <true> ; <false>
             Φ⍰               		 = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
@@ -205,8 +204,8 @@ module options
             ChangeHydroModel       = false
             HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
             Hypix                  = false # <true>; <false>
-            Infilt                 = true # <true>; <false>
-            IntergranularMixingPsd = false # <true>; <false>
+            Infilt                 = false # <true>; <false>
+            IntergranularMixingPsd = true # <true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Smap                   = false  # <true>; <false>
             Smap2Hypix             = false
@@ -253,8 +252,8 @@ module options
 			# =============================================================
 			#		PSD OPTIONS     
 			# =============================================================
-				# Model
-					Model       = :IMP # <:IMP>* Intergranular Mixing Model; <:Chang2019Model>
+				# Model⍰
+					Model⍰       = :IMP # <:IMP>* Intergranular Mixing Model⍰; <:Chang2019Model>
 					OptimizePsd = :Run # <:OptSingleSoil>; <:OptAllSoil>; or <:Run>
 					Psd_2_θr    = :ParamPsd # <:Opt> optimises parameters α1 and α1; <:ParamPsd> uses α1 and α1 from parameters in Param.jl 
 
@@ -278,20 +277,19 @@ module options
 				# TABLE
 					Table_Psd_θΨ_θ = true # <true> derive θ values at prescribed Ψ
 
-				psd = PSD(Model, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
+				psd = PSD(Model⍰, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
 
 
 			# =============================================================
 			#		INFILTRATION OPTIONS
 			# =============================================================
-				# Model
-					DataSingleDoubleRing = :Double	# <:Double> infiltration measured by double ring infiltrometer; <:Single> infiltration measured by single ring infiltrometer
-					OptimizeRun          = :Opt # <:Opt>* Optimise hydraulic parameters from infiltration data; <:Run> run inftration curves from known hydraulic parameters; <:RunOptKs>  run inftration curves from known hydraulic parameters but optimize Ks only
-					Model                = :Best_Univ 	# <:QuasiExact> physical approach; <:Best_Univ> statistical improved approach
+				# Model⍰
+					DataSingleDoubleRing⍰ = :Double	# <:Double> infiltration measured by double ring infiltrometer; <:Single> infiltration measured by single ring infiltrometer
+					OptimizeRun⍰          = :Opt # <:Opt>* Optimise hydraulic parameters from infiltration data; <:Run> run inftration curves from known hydraulic parameters; <:RunOptKs>  run inftration curves from known hydraulic parameters but optimize Ks only
+					Model⍰                = :Best_Univ 	# <:QuasiExact> physical approach; <:Best_Univ> statistical improved approach
 					BestUniv_Continous   = true # <true> if the function is continous as recommended; <false> traditional
-					SortivityVersion     = :NonInfinity # <:NonInfinity> improved method; <:Traditional> old method with problems of infinity
-					SorptivitySplitModel = :Split # <:Split>; <:Split_η>
-					SorptivityModel      = :Parlange # <:Parlange> strong non-linear diffusivity;  <:Crank> constant diffusivity; <:Philip_Knight> dirac delta-function diffusivity; <:Brutsaert> moderate non-linear diffusivity,
+					SorptivitySplitModel⍰ = :Split # <:Split>; <:Split_η>
+					SorptivityModel⍰     = :Parlange # <:Parlange> strong non-linear diffusivity;  <:Crank> constant diffusivity; <:Philip_Knight> dirac delta-function diffusivity; <:Brutsaert> moderate non-linear diffusivity,
 				
 				# Deriving hydraulic parameters from infiltration tests
 					HydroModel⍰      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
@@ -307,7 +305,7 @@ module options
 					Plot_θΨ               = true # <true>; <false>
 					Plot_Sorptivity_SeIni = true # <true> computes sorptivity curves as a function of Se <false> no outputs
 
-				infilt = INFILT(DataSingleDoubleRing, OptimizeRun, Model, BestUniv_Continous, SortivityVersion, SorptivitySplitModel, SorptivityModel, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
+				infilt = INFILT(DataSingleDoubleRing⍰, OptimizeRun⍰, Model⍰, BestUniv_Continous, SorptivitySplitModel⍰, SorptivityModel⍰ , HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
 
 
 			# =============================================================

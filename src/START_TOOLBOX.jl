@@ -128,13 +128,6 @@ function START_TOOLBOX()
 	# ------------------------END: reading---------------------------
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	# _______________________ START:preperation for all model _______________________ 
-
-
-
-
-
-	# ------------------------END: preperation for all models---------------------------  
 
 	# _______________________ START: running HydroLabθΨ _______________________ 
 	if option.run.HydroLabθΨ⍰ ≠ :No
@@ -237,33 +230,33 @@ function START_TOOLBOX()
 
 	# _______________________ START: IntergranularMixingPsd _______________________ 
 	if option.run.IntergranularMixingPsd 
-		println("=== START: PSD MODEL  ===")
-		# Structure of hydroPsd
-			hydroPsd = hydroStruct.HYDROSTRUCT(N_iZ)
+		println("----- START RUNNING IntergranularMixingPsd -----------------------------------------------")
+		# STRUCTURES
+			hydroPsd = hydroStruct.HYDROSTRUCT(option.psd, N_iZ)
 			hydroOther_Psd = hydroStruct.HYDRO_OTHERS(N_iZ)
-			hydroPsd, optim_Psd = reading.HYDRO_PARAM(hydroPsd, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
+			hydroPsd, optim_Psd = reading.HYDRO_PARAM(option.psd, hydroPsd, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
 
-		# Total Porosity= Φ
-		# if option.run.ρᵦ_2_Φ
-			hydroPsd.Φ = rockFragment.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Rock, ρᵦ_Soil, ρₚ_Fine)
-		# end
+		# CHECKING THE DATA
+			checking.CHECKING(option, option.psd, optim)
+
+		# TRANSFERING Φ -> hydro
+			for iZ =1:N_iZ 
+				hydroPsd.Φ[iZ] = Φ[iZ]
+			end
 
 		# PSD model
-			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psdStart.START_PSD(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, N_θΨobs, param, Rpart, θ_θΨobs, Ψ_θΨobs)
+		if @isdefined hydro
+			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psdStart.START_PSD(∑Psd=∑Psd, hydro=hydro, hydroPsd=hydroPsd, N_iZ=N_iZ, N_Psd=N_Psd, N_θΨobs=N_θΨobs, option=option, param=param, Rpart=Rpart, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs)
+		else
+			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psdStart.START_PSD(∑Psd=∑Psd, hydroPsd=hydroPsd, N_iZ=N_iZ, N_Psd=N_Psd, N_θΨobs=N_θΨobs, option=option, param=param, Rpart=Rpart, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs)
+		end
 
 		KunsatModel_Psd = fill(0.0::Float64, N_iZ)
-
 		if  option.psd.HydroParam
-			hydroPsd, hydroOther_Psd = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_Rpart, Ψ_θΨobs=Ψ_Rpart, N_θΨobs=N_Psd, hydro=hydroPsd, hydroOther=hydroOther_Psd, option=option, optionₘ=option.psd, optim=optim_Psd)
+			hydroPsd, hydroOther_Psd = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_Rpart, Ψ_θΨobs=Ψ_Rpart, N_θΨobs=N_Psd, hydro=hydroPsd, hydroOther=hydroOther_Psd, option=option, optionₘ=option.psd, optim=optim_Psd, param=param) 
 		end
 	
-		println("=== END : PSD MODEL  === \n")
-	else
-		θ_Rpart = zeros(Float64, N_iZ,1)
-		Ψ_Rpart = zeros(Float64, N_iZ,1)
-		hydroPsd = hydroStruct.HYDROSTRUCT(option.psd, N_iZ)
-		N_Psd = zeros(Float64, N_iZ)
-
+		println("----- END: RUNNING IntergranularMixingPsd ----------------------------------------------- \n")
 	end
 	# ------------------------END: IntergranularMixingPsd---------------------------  
 
@@ -272,7 +265,9 @@ function START_TOOLBOX()
 	# _______________________ START: Infiltration _______________________ 
 
 	if option.run.Infilt
-	println("=== START: INFILTRATION  ===")
+		println("----- START RUNNING INFILTRATION
+		
+		-----------------------------------------------")
 		# STRUCTURES
 			hydroInfilt = hydroStruct.HYDROSTRUCT(option.infilt, N_iZ)
 			hydroOther_Infilt = hydroStruct.HYDRO_OTHERS(N_iZ)
@@ -292,7 +287,7 @@ function START_TOOLBOX()
 		else
 			infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltStart.START_INFILTRATION(∑Infilt_Obs=∑Infilt_Obs, ∑Psd=∑Psd, hydroInfilt=hydroInfilt, infiltParam=infiltParam, N_Infilt=N_Infilt, N_iZ=N_iZ, option=option, param=param, Tinfilt=Tinfilt)
 		end
-	println("=== END  : INFILTRATION  === \n")
+		println("----- END: RUNNING Infiltration ----------------------------------------------- \n")
 	end # option.run.Infilt
 
 	# ------------------------END: Infiltration---------------------------
@@ -315,6 +310,7 @@ function START_TOOLBOX()
 	
 	# ------------------------END: Jules---------------------------  
 
+
 	# _______________________ START: Smap_2_HyPix ______________________
 	if option.run.Smap2Hypix
 		smap2hypix.SMAP_2_HYPIX(N_iZ, option.hydro, param, path, Smap_Depth, Smap_MaxRootingDepth, Soilname)
@@ -326,7 +322,7 @@ function START_TOOLBOX()
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	# _______________________ START: table _______________________ 
 
-	 if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File # <>=<>=<>=<>=<>
+	 if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 		# CORE OUTPUT
 			table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
 
@@ -348,11 +344,25 @@ function START_TOOLBOX()
 			end # option.run.Smap	
 		end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
 
-		if option.run.Infilt # <>=<>=<>=<>=<>
+
+		if option.run.Infilt # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			table.infilt.HYDRO_INFILT(hydroInfilt, IdSelect, N_iZ, path.tableSoilwater.Table_HydroInfilt)
 
 			table.infilt.INFILT(IdSelect, N_iZ, infiltOutput, path.tableSoilwater.Table_Infilt)
 		end # option.run.Infilt
+
+
+		if option.run.IntergranularMixingPsd # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			table.psd.PSD(IdSelect[1:N_iZ], N_iZ, paramPsd, path.tableSoilwater.Table_Psd)
+
+			if option.psd.HydroParam  && option.psd.HydroParam
+				table.psd.θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_iZ, path.tableSoilwater.Table_Psd)
+			end
+			
+			if option.psd.Table_Psd_θΨ_θ
+				table.psd.PSD_θΨ_θ(IdSelect, hydroPsd, N_iZ, option, param, path.tableSoilwater.Table_Psd_θΨ_θ)
+			end
+		end # option.run.IntergranularMixingPsd
 
 	 # ------------------------END: table---------------------------
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -368,19 +378,6 @@ function START_TOOLBOX()
 	
 	 # ------------------------END: plotting---------------------------  
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-
-
-		if option.run.IntergranularMixingPsd # <>=<>=<>=<>=<>
-			table.psd.PSD(IdSelect[1:N_iZ], N_iZ, paramPsd, path.tableSoilwater.Table_Psd)
-
-			if option.psd.HydroParam  && option.psd.HydroParam
-				table.psd.θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_iZ, path.tableSoilwater.Table_Psd)
-			end
-			
-			if option.psd.Table_Psd_θΨ_θ
-				table.psd.PSD_θΨ_θ(IdSelect, N_iZ, hydroPsd, param, path.tableSoilwater.Table_Psd_θΨ_θ)
-			end
-		end # option.run.IntergranularMixingPsd
 
 
 	# PRINT OUTPUT ======================================================================================

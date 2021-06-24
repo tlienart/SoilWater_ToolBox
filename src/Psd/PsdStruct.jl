@@ -38,7 +38,7 @@ module psdStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROSTRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-	function PSDSTRUCT(N_iZ)
+	function PSDSTRUCT(N_iZ, option, param)
 		FieldName = Array{Symbol}(undef, 1) # Need to put
 
         θr_Psd      = zeros(Float64, N_iZ)
@@ -47,7 +47,7 @@ module psdStruct
         Err_θr_Psd  = zeros(Float64, N_iZ)
         Nse         = zeros(Float64, N_iZ)
 
-		if option.psd.Model == :IMP
+		if option.psd.Model⍰ == :IMP
 			ξ1             = zeros(Float64, N_iZ)
 			ξ2             = zeros(Float64, N_iZ)
 			∑Psd_2_ξ2_β1   = zeros(Float64, N_iZ)
@@ -70,7 +70,7 @@ module psdStruct
 
 			# return paramPsd = tool.readWrite.FIELDNAME_2_STRUCT_VECT(IMP, paramPsd) # Saving the FieldNames
 	
-		elseif option.psd.Model == :Chang2019Model
+		elseif option.psd.Model⍰ == :Chang2019Model
 			ξ1		= zeros(Float64, N_iZ)
 			θr_Psd  = zeros(Float64, N_iZ)
 

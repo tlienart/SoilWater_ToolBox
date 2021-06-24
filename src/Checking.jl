@@ -11,13 +11,13 @@ module checking
         # ------------ CHECKING HydroLabθΨ---------------------
 
 		  if "Ks" ∈ optim.ParamOpt && !(option.data.Kθ) 
-			error("*** If Ks ∈ optim.ParamOpt => option.data.θΨ ***")
+			error("*** If Ks ∈ optim.ParamOpt ⇒option.data.θΨ ***")
 
 			elseif option.run.HydroLabθΨ⍰ ≠ :No && !option.data.θΨ
-				error("*** If option.run.HydroLabθΨ⍰ => option.data.θΨ ***")
+				error("*** If option.run.HydroLabθΨ⍰ ⇒option.data.θΨ ***")
 
 			elseif option.run.RockCorection && option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock && !( option.data.BulkDensity && option.data.θΨ)
-				error("*** If option.run.RockCorrection && option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock =>  option.data.BulkDensity OR option.data.θΨ ***")
+				error("*** If option.run.RockCorrection && option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock ⇒ option.data.BulkDensity OR option.data.θΨ ***")
 
 			elseif optionₘ.HydroModel⍰==:Kosugi && "θsMacMat" ∈ optim.ParamOpt
 				error("*** optionₘ.HydroModel⍰==:Kosugi && optionₘ.HydroModel⍰==:Bimodal THAN optionₘ.HydroModel⍰ == :Φ ***")
@@ -51,11 +51,18 @@ module checking
 
 			# ------------ CHECKING Infiltration model--------------------
 			elseif option.run.Infilt && !(option.data.Infilt)
-				error("***  option.run.Infilt => option.data.Infilt ***")
+				error("***  option.run.Infilt ⇒option.data.Infilt ***")
 
-			# ------------ CHECKING Smap--------------------
+			# ------------ CHECKING Particle Size Distribution model--------------------
+			elseif option.run.IntergranularMixingPsd && !(option.data.Psd)
+				error("***  option.run.IntergranularMixingPsd ⇒option.data.Psd ***")
+
+			elseif option.run.IntergranularMixingPsd && "Ks" ∈ optim.ParamOpt
+					error("*** option.run.IntergranularMixingPsd ⇒ Ks ∉ optim.ParamOpt ***")
+			
+				# ------------ CHECKING Smap--------------------
 			elseif option.run.Smap && option.data.Pedological⍰≠:Smap
-				error("*** If option.run.Smap => option.data.Pedological==Smap ***")
+				error("*** If option.run.Smap ⇒option.data.Pedological==Smap ***")
 
 			elseif option.rockFragment.CorectStoneRockWetability && !(option.run.Smap)
 				@warn("*** If option.data.RockWetability ⇒ option.run.Smap ***")
@@ -64,7 +71,9 @@ module checking
 			# ------------ CHECKING Smap_2_Hypix---------------------
 
 			elseif option.run.Smap2Hypix && (option.data.Pedological⍰ ≠ :Smap)
-				error("*** option.run.Smap2Hypix => option.data.Pedological⍰ == :Smap ***")
+				error("*** option.run.Smap2Hypix ⇒option.data.Pedological⍰ == :Smap ***")
+
+			
 
 
 		

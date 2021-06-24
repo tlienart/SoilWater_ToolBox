@@ -38,7 +38,7 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function BEST_UNIVERSAL(iZ, A, B, Sorptivity, T, T_TransSteady, hydroInfilt, infiltParam, option)
 
-			if option.infilt.DataSingleDoubleRing == :Single #<>=<>=<>=<>=<>
+			if option.infilt.DataSingleDoubleRing⍰ == :Single #<>=<>=<>=<>=<>
 
 				if T ≤ T_TransSteady
 					return ∑Infilt_3D = bestFunc.INFILTRATION_3D_TRANSIT(A, B, hydroInfilt.Ks[iZ], Sorptivity, T)
@@ -46,7 +46,7 @@ module bestFunc
 					return ∑Infilt_3D = bestFunc.INFILTRATION_3D_STEADY(A, B, iZ, hydroInfilt.Ks[iZ], Sorptivity, T, infiltParam, option, T_TransSteady)
 				end # T <= T_TransSteady
 
-			elseif option.infilt.DataSingleDoubleRing == :Double  #<>=<>=<>=<>=<>
+			elseif option.infilt.DataSingleDoubleRing⍰ == :Double  #<>=<>=<>=<>=<>
 				if T ≤ T_TransSteady
 					return ∑Infilt_3D = bestFunc.INFILTRATION_1D_TRANSIT(B, hydroInfilt.Ks[iZ], Sorptivity, T)
 				else

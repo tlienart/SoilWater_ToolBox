@@ -8,7 +8,7 @@ module psdInitialize
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PSD_INITIALIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, param)			
+	function PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, option, param)			
 		# Compute new N_Psd to take into account when ∑Psd 
 		# Correction for N_Psd such that to determine the real maximum Rpart size
 			for iZ=1:N_iZ
@@ -34,13 +34,13 @@ module psdInitialize
 			end # iZ=1:N_iZ
 
 		# DERIVING THE STRUCTURE PARAMETERS
-			paramPsd = psdStruct.PSDSTRUCT(N_iZ)
+			paramPsd = psdStruct.PSDSTRUCT(N_iZ, option, param)
 
 		# COMPUTING θr FROM PSD DATA
-		hydroPsd, paramPsd = psdThetar.PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, param, paramPsd)
+		hydroPsd, paramPsd = psdThetar.PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, option, param, paramPsd)
 			
 		# COMPUTING θs FROM TOTAL POROSITY
-			θs_Psd = Array{Float64}(undef, N_iZ)
+			θs_Psd = fill(0.0::Float64, N_iZ)
 			for iZ=1:N_iZ
 				θs_Psd[iZ] = param.hydro.Coeff_Φ_2_θs * hydroPsd.Φ[iZ]
 				hydroPsd.θs[iZ] = θs_Psd[iZ]

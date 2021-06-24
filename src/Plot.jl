@@ -199,7 +199,7 @@ module plot
 	# 			IntergranularMixing = zeros(Float64, N_Psd[iZ])
 	# 			ξ = zeros(Float64, N_Psd[iZ])
 	# 			for iRpart = 1:N_Psd[iZ]
-	# 				ξ[iRpart] = psdFunc.imp.INTERGRANULARMIXING(Rpart[iZ,iRpart], paramPsd.ξ1[iZ], paramPsd.ξ2[iZ])
+	# 				ξ[iRpart] = psdFunc.imp.INTERGRANULARMIXING(param, Rpart[iZ,iRpart], paramPsd.ξ1[iZ], paramPsd.ξ2[iZ])
 
 	# 				IntergranularMixing[iRpart] = (Rpart[iZ, iRpart] ^ -ξ[iRpart]) 
 	# 			end # for iRpart = 1:N_Psd[iZ]
@@ -256,7 +256,7 @@ module plot
 		
 	# 		println("  ==  START: Plotting PLOT_PSD_θΨ  ==")
 
-	# 		θ_θΨobs_Psd = Array{Float64}(undef, (N_Se))
+	# 		θ_θΨobs_Psd = fill(0.0::Float64, (N_Se))
 
 	# 		for iZ = param.globalparam.N_iZ_Plot_Start:min(param.globalparam.N_iZ_Plot_End, N_iZ)
 	# 			# Range of plots
@@ -339,7 +339,7 @@ module plot
 	# 				Title = " iZ= $(IdSelect[iZ])"
 	# 				# Plot_∑infilt_Obs
 
-	# 					Label ="Obs_$(string(option.infilt.DataSingleDoubleRing))_Ring"
+	# 					Label ="Obs_$(string(option.infilt.DataSingleDoubleRing⍰))_Ring"
 	# 					X = Tinfilt[iZ,1:N_Infilt[iZ]] / 60.0
 	# 					Y = ∑Infilt_Obs[iZ,1:N_Infilt[iZ]]
 	# 					Plot_∑infilt_Obs = Plots.plot(X, Y, seriestype=:scatter, label=Label, color= :red, shape= :square, markersize=4, marker = (Plots.stroke(1, :red))) 
@@ -383,10 +383,10 @@ module plot
 	# 	function PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, Param, Path; hydro=[], N_Se=100)
 	# 	println("  ==  START: PLOT_∑INFILT_θΨ  ==")
 
-	# 		θ_Infilt      = Array{Float64}(undef, (N_Se))
-	# 		θ_Obs         = Array{Float64}(undef, (N_Se))
-	# 		Kunsat_Infilt = Array{Float64}(undef, (N_Se))
-	# 		Kunsat_Obs    = Array{Float64}(undef, (N_Se))
+	# 		θ_Infilt      = fill(0.0::Float64, (N_Se))
+	# 		θ_Obs         = fill(0.0::Float64, (N_Se))
+	# 		Kunsat_Infilt = fill(0.0::Float64, (N_Se))
+	# 		Kunsat_Obs    = fill(0.0::Float64, (N_Se))
 
 	# 		for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End	
 	# 			Ψ_θΨobs_Min = 10.0 ^ -2 # [mm]

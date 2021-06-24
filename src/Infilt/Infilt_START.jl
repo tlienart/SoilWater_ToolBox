@@ -18,23 +18,23 @@ module infiltStart
 			println( "iZ= $iZ")
 
 			# No optimization required running from hydro derived from laboratory
-			if option.infilt.OptimizeRun == :Run && option.run.HydroLabθΨ⍰ ≠ :No #<>=<>=<>=<>=<>
+			if option.infilt.OptimizeRun⍰ == :Run && option.run.HydroLabθΨ⍰ ≠ :No #<>=<>=<>=<>=<>
 				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
 				 
 				# Not to have errors
 					infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])
 
-				if option.infilt.Model == :Best_Univ
+				if option.infilt.Model⍰ == :Best_Univ
 					∑Infilt_3D, T_TransStead =  bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T)
 
-				elseif option.infilt.Model == :QuasiExact
+				elseif option.infilt.Model⍰ == :QuasiExact
 					∑Infilt_3D = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T)
 
-				end # option.infilt.Model
+				end # option.infilt.Model⍰
 
 
-			elseif option.infilt.OptimizeRun == :RunOptKs && option.run.HydroLabθΨ⍰ ≠ :No #<>=<>=<>=<>=<>	
+			elseif option.infilt.OptimizeRun⍰ == :RunOptKs && option.run.HydroLabθΨ⍰ ≠ :No #<>=<>=<>=<>=<>	
 				# Hydraulic param from laboratory
 					hydroInfilt = deepcopy(hydro)
 				
@@ -48,7 +48,7 @@ module infiltStart
 				hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[1]
 
 
-			elseif option.infilt.OptimizeRun == :Opt && option.infilt.HydroModel⍰ == :Kosugi # <>=<>=<>=<>=<>	
+			elseif option.infilt.OptimizeRun⍰ == :Opt && option.infilt.HydroModel⍰ == :Kosugi # <>=<>=<>=<>=<>	
 
 				if option.infilt.σ_2_Ψm⍰ == :Constrained
 					SearchRange =[ (hydroInfilt.σ_Min[iZ], hydroInfilt.σ_Max[iZ]), (0.0, 1.0), (log10(hydroInfilt.Ks_Min[iZ]), log10(hydroInfilt.Ks_Max[iZ]))]
@@ -72,21 +72,21 @@ module infiltStart
 				end # option.infilt.σ_2_Ψm⍰
 	
 			else
-				error("ERROR SoilWaterToolBox = $(option.infilt.Model) not found")
-			end # option.infilt.OptimizeRun
+				error("ERROR SoilWaterToolBox = $(option.infilt.Model⍰) not found")
+			end # option.infilt.OptimizeRun⍰
 
 
 			# OUTPUTS RUNNING THE OPTIMAL INFILTRATION
 				infiltOutput.Sorptivity[iZ] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt) 
 
-				if option.infilt.Model == :Best_Univ 
+				if option.infilt.Model⍰ == :Best_Univ 
 					∑Infilt_3D, T_TransStead = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T)
 
-				elseif option.infilt.Model == :QuasiExact
+				elseif option.infilt.Model⍰ == :QuasiExact
 					# ∑Infilt_3D = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, T)
 					∑Infilt_3D = quasiExact.HYDRO_2_INFILTRATION3D(∑Infilt_3D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T)
 
-				end # option.infilt.Model
+				end # option.infilt.Model⍰
 
 			# Statistics
 				iT_TransSteady = infiltOutput.iT_TransSteady_Data[iZ]
@@ -105,16 +105,16 @@ module infiltStart
          Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:N_iZ])
          Nse        = Statistics.mean(infiltOutput.Nse[1:N_iZ])
 
-			println("    ~ $(option.infilt.SorptivityModel) ~")
+			println("    ~ $(option.infilt.SorptivityModel⍰) ~")
 			println("    ~ Nse= $Nse Nse_Trans= $Nse_Trans,  Nse_Steady= $Nse_Steady ~")
 
 
 		# CONVERTING INFILTRATION DIMENSIONS
-			if option.infilt.Model == :Best_Univ
+			if option.infilt.Model⍰ == :Best_Univ
 				for iZ=1:N_iZ
 					∑Infilt_1D = bestFunc.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T)
 				end
-			elseif option.infilt.Model == :QuasiExact
+			elseif option.infilt.Model⍰ == :QuasiExact
 				for iZ=1:N_iZ
 					∑Infilt_1D = quasiExact.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T)
 				end	
@@ -140,10 +140,10 @@ module infiltStart
 
 			hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt)
 
-			if option.infilt.Model == :Best_Univ
+			if option.infilt.Model⍰ == :Best_Univ
 				return Nse = ofBest.OF_BEST(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T; W=0.5)
 
-			elseif option.infilt.Model == :QuasiExact
+			elseif option.infilt.Model⍰ == :QuasiExact
 				quasiExact.OF_QUASIEXACT(∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T)
 			end # Option.infilt.Model
 

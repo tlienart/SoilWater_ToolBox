@@ -26,7 +26,7 @@ module sorptivity
 				Ψ⬙ = wrc.θ_2_ΨDual(optionₘ, θ⬙, iZ, hydroInfilt)
 
 		
-			if option.infilt.SorptivitySplitModel == :Split  # <>=<>=<>=<>=<>
+			if option.infilt.SorptivitySplitModel⍰ == :Split  # <>=<>=<>=<>=<>
 				# Sorptivity based on θ
 					function SORPTIVITY_θ²(hydroInfilt, iZ, θ, θ_Ini, optionₘ)
 						Se = wrc.θ_2_Se(θ, iZ, hydroInfilt)
@@ -45,7 +45,7 @@ module sorptivity
 					Sorptivity_Ψ² = QuadGK.quadgk(Ψ -> SORPTIVITY_Ψ²(hydroInfilt, iZ, θ_Ini, Ψ), Ψ_Sat, Ψ⬙, rtol=Rtol)[1]
 
 			return Sorptivity = √(max(Sorptivity_θ², eps()) + max(Sorptivity_Ψ², eps()))
-			elseif option.infilt.SorptivitySplitModel == :Split_η # <>=<>=<>=<>=<>
+			elseif option.infilt.SorptivitySplitModel⍰ == :Split_η # <>=<>=<>=<>=<>
 	
 				Ψ⬙_η = wrc.θ_2_ΨDual(optionₘ, θ⬙, iZ, hydroInfilt) / hydroInfilt.Ψm[iZ] # dimensionless water potential
 
@@ -73,7 +73,7 @@ module sorptivity
 				Sorptivity_η = √(max(Sorptivity_Se_η , eps()) + max(Sorptivity_Se_Ψ_η , eps()))
 	
 			return Sorptivity_Scaled = Sorptivity_η * √(hydroInfilt.Ks[iZ] * (hydroInfilt.θs[iZ] - hydroInfilt.θr[iZ]) * hydroInfilt.Ψm[iZ])
-			end # option.infilt.SorptivitySplitModel
+			end # option.infilt.SorptivitySplitModel⍰
 
 		end # function SORPTIVITY
 
@@ -108,16 +108,16 @@ module sorptivity
 	#		FUNCTION : FLUXXCONCENTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function FLUXCONC(option, Se, Se_Ini)
-			if option.infilt.SorptivityModel == :Parlange # <>=<>=<>=<>=<> soils with strong non-linear diffusivity behaviors
+			if option.infilt.SorptivityModel⍰== :Parlange # <>=<>=<>=<>=<> soils with strong non-linear diffusivity behaviors
 				return FluxConc = (1.0 + Se - 2.0 * Se_Ini) # to avoid numerical problems it is set analyticaly
 
-			elseif option.infilt.SorptivityModel == :Crank # <>=<>=<>=<>=<> linear soil with constant diffusivity
+			elseif option.infilt.SorptivityModel⍰== :Crank # <>=<>=<>=<>=<> linear soil with constant diffusivity
 				return FluxConc = (2.0 * (Se - Se_Ini)) / exp(-(erfcinv(max(Se - Se_Ini, eps()) / (1.0 - Se_Ini)))^2 )
 
-			elseif option.infilt.SorptivityModel == :Philip_Knight # <>=<>=<>=<>=<> soils with Dirac δ-function diffusivity (i.e. Green and Ampt model)
+			elseif option.infilt.SorptivityModel⍰== :Philip_Knight # <>=<>=<>=<>=<> soils with Dirac δ-function diffusivity (i.e. Green and Ampt model)
 				return FluxConc = (2.0 * (1.0 - Se_Ini)) # to avoid numerical problems it is set analyticaly 
 
-			elseif option.infilt.SorptivityModel == :Brutsaert # <>=<>=<>=<>=<> soil with moderate non-linear diffusivity behaviors
+			elseif option.infilt.SorptivityModel⍰== :Brutsaert # <>=<>=<>=<>=<> soil with moderate non-linear diffusivity behaviors
 				return FluxConc = (2.0 * √((Se - Se_Ini) * (1.0 - Se_Ini)))  # to avoid numerical problems it is set analyticaly
 			end # option.infilt.SorptivityModel
 		end  # function: FLUXXCONCENTRATION
