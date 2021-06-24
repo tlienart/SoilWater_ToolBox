@@ -55,18 +55,18 @@ module options
 	end
 	mutable struct PSD
 		Model⍰::Symbol
-		OptimizePsd
-		Psd_2_θr
-		∑Psd_2_ξ1
-		HydroParam
-		HydroModel⍰
-		θsOpt⍰
-		θrOpt⍰
-		σ_2_Ψm⍰
-		Plot_Psd_θΨ
-		Plot_θr
-		Plot_IMP_Model
-		Table_Psd_θΨ_θ
+		OptimizePsd⍰::Symbol
+		Psd_2_θr⍰::Symbol
+		∑Psd_2_ξ1::Bool
+		HydroParam::Bool
+		HydroModel⍰::Symbol
+		θsOpt⍰::Symbol
+		θrOpt⍰::Symbol
+		σ_2_Ψm⍰::Symbol
+		Plot_Psd_θΨ::Bool
+		Plot_θr::Bool
+		Plot_IMP_Model::Bool
+		Table_Psd_θΨ_θ::Bool
 	end
 	mutable struct ROCKFRAGMENT
 		CorectStoneRockWetability::Bool
@@ -253,22 +253,21 @@ module options
 			#		PSD OPTIONS     
 			# =============================================================
 				# Model⍰
-					Model⍰       = :IMP # <:IMP>* Intergranular Mixing Model⍰; <:Chang2019Model>
-					OptimizePsd = :Run # <:OptSingleSoil>; <:OptAllSoil>; or <:Run>
-					Psd_2_θr    = :ParamPsd # <:Opt> optimises parameters α1 and α1; <:ParamPsd> uses α1 and α1 from parameters in Param.jl 
+               Model⍰      = :IMP # <:IMP>* Intergranular Mixing Model⍰; <:Chang2019Model>
+               OptimizePsd⍰ = :Run # <:OptSingleSoil>; <:OptAllSoil>; or <:Run>
+               Psd_2_θr⍰    = :ParamPsd # <:Opt> optimises parameters α1 and α1; <:ParamPsd> uses α1 and α1 from parameters in Param.jl
 
-				# For optimizepsd = :single
+				# For OptimizePsd⍰ = :single
 					∑Psd_2_ξ1 = true  # optimize ξ1
 					
 				# Fitting the psd function to a hydraulic model			
-					HydroParam      = true # <true> Optimize the hydraulic parameters from θ(Ψ)psd OR <false>
+               HydroParam  = true # <true> Optimize the hydraulic parameters from θ(Ψ)psd OR <false>
 
-					HydroModel⍰      = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
-					# HydroModel_List = [:Kosugi; :Vangenuchten; :BrooksCorey; :ClappHornberger; :VangenuchtenJules]
-					HydroModel_List = [:Kosugi]
-						θsOpt⍰           = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
-						θrOpt⍰           = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>	
-						σ_2_Ψm⍰          = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
+               HydroModel⍰ = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
+              
+               θsOpt⍰      = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
+               θrOpt⍰      = :Opt # <:Opt> optimises; <:ParamPsd> derive from PSD and uses α1 and α1 from parameters in Param.jl; <:σ_2_θr>
+               σ_2_Ψm⍰     = :Constrained # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 				# PLOTTING
 					Plot_Psd_θΨ    = true # <true>  plot θΨ of PSD; <false>
 					Plot_θr        = true #  <true>  plot θr data and model from Psd ; <false>	
@@ -277,7 +276,7 @@ module options
 				# TABLE
 					Table_Psd_θΨ_θ = true # <true> derive θ values at prescribed Ψ
 
-				psd = PSD(Model⍰, OptimizePsd, Psd_2_θr, ∑Psd_2_ξ1, HydroParam, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
+				psd = PSD(Model⍰, OptimizePsd⍰, Psd_2_θr⍰, ∑Psd_2_ξ1, HydroParam, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
 
 
 			# =============================================================

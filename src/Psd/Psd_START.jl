@@ -6,14 +6,14 @@ module psdStart
 	# ======================================================================================
 	function START_PSD(;∑Psd, hydro=[], hydroPsd, N_iZ, N_Psd, N_θΨobs, option, param, Rpart, θ_θΨobs, Ψ_θΨobs)
 
-		if  option.psd.OptimizePsd == :OptAllSoil && option.run.HydroLabθΨ⍰ == :No
-			error("PSD error: if  option.psd.OptimizePsd == :OptAllSoil && option.run.HydroLabθΨ⍰ ≠ :No ")
+		if  option.psd.OptimizePsd⍰ == :OptAllSoil && option.run.HydroLabθΨ⍰ == :No
+			error("PSD error: if  option.psd.OptimizePsd⍰ == :OptAllSoil && option.run.HydroLabθΨ⍰ ≠ :No ")
 		end 
 
 		# INITIATING THE PSD DATA		
 		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, option, param)
 
-		if option.psd.OptimizePsd == :Run  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
+		if option.psd.OptimizePsd⍰ == :Run  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd,  paramPsd.θr_Psd, option, param, paramPsd, hydroPsd)
 
 			if option.run.HydroLabθΨ⍰ ≠ :No # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
@@ -23,7 +23,7 @@ module psdStart
 			end
 		
 			# && option.run.HydroLabθΨ⍰ ≠ :No
-		elseif option.psd.OptimizePsd == :OptSingleSoil # <>=<>=<>=<>=<>=<>
+		elseif option.psd.OptimizePsd⍰ == :OptSingleSoil # <>=<>=<>=<>=<>=<>
 			if option.psd.Model⍰ == :IMP # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = psdOpt.imp.OPTIMIZATION_SINGLE_SOIL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, paramPsd.θr_Psd, paramPsd, hydro)
 
@@ -35,7 +35,7 @@ module psdStart
 			println("    	~ Nse_Mean_SingleOpt=$Nse_Mean_SingleOpt,  Nse_Std_SingleOpt=$Nse_Std_SingleOpt ~ \n")
 
 			# && option.run.HydroLabθΨ⍰ ≠ :No
-		elseif option.psd.OptimizePsd == :OptAllSoil # <>=<>=<>=<>=<>=<>
+		elseif option.psd.OptimizePsd⍰ == :OptAllSoil # <>=<>=<>=<>=<>=<>
 			if option.psd.Model⍰ == :IMP # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = psdOpt.imp.OPTIMIZATION_ALL_SOIL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, option, θs_Psd, paramPsd.θr_Psd, paramPsd, hydro)
 
@@ -47,8 +47,8 @@ module psdStart
 			println("    	~ Nse_Mean_OptAllSoil=$Nse_Mean_OptAllSoil,  Nse_Std_OptAllSoil=$Nse_Std_OptAllSoil ~")
 
   		else
-     		error("  $(option.psd.OptimizePsd) not found ")
-		end # option.psd.OptimizePsd
+     		error("  $(option.psd.OptimizePsd⍰) not found ")
+		end # option.psd.OptimizePsd⍰
 
 	return paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd	  	
 	end # function START_PSD
