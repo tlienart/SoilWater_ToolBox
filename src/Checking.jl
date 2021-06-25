@@ -72,10 +72,6 @@ module checking
 
 			elseif option.run.Smap2Hypix && (option.data.Pedological⍰ ≠ :Smap)
 				error("*** option.run.Smap2Hypix ⇒option.data.Pedological⍰ == :Smap ***")
-
-			
-
-
 		
 			end # Check error
 

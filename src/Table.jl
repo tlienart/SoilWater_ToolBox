@@ -219,7 +219,7 @@ module table
 				N_Ψ = Int64(length(param.psd.Ψ_Table))
 
 				# Writting the Header
-					FieldName_String = Array{String}(undef, (N_Ψ))
+					FieldName_String = fill(""::String, (N_Ψ))
 
 					for i =1:N_Ψ
 						FieldName_String[i] = string(param.psd.Ψ_Table[i] * cst.Mm_2_Cm) * "cm"

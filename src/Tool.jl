@@ -208,7 +208,7 @@ module tool
 					end
 				
 				# HEADER
-					FieldName_String = Array{String}(undef, N_FieldName)
+					FieldName_String = fill(""::String, N_FieldName)
 					i=1
 					for FieldNames in FieldName_Array
 						FieldName_String[i] =  String(FieldNames)
@@ -219,60 +219,6 @@ module tool
 				end # function STRUCT_2_FIELDNAME
 
 
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : STRUCT_2_FIELDNAMES
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function STRUCT_2_FIELDNAME_PARAM(Structure)
-		# 	N_FieldName = length(Structure.FieldName) - 1
-
-		# 	Matrix = fill(0.0::Float64, (N_FieldName))
-			
-		# 	for i=1:N_FieldName
-		# 		Struct_Array = getfield(Structure, Structure.FieldName[i])
-		# 		Matrix[i] = Struct_Array
-		# 	end
-
-		# 	FieldName_String = Array{String}(undef, N_FieldName)
-		# 	i=1
-		# 	for FieldNames in Structure.FieldName
-		# 		FieldName_String[i] =  String(FieldNames)
-		# 		if i == N_FieldName
-		# 			break
-		# 		end
-		# 		i += 1
-		# 	end
-		# 	return Matrix, FieldName_String
-		# end # function STRUCT_2_FIELDNAME
-			
-			
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : matching data with different timesteps
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function DATA_2_ΔTnew(∑T, N_iT, ∑T_Reduced)
-		# 	True = falses(N_iT) # Reserving memory
-		# 	iT = 1
-		# 	for iTreduced = 1:length(∑T_Reduced)	
-		# 		while ∑T_Reduced[iTreduced] ≥ ∑T[iT]
-		# 			iT += 1
-		# 		end
-
-		# 		# @show iT
-		# 		if iT ≤ N_iT
-		# 			True[iT] = true
-		# 		else
-		# 			exit
-		# 		end
-		# 	end # for iTθ
-
-		# 	# More accurate ∑T_Reduced
-		# 	∑T_Reduced = ∑T[True[1:N_iT]]
-
-		# 	N_∑T_Reduced = count(True[1:N_iT])
-
-		# 	return N_∑T_Reduced, True
-		# end  # function: function SELECT_OUTPUT_ΔT
-		
 	end  # module readWrite ************************
 	# ............................................................
 end  # module tool

@@ -8,12 +8,9 @@ module options
 		Infilt::Bool
 		Kθ::Bool
 		Pedological⍰::Symbol
-		Pet::Bool
-		Pr::Bool
 		Psd::Bool
 		RockWetability::Bool
 		SimulationKosugiθΨK::Bool
-		θobs::Bool
 		θΨ::Bool
 		Φ⍰::Symbol
 	end # struct DATA
@@ -58,7 +55,6 @@ module options
 		OptimizePsd⍰::Symbol
 		Psd_2_θr⍰::Symbol
 		∑Psd_2_ξ1::Bool
-		HydroParam::Bool
 		HydroModel⍰::Symbol
 		θsOpt⍰::Symbol
 		θrOpt⍰::Symbol
@@ -177,16 +173,13 @@ module options
             Infilt                = true # <true> ; <false>
             Kθ                    = true # <true> ; <false>
 				Pedological⍰ 			= :Core # <:Core>; from traditional data set <:Smap> from Smap; <No> no data available
-            Pet                   = false # <true> ; <false>
-            Pr                    = false # <true> ; <false>
             Psd                   = true # <true> ; <false>
             RockWetability        = true # <true> ; <false>
             SimulationKosugiθΨK   = false # <true> or <false>
-            θobs                  = false # <true> ; <false>
             θΨ                    = true # <true> ; <false>
-            Φ⍰               		 = :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
+            Φ⍰               		= :ρᵦ # <:ρᵦ> BulkDensity data; <:Φ> TotalPorosity; <:No> no data
 
-			data = DATA( HydroParam, Infilt, Kθ , Pedological⍰, Pet ,Pr, Psd, RockWetability, SimulationKosugiθΨK, θobs, θΨ,  Φ⍰ )
+			data = DATA( HydroParam, Infilt, Kθ , Pedological⍰, Psd, RockWetability, SimulationKosugiθΨK, θΨ,  Φ⍰)
 
 
 			# =============================================================
@@ -201,11 +194,11 @@ module options
 			# 		RUN
 			#      What model wanting to run ?
 			# =============================================================
-            ChangeHydroModel       = false
+            ChangeHydroModel       = false # Not yet operational<true>; <false>
             HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            Hypix                  = false # <true>; <false>
+            Hypix                  = true # <true>; <false>
             Infilt                 = false # <true>; <false>
-            IntergranularMixingPsd = true # <true>; <false>
+            IntergranularMixingPsd = false # <true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Smap                   = false  # <true>; <false>
             Smap2Hypix             = false
@@ -261,8 +254,6 @@ module options
 					∑Psd_2_ξ1 = true  # optimize ξ1
 					
 				# Fitting the psd function to a hydraulic model			
-               HydroParam  = true # <true> Optimize the hydraulic parameters from θ(Ψ)psd OR <false>
-
                HydroModel⍰ = :Kosugi # <:Kosugi>*; <:Vangenuchten>; <:BrooksCorey>; <:ClappHornberger>; <:VangenuchtenJules>
               
                θsOpt⍰      = :Φ #  <:Opt> Optimize θs; <:Φ> derived from total porosity which requires some correction from param.hydro.Coeff_Φ_2_θs; <:FromData> θs is optimised with the feasible range derived directly from θobs(Ψ), assuming that we have θ(Ψ=0))
@@ -276,7 +267,7 @@ module options
 				# TABLE
 					Table_Psd_θΨ_θ = true # <true> derive θ values at prescribed Ψ
 
-				psd = PSD(Model⍰, OptimizePsd⍰, Psd_2_θr⍰, ∑Psd_2_ξ1, HydroParam, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
+				psd = PSD(Model⍰, OptimizePsd⍰, Psd_2_θr⍰, ∑Psd_2_ξ1, HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Psd_θΨ, Plot_θr, Plot_IMP_Model, Table_Psd_θΨ_θ)
 
 
 			# =============================================================
@@ -346,25 +337,25 @@ module options
 					θs_Opt = :No #  <:θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 
 				# Calibration data available
-				Optimisation = false # <true>; <false>
-				θobs         = true # <true>; <false>
-				θobs_Average = true; #<true> ; <false>determine if the observed θ is an average of different layers
+					Optimisation = true # <true>; <false>
+					θobs         = true # <true>; <false>
+					θobs_Average = true #<true> ; <false>determine if the observed θ is an average of different layers
 
 					θobs_Hourly = true # θ data can be very large so we reduce the data to hourly
 					Signature_Run = false
 
 				# Table true
-				Table = true 
-						Table_Discretization  = true
-						Table_Q               = true
-						Table_RootWaterUptake = true
-						Table_TimeSeries      = true
-						Table_Ψ               = true
-						Table_θ               = true
-						Table_TimeSeriesDaily = true
-						Tabule_θΨ             = true
-						Table_Climate         = true
-					
+					Table = true 
+					Table_Discretization  = true
+					Table_Q               = true
+					Table_RootWaterUptake = true
+					Table_TimeSeries      = true
+					Table_Ψ               = true
+					Table_θ               = true
+					Table_TimeSeriesDaily = true
+					Tabule_θΨ             = true
+					Table_Climate         = true
+				
 				# plot outputs
 					Plot_Vegetation   = false
 					Plot_θΨK          = false

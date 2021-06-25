@@ -173,9 +173,9 @@ module jules
                      Date_Start_Obs = Dates.Date(Year,Month,Day)
 
                 # Need to provide dates by adding 1 day
-                  Years   = Array{Int64}(undef, N)
-                  Months  = Array{Int64}(undef, N)
-                  Days    = Array{Int64}(undef, N)
+                  Years   = fill(0::Int64, N)
+                  Months  = fill(0::Int64, N)
+                  Days    = fill(0::Int64, N)
                   Hours   = fill(9::Int64, N)
                   Minutes = fill(0::Int64, N)
                   Seconds = fill(0::Int64, N)

@@ -74,10 +74,9 @@ module paths
 				Dates::String
 				Discretization::String
 				HyPix_HydroParam::String
-				HyPix_Param::String
+				HyPixParamOpt::String
 
 				HyPix_VegParam::String
-				Hydraulic_Kg::String
 				IdSelect::String 
 				Input_OfStep::String
 				JulesMetadata::String
@@ -150,7 +149,7 @@ module paths
 			# Which files to use
 			SiteName_Soilhyro =  "NewFormat" #"Smap20210226"; "VCSNSmap2"; "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
 			ModelName ="Check"
-			Select = "SELECT_2" # Select data to model
+			Select = "SELECT_1" # "SELECT_1" "SELECT_2" Select data to model
 
 			option = OPTIONS(ModelName, Select, SiteName_Soilhyro)
 	
@@ -276,7 +275,6 @@ module paths
 
 		smap2Hypix = SMAP_2_HYPIX(Path_Smap2Hypix)
 
-
 		
 		# =============================================================
 		#		PLOT SOILWATER
@@ -325,9 +323,9 @@ module paths
 		#		HYPIX MODEL
 		# =============================================================
 			# INPUT NAME OF FILE
-				ProjectName_Hypix = "JULES" # "JULES"; "LYSIMETERS" 
+				ProjectName_Hypix = "LYSIMETERS" # "JULES"; "LYSIMETERS" 
 			
-				# IdName_Hypix = "Lincoln" # "TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; "Lincoln";
+				# TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; 
 				IdName_Hypix = Soilname[iSim]
 		
 			# HYPIX INPUT JULES	
@@ -338,9 +336,8 @@ module paths
             Dates            = "Dates.csv"
             Discretization   = "Discretization_2.csv"
             HyPix_HydroParam = "HypixHydro.csv"
-            HyPix_Param      = "HyPix_Param_2.csv"
+            HyPixParamOpt    = "HyPixParamOpt.csv"
             HyPix_VegParam   = "Vegetation.csv"
-            Hydraulic_Kg     = "Hydraulic_Uni_Kg2.csv"
             IdSelect         = "IdSelect.csv"
             Input_OfStep     = "Wof_Steps.csv"
             obsθ             = "Soilmoisture.csv"
@@ -409,7 +406,7 @@ module paths
 				Discretization   = FileHypix_Input₂ * Discretization
 				HyPix_HydroParam = FileHypix_Input₂ * HyPix_HydroParam
 				HyPix_VegParam   = FileHypix_Input₂ * HyPix_VegParam
-				Hypix_Param      = FileHypix_Input₂ * HyPix_Param
+				Hypix_Param      = FileHypix_Input₂ * HyPixParamOpt
 				obsθ             = FileHypix_Input₂ * obsθ
 
 				Input_OfStep     = Home * "/INPUT/Data_Hypix/RESULTS/"
@@ -476,9 +473,8 @@ module paths
 					Dates,
 					Discretization,
 					HyPix_HydroParam,
-					HyPix_Param,
+					HyPixParamOpt,
 					HyPix_VegParam,
-					Hydraulic_Kg,
 					IdSelect,
 					Input_OfStep,
 					JulesMetadata,

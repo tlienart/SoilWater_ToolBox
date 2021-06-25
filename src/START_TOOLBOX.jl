@@ -46,6 +46,7 @@ function START_TOOLBOX()
 		# DETERMINE WHICH SOILS/ PROFILE TO RUN: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.run.Hypix
 				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
+
 			else
 				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
 			end # if: option.run.Hypix
@@ -204,30 +205,6 @@ function START_TOOLBOX()
 	# ------------------------END: running HydroLabθΨ--------------------------
 
 
-	
-	# _______________________ START: ChangeHydroModel _______________________ 
-	if option.run.ChangeHydroModel
-		# Creating 
-		hydroTranslate = hydroStruct.HYDROSTRUCT(option.hydro, 1000)
-		
-		hydroTranslate, N_iZ = reading.READ_STRUCT(hydroTranslate, path.inputSoilwater.ConvertModel)
-		
-		# Temporary Id
-			IdSelect = collect(1:1:N_iZ)
-	
-		# Deriving a table of θ(Ψ)
-			table.hydroLab.TABLE_EXTRAPOINTS_θΨ(hydroTranslate, IdSelect, N_iZ, path.inputSoilwater.Ψθ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
-		
-		# Deriving a table of K(θ)
-			table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, IdSelect, param.hydro.TableComplete_θΨ, hydroTranslate.Ks[1:N_iZ], N_iZ::Int64, path.inputSoilwater.Kunsat)
-
-		# Creating an Id output required by the program
-			table.TABLE_ID(N_iZ::Int64, path.inputSoilwater.IdSelect)
-	end # Option
-	# ------------------------END: ChangeHydroModel---------------------------  	
-
-
-
 	# _______________________ START: IntergranularMixingPsd _______________________ 
 	if option.run.IntergranularMixingPsd 
 		println("----- START RUNNING IntergranularMixingPsd -----------------------------------------------")
@@ -251,11 +228,11 @@ function START_TOOLBOX()
 			paramPsd, N_Psd, θ_Rpart, Ψ_Rpart, Psd, hydroPsd = psdStart.START_PSD(∑Psd=∑Psd, hydroPsd=hydroPsd, N_iZ=N_iZ, N_Psd=N_Psd, N_θΨobs=N_θΨobs, option=option, param=param, Rpart=Rpart, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs)
 		end
 
-		KunsatModel_Psd = fill(0.0::Float64, N_iZ)
-		if  option.psd.HydroParam
+		# Deriving the hydraulic parameters of PSD
+			KunsatModel_Psd = fill(0.0::Float64, N_iZ)
+
 			hydroPsd, hydroOther_Psd = hydrolabOpt.HYDROLABOPT_START(N_iZ=N_iZ, ∑Psd=∑Psd, θ_θΨobs=θ_Rpart, Ψ_θΨobs=Ψ_Rpart, N_θΨobs=N_Psd, hydro=hydroPsd, hydroOther=hydroOther_Psd, option=option, optionₘ=option.psd, optim=optim_Psd, param=param) 
-		end
-	
+		
 		println("----- END: RUNNING IntergranularMixingPsd ----------------------------------------------- \n")
 	end
 	# ------------------------END: IntergranularMixingPsd---------------------------  
@@ -296,6 +273,7 @@ function START_TOOLBOX()
 	
 	# _______________________ START: HyPix _______________________ 
 	if option.run.Hypix
+		println(Soilname)
 		hypixStart.HYPIX_START(Soilname, option, param, path)
 	end # option.run.Hypix
 	# ------------------------END: HyPix---------------------------
@@ -355,9 +333,7 @@ function START_TOOLBOX()
 		if option.run.IntergranularMixingPsd # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			table.psd.PSD(IdSelect[1:N_iZ], N_iZ, paramPsd, path.tableSoilwater.Table_Psd)
 
-			if option.psd.HydroParam  && option.psd.HydroParam
-				table.psd.θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_iZ, path.tableSoilwater.Table_Psd)
-			end
+			table.psd.θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_iZ, path.tableSoilwater.Table_Psd)
 			
 			if option.psd.Table_Psd_θΨ_θ
 				table.psd.PSD_θΨ_θ(IdSelect, hydroPsd, N_iZ, option, param, path.tableSoilwater.Table_Psd_θΨ_θ)
