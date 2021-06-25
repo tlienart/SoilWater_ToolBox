@@ -93,7 +93,7 @@ module options
 		RootWaterUptakeComp
 		LookupTable_Lai
 		LookUpTable_CropCoeficient
-		θΨKmodel
+		HydroModel⍰
 		BottomBoundary
 		∂R∂Ψ_Numerical
 		AdaptiveTimeStep
@@ -315,7 +315,7 @@ module options
 					LookUpTable_CropCoeficient = true # <false> CropCoeficient=constant; <true> CropCoeficient varies per month
 
 				# Hydraulic model 
-					θΨKmodel = :Kosugi # <:vanGenuchten>; <:Kosugi>
+					HydroModel⍰ = :Kosugi # <:vanGenuchten>; <:Kosugi>
 
 				# Richards equation
 					BottomBoundary = :Free # not working <:Free>; <:Pressure>
@@ -370,7 +370,7 @@ module options
 						Plot_WaterBalance = true
 						Plot_ΔT           = true
 
-			hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, θΨKmodel, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm⍰, σ_2_θr, θs_Opt, Optimisation, θobs,θobs_Average, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
+			hyPix = HYPIX(ClimateDataTimestep, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, HydroModel⍰, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm⍰, σ_2_θr, θs_Opt, Optimisation, θobs,θobs_Average, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
 
 
 			# =============================================================

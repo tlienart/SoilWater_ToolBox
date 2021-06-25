@@ -383,12 +383,6 @@ module paths
 		# 						PROCESSING DATA
 		#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-			# INPUT NAME OF FILE
-				ProjectName_Hypix = "JULES" # "JULES"; "LYSIMETERS" 
-				
-			# IdName_Hypix = "Lincoln" # "TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; "Lincoln";
-				IdName_Hypix = Soilname[iSim]
-	
 			# HYPIX INPUT JULES	
 				JulesMetadata = "JULES_LinkingData.csv"
 
@@ -406,7 +400,7 @@ module paths
 				Discretization   = FileHypix_Input₂ * Discretization
 				HyPix_HydroParam = FileHypix_Input₂ * HyPix_HydroParam
 				HyPix_VegParam   = FileHypix_Input₂ * HyPix_VegParam
-				Hypix_Param      = FileHypix_Input₂ * HyPixParamOpt
+				HyPixParamOpt      = FileHypix_Input₂ * HyPixParamOpt
 				obsθ             = FileHypix_Input₂ * obsθ
 
 				Input_OfStep     = Home * "/INPUT/Data_Hypix/RESULTS/"

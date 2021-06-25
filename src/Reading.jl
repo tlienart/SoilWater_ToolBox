@@ -472,7 +472,7 @@ module reading
 	#		module: reading Hypix
 	# =============================================================
 	module hyPix
-		import  ...tool, ..horizonLayer
+		import  ...tool, ...horizonLayer
 		import Dates: value, DateTime, hour, minute, month, now
 		import DelimitedFiles
 		export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
@@ -513,13 +513,13 @@ module reading
 					param.hyPix.obsθ.Day_End     = param.hyPix.Day_End
 
 				# Dates of plots
-				param.hyPix.ploting.Year_Start  = param.hyPix.Year_Start
-				param.hyPix.ploting.Month_Start = param.hyPix.Month_Start
-				param.hyPix.ploting.Day_Start   = param.hyPix.Day_Start
+					param.hyPix.ploting.Year_Start  = param.hyPix.Year_Start
+					param.hyPix.ploting.Month_Start = param.hyPix.Month_Start
+					param.hyPix.ploting.Day_Start   = param.hyPix.Day_Start
 
-				param.hyPix.ploting.Year_End    = param.hyPix.Year_End
-				param.hyPix.ploting.Month_End   = param.hyPix.Month_End
-				param.hyPix.ploting.Day_End     = param.hyPix.Day_End
+					param.hyPix.ploting.Year_End    = param.hyPix.Year_End
+					param.hyPix.ploting.Month_End   = param.hyPix.Month_End
+					param.hyPix.ploting.Day_End     = param.hyPix.Day_End
 
 			return param
 			end  # function: DATES
@@ -548,9 +548,9 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYPIX_PARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, veg)
+			function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, option, param, Path::String, veg)
 				# Read data
-					Data = DelimitedFiles.readdlm(pathHyPix.Hypix_Param, ',')
+					Data = DelimitedFiles.readdlm(Path, ',')
 				# Read header
 					Header = Data[1,1:end]
 				# Remove first READ_ROW_SELECT
@@ -681,7 +681,7 @@ module reading
 
 				if !(Flag_MultiStepOpt)
 					# Hydraulic parameters per horizon to layers
-					hydro = horizonLayer.HYDROHORIZON_2_HYDRO(N_iZ, Layer, hydroHorizon)
+					hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ, option)
 				end
 
 				NparamOpt = length(ParamOpt)
@@ -766,7 +766,11 @@ module reading
 					end
 
 				# READING DATES FROM FILE
-					param = DATES(param, pathHyPix)
+					try
+						param = DATES(param, pathHyPix)
+					catch
+						@info "		*** Dates read from param and not from file ***"
+					end
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 					Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
@@ -889,8 +893,13 @@ module reading
 						end # occursin("Z=", iHeader)
 					end #  iHeader
 
-				# READING DATES FROM FILE
-					param = DATES(param, pathHyPix)
+
+					# READING DATES FROM FILE
+						try
+							param = DATES(param, pathHyPix)
+						catch
+							@info "		*** Dates read from param and not from file ***"
+						end
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 					Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)

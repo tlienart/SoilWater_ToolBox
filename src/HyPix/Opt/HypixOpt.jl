@@ -8,15 +8,17 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIXOPT_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, obsθ, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Layer, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iSim_Count, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iHorizon, N_iZ, optim, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iSim_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsθ, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
-		SearchRange = SEARCHRANGE(optionₘ, optim)
+		SearchRange = SEARCHRANGE(optim, option)
 
-		Optimization = BlackBoxOptim.bboptimize(Param -> OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, obsθ, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Layer, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iHorizon, N_iZ, optim, Param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent, MaxFuncEvals=param.hyPix.obsθ.NmaxFuncEvals)
+		Optimization = BlackBoxOptim.bboptimize(X -> OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsθ, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent, MaxFuncEvals=param.hyPix.obsθ.NmaxFuncEvals)
 
-		Param = BlackBoxOptim.best_candidate(Optimization)
+		X = BlackBoxOptim.best_candidate(Optimization)
 
-		hydro, hydroHorizon, veg = PARAM_2_hydro_veg(Layer, hydro, hydroHorizon, N_iHorizon, N_iZ, optim, Param, veg)
+		hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
+
+		
 
 		WofBest[iSim_Count] = BlackBoxOptim.best_fitness(Optimization)
 
@@ -51,18 +53,19 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, obsθ, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Layer, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iHorizon, N_iZ, optim, Param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+		function OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsθ, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 			# New optimized param which are put into the matching veg or hydro parameters
-				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(Layer, hydro, hydroHorizon, N_iHorizon, N_iZ, optim, Param, veg)
+				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
+				
 		
 			# Running Hypix model	
-				∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ  = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+				∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ  = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 			# Weighted Objective Function
-				Wof = ofHypix.θof.WOF_θ(∑T[1:N_iT], obsθ, N_iT, N_iZ, ΔHpond[1:N_iT], θ[1:N_iT,1:N_iZ], θSim)
+				Wof = ofHypix.θof.WOF_θ(∑T[1:N_iT], N_iT, N_iZ, obsθ, param, ΔHpond[1:N_iT], θ[1:N_iT,1:N_iZ], θSim)
 				
-				println("\n			~ Wof = $Wof ~")
+		println("\n			~ Wof = $Wof ~")
 		return Wof
 		end  # function: OF_HYPIX
 
@@ -71,7 +74,7 @@ module hypixOpt
 	#		FUNCTION : SEARCHRANGE
 	#		Required by BlackBoxOptim
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SEARCHRANGE(optionₘ, optim)
+		function SEARCHRANGE(optim, option)
 			ParamOpt_Min₂ = copy(optim.ParamOpt_Min)
 			ParamOpt_Max₂ = copy(optim.ParamOpt_Max)
 
@@ -91,7 +94,7 @@ module hypixOpt
 			end # "θs" ∈ optim.ParamOpt
 
 			SearchRange = (collect(zip(Float64.(ParamOpt_Min₂), Float64.(ParamOpt_Max₂))))
-			println("			~ SearchRange = ", SearchRange)
+			println("	~ SearchRange = ", SearchRange)
 		return SearchRange
 		end  # function: SEARCHRANGE
 
@@ -100,16 +103,16 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PARAM_2_hydro_veg(Layer, hydro, hydroHorizon, N_iHorizon, N_iZ, optim, Param, veg)
+		function PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
 
 			println("\n		==== OPT PARAM ====")
 			for iParam = 1:optim.NparamOpt
 
 				# Determening if parameters are Log transformed
 				if optim.ParamOpt_LogTransform[iParam]
-					Paramₐ = expm1(Param[iParam])
+					Paramₐ = expm1(X[iParam])
 				else
-					Paramₐ = Param[iParam]
+					Paramₐ = X[iParam]
 				end  # if: optim.ParamOpt_LogTransform
 
 
@@ -192,7 +195,7 @@ module hypixOpt
 				end
 
 			# Transforming horizonLayer -> hydro
-				hydro = horizonLayer.HYDROHORIZON_2_HYDRO(N_iZ, Layer, hydroHorizon)
+				hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ, option)
 
 		return hydro, hydroHorizon, veg
 		end  # function: PARAM

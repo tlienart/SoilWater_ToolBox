@@ -22,6 +22,7 @@
         include("Hydro/ΨminΨmax.jl")
         include("Hydro/HydroStruct.jl")
         include("Hydro/HydroRelation.jl")
+        include("Hypix/HorizonLayer.jl")
         include("Hydro/Wrc.jl")
         include("Optim/Optimize.jl")
         include("reading.jl")

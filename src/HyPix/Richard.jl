@@ -228,7 +228,7 @@ module richard
 					Q[iT,iZ] = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])
 				end # for: iZ= 1:N_iZ+1
 
-				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, option.hydro, param, Q, ΔΨmax, ΔSink, θ, Ψ)
+				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, option.hyPix, param, Q, ΔΨmax, ΔSink, θ, Ψ)
 
 				# Rerun if the new time step is smaller that the older time step
 				# if Flag_NoConverge # <>=<>=<>=<>=<>

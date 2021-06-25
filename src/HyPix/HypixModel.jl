@@ -3,14 +3,14 @@
 # =============================================================
 module hypixModel
 
-	import ..timeStep, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..climate, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
+	import ..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
 
 	export HYPIX
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -52,7 +52,7 @@ module hypixModel
 
 		# ADAPTIVETIMESTEP
 			if option.hyPix.AdaptiveTimeStep == :ΔΨ
-				ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option.hydro, param, ΔΨmax)
+				ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option, param, ΔΨmax)
 			end #  option.hyPix.AdaptiveTimeStep == :ΔΨ
 
 		# FIRST TIME STEP

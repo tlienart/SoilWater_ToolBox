@@ -273,7 +273,6 @@ function START_TOOLBOX()
 	
 	# _______________________ START: HyPix _______________________ 
 	if option.run.Hypix
-		println(Soilname)
 		hypixStart.HYPIX_START(Soilname, option, param, path)
 	end # option.run.Hypix
 	# ------------------------END: HyPix---------------------------

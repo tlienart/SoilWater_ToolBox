@@ -9,9 +9,9 @@ module horizonLayer
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :   HORIZON_2_LAYER
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROHORIZON_2_HYDRO(hydroₘ, N_iZ, Layer, hydroHorizon)
+	function HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ::Int64, option)
 
-		hydro = hydroStruct.HYDROSTRUCT(hydroₘ, N_iZ)
+		hydro = hydroStruct.HYDROSTRUCT(option.hyPix, N_iZ)
 
 		# Field names of the structure
 			FieldName_Array = propertynames(hydroHorizon)
