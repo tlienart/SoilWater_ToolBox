@@ -59,7 +59,7 @@ module infiltStart
 					hydroInfilt.Ψm[iZ] = BlackBoxOptim.best_candidate(Optimization)[2]
 					hydroInfilt.Ks[iZ] = 10.0 ^ BlackBoxOptim.best_candidate(Optimization)[3]
 		
-					hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt)
+					hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt, param)
 						
 				else
 					SearchRange =[ (hydroInfilt.σ_Min[iZ], hydroInfilt.σ_Max[iZ]), (log10(hydroInfilt.Ψm_Min[iZ]), log10(hydroInfilt.Ψm_Max[iZ])), (log10(hydroInfilt.Ks_Min[iZ]), log10(hydroInfilt.Ks_Max[iZ]))]
@@ -138,7 +138,7 @@ module infiltStart
          hydroInfilt.ΨmMac[iZ]    = Ψm
          hydroInfilt.σMac[iZ]     = σ
 
-			hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt)
+			hydroInfilt = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroInfilt, iZ, option.infilt, param)
 
 			if option.infilt.Model⍰ == :Best_Univ
 				return Nse = ofBest.OF_BEST(∑Infilt_3D, ∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T; W=0.5)

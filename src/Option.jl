@@ -195,8 +195,8 @@ module options
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false # Not yet operational<true>; <false>
-            HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            Hypix                  = true # <true>; <false>
+            HydroLabθΨ⍰            = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
+            Hypix                  = false # <true>; <false>
             Infilt                 = false # <true>; <false>
             IntergranularMixingPsd = false # <true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment

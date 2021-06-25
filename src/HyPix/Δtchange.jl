@@ -30,7 +30,7 @@ module Δtchange
 		# PREPARING DATA FOR PLOTS
 			Date_Start = clim.Date[2]
 
-			param = reading.hyPix.DATES(param, pathHyPix)
+			# param = reading.hyPix.DATES(param, pathHyPix)
 					
 			Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
 				

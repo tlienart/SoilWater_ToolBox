@@ -38,7 +38,7 @@ module memory
       ∂R∂Ψ△    = fill(0.0::Float64, N_iZ)
       ∂R∂Ψ▽    = fill(0.0::Float64, N_iZ)
       
-      N_∑T_Plot                  = param.hyPix.iSim_End - param.hyPix.iSim_Start + 1
+      N_∑T_Plot                  = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
 
       iNonConverge_iSim          = fill(0  ::Int64, N_∑T_Plot)
       

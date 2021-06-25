@@ -344,9 +344,9 @@ function START_TOOLBOX()
 	 
 	 # _______________________ START: plotting _______________________ 
 
-		if option.other.Ploting && !option.run.Hypix
+		if option.other.Ploting && option.run.HydroLabθΨ⍰ ≠ :No
 			println("		=== START: PLOTTING  ===")
-				plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, option, option.hydro, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+				plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, option, option.hydro, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 
 			println("		=== END: PLOTTING  === \n")
 		end

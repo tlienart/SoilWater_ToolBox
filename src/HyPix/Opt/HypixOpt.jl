@@ -101,7 +101,7 @@ module hypixOpt
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : PARAM
+	#		FUNCTION : PARAM_2_hydro_veg
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
 
@@ -151,7 +151,7 @@ module hypixOpt
 					iHorizon_Start = optim.ParamOpt_HorizonEq[iParam][1]
 					iHorizon_End   = optim.ParamOpt_HorizonEq[iParam][2]
 
-					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, option.hyPix)
+					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, option.hyPix, param)
 
 				# Updating the horizons which are optimised simultaneously
 					for iZ = iHorizon_Start:iHorizon_End
@@ -198,7 +198,7 @@ module hypixOpt
 				hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ, option)
 
 		return hydro, hydroHorizon, veg
-		end  # function: PARAM
+		end  # function: PARAM_2_hydro_veg
 		
 	end  # module hypixOpt
 # ............................................................rm 

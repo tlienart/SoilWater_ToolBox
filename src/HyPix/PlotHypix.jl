@@ -11,7 +11,7 @@ module plotHypix
 	# ========================================
 	# PLOTTING HYDRAULIC RELATIONSHIP FOR EVERY HORIZON
 	# ======================================== 
-	function θΨK(hydroHorizon, N_iHorizon, iSim, pathHyPix)
+	function θΨK(hydroHorizon, N_iHorizon, iOpt, pathHyPix)
 
 		# Deriving the Min and Max Ψ from principals of soil physics
 		Ψ_Min_Horizon = fill(0.0::Float64, N_iHorizon)
@@ -90,7 +90,7 @@ module plotHypix
 
 		end #iZ ............................................
 
-		Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iSim) * ".svg"
+		Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iOpt) * ".svg"
 		PGFPlots.save(Path, Plot_θΨK) 
 	end # function θΨK
 
@@ -98,7 +98,7 @@ module plotHypix
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ROOTDENSITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function VEG_FUNCTIONS(discret, iSim, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
+		function VEG_FUNCTIONS(discret, iOpt, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
 
 			Plot_All = PGFPlots.GroupPlot(2, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
 
@@ -138,7 +138,7 @@ module plotHypix
 
 				push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Psi \ [kPa]$", xmode="log", ylabel=L"$ F_{waterStress} \ [-]$", title="(b)"))
 
-			Path = pathHyPix.Vegetation * "_" * string(iSim) * ".svg"
+			Path = pathHyPix.Vegetation * "_" * string(iOpt) * ".svg"
 			PGFPlots.save(Path, Plot_All)	
 		end  # function ROOTDENSITY
 
@@ -160,7 +160,7 @@ module plotHypix
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		FUNCTION : PLOT_SORPTIVITY
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function PLOT_SORPTIVITY(iSim, hydro, pathHyPix)
+				function PLOT_SORPTIVITY(iOpt, hydro, pathHyPix)
 					println("  ==  START: PLOT_SORPTIVITY_SeIni  ==")
 
 					# Setting the range of values for Se
@@ -182,7 +182,7 @@ module plotHypix
 
 						Plots.plot!(Plot1, Se_Ini[1:N_SeIni] , Sorptivity_Mod[1:N_SeIni], framestyle = [:box :semi :origin :zerolines :grid :true], xlabel=L"Initial \ Se \ [-]", ylabel=L"Sorptivity \  [ \ mm \ \sqrt s \ ]", label="", grid=false) 
 					
-						Path =pathHyPix.Plot_Sorptivity  * "_" * string(iSim) * ".svg"
+						Path =pathHyPix.Plot_Sorptivity  * "_" * string(iOpt) * ".svg"
 
 						Plots.savefig(Plot1, Path)
 
@@ -194,7 +194,7 @@ module plotHypix
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# # 		FUNCTION : INTERCEPTION
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 	function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iSim, pathHyPix)
+			# 	function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iOpt, pathHyPix)
 
 			# 		# TICKS
 			# 			DateTick=range(clim.Date[i∑T_CalibrStart_Day],step=Day(7),clim.Date[clim.N_Climate])
@@ -215,7 +215,7 @@ module plotHypix
 			# 			Plots.plot!(Plot1, grid=false, framestyle=:origin, size=(1000, 600), legend=:topright, xrotation=rad2deg(pi/3), xticks=(DateTick, DateTick2), title=Title, xlabel=L"$Day$", ylabel=L"$Daily \ \Delta Pr  \ \slash \ \Delta Pr_{through} \ \slash \ \Delta Pet_{int} \ [mm] $")
 
 												
-			# 		Path = pathHyPix.Plot_RainfallInterception * "_" * string(iSim) * ".svg"
+			# 		Path = pathHyPix.Plot_RainfallInterception * "_" * string(iOpt) * ".svg"
 			# 		Plots.savefig(Plot1, Path)
 			# 		println("			 ~ ", Path, "~")
 			# 	end  # function: INTERCEPTION
@@ -223,10 +223,10 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iSim, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iOpt, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 				# PATH
-					Path = pathHyPix.Plot_HypixTime * "_" * string(iSim) * ".svg"
+					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES

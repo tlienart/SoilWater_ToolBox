@@ -105,8 +105,8 @@ module params
 			θΨ_Table
 		end
 	mutable struct HYPIXS
-		iSim_Start
-		iSim_End
+		iOpt_Start
+		iOpt_End
 		Year_Start::Int64
 		Month_Start::Int64
 		Day_Start::Int64
@@ -211,7 +211,6 @@ module params
 		smap = SMAPS(Ψ_Table)
 
 	
-
 	# =============================================================
 	#		PSD module parameters
 	# =============================================================
@@ -283,8 +282,8 @@ module params
 	#		HYPIX PARAMETERS
 	# =============================================================
 		# Simulation wanted to run 
-		  iSim_Start = 1
-		  iSim_End   = 5
+		  iOpt_Start = 100
+		  iOpt_End   = 100
 
 		# Simulations start end
          Year_Start   = 2015 # 2017
@@ -371,7 +370,7 @@ module params
 
 		ploting = PLOT(Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, Cells_Plot, θΨ_Table)
 
-	hyPix = HYPIXS(iSim_Start, iSim_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, obsθ, ploting)
+	hyPix = HYPIXS(iOpt_Start, iOpt_End, Year_Start, Month_Start, Day_Start, Hour_Start, Minute_Start, Second_Start, Year_End, Month_End, Day_End, Hour_End, Minute_End, Second_End, ΔZrz_Max, ΔZdeep_max, Cosα, ΔHpondMax, Ψ_Bot, ΔT_Min, ΔT_Max, N_Iter, ΔT_Rerun, Δθ_Max, NewtonStepWeaken, WaterBalanceResidual_Max, obsθ, ploting)
 
 
 	# =============================================================

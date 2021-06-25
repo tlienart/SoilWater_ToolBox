@@ -591,7 +591,7 @@ module reading
 				"""Determening if multistep optimisation is performed (not the first step)
 				This is such that the optimal values of the previous optimisation step is kept in memory
 				We need to determine what next param to optimize"""
-					if Flag_Opt && (iSim ≥ param.hyPix.iSim_Start + 1)
+					if Flag_Opt && (iSim ≥ param.hyPix.iOpt_Start + 1)
 						Flag_MultiStepOpt = true
 					else
 						Flag_MultiStepOpt = false 

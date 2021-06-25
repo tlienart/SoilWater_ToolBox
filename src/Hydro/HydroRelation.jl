@@ -3,7 +3,7 @@
 # =============================================================
 module hydroRelation
 import BlackBoxOptim
-import ..params, ..tool
+import ..tool
 export σ_2_Ψm⍰, σ_2_θr
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +18,7 @@ export σ_2_Ψm⍰, σ_2_θr
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : σ_2_θr
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function FUNCTION_σ_2_Ψm_SOFTWARE(hydro₂, iZ, option₂; Pσ=3.0)
-			param = params.PARAM()
+		function FUNCTION_σ_2_Ψm_SOFTWARE(hydro₂, iZ, option₂, param; Pσ=3.0)
 			if (option₂.σ_2_Ψm⍰ == :Constrained)
 				Ψm_Min = hydroRelation.σ_2_Ψm⍰(hydro₂.σ[iZ], param.hydro.kg.Ψσ_Min, hydro₂.Ψm_Min[iZ], hydro₂.Ψm_Max[iZ])
 

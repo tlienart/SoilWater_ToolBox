@@ -111,11 +111,11 @@ module hydrolabOpt
 			# OPTIMIZATION: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-				Optimization = BlackBoxOptim.bboptimize(X -> hydrolabOpt.OF_HYDROLAB(X, hydro, iZ, K_KΨobs, N_KΨobs, N_θΨobs, optim, optionₘ, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent)
+				Optimization = BlackBoxOptim.bboptimize(X -> hydrolabOpt.OF_HYDROLAB(hydro, iZ, K_KΨobs, N_KΨobs, N_θΨobs, optim, optionₘ, param, X, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent)
 
 				X = BlackBoxOptim.best_candidate(Optimization)
 
-				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
+				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, param, X)
 
 				# STATISTICS
 					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
@@ -155,9 +155,9 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_HYDROLAB(X, hydro, iZ, K_KΨobs, N_KΨobs, N_θΨobs, optim, optionₘ, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
+		function OF_HYDROLAB(hydro, iZ, K_KΨobs, N_KΨobs, N_θΨobs, optim, optionₘ, param, X, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 			# New optimized which are put into the matching veg or hydro parameters
-				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
+				hydro = hydrolabOpt.PARAM_2_hydro(hydro, iZ, optim, optionₘ, param, X)
 		
 			# Weighted Objective Function
 				Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
@@ -169,7 +169,7 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PARAM_2_hydro(hydro, iZ, optim, optionₘ, X)
+	function PARAM_2_hydro(hydro, iZ, optim, optionₘ, param, X)
 		for iParam = 1:optim.NparamOpt
 			# Determening if parameters are Log transformed
 				if (optim.ParamOpt_LogTransform[iParam]) && !(optim.ParamOpt[iParam]=="Ψm" && optionₘ.σ_2_Ψm⍰ == :Constrained)
@@ -192,7 +192,7 @@ module hydrolabOpt
 
 		# RELATIONSHIP BETWEEN σ AND Ψm
 		if (optionₘ.σ_2_Ψm⍰ ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
-			hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ; Pσ=3.0)
+			hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ, param; Pσ=3.0)
 		end # optionₘ.σ_2_Ψm⍰ ≠ :No
 
 		#  <>=<>=<>=<>=<>=<> Relationship between σ and θr

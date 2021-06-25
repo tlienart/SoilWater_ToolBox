@@ -41,7 +41,7 @@ module interpolate
 	#		FUNCTION : POINTS_2_SlopeIntercept
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""POINTS_2_SlopeIntercept
-	From Point1 [X1, Y1] and point2 [X2, Y2] compute Y = Slope.X + Intercept
+	From Point1 [X1, Y1] and point2 [X2, Y2] compute Y = Slope.X₀ + Intercept
 	"""
 		function POINTS_2_SlopeIntercept(X1, Y1, X2, Y2)
 			Slope = (Y2 - Y1) / (X2 - X1)
@@ -53,7 +53,7 @@ module interpolate
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INTERPOLATE_2D_LOOP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, NiT_Reduced, N_iT, N_iZ, X_Reduced, X)
+		function INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, NiT_Reduced, N_iT, N_iZ, X_Reduced, X₀)
 			iT_X = 2
 			iCount_TooEarly = 0 
 
@@ -77,13 +77,13 @@ module interpolate
 				# Building a regression line which passes from POINT1(∑T_Climate[iT_X], ∑Pr_Climate[iT_Pr]) and POINT2: (∑T_Climate[iT_Pr+1], ∑Pr_Climate[iT_Pr+1])
 				if !Flag_TooEarly
 					for iZ = 1:N_iZ
-						Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X[iT_X-1,iZ], ∑T[iT_X], X[iT_X,iZ])
+						Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X₀[iT_X-1,iZ], ∑T[iT_X], X₀[iT_X,iZ])
 
 						X_Reduced[iT,iZ] = Slope * ∑T_Reduced[iT] + Intercept
 					end # for iZ = 1:N_iZ
 				else
 					for iZ = 1:N_iZ
-						X_Reduced[iT,iZ] = X[iT_X,iZ] # TODO problem of shifting of 1 day
+						X_Reduced[iT,iZ] = X₀[iT_X,iZ] # TODO problem of shifting of 1 day
 					end
 				end
 			end # for: iT=1:obsθ.N_iT
@@ -91,20 +91,18 @@ module interpolate
 			# TODO to be checked
 			if iCount_TooEarly ≥ 1
 				for iZ = 1:N_iZ
-					X_Reduced[1:NiT_Reduced-1, iZ] = X_Reduced[2:NiT_Reduced, iZ]
-					X_Reduced[NiT_Reduced, iZ] = X[NiT_Reduced,iZ]
+					# X_Reduced[1:NiT_Reduced-1, iZ] = X_Reduced[2:NiT_Reduced, iZ]
+					# X_Reduced[NiT_Reduced, iZ] = X₀[NiT_Reduced,iZ]
 				end
-
 			end
-		
-			
-		return X_Reduced
+				
+	return X_Reduced
 	end  # function: θINTERPOLATION
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INTERPOLATE_2D_LOOP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, NiT_Reduced, N_iT, X_Reduced, X)
+		function INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, NiT_Reduced, N_iT, X_Reduced, X₀)
 			iT_X = 2
 			for iT=1:NiT_Reduced
 		
@@ -120,7 +118,7 @@ module interpolate
 				end # while
 
 				# Building a regression line which passes from POINT1(∑T_Climate[iT_X], ∑Pr_Climate[iT_Pr]) and POINT2: (∑T_Climate[iT_Pr+1], ∑Pr_Climate[iT_Pr+1])
-				Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X[iT_X-1], ∑T[iT_X], X[iT_X])
+				Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X₀[iT_X-1], ∑T[iT_X], X₀[iT_X])
 
 				X_Reduced[iT] = Slope * ∑T_Reduced[iT] + Intercept
 			
