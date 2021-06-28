@@ -149,12 +149,11 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			module plots
-			import ...sorptivity, ..wrc, ..cst, ....reading
+			import ...sorptivity, ..wrc, ..cst, ...reading
 			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
 				using Plots;pgfplotsx()
-
 				using Dates
 				
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -223,14 +222,14 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iOpt, N_∑T_Plot, N_iZ, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iOpt, N_∑T_Plot, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
 					rm(Path, force=true, recursive=true)
 					
 				# READING DATES
-					param = reading.DATES(param, pathHyPix)
+					# param = reading.DATES(param, pathHyPix)
 
 				# TICKS
 					# Date_Start_Calibr = obsθ.Date[1]
@@ -261,7 +260,7 @@ module plotHypix
 
 					Plot_Climate = Plots.plot!(Plot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, line =(:sticks, :solid, 4), colorbar=false, label=L"$\Delta Pr_{through}$")
 	
-					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", title=pathHyPix.SiteName_Hypix, xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
+					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", title=pathHyPix.IdName_Hypix, xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
 				end # if: option.hyPix.Plot_Climate
 
 				# PLOT EVAPOYTRANSPIRATION

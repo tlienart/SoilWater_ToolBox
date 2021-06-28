@@ -394,7 +394,6 @@ module paths
 			# HYPIX INPUT LEVEL 2 ===
 				FileHypix_Input₂  = Home * "/INPUT/Data_Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
-
 				Climate          = FileHypix_Input₂ * opt.hyPix.ClimateDataTimestep * "_" * Climate
 				Dates            = FileHypix_Input₂ * Dates
 				Discretization   = FileHypix_Input₂ * Discretization
@@ -421,25 +420,28 @@ module paths
 				Table_Discretisation  = FileSoilHydro_Table  *  IdName_Hypix * "_" *Table_Discretisation
 				Table_Hydro           = FileSoilHydro_Table  *  IdName_Hypix * "_" *Table_Hydro
 				Table_KΨ              = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_KΨ
+				Table_Performance     = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Performance
 				Table_Q               = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Q
 				Table_Signature       = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Signature
 				Table_TimeSerie       = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_TimeSerie
 				Table_TimeSerie_Daily = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_TimeSerie_Daily
 				Table_Veg             = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Veg
-				Table_Ψ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Ψ
 				Table_θ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_θ
 				Table_θΨ              = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_θΨ
+				Table_Ψ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Ψ
 				
 			FileSoilHydro_Table_θaverage = Home * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/SoilMoistureSim/" 				
 				mkpath(FileSoilHydro_Table_θaverage) #Make Folder if not exist
 				Table_θaverage        = FileSoilHydro_Table_θaverage *  IdName_Hypix * "_"* Table_θaverage
 
-			FileSoilHydro_Table_Performace = Home * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/"		
-				Table_Performance     = FileSoilHydro_Table_Performace  *  IdName_Hypix * "_"* string(iSim) * "_"* Table_Performance
+			# FileSoilHydro_Table_Performace = Home * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/"
+			# Table_Performance     = FileSoilHydro_Table_Performace  *  IdName_Hypix * "_"* string(iSim) * "_"* Table_Performance		
+				
 
 
 			# HYPIX PLOT CORE
-			FileHypix_Plot = Home * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/Plots/" 
+			# FileHypix_Plot = Home * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/Plots/" 
+			FileHypix_Plot = Home * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
 				mkpath(FileHypix_Plot)
 
 				Plot_HypixTime            = FileHypix_Plot * IdName_Hypix  * "_" * Plot_HypixTime

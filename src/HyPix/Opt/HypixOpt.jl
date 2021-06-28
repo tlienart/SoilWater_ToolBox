@@ -8,7 +8,7 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIXOPT_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iSim_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsθ, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsθ, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 		SearchRange = SEARCHRANGE(optim, option)
 
@@ -20,30 +20,30 @@ module hypixOpt
 
 		
 
-		WofBest[iSim_Count] = BlackBoxOptim.best_fitness(Optimization)
+		WofBest[iOpt_Count] = BlackBoxOptim.best_fitness(Optimization)
 
-		println("			~ WOFbest = ", WofBest[iSim_Count] , "\n")
+		println("			~ WOFbest = ", WofBest[iOpt_Count] , "\n")
 
-		if iSim_Count == 1
+		if iOpt_Count == 1
          hydro_best        = deepcopy(hydro)
          hydroHorizon_best = deepcopy(hydroHorizon)
 			veg_best          = deepcopy(veg)
 
-		elseif iSim_Count ≥ 2 && WofBest[iSim_Count] <  WofBest[iSim_Count-1]
+		elseif iOpt_Count ≥ 2 && WofBest[iOpt_Count] <  WofBest[iOpt_Count-1]
 			println("\n		== ~ IMPROVING ~ == \n")			
 				hydro_best        = deepcopy(hydro) 
             hydroHorizon_best = deepcopy(hydroHorizon)
 				veg_best          = deepcopy(veg)
 									
 		# Sorry Not improving so we revert
-		elseif iSim_Count ≥ 2 && WofBest[iSim_Count] ≥ WofBest[iSim_Count-1]
+		elseif iOpt_Count ≥ 2 && WofBest[iOpt_Count] ≥ WofBest[iOpt_Count-1]
 			println("\n		== ~ NO IMPROVEMENTS ~ == \n")
             hydro        = deepcopy(hydro_best)
             hydroHorizon = deepcopy(hydroHorizon_best)
 				veg          = deepcopy(veg_best)
 
-				WofBest[iSim_Count] = WofBest[iSim_Count-1]			
-		end # if iSim_Count
+				WofBest[iOpt_Count] = WofBest[iOpt_Count-1]			
+		end # if iOpt_Count
 
 	return hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest
 	end  # function: HYPIXOPT_START

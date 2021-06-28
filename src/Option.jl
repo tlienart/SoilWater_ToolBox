@@ -159,7 +159,7 @@ module options
 					DownloadPackage = false # <true> For first time user download packages required to run program; <false>*
 
 				# Plotting
-					Ploting   = false # <true>* plot; <false> no plotting
+					Ploting   = true # <true>* plot; <false> no plotting
 					PlotVscode = true # <true>* plot shown in VScode; <false>
 					DataPrivateShare = "Private" # <"Private"> data kept private in GitHub; <"Share"> date share in GitHub
 
@@ -195,8 +195,8 @@ module options
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false # Not yet operational<true>; <false>
-            HydroLabθΨ⍰            = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            Hypix                  = false # <true>; <false>
+            HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
+            Hypix                  = true # <true>; <false>
             Infilt                 = false # <true>; <false>
             IntergranularMixingPsd = false # <true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment

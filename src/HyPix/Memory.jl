@@ -7,7 +7,7 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(clim, iSim_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsθ, param)
+	function MEMORY(clim, iOpt_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsθ, param)
 
 		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 
@@ -40,7 +40,7 @@ module memory
       
       N_∑T_Plot                  = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
 
-      iNonConverge_iSim          = fill(0  ::Int64, N_∑T_Plot)
+      iNonConverge_iOpt          = fill(0  ::Int64, N_∑T_Plot)
       
 
 
@@ -49,7 +49,7 @@ module memory
 
       θSim = fill(0.0::Float64, obsθ.N_iT, N_iZ)
 		
-		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iSim, Laiᵀ, N_Memory, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, N_Memory, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
 
 end  # module: memory 
