@@ -35,7 +35,6 @@ module paths
 	
 	mutable struct PLOT_SOILWATER	
 		Plot_∑infilt_Opt::String
-		Plot_∑infilt_SeIniRange::String
 		Plot_∑infilt_θΨ::String
 		Plot_IMP_model::String
 		Plot_Psd_θr::String
@@ -149,7 +148,7 @@ module paths
 			# Which files to use
 			SiteName_Soilhyro =  "NewFormat" #"Smap20210226"; "VCSNSmap2"; "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
 			ModelName ="Check"
-			Select = "SELECT_1" # "SELECT_1" "SELECT_2" Select data to model
+			Select = "SELECT_2" # "SELECT_1" "SELECT_2" Select data to model
 
 			option = OPTIONS(ModelName, Select, SiteName_Soilhyro)
 	
@@ -305,19 +304,16 @@ module paths
 				mkpath(Plot_∑infilt_Opt)
 				Plot_∑infilt_Opt = Plot_∑infilt_Opt * SiteName_Soilhyro * "_"
 
-			Plot_∑infilt_SeIniRange = FileSoilHydro_Plot * "/Infiltration/SeIni/"
-				mkpath(Plot_∑infilt_SeIniRange)
-				Plot_∑infilt_SeIniRange = Plot_∑infilt_SeIniRange * SiteName_Soilhyro * "_"
 
 			Plot_∑infilt_θΨ = FileSoilHydro_Plot * "/Infiltration/ThetaH/"
 				mkpath(Plot_∑infilt_θΨ)
 				Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * SiteName_Soilhyro * "_"
 
-			Plot_Sorptivity_Se = FileSoilHydro_Plot * "/Infiltration/Sorptivity/"
+			Plot_Sorptivity_Se = FileSoilHydro_Plot * "/Sorptivity/"
 				mkpath(Plot_Sorptivity_Se)
 				Plot_Sorptivity_Se = Plot_Sorptivity_Se * SiteName_Soilhyro * "_"
 
-		plotSoilwater = PLOT_SOILWATER(Plot_∑infilt_Opt, Plot_∑infilt_SeIniRange, Plot_∑infilt_θΨ, Plot_IMP_model, Plot_Psd_θr, Plot_Psd_θΨ, Plot_Sorptivity_Se, Plot_θΨK, Plot_σΨm)
+		plotSoilwater = PLOT_SOILWATER(Plot_∑infilt_Opt, Plot_∑infilt_θΨ, Plot_IMP_model, Plot_Psd_θr, Plot_Psd_θΨ, Plot_Sorptivity_Se, Plot_θΨK, Plot_σΨm)
 		
 		# =============================================================
 		#		HYPIX MODEL
@@ -394,7 +390,7 @@ module paths
 			# HYPIX INPUT LEVEL 2 ===
 				FileHypix_Input₂  = Home * "/INPUT/Data_Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
-				Climate          = FileHypix_Input₂ * opt.hyPix.ClimateDataTimestep * "_" * Climate
+				Climate          = FileHypix_Input₂ * opt.hyPix.ClimateDataTimestep⍰ * "_" * Climate
 				Dates            = FileHypix_Input₂ * Dates
 				Discretization   = FileHypix_Input₂ * Discretization
 				HyPix_HydroParam = FileHypix_Input₂ * HyPix_HydroParam

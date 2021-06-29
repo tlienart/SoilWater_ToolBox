@@ -735,16 +735,16 @@ module reading
 			Option_ReadTemperature = false
 
 			function CLIMATE(option, param, pathHyPix)
-				if option.hyPix.ClimateDataTimestep == "Daily"
+				if option.hyPix.ClimateDataTimestepl⍰ == "Daily"
 					Pr_Name          = "Rain(mm)"
 					Pet_Name         = "PET(mm)"
 					Temperature_Name = "Tmax(C)" # Maximum temperature which is not correct
 
-				elseif option.hyPix.ClimateDataTimestep == "Hourly"
+				elseif option.hyPix.ClimateDataTimestepl⍰ == "Hourly"
 					Pr_Name          = "Pr_mm"
 					Pet_Name         = "Pet_mm"
 					Temperature_Name = "Temp_c"
-				end #  option.hyPix.ClimateDataTimestep
+				end #  option.hyPix.ClimateDataTimestepl⍰
 
 				# READ DATA
 					Data = DelimitedFiles.readdlm(pathHyPix.Climate, ',')

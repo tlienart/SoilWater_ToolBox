@@ -75,7 +75,7 @@ module psdStruct
 			θr_Psd  = zeros(Float64, N_iZ)
 
 			for iZ=1:N_iZ
-				ξ1[iZ] = param.psd.chan.ξ1
+				ξ1[iZ] = param.psd.chang.ξ1
 			end
 
 			return paramPsd = CHANG(ξ1, Psd_2_θr_α1, Psd_2_θr_α2, θr_Psd, Err_θr_Psd, Nse)

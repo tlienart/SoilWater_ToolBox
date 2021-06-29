@@ -281,8 +281,7 @@ function START_TOOLBOX()
 	# _______________________ START: Jules _______________________ 
 
 	if option.dataFrom.Jules
-		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)
-		# smap2hypix.SMAP_2_HYPIX(SoilName_2_SiteName, SiteName_2_θini, path)	
+		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)	
 	end  # if: option.START_JULES()
 	
 	# ------------------------END: Jules---------------------------  
@@ -344,65 +343,49 @@ function START_TOOLBOX()
 	 
 	 # _______________________ START: plotting _______________________ 
 
-		if option.other.Ploting && option.run.HydroLabθΨ⍰ ≠ :No
-			println("		=== START: PLOTTING  ===")
-				plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, option, option.hydro, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
+		if option.other.Ploting
+		println("		=== START: PLOTTING  ===")
 
-			println("		=== END: PLOTTING  === \n")
-		end
+		# Checking the maximum number of plotting
+			param.globalparam.N_iZ_Plot_End = min(param.globalparam.N_iZ_Plot_End, N_iZ)
+
+			if option.run.HydroLabθΨ⍰ ≠ :No
+				plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
+			end
+			if option.run.IntergranularMixingPsd
+				if option.psd.Plot_θr && option.run.HydroLabθΨ⍰ ≠ :No # <>=<>=<>=<>=<>
+					plot.psd.PLOT_θr(∑Psd, hydro, hydroPsd, N_iZ, param, path.plotSoilwater.Plot_Psd_θr)
+				end
+				if option.psd.Plot_IMP_Model # <>=<>=<>=<>=<>
+					plot.psd.PLOT_IMP_MODEL(∑Psd, hydro, IdSelect, N_iZ, N_Psd, option, param, path.plotSoilwater.Plot_IMP_model, Psd, Rpart) 
+				end
+				if option.psd.Plot_Psd_θΨ # <>=<>=<>=<>=<>
+					plot.psd.PLOT_PSD_θΨ(hydro, hydroPsd, IdSelect, N_iZ, N_Psd, N_θΨobs, option, param, path.plotSoilwater.Plot_Psd_θΨ, θ_Rpart, θ_θΨobs, Ψ_Rpart, Ψ_θΨobs)
+				end
+			end # option.run.IntergranularMixingPsd
+
+			if option.run.Infilt # <>=<>=<>=<>=<>
+				if option.infilt.Plot_∑Infilt  
+					plot.infilt.PLOT_∑INFILT(∑Infilt_1D, ∑Infilt_3D, ∑Infilt_Obs, IdSelect, infiltOutput, N_Infilt, N_iZ, option, param, path.plotSoilwater.Plot_∑infilt_Opt, Tinfilt)
+				end
+				if option.infilt.Plot_θΨ
+					if option.run.HydroLabθΨ⍰ ≠ :No
+						plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, optim, option, param, path.plotSoilwater.Plot_∑infilt_θΨ; hydro=hydro)
+					else
+						plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, optim, option, param, path.plotSoilwater.Plot_∑infilt_θΨ)
+					end # option.run.HydroLabθΨ⍰
+				end # option.run.Infilt
+			end # option.run.Infilt
+
+			if option.run.Smap # <>=<>=<>=<>=<>
+				plotSmap.makie.HYDROPARAM(hydro, IdSelect, K_KΨobs, Kₛ_Model, N_iZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
+			end # option.run.Smap
+		
+		println("		=== END: PLOTTING  === \n")
+		end # option.other.Ploting
 	
 	 # ------------------------END: plotting---------------------------  
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-
-
-	# PRINT OUTPUT ======================================================================================
-	# if option.other.Ploting && !option.run.Hypix
-	# println("		=== START: PLOTTING  ===")
-	
-	# 	# if option.smap.Plot_Kunsat  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	# 	plotSmap.PLOT_KUNSAT(hydro, N_iZ, smap; N_Se= 1000)
-	# 	# end
-
-	# 	if option.run.HydroLabθΨ⍰ ≠ :No && option.hydro.Plot_θΨ # <>=<>=<>=<>=<>
-
-	# 		if option.dataFrom.Smap
-	# 			plotSmap.makie.HYDROPARAM(Ψ_θΨobs, Ψ_KΨobs, θ_θΨobs, N_θΨobs, N_iZ, N_KΨobs, K_KΨobs, IdSelect, hydro, Kₛ_Model, path; smap=smap)
-
-	# 			# plotSmap.HYDROPARAM(Ψ_θΨobs, Ψ_KΨobs, θ_θΨobs, N_θΨobs, N_iZ, N_KΨobs, K_KΨobs, IdSelect, hydro, Kₛ_Model; N_Se=1000, smap=[])
-	# 		else
-	# 			plot.lab.HYDROPARAM(Ψ_θΨobs, Ψ_KΨobs, θ_θΨobs, N_θΨobs, N_iZ, N_KΨobs, K_KΨobs, IdSelect, hydro, Kₛ_Model, path.plotSoilwater.Plot_θΨK, path.option.ModelName)
-	# 		end	
-	# 	end # option.run.HydroLabθΨ⍰
-	# 	if option.run.IntergranularMixingPsd && option.psd.Plot_θr # <>=<>=<>=<>=<>
-	# 		plot.psd.PLOT_θr(∑Psd, N_iZ, hydro, hydroPsd, path.plotSoilwater.Plot_Psd_θr, path.plotSoilwater.Plot_IMP_model)
-	# 	end
-	# 	if option.run.IntergranularMixingPsd && option.psd.Plot_IMP_Model # <>=<>=<>=<>=<>
-	# 		plot.psd.PLOT_IMP_MODEL(IdSelect, Rpart, N_Psd, ∑Psd, Psd, N_iZ, hydro, paramPsd) 
-	# 	end
-	# 	if  option.run.IntergranularMixingPsd && option.psd.Plot_Psd_θΨ && !option.psd.HydroParam
-	# 		println("			~ PSD WARNING Sorry cannot plot Plot_Psd_θΨ as option.psd.HydroParam==false ~")
-	# 	end
-	# 	if option.run.IntergranularMixingPsd && option.psd.Plot_Psd_θΨ && option.psd.HydroParam # <>=<>=<>=<>=<>
-	# 		plot.psd.PLOT_PSD_θΨ(Ψ_θΨobs, Ψ_Rpart, θ_θΨobs, θ_Rpart, N_θΨobs, N_iZ, N_Psd, IdSelect, hydroPsd, hydro, path.plotSoilwater.Plot_Psd_θΨ)
-	# 	end
-	# 	if option.run.Infilt && option.infilt.Plot_∑Infilt  # <>=<>=<>=<>=<>
-	# 		plot.infilt.PLOT_∑INFILT(IdSelect, N_Infilt, N_iZ, ∑Infilt_Obs, Tinfilt, ∑Infilt_3D, ∑Infilt_1D, infiltOutput, path.plotSoilwater.Plot_∑infilt_Opt )
-	# 	end
-	# 	# if option.run.Infilt && option.infilt.Plot_SeIni_Range # <>=<>=<>=<>=<>
-	# 	# Removing GRUtils software to avoid conflict
-	# 	# 	# plot.infilt.PLOT_∑INFILT_SEINI(hydroInfilt, IdSelect, infiltOutput, infiltParam, N_iZ)
-	# 	# end
-
-	# 	if option.run.Infilt && option.infilt.Plot_θΨ
-	# 		if option.run.HydroLabθΨ⍰ ≠ :No
-	# 			plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, path.plotSoilwater.Plot_∑infilt_θΨ; hydro=hydro)
-	# 		else
-	# 			plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, path.plotSoilwater.Plot_∑infilt_θΨ)
-	# 		end # option.run.HydroLabθΨ⍰
-	# 	end # option.run.Infilt
-
-	# println("=== END: PLOTTING  === \n")
-	# end # if option.other.Ploting
 
 	# Playing sounds...
 		println("\007")
