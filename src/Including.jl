@@ -32,10 +32,7 @@
         include("Checking.jl")
         include("Stats.jl")
         include("RockFragment/RockFragment.jl")
-
-        if !(option.run.Hypix)
-            include("Psd/PsdThetar.jl")
-        end
+        include("Psd/PsdThetar.jl")
 
         if option.data.Pedological⍰ == :Smap
             include("Hypix/VegStruct.jl")
@@ -48,10 +45,9 @@
             end
         end
 
-        if !(option.run.Hypix)
-            include("HydroLab/OfHydrolab.jl")
-            include("HydroLab/HydrolabOpt.jl")
-        end
+        include("HydroLab/OfHydrolab.jl")
+        include("HydroLab/HydrolabOpt.jl")
+
         
         if option.run.Infilt
             include("Sorptivity/Sorptivity.jl")            
@@ -72,7 +68,7 @@
             include("Psd/Psd_START.jl")
         end # option.run.IntergranularMixingPsd
 
-        if option.other.Ploting && !(option.run.Hypix)
+        if option.other.Ploting
             include("Plot.jl")
         end # option.other.Ploting
 
@@ -108,7 +104,7 @@
             include("Hypix/HypixStart.jl")
         end  # if: option.run.Hypix
 
-        if option.dataFrom.Jules
+        if option.run.Jules
             include("Hypix/VegStruct.jl")
             include("Hypix/Discretization.jl")
             include("NoCore/Jules/Jules.jl")

@@ -22,16 +22,13 @@ module options
       Hypix::Bool
       Infilt::Bool
       IntergranularMixingPsd ::Bool
+		Jules::Bool
       RockCorection::Bool
 		Smap::Bool
 		Smap2Hypix::Bool
       Temporary::Bool
 	end
 
-	# How to input the data
-	mutable struct DATAFROM
-		Jules::Bool
-	end
 	mutable struct OTHER
 		DownloadPackage::Bool
 		Ploting::Bool
@@ -48,7 +45,6 @@ module options
 		θrOpt⍰::Symbol
 		σ_2_Ψm⍰::Symbol
 		Plot_θΨ::Bool
-		Plot_σ_Ψm::Bool
 	end
 	mutable struct PSD
 		Model⍰::Symbol
@@ -79,11 +75,9 @@ module options
 		θsOpt⍰::Symbol            
 		θrOpt⍰::Symbol            
 		σ_2_Ψm⍰::Symbol               
-		Plot_Sorptivity::Bool        	
-		Plot_SeIni_Range::Bool       
+		Plot_Sorptivity::Bool        	 
 		Plot_∑Infilt::Bool           
 		Plot_θΨ::Bool                
-		Plot_Sorptivity_SeIni::Bool  
 	end
 	mutable struct HYPIX
 		ClimateDataTimestep⍰
@@ -94,21 +88,20 @@ module options
 		LookupTable_Lai
 		LookUpTable_CropCoeficient
 		HydroModel⍰
-		BottomBoundary
+		BottomBoundary⍰
 		∂R∂Ψ_Numerical
-		AdaptiveTimeStep
-		NormMin
+		AdaptiveTimeStep⍰
+		NormMin⍰
 		Flag_ReRun
 		Qbottom_Correction
 		Lai_2_SintMax
 		σ_2_Ψm⍰
 		σ_2_θr
-		θs_Opt
+		θs_Opt⍰
 		Optimisation::Bool
 		θobs::Bool
 		θobs_Average::Bool
 		θobs_Hourly::Bool
-		Signature_Run
 		Table::Bool
 		Table_Discretization::Bool
 		Table_Q::Bool
@@ -134,7 +127,6 @@ module options
 	end
 		mutable struct OPTION
 			data::DATA
-			dataFrom::DATAFROM
 			hydro::HYDRO
 			hyPix::HYPIX
 			infilt::INFILT
@@ -182,30 +174,22 @@ module options
 
 			data = DATA(HydroParam, Infilt, Kθ , Pedological⍰, Psd, RockWetability, SimulationKosugiθΨK, θΨ,  Φ⍰)
 
-
-			# =============================================================
-			# 		DATA FROM
-			#      How to read data ?
-			# =============================================================
-				Jules = false
-
-			dataFrom = DATAFROM(Jules)
-
 			# =============================================================
 			# 		RUN
 			#      What model wanting to run ?
 			# =============================================================
-            ChangeHydroModel       = false # Not yet operational<true>; <false>
-            HydroLabθΨ⍰           = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            Hypix                  = false # <true>; <false>
-            Infilt                 = false # <true>; <false>
+            ChangeHydroModel       = false # TODO Not yet operational<true>; <false>
+            HydroLabθΨ⍰            = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
+            Hypix                  = true # <true>; <false>
+            Infilt                 = true # <true>; <false>
             IntergranularMixingPsd = true # <true>; <false>
+            Jules                  = false #<true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Smap                   = false  # <true>; <false>
             Smap2Hypix             = false
             Temporary              = false # <true>; <false>
 
-			run = RUN(ChangeHydroModel, HydroLabθΨ⍰, Hypix, Infilt, IntergranularMixingPsd, RockCorection, Smap, Smap2Hypix, Temporary)
+			run = RUN(ChangeHydroModel, HydroLabθΨ⍰, Hypix, Infilt, IntergranularMixingPsd, Jules, RockCorection, Smap, Smap2Hypix, Temporary)
 				
 			# =============================================================
 			#	   ROCK FRAGMENT OPTIONS
@@ -221,9 +205,9 @@ module options
 			#		SMAP OPTIONS
 			# =============================================================
 				# Smap-Hydro options
-					Plot_Kunsat = false  # <true> or <false>
+					Nothings = false  # <true> or <false>
 
-				smap = SMAP(Plot_Kunsat)
+				smap = SMAP(Nothings)
 
 			# =============================================================
 			#		HYDRO OPTIONS
@@ -238,9 +222,8 @@ module options
 
 				# PLOTTING
 					Plot_θΨ   = true
-					Plot_σ_Ψm = false
 					
-				hydro = HYDRO(HydroModel⍰, HydroModel_List, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_θΨ, Plot_σ_Ψm)
+				hydro = HYDRO(HydroModel⍰, HydroModel_List, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_θΨ)
 
 
 			# =============================================================
@@ -292,12 +275,10 @@ module options
 			
 				# Plotting
 					Plot_Sorptivity       = true # <true> or <false>	
-					Plot_SeIni_Range      = true # <true> computes infiltration curves for different SeIn set in param.infilt.SeIni_Output <false> no outputs
 					Plot_∑Infilt          = true # <true> plots cumulative infiltration curves for experimental and derived data <false> no plots
 					Plot_θΨ               = true # <true>; <false>
-					Plot_Sorptivity_SeIni = true # <true> computes sorptivity curves as a function of Se <false> no outputs
 
-				infilt = INFILT(DataSingleDoubleRing⍰, OptimizeRun⍰, Model⍰, BestUniv_Continous, SorptivitySplitModel⍰, SorptivityModel⍰ , HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Sorptivity, Plot_SeIni_Range, Plot_∑Infilt, Plot_θΨ, Plot_Sorptivity_SeIni)
+				infilt = INFILT(DataSingleDoubleRing⍰, OptimizeRun⍰, Model⍰, BestUniv_Continous, SorptivitySplitModel⍰, SorptivityModel⍰ , HydroModel⍰, θsOpt⍰, θrOpt⍰, σ_2_Ψm⍰, Plot_Sorptivity, Plot_∑Infilt, Plot_θΨ)
 
 
 			# =============================================================
@@ -320,12 +301,12 @@ module options
 					HydroModel⍰ = :Kosugi # <:vanGenuchten>; <:Kosugi>
 
 				# Richards equation
-					BottomBoundary = :Free # not working <:Free>; <:Pressure>
+					BottomBoundary⍰ = :Free # not working <:Free>; <:Pressure>
 					∂R∂Ψ_Numerical = false # perform the derivatives numerically <true>; <false>
 
 				# Adaptive time step
-					AdaptiveTimeStep   = :ΔΨ # <:ΔΨ>; <:Δθ>
-					NormMin            = :Norm		#<:Norm>; <:Min>
+					AdaptiveTimeStep⍰   = :ΔΨ # <:ΔΨ>; <:Δθ>
+					NormMin⍰            = :Norm		#<:Norm>; <:Min>
 					Flag_ReRun         = true # <true>; <false> Rerun after updating the ΔT
 					Qbottom_Correction = true # <true> correction for the mass balance of the last cell
 					# const NoConverge_Ψbest   = false # not working <true>; <false>* compute Q(Ψbest) when no convergence
@@ -336,7 +317,7 @@ module options
 				# Step wise optimization
 					σ_2_Ψm⍰ = :No  # <:Constrained> Ψm physical feasible range is computed from σ <:UniqueRelationship> Ψm is computed from σ; <:No> optimisation of σ & Ψm with no constraints
 					σ_2_θr = true # <true> derive θr from σ <false>
-					θs_Opt = :No #  <:θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
+					θs_Opt⍰ = :No #  <:θs_Opt⍰> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 
 				# Calibration data available
 					Optimisation = true # <true>; <false>
@@ -344,7 +325,6 @@ module options
 					θobs_Average = true #<true> ; <false>determine if the observed θ is an average of different layers
 
 					θobs_Hourly = true # θ data can be very large so we reduce the data to hourly
-					Signature_Run = false
 
 				# Table true
 					Table = true 
@@ -372,13 +352,13 @@ module options
 						Plot_WaterBalance = true
 						Plot_ΔT           = true
 
-			hyPix = HYPIX(ClimateDataTimestep⍰, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, HydroModel⍰, BottomBoundary, ∂R∂Ψ_Numerical, AdaptiveTimeStep, NormMin, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm⍰, σ_2_θr, θs_Opt, Optimisation, θobs,θobs_Average, θobs_Hourly, Signature_Run, Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
+			hyPix = HYPIX(ClimateDataTimestep⍰, RainfallInterception, Evaporation, RootWaterUptake, RootWaterUptakeComp, LookupTable_Lai, LookUpTable_CropCoeficient, HydroModel⍰, BottomBoundary⍰, ∂R∂Ψ_Numerical, AdaptiveTimeStep⍰, NormMin⍰, Flag_ReRun, Qbottom_Correction, Lai_2_SintMax, σ_2_Ψm⍰, σ_2_θr, θs_Opt⍰, Optimisation, θobs,θobs_Average, θobs_Hourly,Table, Table_Discretization, Table_Q, Table_RootWaterUptake, Table_TimeSeries, Table_Ψ, Table_θ, Table_TimeSeriesDaily, Tabule_θΨ, Table_Climate, Plot_Vegetation, Plot_θΨK, Plot_Interception, Plot_Other, Plot_Sorptivity, Plot_Hypix, Plot_Climate, Plot_θ, Plot_Ψ, Plot_Flux, Plot_WaterBalance, Plot_ΔT)
 
 
 			# =============================================================
 			#		GLOBAL OPTION
 			# ===========================================================
-				option = OPTION(data, dataFrom, hydro, hyPix, infilt, other, psd, rockFragment, run, smap)
+				option = OPTION(data, hydro, hyPix, infilt, other, psd, rockFragment, run, smap)
 
 		return option
 		end  # function: OPTION

@@ -42,15 +42,9 @@ function START_TOOLBOX()
 			hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
 			hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputSoilwater.HydroParam_ThetaH)
 	
-
 		# DETERMINE WHICH SOILS/ PROFILE TO RUN: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.run.Hypix
-				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
-
-			else
+			# For HyPix Id will run again
 				IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
-			end # if: option.run.Hypix
-
 
 		# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
@@ -207,7 +201,7 @@ function START_TOOLBOX()
 
 	# _______________________ START: IntergranularMixingPsd _______________________ 
 	if option.run.IntergranularMixingPsd 
-		println("----- START RUNNING IntergranularMixingPsd -----------------------------------------------")
+		println("\n ----- START RUNNING IntergranularMixingPsd ----------------------------------------------- \n")
 		# STRUCTURES
 			hydroPsd = hydroStruct.HYDROSTRUCT(option.psd, N_iZ)
 			hydroOther_Psd = hydroStruct.HYDRO_OTHERS(N_iZ)
@@ -273,6 +267,8 @@ function START_TOOLBOX()
 	
 	# _______________________ START: HyPix _______________________ 
 	if option.run.Hypix
+		~, ~, Soilname, ~ = reading.ID(PathIdSlect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
+
 		hypixStart.HYPIX_START(Soilname, option, param, path)
 	end # option.run.Hypix
 	# ------------------------END: HyPix---------------------------
@@ -280,7 +276,7 @@ function START_TOOLBOX()
 
 	# _______________________ START: Jules _______________________ 
 
-	if option.dataFrom.Jules
+	if option.run.Jules
 		SoilName_2_SiteName,  SiteName_2_θini = jules.START_JULES(path)	
 	end  # if: option.START_JULES()
 	

@@ -253,9 +253,6 @@ module hypixStart
 				if option.hyPix.θobs_Average && option.hyPix.θobs
 					table.hyPix.θAVERAGE(Date_Plot[1:N_∑T_Plot], iOpt, θobs_Plot[1:N_∑T_Plot], θsim_Aver[1:N_∑T_Plot], path.hyPix)
 				end
-				# if option.hyPix.Signature_Run
-				# 	table.hyPix.SIGNATURE(iOpt, Signature_Deficit_Obs, Signature_Max_Obs, Signature_Saturated_Obs, Signature_Senescence_Obs, Signature_Deficit_Sim, Signature_Max_Sim, Signature_Saturated_Sim, Signature_Senescence_Sim)
-				# end
 			println("		=== === END: Table === === \n")
 			end  # if option.hyPix.Table
 				
@@ -284,7 +281,7 @@ module hypixStart
 					plotHypix.plots.RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iOpt, path.hyPix)
 				end
 				if  option.hyPix.Plot_Sorptivity
-					plotHypix.plots.PLOT_SORPTIVITY(iOpt, hydro, path.hyPix)
+					plotHypix.plots.PLOT_SORPTIVITY(hydro, iOpt, option, optionₘ, path.hyPix)
 				end
 			println("		=== === END: Plotting === === \n")
 			end # if option.hyPix.Plotting

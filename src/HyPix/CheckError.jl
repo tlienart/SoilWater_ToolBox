@@ -26,8 +26,8 @@ module checkError
 				error("\n Hypix error: HydroModel⍰ option = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [vanGenuchten] or [Kosugi]")
 			end
 
-			if option.hyPix.BottomBoundary ≠ :Free && option.hyPix.BottomBoundary ≠ :Pressure
-				error("\n Hypix error: BottomBoundary option = $BottomBoundary not yet supported. BottomBoundary must = either [Free] or [Pressure]")
+			if option.hyPix.BottomBoundary⍰ ≠ :Free && option.hyPix.BottomBoundary⍰ ≠ :Pressure
+				error("\n Hypix error: BottomBoundary⍰ option = $BottomBoundary⍰ not yet supported. BottomBoundary⍰ must = either [Free] or [Pressure]")
 			end
 
 			Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)

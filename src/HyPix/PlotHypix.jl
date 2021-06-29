@@ -159,7 +159,7 @@ module plotHypix
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		FUNCTION : PLOT_SORPTIVITY
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function PLOT_SORPTIVITY(iOpt, hydro, pathHyPix)
+				function PLOT_SORPTIVITY(hydro, iOpt, option, optionₘ, pathHyPix)
 					println("  ==  START: PLOT_SORPTIVITY_SeIni  ==")
 
 					# Setting the range of values for Se

@@ -124,14 +124,14 @@ module richard
 
 				# Does not take into consideration the last cell which has a perfect mass balance
 				for iZ=1:N_iZ
-					if option.hyPix.NormMin == :Norm
+					if option.hyPix.NormMin⍰ == :Norm
 						Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2
 					else
 						Residual_Max = max( Residual_Max, abs(Residual[iZ]) / (ΔT[iT] * discret.ΔZ[iZ]) ) 
 					end
 				end # for: iZ=N_iZ
 
-				if option.hyPix.NormMin == :Norm
+				if option.hyPix.NormMin⍰ == :Norm
 					Residual_Max = √(Residual_Norm / N_iZ)
 				end
 			

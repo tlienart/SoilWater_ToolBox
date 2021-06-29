@@ -148,7 +148,7 @@ module paths
 			# Which files to use
 			SiteName_Soilhyro =  "NewFormat" #"Smap20210226"; "VCSNSmap2"; "SFF"; "PAF"; K10KPA; Smap; Smap20210226; SmapSouthland2; CantyLysimSmap; VCSNSmap; "WaikLysim"; "Convert; "SmapNZAllSoilsSmap20210326"; "Smap20210226"
 			ModelName ="Check"
-			Select = "SELECT_2" # "SELECT_1" "SELECT_2" Select data to model
+			Select = "SELECT_1" # "SELECT_1" ;"SELECT_2" Select data to model
 
 			option = OPTIONS(ModelName, Select, SiteName_Soilhyro)
 	

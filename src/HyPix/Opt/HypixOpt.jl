@@ -86,7 +86,7 @@ module hypixOpt
 				ParamOpt_Max₂[iψm] = 1.0
 			end # option.hyPix.σ_2_Ψm⍰==:Constrained
 
-			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt ≠ :No)
+			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ ≠ :No)
 				iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iθs] = 0.0
@@ -173,11 +173,11 @@ module hypixOpt
 				end
 
 			#  <>=<>=<>=<>=<>=<> Assuring the limits of 
-				if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt == :θs_Opt)
+				if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ == :θs_Opt⍰)
 					for iZ = iHorizon_Start:iHorizon_End
 						hydroHorizon.θs[iZ] = tool.norm.∇NORM_2_PARAMETER(hydroHorizon.θs[iZ], hydroHorizon.θs_Min[iZ], hydroHorizon.θs_Max[iZ])
 					end # iZ
-				end # if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt == :θs_Opt)
+				end # if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ == :θs_Opt⍰)
 		
 
 			# Converting θsMacMat_ƞ -> θsMacMat

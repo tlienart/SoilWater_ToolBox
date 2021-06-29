@@ -311,7 +311,7 @@ module params
 			ΔHpondMax = 15.0 # [mm] for optimisation maximum ponding depth at the end of the simulation before penalty implies 
 
 		# Richards equation
-			Ψ_Bot = 0.0 # If BottomBoundary =  [Pressure]
+			Ψ_Bot = 0.0 # If BottomBoundary⍰ =  [Pressure]
 
 		# Time management
          ΔT_Min   = 10.0  # 30.0 [seconds]

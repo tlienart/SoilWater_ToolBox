@@ -23,8 +23,7 @@ module timeTransSteady
 				iStart = N_Infilt[iZ] - N_LastInfiltPoint + 1
 				iEnd = N_Infilt[iZ]
 
-				
-					Intercept, Slope = stats.LINEAR_REGRESSION(T[iZ,iStart:iEnd], ∑Infilt_Obs[iZ,iStart:iEnd])
+				Intercept, Slope = stats.LINEAR_REGRESSION(T[iZ,iStart:iEnd], ∑Infilt_Obs[iZ,iStart:iEnd])
 					# error("*** Most probaby a problem with SELECT_ID of infiltration data ***")
 		
 			# Starting from the last soils
