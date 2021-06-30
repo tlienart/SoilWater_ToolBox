@@ -282,8 +282,8 @@ module params
 	#		HYPIX PARAMETERS
 	# =============================================================
 		# Simulation wanted to run 
-		  iOpt_Start = 100
-		  iOpt_End   = 100
+		  iOpt_Start = 1
+		  iOpt_End   = 3
 
 		# Simulations start end
          Year_Start   = 2015 # 2017

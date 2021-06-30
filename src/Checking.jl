@@ -8,10 +8,15 @@ module checking
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function CHECKING(option, optionₘ, optim)
 
+		 # ------------ Cannot run simultaneously HyIx and soilwater---------------------
+
+		 	if option.run.Hypix && (option.run.ChangeHydroModel || option.run.HydroLabθΨ⍰≠:No || option.run.Infilt || option.run.IntergranularMixingPsd || option.run.Jules || option.run.Smap2Hypix || option.run.Temporary)
+				error("*** Cannot run simulataneously HyPix and SoilWater ***")
+
         # ------------ CHECKING HydroLabθΨ---------------------
 
-		  if "Ks" ∈ optim.ParamOpt && !(option.data.Kθ) 
-			error("*** If Ks ∈ optim.ParamOpt ⇒option.data.θΨ ***")
+		 	elseif "Ks" ∈ optim.ParamOpt && !(option.data.Kθ) 
+				error("*** If Ks ∈ optim.ParamOpt ⇒option.data.θΨ ***")
 
 			elseif option.run.HydroLabθΨ⍰ ≠ :No && !option.data.θΨ
 				error("*** If option.run.HydroLabθΨ⍰ ⇒option.data.θΨ ***")

@@ -390,7 +390,7 @@ module paths
 			# HYPIX INPUT LEVEL 2 ===
 				FileHypix_Input₂  = Home * "/INPUT/Data_Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
-				Climate          = FileHypix_Input₂ * opt.hyPix.ClimateDataTimestep⍰ * "_" * Climate
+				Climate          = FileHypix_Input₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * Climate
 				Dates            = FileHypix_Input₂ * Dates
 				Discretization   = FileHypix_Input₂ * Discretization
 				HyPix_HydroParam = FileHypix_Input₂ * HyPix_HydroParam

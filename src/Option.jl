@@ -80,24 +80,24 @@ module options
 		Plot_θΨ::Bool                
 	end
 	mutable struct HYPIX
-		ClimateDataTimestep⍰
-		RainfallInterception
-		Evaporation
-		RootWaterUptake
-		RootWaterUptakeComp
-		LookupTable_Lai
-		LookUpTable_CropCoeficient
-		HydroModel⍰
-		BottomBoundary⍰
-		∂R∂Ψ_Numerical
-		AdaptiveTimeStep⍰
-		NormMin⍰
-		Flag_ReRun
-		Qbottom_Correction
-		Lai_2_SintMax
-		σ_2_Ψm⍰
-		σ_2_θr
-		θs_Opt⍰
+		ClimateDataTimestep⍰::Symbol
+		RainfallInterception::Bool
+		Evaporation::Bool
+		RootWaterUptake::Bool
+		RootWaterUptakeComp::Bool
+		LookupTable_Lai::Bool
+		LookUpTable_CropCoeficient::Bool
+		HydroModel⍰::Symbol
+		BottomBoundary⍰::Symbol
+		∂R∂Ψ_Numerical::Bool
+		AdaptiveTimeStep⍰::Symbol
+		NormMin⍰::Symbol
+		Flag_ReRun::Bool
+		Qbottom_Correction::Bool
+		Lai_2_SintMax::Bool
+		σ_2_Ψm⍰::Symbol
+		σ_2_θr::Bool
+		θs_Opt⍰::Symbol
 		Optimisation::Bool
 		θobs::Bool
 		θobs_Average::Bool
@@ -179,10 +179,10 @@ module options
 			#      What model wanting to run ?
 			# =============================================================
             ChangeHydroModel       = false # TODO Not yet operational<true>; <false>
-            HydroLabθΨ⍰            = :Opt # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            Hypix                  = true # <true>; <false>
-            Infilt                 = true # <true>; <false>
-            IntergranularMixingPsd = true # <true>; <false>
+            HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
+            Hypix                  = true # cannot run simultaneously with other modules <true>; <false>
+            Infilt                 = false # <true>; <false>
+            IntergranularMixingPsd = false # <true>; <false>
             Jules                  = false #<true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Smap                   = false  # <true>; <false>
@@ -285,7 +285,7 @@ module options
 			#		HYPIX OPTIONS
 			# =============================================================
 				# Time step
-					ClimateDataTimestep⍰ = "Daily" # <Hourly>; <Daily>
+					ClimateDataTimestep⍰ = :Daily # <:Hourly>; <:Daily>
 
 				# Modules used
 					RainfallInterception = true
