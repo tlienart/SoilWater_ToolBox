@@ -14,42 +14,62 @@
       soil::SOIL 
    end
 
-using TOML, StructTypes
+using TOML
 function TOML_TEST()
    # PARSING TOML FILE
-      PathHome = @__DIR__
-      Path = PathHome *  "/Toml.toml"
+   Home2 = @__DIR__
+
+   # perform cs..
+      Home = dirname(Home2)
+      Home = dirname(Home)
+
+   # Change path name to /data/Private/
+      Home = Home * "/data/" * "Private" * "/"
+
+
+      # Path = PathHome *  "/Toml.toml"
+      SiteName_Soilhyro = "NewFormat"
+
+      FileDataSoilhydro_Input = Home * "INPUT/Data_SoilWater/" * SiteName_Soilhyro * "/" * SiteName_Soilhyro * "_"
+
+      Path =FileDataSoilhydro_Input * "Path.toml"
+
+      println(Path)
       # Dict{String, Any}("evapotranspiration" => Dict{String, Any}("Evaporation" => true, "Transpiration" => false), "soil" => Dict{String, Any}("Topsoil" => true, "Macropore" => false))
-      TomlParse = TOML.tryparsefile(Path)
+      TomlParse = TOML.parsefile(Path)
+      # println(TomlParse)
 
    # INITIAL VALUES OF STRUCTURE
-      Evaporation::Bool =false
-      Transpiration::Bool=false
-      evapotranspiration=EVAPOTRANSPIRATION(Evaporation, Transpiration)
+      evapotranspiration=EVAPOTRANSPIRATION(false, false)
+      evapotranspiration = TOML_2_STRUCT(evapotranspiration, TomlParse)
    
-      Topsoil::Bool=false
-      Macropore::Bool=false
-      soil = SOIL(Topsoil, Macropore)
+      soil = SOIL(false, false)
+      soil = TOML_2_STRUCT(soil, TomlParse)
 
+   # option = OPTION(evapotranspiration, soil)
+   
+   # println(option.evapotranspiration.Evaporation)
+   # println(option.evapotranspiration.Transpiration)
+   # println(option.soil.Topsoil)
+   # println(option.soil.Macropore)
+end
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#		FUNCTION : TOML_2_STRUCT
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function TOML_2_STRUCT(Structure, TomlParse)
    # LOOPING THROUGH THE DICT
+   println(keys(TomlParse))
+
    for (iKey, iValue₀) in TomlParse
-
       for iValue in (keys(iValue₀))
-         if iKey == "evapotranspiration"
-            setfield!(evapotranspiration, Symbol(iValue), TomlParse[iKey][iValue])
-
-         elseif iKey == "soil"
-            setfield!(soil, Symbol(iValue), TomlParse[iKey][iValue])
+         println(iValue)
+         if iKey == string(Structure)
+            setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
          end 
       end
    end
-
-   option = OPTION(evapotranspiration, soil)
-   
-   println(option.evapotranspiration.Evaporation)
-   println(option.evapotranspiration.Transpiration)
-   println(option.soil.Topsoil)
-   println(option.soil.Macropore)
-end
+return Structure
+end  # function: TOML_2_STRUCT
 
 TOML_TEST()

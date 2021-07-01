@@ -68,7 +68,7 @@ module tool
 	# =============================================================
 	module readWrite
 		import DelimitedFiles
-		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT
+		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, TOML_2_STRUCT
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_HEADER_FAST
@@ -214,9 +214,24 @@ module tool
 						FieldName_String[i] =  String(FieldNames)
 						i += 1
 					end
-
 				return Matrix, FieldName_String
 				end # function STRUCT_2_FIELDNAME
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : TOML_2_STRUCT
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function TOML_2_STRUCT(Structure, TomlParse)
+			# LOOPING THROUGH THE DICT
+			for (iKey, iValue₀) in TomlParse
+			for iValue in (keys(iValue₀))
+				if iKey == string(Structure)
+					setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
+				end 
+			end
+		end
+		return Structure
+		end  # function: TOML_2_STRUCT
+
 
 
 	end  # module readWrite ************************
