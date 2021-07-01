@@ -33,7 +33,6 @@ module options
 		DownloadPackage::Bool
 		Ploting::Bool
 		PlotVscode::Bool
-		DataPrivateShare::String
 	end
 	mutable struct SMAP
 		Plot_Kunsat
@@ -153,9 +152,8 @@ module options
 				# Plotting
 					Ploting   = true # <true>* plot; <false> no plotting
 					PlotVscode = true # <true>* plot shown in VScode; <false>
-					DataPrivateShare = "Private" # <"Private"> data kept private in GitHub; <"Share"> date share in GitHub
 
-			other = OTHER(DownloadPackage, Ploting, PlotVscode, DataPrivateShare)
+			other = OTHER(DownloadPackage, Ploting, PlotVscode)
 
 			# =============================================================
 			# 		DATA

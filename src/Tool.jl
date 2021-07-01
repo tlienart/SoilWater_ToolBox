@@ -233,7 +233,6 @@ module tool
 		end  # function: TOML_2_STRUCT
 
 
-
 	end  # module readWrite ************************
 	# ............................................................
 end  # module tool

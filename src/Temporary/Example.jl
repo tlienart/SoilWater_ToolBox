@@ -34,8 +34,7 @@ function TOML_TEST()
 
       Path =FileDataSoilhydro_Input * "Path.toml"
 
-      println(Path)
-      # Dict{String, Any}("evapotranspiration" => Dict{String, Any}("Evaporation" => true, "Transpiration" => false), "soil" => Dict{String, Any}("Topsoil" => true, "Macropore" => false))
+
       TomlParse = TOML.parsefile(Path)
       # println(TomlParse)
 

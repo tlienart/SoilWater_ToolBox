@@ -140,7 +140,7 @@ module paths
 			Home = dirname(Home2)
 
 		# Change path name to /data/Private/
-			Home = Home * "/data/" * opt.other.DataPrivateShare * "/"
+			Home = Home * "/data/"
 			
 		# =============================================================
 		#		OPTIONS
