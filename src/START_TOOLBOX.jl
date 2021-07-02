@@ -6,6 +6,12 @@
 
 include("Including.jl")
 
+struct OPTION_MASTER
+	Soilwater_OR_Hypix⍰::Symbol
+	SiteName_Soilwater::String
+	SiteName_Hypix::String
+end
+
 # ===============================================================
 #		FUNCTION : START_TOOLBOX
 # ==============================================================

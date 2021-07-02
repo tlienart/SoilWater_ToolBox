@@ -79,7 +79,7 @@ module paths
 		IdSelect::String 
 		Input_OfStep::String
 		JulesMetadata::String
-		ProjectName_Hypix::String
+		SiteName_Hypix::String
 		IdName_Hypix::String
 		obsθ::String 
 
@@ -133,7 +133,7 @@ module paths
 
 		# _______________________ START: optionMaster _______________________
 		struct OPTION_MASTER
-			SiteName_Soilhyro::String
+			SiteName_Soilwater::String
 		end 
 
 
@@ -155,7 +155,7 @@ module paths
 			Path_OptionMaster = PathHome₀ * "/data/OptionMaster.toml"
 			Toml_OptionMaster = TOML.parsefile(Path_OptionMaster)
 
-			optionMaster = OPTION_MASTER("SiteName_Soilhyro")
+			optionMaster = OPTION_MASTER("SiteName_Soilwater")
 			optionMaster = tool.readWrite.TOML_2_STRUCT(optionMaster, Toml_OptionMaster)
 
 		
@@ -169,7 +169,7 @@ module paths
 
 			option = OPTIONS(ModelName, Select)
 	
-			FileDataSoilhydro_Input = PathHome * "INPUT/Data_SoilWater/" * optionMaster.SiteName_Soilhyro * "/" * optionMaster.SiteName_Soilhyro * "_"
+			FileDataSoilhydro_Input = PathHome * "INPUT/Data_SoilWater/" * optionMaster.SiteName_Soilwater * "/" * optionMaster.SiteName_Soilwater * "_"
 
 			Path =FileDataSoilhydro_Input * "Path.toml"
 	
@@ -179,9 +179,9 @@ module paths
 
 
 		# Paths
-			FileDataSoilhydro_Input = PathHome * "INPUT/Data_SoilWater/" * optionMaster.SiteName_Soilhyro * "/" * optionMaster.SiteName_Soilhyro * "_"
+			FileDataSoilhydro_Input = PathHome * "INPUT/Data_SoilWater/" * optionMaster.SiteName_Soilwater * "/" * optionMaster.SiteName_Soilwater * "_"
 
-			FileSoilHydro_Table₁ = PathHome * "/OUTPUT/SoilWater/" * optionMaster.SiteName_Soilhyro * "/Table/" 
+			FileSoilHydro_Table₁ = PathHome * "/OUTPUT/SoilWater/" * optionMaster.SiteName_Soilwater * "/Table/" 
 				mkpath(FileSoilHydro_Table₁) 
 
 		# =============================================================
@@ -270,8 +270,8 @@ module paths
 				tableSoilwater = tool.readWrite.TOML_2_STRUCT(tableSoilwater, TomlParse)	
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			tableSoilwater.FileSoilHydro_Table₁ = tableSoilwater.FileSoilHydro_Table₁ * optionMaster.SiteName_Soilhyro
-			FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * optionMaster.SiteName_Soilhyro  
+			tableSoilwater.FileSoilHydro_Table₁ = tableSoilwater.FileSoilHydro_Table₁ * optionMaster.SiteName_Soilwater
+			FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * optionMaster.SiteName_Soilwater  
 
             tableSoilwater.Table_HydroInfilt    = FileSoilHydro_Table₁ * string(opt.infilt.Model⍰) * "_" *  ModelName  *  "_" * tableSoilwater.Table_HydroInfilt
             tableSoilwater.Table_Infilt         = FileSoilHydro_Table₁ * string(opt.infilt.Model⍰) *  "_" *  ModelName  *  "_" *  tableSoilwater.Table_Infilt
@@ -315,23 +315,23 @@ module paths
 		# =============================================================
 		#		PLOT SOILWATER
 		# =============================================================
-			FileSoilHydro_Plot = PathHome * "/OUTPUT/SoilWater/" * optionMaster.SiteName_Soilhyro * "/Plots/"
+			FileSoilHydro_Plot = PathHome * "/OUTPUT/SoilWater/" * optionMaster.SiteName_Soilwater * "/Plots/"
 
 			Plot_θΨK = FileSoilHydro_Plot * "/Lab/" 
 				mkpath(Plot_θΨK)
-				Plot_θΨK = Plot_θΨK * optionMaster.SiteName_Soilhyro * "_"
+				Plot_θΨK = Plot_θΨK * optionMaster.SiteName_Soilwater * "_"
 
 			Plot_σΨm = FileSoilHydro_Plot * "/LabSigmaHm/" 
 				mkpath(Plot_σΨm)
-				Plot_σΨm = Plot_σΨm * optionMaster.SiteName_Soilhyro * "_"
+				Plot_σΨm = Plot_σΨm * optionMaster.SiteName_Soilwater * "_"
 
 			Plot_Psd_θΨ = FileSoilHydro_Plot * "/Psd/IMP_ThetaH/"
 				mkpath(Plot_Psd_θΨ)				
-				Plot_Psd_θΨ = Plot_Psd_θΨ * optionMaster.SiteName_Soilhyro * "_"
+				Plot_Psd_θΨ = Plot_Psd_θΨ * optionMaster.SiteName_Soilwater * "_"
 
 			Plot_IMP_model = FileSoilHydro_Plot * "/Psd/IMP/"
 				mkpath(Plot_IMP_model)
-				Plot_IMP_model = Plot_IMP_model * optionMaster.SiteName_Soilhyro * "_"
+				Plot_IMP_model = Plot_IMP_model * optionMaster.SiteName_Soilwater * "_"
 
 			Plot_Psd_θr = FileSoilHydro_Plot * "/Psd/ThetaR/" 
 				mkpath(Plot_Psd_θr)
@@ -339,15 +339,15 @@ module paths
 
 			Plot_∑infilt_Opt = FileSoilHydro_Plot * "/Infiltration/Optimize/"
 				mkpath(Plot_∑infilt_Opt)
-				Plot_∑infilt_Opt = Plot_∑infilt_Opt * optionMaster.SiteName_Soilhyro * "_"
+				Plot_∑infilt_Opt = Plot_∑infilt_Opt * optionMaster.SiteName_Soilwater * "_"
 
 			Plot_∑infilt_θΨ = FileSoilHydro_Plot * "/Infiltration/ThetaH/"
 				mkpath(Plot_∑infilt_θΨ)
-				Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * optionMaster.SiteName_Soilhyro * "_"
+				Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * optionMaster.SiteName_Soilwater * "_"
 
 			Plot_Sorptivity_Se = FileSoilHydro_Plot * "/Sorptivity/"
 				mkpath(Plot_Sorptivity_Se)
-				Plot_Sorptivity_Se = Plot_Sorptivity_Se * optionMaster.SiteName_Soilhyro * "_"
+				Plot_Sorptivity_Se = Plot_Sorptivity_Se * optionMaster.SiteName_Soilwater * "_"
 
 		plotSoilwater = PLOT_SOILWATER(Plot_∑infilt_Opt, Plot_∑infilt_θΨ, Plot_IMP_model, Plot_Psd_θr, Plot_Psd_θΨ, Plot_Sorptivity_Se, Plot_θΨK, Plot_σΨm)
 		
@@ -355,7 +355,7 @@ module paths
 		#		HYPIX MODEL
 		# =============================================================
 			# INPUT NAME OF FILE
-				# ProjectName_Hypix = "LYSIMETERS" # "JULES"; "LYSIMETERS" 
+				SiteName_Hypix = "LYSIMETERS" # "JULES"; "LYSIMETERS" 
 			
 				# TAUPO"; "OTOROHANGA"; "WAIHOU"; "WAITOA"; "HAMILTON"; 
 
@@ -431,7 +431,7 @@ module paths
 					"IdSelect",
 					"Input_OfStep",
 					"JulesMetadata",
-					"ProjectName_Hypix",
+					"SiteName_Hypix",
 					"IdName_Hypix",
 					"obsθ", 
 					"LookUpTable_CropCoeficient",
@@ -467,12 +467,12 @@ module paths
 				hyPix = tool.readWrite.TOML_2_STRUCT(hyPix, TomlParse)	
 
 			# HYPIX INPUT LEVEL 1 ===
-				FileHypix_Input₁ = PathHome * "/INPUT/Data_Hypix/" * ProjectName_Hypix * "/"
-				IdSelect =  FileHypix_Input₁ * ProjectName_Hypix * "_" * IdSelect
+				FileHypix_Input₁ = PathHome * "/INPUT/Data_Hypix/" * SiteName_Hypix * "/"
+				IdSelect =  FileHypix_Input₁ * SiteName_Hypix * "_" * IdSelect
 				JulesMetadata   =FileHypix_Input₁ * JulesMetadata
 
 			# HYPIX INPUT LEVEL 2 ===
-				FileHypix_Input₂  = PathHome * "/INPUT/Data_Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
+				FileHypix_Input₂  = PathHome * "/INPUT/Data_Hypix/" * SiteName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
 				hyPix.Climate          = FileHypix_Input₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * hyPix.Climate
 				hyPix.Dates            = FileHypix_Input₂ * hyPix.Dates
@@ -491,10 +491,10 @@ module paths
 			hyPix.LookUpTable_Lai            = FileHypix_LookUpTable * hyPix.LookUpTable_Lai
 
 			# HYPIX OUTPUT TABLE
-			FileSoilHydro_Table = PathHome * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix *"/Table/" 				
+			FileSoilHydro_Table = PathHome * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Table/" 				
 				mkpath(FileSoilHydro_Table) #Make Folder if not exist
 
-				FileSoilHydro_Table = FileSoilHydro_Table * ProjectName_Hypix * "_"
+				FileSoilHydro_Table = FileSoilHydro_Table * SiteName_Hypix * "_"
 
 				hyPix.Table_DailyClimate    = FileSoilHydro_Table  *  IdName_Hypix * "_"* hyPix.Table_DailyClimate
 				hyPix.Table_Discretisation  = FileSoilHydro_Table  *  IdName_Hypix * "_" *hyPix.Table_Discretisation
@@ -510,18 +510,18 @@ module paths
 				hyPix.Table_θΨ              = FileSoilHydro_Table  *  IdName_Hypix * "_"* hyPix.Table_θΨ
 				hyPix.Table_Ψ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* hyPix.Table_Ψ
 				
-			FileSoilHydro_Table_θaverage = PathHome * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/SoilMoistureSim/" 				
+			FileSoilHydro_Table_θaverage = PathHome * "/OUTPUT/Hypix/" * SiteName_Hypix * "/SoilMoistureSim/" 				
 				mkpath(FileSoilHydro_Table_θaverage) #Make Folder if not exist
 				Table_θaverage        = FileSoilHydro_Table_θaverage *  IdName_Hypix * "_"* Table_θaverage
 
-			# FileSoilHydro_Table_Performace = PathHome * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/"
+			# FileSoilHydro_Table_Performace = PathHome * "/OUTPUT/Hypix/" * SiteName_Hypix * "/"
 			# Table_Performance     = FileSoilHydro_Table_Performace  *  IdName_Hypix * "_"* string(iSim) * "_"* Table_Performance		
 				
 
 
 			# HYPIX PLOT CORE
-			# FileHypix_Plot = PathHome * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/Plots/" 
-			FileHypix_Plot = PathHome * "/OUTPUT/Hypix/" * ProjectName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
+			# FileHypix_Plot = PathHome * "/OUTPUT/Hypix/" * SiteName_Hypix * "/Plots/" 
+			FileHypix_Plot = PathHome * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
 				mkpath(FileHypix_Plot)
 
 				hyPix.Plot_HypixTime            = FileHypix_Plot * IdName_Hypix  * "_" * hyPix.Plot_HypixTime

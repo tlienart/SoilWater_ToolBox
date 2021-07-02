@@ -16,59 +16,55 @@
 
 using TOML
 function TOML_TEST()
+
    # PARSING TOML FILE
-   Home2 = @__DIR__
-
-   # perform cs..
-      Home = dirname(Home2)
-      Home = dirname(Home)
-
-   # Change path name to /data/Private/
-      Home = Home * "/data/" * "Private" * "/"
-
-
-      # Path = PathHome *  "/Toml.toml"
-      SiteName_Soilhyro = "NewFormat"
-
-      FileDataSoilhydro_Input = Home * "INPUT/Data_SoilWater/" * SiteName_Soilhyro * "/" * SiteName_Soilhyro * "_"
-
-      Path =FileDataSoilhydro_Input * "Path.toml"
-
-
+      Path= "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\Temporary\\Toml.toml"
       TomlParse = TOML.parsefile(Path)
-      # println(TomlParse)
 
-   # INITIAL VALUES OF STRUCTURE
-      evapotranspiration=EVAPOTRANSPIRATION(false, false)
-      evapotranspiration = TOML_2_STRUCT(evapotranspiration, TomlParse)
-   
-      soil = SOIL(false, false)
-      soil = TOML_2_STRUCT(soil, TomlParse)
+   # STRUCTURE
 
-   # option = OPTION(evapotranspiration, soil)
+   println(keys(TomlParse)) 
+      evapotranspiration = TOML_2_STRUCT(EVAPOTRANSPIRATION, TomlParse; MyType_LowerCase=true)
+
+
+      soil = TOML_2_STRUCT(SOIL,TomlParse; MyType_LowerCase=true)
+
+   option = OPTION(evapotranspiration, soil)
    
-   # println(option.evapotranspiration.Evaporation)
-   # println(option.evapotranspiration.Transpiration)
-   # println(option.soil.Topsoil)
-   # println(option.soil.Macropore)
+   # TESTING
+      println(option.evapotranspiration.Evaporation)
+      println(option.evapotranspiration.Transpiration)
+      println(option.soil.Topsoil)
+      println(option.soil.Macropore)
 end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : TOML_2_STRUCT
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-function TOML_2_STRUCT(Structure, TomlParse)
-   # LOOPING THROUGH THE DICT
-   println(keys(TomlParse))
-
-   for (iKey, iValue₀) in TomlParse
+   function TOML_2_STRUCT2(Structure, TomlParse)
+      # LOOPING THROUGH THE DICT
+      for (iKey, iValue₀) in TomlParse
       for iValue in (keys(iValue₀))
-         println(iValue)
-         if iKey == string(Structure)
+         if uppercase.(iKey) == (string(typeof(Structure)))
             setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
          end 
       end
    end
-return Structure
-end  # function: TOML_2_STRUCT
+   return Structure
+   end  # function: TOML_2_STRUCT
+
+
+   function TOML_2_STRUCT(Structure, TomlParse; MyType_LowerCase=true, MyType=:MyType)
+      if MyType_LowerCase == false
+         MyType = string(MyType)
+      else
+         MyType = lowercase.(string(Structure))
+      end
+
+      Output = NamedTuple{Tuple(Symbol.(keys(TomlParse[MyType])))}(values(TomlParse[MyType]))
+     return Structure(Output...)
+   end
+
+
 
 TOML_TEST()

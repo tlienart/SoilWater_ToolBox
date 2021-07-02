@@ -220,17 +220,32 @@ module tool
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TOML_2_STRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TOML_2_STRUCT(Structure, TomlParse)
-			# LOOPING THROUGH THE DICT
-			for (iKey, iValue₀) in TomlParse
-			for iValue in (keys(iValue₀))
-				if iKey == string(Structure)
-					setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
-				end 
+   function TOML_2_STRUCT2(Structure, TomlParse)
+      # LOOPING THROUGH THE DICT
+      for (iKey, iValue₀) in TomlParse
+      for iValue in (keys(iValue₀))
+         if uppercase.(iKey) == (string(typeof(Structure)))
+            setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
+         end 
+      end
+   end
+   return Structure
+   end  # function: TOML_2_STRUCT
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : TOML_2_STRUCT
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function TOML_2_STRUCT(Structure, TomlParse; MyType_LowerCase=true, MyType=:MyType)
+			if MyType_LowerCase == false
+				MyType = string(MyType)
+			else
+				MyType = lowercase.(string(Structure))
 			end
-		end
-		return Structure
-		end  # function: TOML_2_STRUCT
+
+			Output = NamedTuple{Tuple(Symbol.(keys(TomlParse[MyType])))}(values(TomlParse[MyType]))
+		return Structure(Output...)
+		end # function TOML_2_STRUC
 
 
 	end  # module readWrite ************************

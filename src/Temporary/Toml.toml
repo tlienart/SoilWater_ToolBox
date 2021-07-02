@@ -1,8 +1,8 @@
 # TOML INPUT FILE
 [evapotranspiration]
-	Evaporation = true
    Transpiration = false
+	Evaporation = true
 
 [soil]
-  Topsoil = true
 	Macropore = false
+  Topsoil = true
