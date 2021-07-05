@@ -178,14 +178,14 @@ module options
 			# =============================================================
             ChangeHydroModel       = false # TODO Not yet operational<true>; <false>
             HydroLabθΨ⍰            = :No # <:Opt>* Optimize hydraulic parameters from θ(Ψ); <:File> from save file; <:Run> just run <:No> not available
-            Hypix                  = true # cannot run simultaneously with other modules <true>; <false>
+            Hypix                  = false # cannot run simultaneously with other modules <true>; <false>
             Infilt                 = false # <true>; <false>
             IntergranularMixingPsd = false # <true>; <false>
             Jules                  = false #<true>; <false>
             RockCorection          = false # <true> make correction for rock fragment; <false> no correction for rock fragment
             Smap                   = false  # <true>; <false>
             Smap2Hypix             = false
-            Temporary              = false # <true>; <false>
+            Temporary              = true # <true>; <false>
 
 			run = RUN(ChangeHydroModel, HydroLabθΨ⍰, Hypix, Infilt, IntergranularMixingPsd, Jules, RockCorection, Smap, Smap2Hypix, Temporary)
 				

@@ -32,6 +32,10 @@ using Revise
     include("Checking.jl")
     include("Stats.jl")
     include("RockFragment/RockFragment.jl")
+    
+    if option.run.Temporary
+        include("Temporary/KS_SMAP.jl")
+    end
 
     if !(option.run.Hypix)
         include("Psd/PsdThetar.jl")

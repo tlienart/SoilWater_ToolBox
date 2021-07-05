@@ -303,7 +303,15 @@ function START_TOOLBOX()
 		smap2hypix.SMAP_2_HYPIX(N_iZ, option.hydro, param, path, Smap_Depth, Smap_MaxRootingDepth, Soilname)
 	end  # if: Smap2Hypix 
 
-	# ------------------------END: Smap_2_HyPix---------------------------  
+	# ------------------------END: Smap_2_HyPix---------------------------
+	
+	# _______________________ START: Temporary _______________________ 
+
+	if option.run.Temporary
+		temporary.KS_SMAP()
+	end
+
+	# ------------------------END: Temporary---------------------------  
 
 
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
