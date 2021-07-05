@@ -52,7 +52,7 @@ module temporary
 			end
 
 		# PLOTTING	
-			colors = ColorSchemes.ColorScheme(range(Colors.colorant"black", Colors.colorant"red", length=length(Categorie_Unique)))
+			colors = ColorScheme(range(colorant"black", colorant"red", length=N_Categories))
 		
 			Fig = CairoMakie.Figure(resolution = (700, 800))
 			Axis1 = CairoMakie.Axis(Fig, xlabel = "variable", yscale=log10, ylabel = "Ks [mm / h]", xticks = (1:N_Categories, Categorie_Unique))
@@ -62,9 +62,9 @@ module temporary
 				X = fill(iPos, iN_Class[iPos])
 				Y = KsModel_Class[1:iN_Class[iPos], iPos]
 
-				CairoMakie.boxplot!(Axis1, X, Y; whiskerwidth = 1, width = 0.35, color=(colors[iPos], 0.45), whiskercolor = (colors[iPos], 1), mediancolor = :black)
+				boxplot!(Axis1, X, Y; whiskerwidth = 1, width = 0.35, color=(colors[iPos], 0.45), whiskercolor = (colors[iPos], 1), mediancolor = :black)
 				 
-				CairoMakie.violin!(Axis2, X, Float32.(Y); width = 0.35, color=(colors[iPos], 0.45), strokecolor = colors[iPos], show_median = true, mediancolor = :black)
+				# violin!(Axis2, X, Y; width = 0.35, color=(colors[iPos], 0.45), strokecolor = colors[iPos], show_median = true, mediancolor = :black)
 			end
 
 		Fig[1,1] = Axis1
