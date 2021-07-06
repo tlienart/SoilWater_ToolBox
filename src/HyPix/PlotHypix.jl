@@ -222,7 +222,7 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsθ, discret, Flag_Plot_Pond, iOpt, N_∑T_Plot, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+				function TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsTheta, discret, Flag_Plot_Pond, iOpt, N_∑T_Plot, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
@@ -232,10 +232,10 @@ module plotHypix
 					# param = reading.DATES(param, pathHyPix)
 
 				# TICKS
-					# Date_Start_Calibr = obsθ.Date[1]
-					Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start) # since we need to compute the culmulativeof the 1rst day
+					# Date_Start_Calibr = obsTheta.Date[1]
+					Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start) # since we need to compute the culmulativeof the 1rst day
 					
-					# Date_End_Calibr = obsθ.Date[end]
+					# Date_End_Calibr = obsTheta.Date[end]
 					Date_End_Calibr = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 					
 					DateTick=range(Date_Start_Calibr,step=Day(61),Date_End_Calibr)
@@ -283,11 +283,11 @@ module plotHypix
 					Style_Hypix = [:red, :darkviolet, :orange, :teal, :blue]
 
 					# Observation θplot obs
-					for ithetaObs = 1:obsθ.Ndepth
+					for ithetaObs = 1:obsTheta.Ndepth
 						# lABEL
-							Label_Obs = "Obs=" * string(Int(floor(obsθ.Z[ithetaObs]))) * "mm"
+							Label_Obs = "Obs=" * string(Int(floor(obsTheta.Z[ithetaObs]))) * "mm"
 
-							Label_Sim = "Sim=" * string( Int(floor((discret.Znode[obsθ.ithetaObs[ithetaObs]])))) * "mm"
+							Label_Sim = "Sim=" * string( Int(floor((discret.Znode[obsTheta.ithetaObs[ithetaObs]])))) * "mm"
 
 						# Plotting
 							# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑T_Plot], θobs_Plot[1:N_∑T_Plot, iZobs].+param.hypixStart.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)

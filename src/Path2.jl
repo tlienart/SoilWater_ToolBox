@@ -81,7 +81,7 @@ module paths
 		JulesMetadata::String
 		SiteName_Hypix::String
 		IdName_Hypix::String
-		obsθ::String 
+		obsTheta::String 
 
 		LookUpTable_CropCoeficient::String
 		LookUpTable_Lai::String
@@ -372,7 +372,7 @@ module paths
          #    HyPix_VegParam   = "Vegetation.csv"
          #    IdSelect         = "IdSelect.csv"
          #    Input_OfStep     = "Wof_Steps.csv"
-         #    obsθ             = "Soilmoisture.csv"
+         #    obsTheta             = "Soilmoisture.csv"
 				
 			# # HYPIX LOOKUPTABLE
 			# 	LookUpTable_CropCoeficient = "LookUpTable_CropCoeficient.csv"
@@ -433,7 +433,7 @@ module paths
 					"JulesMetadata",
 					"SiteName_Hypix",
 					"IdName_Hypix",
-					"obsθ", 
+					"obsTheta", 
 					"LookUpTable_CropCoeficient",
 					"LookUpTable_Lai",
 					"Table_DailyClimate",
@@ -480,7 +480,7 @@ module paths
 				hyPix.HyPix_HydroParam = FileHypix_Input₂ * hyPix.HyPix_HydroParam
 				hyPix.HyPix_VegParam   = FileHypix_Input₂ * hyPix.HyPix_VegParam
 				hyPix.HyPixParamOpt      = FileHypix_Input₂ * hyPix.HyPixParamOpt
-				hyPix.obsθ             = FileHypix_Input₂ * hyPix.obsθ
+				hyPix.obsTheta             = FileHypix_Input₂ * hyPix.obsTheta
 
 				hyPix.Input_OfStep     = PathHome * "/INPUT/Data_Hypix/RESULTS/"
 

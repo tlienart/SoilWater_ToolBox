@@ -7,7 +7,7 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(clim, iOpt_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsθ, param)
+	function MEMORY(clim, iOpt_Count::Int64, N_∑T_Climate::Int64, N_iZ::Int64, obsTheta, param)
 
 		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 
@@ -47,7 +47,7 @@ module memory
       Laiᵀ= fill(0.0::Float64, clim.N_Climate)
 		CropCoeficientᵀ = fill(0.0::Float64, clim.N_Climate)
 
-      θSim = fill(0.0::Float64, obsθ.N_iT, N_iZ)
+      θSim = fill(0.0::Float64, obsTheta.N_iT, N_iZ)
 		
 		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, N_Memory, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY

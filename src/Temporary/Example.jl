@@ -1,15 +1,16 @@
 # DEFINING STRUCTURE
-   mutable struct EVAPOTRANSPIRATION
-      Evaporation::Bool
-      Transpiration::Bool
+using Base
+   Base.@kwdef mutable struct EVAPOTRANSPIRATION
+      Evaporation
+      Transpiration
    end
 
-   mutable struct SOIL
+   Base.@kwdef mutable struct SOIL
       Topsoil :: Bool
       Macropore :: Bool
    end
 
-   mutable struct OPTION
+   Base.@kwdef mutable struct OPTION
       evapotranspiration::EVAPOTRANSPIRATION
       soil::SOIL 
    end
@@ -52,7 +53,6 @@ end
    end
    return Structure
    end  # function: TOML_2_STRUCT
-
 
    function TOML_2_STRUCT(Structure, TomlParse; MyType_LowerCase=true, MyType=:MyType)
       if MyType_LowerCase == false

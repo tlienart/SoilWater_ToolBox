@@ -5,7 +5,7 @@ module waterBalance
 
 	export WATERBALANCE
 
-	function WATERBALANCE(∑T, obsθ, discret, hydro, N_iRoot::Int64, N_iT::Int64, N_iZ::Int64, Q, ΔSink, ΔT, θ, Ψ)
+	function WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot::Int64, N_iT::Int64, N_iZ::Int64, Q, ΔSink, ΔT, θ, Ψ)
       ∑WaterBalance_η = fill(0.0::Float64, N_iT)
       ∑ΔSink          = fill(0.0::Float64, N_iT)
       ∑ΔQtop          = 0.0 ::Float64
@@ -16,7 +16,7 @@ module waterBalance
       i∑T_CalibrStart    = 1::Int64
 
 		# Starting to compute the waterbalance after the warmup period
-			while ∑T[i∑T_CalibrStart] < obsθ.∑T[1]
+			while ∑T[i∑T_CalibrStart] < obsTheta.∑T[1]
 				i∑T_CalibrStart += 1
 			end
 		

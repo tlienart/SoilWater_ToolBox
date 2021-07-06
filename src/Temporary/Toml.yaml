@@ -1,0 +1,8 @@
+# YAML INPUT FILE
+evapotranspiration:
+   α: :Large
+   Evaporation: 1
+
+soil:
+   Macropore:  3.0
+   Topsoil: "Top"

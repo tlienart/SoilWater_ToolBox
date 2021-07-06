@@ -74,9 +74,12 @@ module θψ2Ks
 				Kunsat_Bim(Se) = T1Mac * ((θs - θsMacMat) ^ T3mac) * ((cst.Y / ΨmMac) / ( exp( erfcinv(2.0 * Se) * σMac * √2.0))) ^ T2mac 
 				
 				Kunsat_Bimodal(Se) = Kunsat_Uni(Se) + Kunsat_Bim(Se) 
+				
 				kₛ_Model = cst.KunsatModel * QuadGK.quadgk(Se -> Kunsat_Bimodal(Se), 0.0, Se_Max; rtol=Rtol)[1]
+			
 			else
 				kₛ_Model = cst.KunsatModel * QuadGK.quadgk(Se -> Kunsat_Uni(Se), 0.0, Se_Max; rtol=Rtol)[1]
+
 			end   
 
 			kₛ_Model = min(max(hydroParam.Ks_Min[iZ], kₛ_Model), hydroParam.Ks_Max[iZ])

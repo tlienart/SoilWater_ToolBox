@@ -5,7 +5,7 @@ module Δtchange
 	import ..interpolate, ...reading, ..tool, ..cst
 	import Dates: value, DateTime, Day, Second, Hour, now
 
-	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsθ, clim, N_iT::Int64, N_iZ::Int64, param, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate, pathHyPix)
+	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, N_iT::Int64, N_iZ::Int64, param, Q, veg, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate, pathHyPix)
 
 		# PREPROCESSING ∑Evaporation, ∑ΔQ
          ∑Evaporation = fill(0.0::Float64, N_iT)
@@ -32,9 +32,9 @@ module Δtchange
 
 			# param = reading.hyPix.DATES(param, pathHyPix)
 					
-			Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
+			Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
 				
-			Date_End_Calibr = DateTime(param.hyPix.obsθ.Year_End, param.hyPix.obsθ.Month_End, param.hyPix.obsθ.Day_End, param.hyPix.obsθ.Hour_End, param.hyPix.obsθ.Minute_End, param.hyPix.obsθ.Second_End)
+			Date_End_Calibr = DateTime(param.hyPix.obsTheta.Year_End, param.hyPix.obsTheta.Month_End, param.hyPix.obsTheta.Day_End, param.hyPix.obsTheta.Hour_End, param.hyPix.obsTheta.Minute_End, param.hyPix.obsTheta.Second_End)
 
 			ΔT_Sim = value(Date_End_Calibr - Date_Start_Calibr) / 1000
 
@@ -55,7 +55,7 @@ module Δtchange
 			θ_Plot = interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, N_iZ, θ_Plot, θ)
 
 			θobs_Plot = fill(0.0::Float64, N_∑T_Plot, N_iZ)	
-			θobs_Plot = interpolate.INTERPOLATE_2D_LOOP(obsθ.∑T[1:obsθ.N_iT], ∑T_Plot, N_∑T_Plot, obsθ.N_iT, obsθ.Ndepth, θobs_Plot, obsθ.θobs[1:obsθ.N_iT,1:obsθ.Ndepth])
+			θobs_Plot = interpolate.INTERPOLATE_2D_LOOP(obsTheta.∑T[1:obsTheta.N_iT], ∑T_Plot, N_∑T_Plot, obsTheta.N_iT, obsTheta.Ndepth, θobs_Plot, obsTheta.θobs[1:obsTheta.N_iT,1:obsTheta.Ndepth])
 
 			Ψ_Plot = fill(0.0::Float64, N_∑T_Plot, N_iZ)
 			Ψ_Plot =  interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, N_iZ, Ψ_Plot, Ψ) .* cst.Mm_2_Cm

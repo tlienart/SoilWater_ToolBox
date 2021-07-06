@@ -504,13 +504,13 @@ module reading
 						param.hyPix.Day_End = Day_End₀[1]
 					
 				# Dates of observed data
-					param.hyPix.obsθ.Year_Start  = param.hyPix.Year_Start
-					param.hyPix.obsθ.Month_Start = param.hyPix.Month_Start
-					param.hyPix.obsθ.Day_Start   = param.hyPix.Day_Start
+					param.hyPix.obsTheta.Year_Start  = param.hyPix.Year_Start
+					param.hyPix.obsTheta.Month_Start = param.hyPix.Month_Start
+					param.hyPix.obsTheta.Day_Start   = param.hyPix.Day_Start
 
-					param.hyPix.obsθ.Year_End    = param.hyPix.Year_End
-					param.hyPix.obsθ.Month_End   = param.hyPix.Month_End
-					param.hyPix.obsθ.Day_End     = param.hyPix.Day_End
+					param.hyPix.obsTheta.Year_End    = param.hyPix.Year_End
+					param.hyPix.obsTheta.Month_End   = param.hyPix.Month_End
+					param.hyPix.obsTheta.Day_End     = param.hyPix.Day_End
 
 				# Dates of plots
 					param.hyPix.ploting.Year_Start  = param.hyPix.Year_Start
@@ -846,7 +846,7 @@ module reading
 
 			function TIME_SERIES(option, param, pathHyPix)
 			# Read data
-				Data = DelimitedFiles.readdlm(pathHyPix.obsθ, ',')
+				Data = DelimitedFiles.readdlm(pathHyPix.obsTheta, ',')
 			# Read header
 				Header = Data[1,1:end]
 			# Remove first READ_ROW_SELECT
@@ -860,7 +860,7 @@ module reading
 				Second, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
 
 				# READING THE DEPTH OF Θ MEASUREMENTS FROM HEADER: data having Z=
-					θobs, Header = DelimitedFiles.readdlm(pathHyPix.obsθ, ','; header=true)
+					θobs, Header = DelimitedFiles.readdlm(pathHyPix.obsTheta, ','; header=true)
 
 					Array_iHeader = []
 					Ndepth = 0
@@ -902,9 +902,9 @@ module reading
 						end
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
-					Date_Start_Calibr = DateTime(param.hyPix.obsθ.Year_Start, param.hyPix.obsθ.Month_Start, param.hyPix.obsθ.Day_Start, param.hyPix.obsθ.Hour_Start, param.hyPix.obsθ.Minute_Start, param.hyPix.obsθ.Second_Start)
+					Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
 					
-					Date_End_Calibr = DateTime(param.hyPix.obsθ.Year_End, param.hyPix.obsθ.Month_End, param.hyPix.obsθ.Day_End, param.hyPix.obsθ.Hour_End, param.hyPix.obsθ.Minute_End, param.hyPix.obsθ.Second_End)
+					Date_End_Calibr = DateTime(param.hyPix.obsTheta.Year_End, param.hyPix.obsTheta.Month_End, param.hyPix.obsTheta.Day_End, param.hyPix.obsTheta.Hour_End, param.hyPix.obsTheta.Minute_End, param.hyPix.obsTheta.Second_End)
 
 				# ERROR CHECKING Assuring that Date_End ≤ Date_Clim_End
 					Date_Clim_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
@@ -954,12 +954,12 @@ module reading
 					ithetaObs = fill(0::Int64, Ndepth)
 
 				# STRUCTURE
-					obsθ = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
+					obsTheta = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
 
 				# SAVING SPACE 
 					Data = nothing
 					True = nothing
-			return obsθ
+			return obsTheta
 			end  # function: TIME_SERIES
 
 
