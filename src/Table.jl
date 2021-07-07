@@ -243,7 +243,6 @@ module table
 					open(Path, "w") do io
 						DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
 						for i = 1:length(IdSelect)
-							DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 							DelimitedFiles.writedlm(io, [θ[i, 1:N_Ψ+1]], ",")
 						end # i
 					end # Path
@@ -416,7 +415,6 @@ module table
 				end
 
 				open(Path, "w") do io
-					DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
 					DelimitedFiles.writedlm(io, [Id Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ∑T_Plot 10.0.*ΔPr_Plot ΔPet_Plot ΔSink_Plot ΔEvaporation_Plot 10.0.*ΔPond_Plot ΔRecharge_Plot ∑WaterBalance_η_Plot], ",")
 				end

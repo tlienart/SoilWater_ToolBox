@@ -16,7 +16,7 @@ module hypixOpt
 
 		X = BlackBoxOptim.best_candidate(Optimization)
 
-		hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
+		hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, param, X, veg)
 
 		
 
@@ -56,7 +56,7 @@ module hypixOpt
 		function OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 			# New optimized param which are put into the matching veg or hydro parameters
-				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
+				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, param, X, veg)
 				
 		
 			# Running Hypix model	
@@ -79,14 +79,14 @@ module hypixOpt
 			ParamOpt_Max₂ = copy(optim.ParamOpt_Max)
 
 			# Making sure that for constrained optimisation Ψm is between 0 & 1
-			if (option.hyPix.σ_2_Ψm⍰==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
+			if (option.hyPix.σ_2_Ψm⍰=="Constrained") && ("Ψm" ∈ optim.ParamOpt)
 				iψm = findfirst(isequal("Ψm"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iψm] = 0.0
 				ParamOpt_Max₂[iψm] = 1.0
 			end # option.hyPix.σ_2_Ψm⍰==:Constrained
 
-			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ ≠ :No)
+			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ ≠ "No")
 				iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iθs] = 0.0
@@ -103,7 +103,7 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM_2_hydro_veg
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, X, veg)
+		function PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, param, X, veg)
 
 			println("\n		==== OPT PARAM ====")
 			for iParam = 1:optim.NparamOpt
@@ -143,7 +143,7 @@ module hypixOpt
 			# ==================== SPECIAL CASE ====================
 
 			# RELATIONSHIP BETWEEN σ AND Ψm
-			if (option.hyPix.σ_2_Ψm⍰ ≠ :No) && ("Ψm" ∈ optim.ParamOpt)
+			if (option.hyPix.σ_2_Ψm⍰ ≠ "No") && ("Ψm" ∈ optim.ParamOpt)
 		
 				# <>=<>=<>=<>=<>=<> Horizons wanting to optimize the selected hydraulic parameter
 					iParam = findfirst(isequal("σ"), optim.ParamOpt)[1]
@@ -173,7 +173,7 @@ module hypixOpt
 				end
 
 			#  <>=<>=<>=<>=<>=<> Assuring the limits of 
-				if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ == :θs_Opt⍰)
+				if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ == "θs_Opt⍰")
 					for iZ = iHorizon_Start:iHorizon_End
 						hydroHorizon.θs[iZ] = tool.norm.∇NORM_2_PARAMETER(hydroHorizon.θs[iZ], hydroHorizon.θs_Min[iZ], hydroHorizon.θs_Max[iZ])
 					end # iZ

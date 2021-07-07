@@ -8,10 +8,10 @@ module rockFragment
 	#		FUNCTION :  ρᵦ_2_Φ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
-			if option.rockFragment.RockInjectedIncluded⍰  == :InjectRock
+			if option.rockFragment.RockInjectedIncluded⍰  == "InjectRock"
 				return Φ = rockFragment.injectRock.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
 
-			elseif option.rockFragment.RockInjectedIncluded⍰  == :Included
+			elseif option.rockFragment.RockInjectedIncluded⍰  == "Included"
 				return Φ = rockFragment.included.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
 			end
 		end  # function: function ρᵦ_2_Φ

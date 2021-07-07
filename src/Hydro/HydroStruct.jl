@@ -158,7 +158,7 @@ module hydroStruct
 			Φ_Max      = fill(0.0::Float64, N_iZ)
 			So_Max     = fill(0.0::Float64, N_iZ)
 			
-			if optionₘ.HydroModel⍰ == :Kosugi # <>=<>=<>=<>=<>
+			if optionₘ.HydroModel⍰ == "Kosugi" # <>=<>=<>=<>=<>
 				σ              = fill(0.0::Float64, N_iZ)
             Ψm             = fill(0.0::Float64, N_iZ)
             σMac           = fill(0.0::Float64, N_iZ)
@@ -181,7 +181,7 @@ module hydroStruct
 				hydro = KOSUGI(θs, θr, Ks, σ, Ψm, θsMacMat_ƞ, σMac, ΨmMac, So, θsMacMat, Φ, θs_Min, θr_Min, Ks_Min, σ_Min,Ψm_Min, θsMacMat_ƞ_Min, σMac_Min, ΨmMac_Min, So_Min, θsMacMat_Min, Φ_Min, θs_Max, θr_Max, Ks_Max, σ_Max, Ψm_Max, θsMacMat_ƞ_Max, σMac_Max, ΨmMac_Max, So_Max, θsMacMat_Max, Φ_Max)
 				return hydro
 
-			elseif optionₘ.HydroModel⍰ == :Vangenuchten || optionₘ.HydroModel⍰ == :VangenuchtenJules # <>=<>=<>=<>=<>
+			elseif optionₘ.HydroModel⍰=="Vangenuchten" || optionₘ.HydroModel⍰=="VangenuchtenJules" # <>=<>=<>=<>=<>
             N       = fill(0.0::Float64, N_iZ)
             Ψvg     = fill(0.0::Float64, N_iZ)
             Km      = fill(0.0::Float64, N_iZ)
@@ -204,7 +204,7 @@ module hydroStruct
 				return hydro
 
 
-			elseif optionₘ.HydroModel⍰ == :BrooksCorey # <>=<>=<>=<>=<>=<>
+			elseif optionₘ.HydroModel⍰ == "BrooksCorey" # <>=<>=<>=<>=<>=<>
             λbc     = fill(0.0::Float64, N_iZ)
             Ψbc     = fill(0.0::Float64, N_iZ)
             λbc_Min = fill(0.0::Float64, N_iZ)
@@ -216,7 +216,7 @@ module hydroStruct
 				hydro = BROOKS_COREY(θs, θr, λbc, Ψbc, Ks, Φ, Ψga, θs_Min, θr_Min, λbc_Min, Ψbc_Min, Ks_Min, Φ_Min, θs_Max, θr_Max, λbc_Max, Ψbc_Max, Ks_Max, Φ_Max)
 				return hydro
 
-			elseif optionₘ.HydroModel⍰ == :ClappHornberger # <>=<>=<>=<>=<>=<>
+			elseif optionₘ.HydroModel⍰ == "ClappHornberger" # <>=<>=<>=<>=<>=<>
 				λch = fill(0.0::Float64, N_iZ)
 				Ψch  = fill(0.0::Float64, N_iZ)
             Ψga  = fill(0.0::Float64, N_iZ)

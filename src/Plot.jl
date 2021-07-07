@@ -288,7 +288,7 @@ module plot
 						Plot_θ_Ψ_Psd = Plots.plot!(X ,Y, seriestype=:scatter, label=Label, color= :violet, shape= :circle, markersize=4)
 
 					# Plot_θ_Ψ: Observed
-					if option.run.HydroLabθΨ⍰ ≠ :No 
+					if option.run.HydroLabθΨ⍰ ≠ "No" 
 						X = Ψ_θΨobs[iZ,1:N_θΨobs[iZ]] .* cst.Mm_2_Cm
 						Y = θ_θΨobs[iZ,1:N_θΨobs[iZ]]
 						Label = "LabObs"
@@ -397,7 +397,7 @@ module plot
 
 					θ_θΨobs_Max = hydroInfilt.Φ[iZ] + 0.1
 
-					if option.run.HydroLabθΨ⍰ ≠ :No && "Ks" ∈ optim.ParamOpt
+					if option.run.HydroLabθΨ⍰ ≠ "No" && "Ks" ∈ optim.ParamOpt
 						K_Ψ_Max = max(hydroInfilt.Ks[iZ], hydro.Ks[iZ]) * 1.1
 					else
 						K_Ψ_Max = hydroInfilt.Ks[iZ] * 1.1
@@ -408,10 +408,10 @@ module plot
 
 						Kunsat_Infilt[iΨ] = kunsat.Ψ_2_KUNSAT(option.infilt, Ψ[iΨ], iZ, hydroInfilt)
 
-						if option.run.HydroLabθΨ⍰ ≠ :No
+						if option.run.HydroLabθΨ⍰ ≠ "No"
 							θ_Obs[iΨ] = wrc.Ψ_2_θDual(option.infilt,Ψ[iΨ], iZ, hydro)
 
-							if option.run.HydroLabθΨ⍰ ≠ :No && "Ks" ∈ optim.ParamOpt
+							if option.run.HydroLabθΨ⍰ ≠ "No" && "Ks" ∈ optim.ParamOpt
 								Kunsat_Obs[iΨ] = kunsat.Ψ_2_KUNSAT(option.infilt, Ψ[iΨ], iZ, hydro)
 							end # "Ks" ∈ optim.ParamOpt		
 						end # option.run.HydroLabθΨ⍰ ≠ :No
@@ -425,7 +425,7 @@ module plot
 							Plot_θ_Ψ = Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 						# Plot_θ_Ψ: Observed
-						if option.run.HydroLabθΨ⍰ ≠ :No
+						if option.run.HydroLabθΨ⍰ ≠ "No"
 							X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 							Y = θ_Obs[1:N_Se]
 							Label = "Obs"
@@ -445,7 +445,7 @@ module plot
 							Plot_K_Ψ = Plots.plot(X, Y, seriestype=:line, label=Label, color= :blue, lw=2)
 
 							# Plot_K_Ψ: Sim K_Ψ
-							if option.run.HydroLabθΨ⍰ ≠ :No && "Ks" ∈ optim.ParamOpt
+							if option.run.HydroLabθΨ⍰ ≠ "No" && "Ks" ∈ optim.ParamOpt
 								X = Ψ[1:N_Se] .* cst.Mm_2_Cm
 								Y = Kunsat_Obs[1:N_Se] .* cst.MmS_2_CmH
 								Label = "Obs"

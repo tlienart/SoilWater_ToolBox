@@ -4,26 +4,35 @@
 ##                                                                                      ##
 ##========================================================================================
 
+
 include("Including.jl")
 
-struct OPTION_MASTER
-	Soilwater_OR_Hypix⍰::Symbol
-	SiteName_Soilwater::String
-	SiteName_Hypix::String
-end
 
 # ===============================================================
 #		FUNCTION : START_TOOLBOX
 # ==============================================================
-function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
+function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 
 	# _______________________ START: option/ param/ path _______________________ 
-		
-		option = options.OPTIONS()
 
-		param = params.PARAM()
+		Path_Home = @__DIR__
+		Path_Data = dirname(Path_Home)
 
-		path = paths.PATH(1, option)
+		if Soilwater_OR_Hypix⍰ == "Soilwater"
+			Path_Data = Path_Data * "/data/INPUT/Data_SoilWater/" * SiteName
+
+		elseif Soilwater_OR_Hypix⍰ == "Hypix"
+			Path_Data = Path_Data * "/data/INPUT/Data_Hypix/" * SiteName
+
+		else
+			error("Soilwater_OR_Hypix⍰ = $Soilwater_OR_Hypix⍰ not available needs to be either <Soilwater> or <Hypix>")
+		end
+			
+		option = options.OPTIONS(Path_Data, SiteName)
+
+		param = params.PARAM(Path_Data, SiteName)
+
+		path = paths.PATH(1, option, Path_Data)
 
 	# ------------------------END: option/ param/ path---------------------------
 
@@ -46,6 +55,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 	println("----- START READING -----------------------------------------------")
 		
 		# DERIVING OPTIM PARAMETERS FOR OPTIONS. THIS WILL BE RECOMPUTED: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+		println(option.hydro)
 			hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
 			hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputSoilwater.HydroParam_ThetaH)
 	
@@ -58,10 +68,10 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 		end # if: option.run.Hypix
 
 		# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
+			if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠"Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained")
 				θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 
-			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained # Ading extra data
+			elseif option.data.θΨ && option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ "Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained" # Ading extra data
 				try
 					@info "\n	*** Reading θ(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
 					θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ)
@@ -72,10 +82,10 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 			end  # if: option.data.θΨ
 
 		# IF WE HAVE K(Θ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained)
+			if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠"Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained")
 				K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 
-			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ :Kosugi 
+			elseif option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠ "Kosugi" 
 				try
 					@info "\n	*** Reading K(Ψ) data from $(path.tableSoilwater.TableComplete_KΨ) *** \n"
 					K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.tableSoilwater.TableComplete_KΨ)
@@ -89,13 +99,13 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 
 
 		# IF WE HAVE BULK DENSITY AND ROCK FRAGMENT DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.Φ⍰ == :ρᵦ
+			if option.data.Φ⍰ == "ρᵦ"
 				RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil = reading.BULKDENSITY(IdSelect, N_iZ, path.inputSoilwater.BulkDensity)
 
 				# Φ  corrected for RockFragments
 				Φ = rockFragment.ρᵦ_2_Φ(N_iZ, option, RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil)
 
-			elseif option.data.Φ⍰ == :Φ # Total Porosity
+			elseif option.data.Φ⍰ == "Φ" # Total Porosity
 				RockFragment, Φ = reading.Φ(IdSelect, N_iZ, path.inputSoilwater.Φ)
 				
 				Φ = rockFragment.injectRock.CORECTION_Φ!(N_iZ, option, RockFragment, Φ)	
@@ -114,10 +124,10 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 
 
 		# IF WE HAVE PEDOLOGICAL⍰: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if option.data.Pedological⍰ == :Core
+			if option.data.Pedological⍰ == "Core"
 				IsTopsoil, RockClass = reading.PEDOLOGICAL(IdSelect, N_iZ, path.inputSoilwater.Pedological⍰)
 			
-			elseif option.data.Pedological⍰ == :Smap
+			elseif option.data.Pedological⍰ == "Smap"
 				IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname = readSmap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
 
 			end  # if: option.data.Pedological⍰
@@ -136,7 +146,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 
 
 	# _______________________ START: running HydroLabθΨ _______________________ 
-	if option.run.HydroLabθΨ⍰ ≠ :No
+	if option.run.HydroLabθΨ⍰ ≠ "No"
 	println("----- START RUNNING HYDROLABΘΨ -----------------------------------------------")
 		# STRUCTURES
 			hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
@@ -147,7 +157,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 			checking.CHECKING(option, option.hydro, optim)
 
 		# TRANSFERING Φ -> hydro
-			if option.data.Φ⍰ ≠ :No
+			if option.data.Φ⍰ ≠ "No"
 				for iZ =1:N_iZ 
 					hydro.Φ[iZ] = Φ[iZ]
 				end
@@ -155,7 +165,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 
 		# CORRECT θ(Ψ) FOR ROCK FRAGMENT
 		if option.run.RockCorection
-			if option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock
+			if option.rockFragment.RockInjectedIncluded⍰ =="InjectRock"
 				θ_θΨobs = rockFragment.injectRock.CORECTION_θΨ!(N_iZ, N_θΨobs, RockFragment, θ_θΨobs)
 			end #  option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock
 
@@ -176,7 +186,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 
 		# COMPUTE KS FROM Θ(Ψ)
 			Kₛ_Model = fill(0.0::Float64, N_iZ)
-			if option.hydro.HydroModel⍰ == :Kosugi
+			if option.hydro.HydroModel⍰ == "Kosugi"
 				println("\n	=== === Computing model Ks === === ")
 
 				IsTopsoil₁ = 0.0 ; RockFragment₁ = 0.0
@@ -199,7 +209,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 
 
 		# SPECIAL CASE
-			if option.hydro.HydroModel⍰==:BrooksCorey || option.hydro.HydroModel⍰==:ClappHornberger
+			if option.hydro.HydroModel⍰=="BrooksCorey" || option.hydro.HydroModel⍰=="ClappHornberger"
 				for iZ=1:N_iZ
 					hydro.Ψga[iZ] = wrc.GREEN_AMPT(option.hydro, iZ, hydro)
 				end
@@ -281,7 +291,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 		# CHECKING THE DATA
 			checking.CHECKING(option, option.hydro, optim)
 
-		hypixStart.HYPIX_START(Soilname, option, param, path)
+		hypixStart.HYPIX_START(Soilname, option, param, path, Path_Data)
 	end # option.run.Hypix
 	# ------------------------END: HyPix---------------------------
 
@@ -318,12 +328,12 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 	#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	# _______________________ START: table _______________________ 
 
-	 if option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+	 if option.run.HydroLabθΨ⍰ ≠ "No" && option.run.HydroLabθΨ⍰ ≠ "File" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 		# CORE OUTPUT
 			table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
 
 			# When optimising other model than Kosugi we do not have a model for σ_2_Ψm⍰. Therefore we assume that θ(Ψ) and K(θ) derived by Kosugi from very dry to very wet are physical points
-			if option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰==:Constrained
+			if option.hydro.HydroModel⍰ == "Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained"
 				table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.TableComplete_KΨ)
 		
 				table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
@@ -369,11 +379,11 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 		# Checking the maximum number of plotting
 			param.globalparam.N_iZ_Plot_End = min(param.globalparam.N_iZ_Plot_End, N_iZ)
 
-			if option.run.HydroLabθΨ⍰ ≠ :No
+			if option.run.HydroLabθΨ⍰ ≠ "No"
 				plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 			end
 			if option.run.IntergranularMixingPsd
-				if option.psd.Plot_θr && option.run.HydroLabθΨ⍰ ≠ :No # <>=<>=<>=<>=<>
+				if option.psd.Plot_θr && option.run.HydroLabθΨ⍰ ≠ "No" # <>=<>=<>=<>=<>
 					plot.psd.PLOT_θr(∑Psd, hydro, hydroPsd, N_iZ, param, path.plotSoilwater.Plot_Psd_θr)
 				end
 				if option.psd.Plot_IMP_Model # <>=<>=<>=<>=<>
@@ -389,7 +399,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰=:Soilwater, SiteName="NewFormat")
 					plot.infilt.PLOT_∑INFILT(∑Infilt_1D, ∑Infilt_3D, ∑Infilt_Obs, IdSelect, infiltOutput, N_Infilt, N_iZ, option, param, path.plotSoilwater.Plot_∑infilt_Opt, Tinfilt)
 				end
 				if option.infilt.Plot_θΨ
-					if option.run.HydroLabθΨ⍰ ≠ :No
+					if option.run.HydroLabθΨ⍰ ≠ "No"
 						plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, optim, option, param, path.plotSoilwater.Plot_∑infilt_θΨ; hydro=hydro)
 					else
 						plot.infilt.PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, optim, option, param, path.plotSoilwater.Plot_∑infilt_θΨ)

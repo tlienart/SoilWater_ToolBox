@@ -21,7 +21,7 @@
          end
 
       # Making sure that for constrained optimisation Ψm is between 0 & 1
-         if (optionₘ.σ_2_Ψm⍰==:Constrained) && ("Ψm" ∈ optim.ParamOpt)
+         if (optionₘ.σ_2_Ψm⍰=="Constrained") && ("Ψm" ∈ optim.ParamOpt)
             iψm = findfirst(isequal("Ψm"), optim.ParamOpt)[1]
 
             ParamOpt_Min₂[iψm] = 0.0

@@ -3,7 +3,7 @@
 # =============================================================
 module hypixStart
 
-	import ..climate, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..plotOther, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
+	import ..climate, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
 	
 	import Statistics, Dates, DelimitedFiles
 	export HYPIX_START
@@ -11,7 +11,7 @@ module hypixStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_START(Soilname, option, param, path)
+	function HYPIX_START(Soilname, option, param, path, Path_Data)
 
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
@@ -31,7 +31,7 @@ module hypixStart
 
 
 			# READING STRUCTURE OF PATH
-				path = paths.PATH(iSim, option; Soilname=Soilname)
+				path = paths.PATH(iSim, option, Path_Data; Soilname=Soilname)
 
 				println("\n	 ==== ==== ===  $(path.hyPix.IdName_Hypix) 	=== ==== ====\n")
 
@@ -259,13 +259,13 @@ module hypixStart
 			if option.other.Ploting
 			println("		=== === START: Plotting === ===")
 
-				if option.hyPix.Plot_Other
-					# plotOther.ΨMINΨMAX(hydro, path.hyPix)
-					plotOther.WOF_STEPS(path.hyPix)
-					# plotOther.SE_Ψ_CONSTRAINED(hydro, path.hyPix)
-					# plotOther.PLOT_σ_2_θr(hydro, path.hyPix)
-					# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix)
-				end # option.hyPix.Plot_Other
+				# if option.hyPix.Plot_Other
+				# 	# plotOther.ΨMINΨMAX(hydro, path.hyPix)
+				# 	plotOther.WOF_STEPS(path.hyPix)
+				# 	# plotOther.SE_Ψ_CONSTRAINED(hydro, path.hyPix)
+				# 	# plotOther.PLOT_σ_2_θr(hydro, path.hyPix)
+				# 	# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix)
+				# end # option.hyPix.Plot_Other
 				
 				if option.hyPix.Plot_Hypix
 					plotHypix.plots.TIMESERIES(∑T_Date_Plot, ∑T_Plot, obsTheta, discret, Flag_Plot_Pond, iOpt, N_∑T_Plot, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, path.hyPix)

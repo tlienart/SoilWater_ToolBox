@@ -20,9 +20,9 @@ end
 # example from StructTypes deserialization
 Car = StructTypes.read("""
 {
-    "type": "car",
-    "make": "Mercedes-Benz",
-    "model": "S500",
-    "seatingCapacity": 5,
-    "topSpeed": 250.1
+    "type" "car",
+    "make" "Mercedes-Benz",
+    "model" "S500",
+    "seatingCapacity" 5,
+    "topSpeed" 250.1
 }""", Vehicle)

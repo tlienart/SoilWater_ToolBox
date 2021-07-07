@@ -35,22 +35,22 @@ module plotSmap
             if Flag_OtherData1
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_ClappHornberger_Constrained_A_Table_ThetaHK.csv"
 
-               option.hydro.HydroModel⍰ = :ClappHornberger
+               option.hydro.HydroModel⍰ = "ClappHornberger"
                   # Structure of the hydroparameters
                      hydroData = hydroStruct.HYDROSTRUCT(N_iZ)  
                   # Populate the values of the parameters
-                  option.hydro.HydroModel⍰ = :ClappHornberger
+                  option.hydro.HydroModel⍰ = "ClappHornberger"
                      hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
 
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_Loam.csv"
-                  option.hydro.HydroModel⍰ = :ClappHornberger
+                  option.hydro.HydroModel⍰ = "ClappHornberger"
                   # Structure of the hydroparameters
                      hydroData2 = hydroStruct.HYDROSTRUCT(N_iZ)
                   # Populate the values of the parameters
                      hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
 
                  Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
-                  option.hydro.HydroModel⍰ = :VangenuchtenJules
+                  option.hydro.HydroModel⍰ = "VangenuchtenJules"
                   # Structure of the hydroparameters
                      hydroData3 = hydroStruct.HYDROSTRUCT(N_iZ)
                   # Populate the values of the parameters
@@ -67,27 +67,27 @@ module plotSmap
 
                # Simulated 
                   for iΨ = 1:N_Se
-                     option.hydro.HydroModel⍰ = :Vangenuchten
+                     option.hydro.HydroModel⍰ = "Vangenuchten"
                       θ_Sim[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydro)
                       Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydro)
 
                      if Flag_OtherData1
                         # ClappHornberger model Smap_Hydro
-                        option.hydro.HydroModel⍰ = :ClappHornberger
+                        option.hydro.HydroModel⍰ = "ClappHornberger"
                            θ_OtherData[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData)
-                           option.hydro.HydroModel⍰ = :ClappHornberger
+                           option.hydro.HydroModel⍰ = "ClappHornberger"
                            Kunsat_OtherData[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydroData)
 
                         # ClappHornberger Loam
-                        option.hydro.HydroModel⍰ = :ClappHornberger
+                        option.hydro.HydroModel⍰ = "ClappHornberger"
                            θ_OtherData2[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData2)
-                            option.hydro.HydroModel⍰ = :ClappHornberger
+                            option.hydro.HydroModel⍰ = "ClappHornberger"
                            Kunsat_OtherData2[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydroData2)
           
                         # VanGenuchten_Jules
-                        option.hydro.HydroModel⍰ = :VangenuchtenJules
+                        option.hydro.HydroModel⍰ = "VangenuchtenJules"
                          θ_OtherData3[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData3)
-                         option.hydro.HydroModel⍰ = :VangenuchtenJules
+                         option.hydro.HydroModel⍰ = "VangenuchtenJules"
                         Kunsat_OtherData3[iΨ] =  kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydroData3)
 
                          θobs₀ =[ [ 0.456,	0.35,	0.28,	0.16],
@@ -99,10 +99,10 @@ module plotSmap
 
                          θobs = θobs₀[iZ,:][1] 
                      else
-                         option.hydro.HydroModel⍰ = :VangenuchtenJules
+                         option.hydro.HydroModel⍰ = "VangenuchtenJules"
                          θ_Sim[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydro)
 
-                         option.hydro.HydroModel⍰ = :VangenuchtenJules
+                         option.hydro.HydroModel⍰ = "VangenuchtenJules"
                         Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydro)
                      end
                   end # iΨ
@@ -164,7 +164,7 @@ module plotSmap
                      P_PtotalPorosity = scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* X), Y, color=:slateblue3, markersize=20, marker ="●")
 
                # == Plot_K_Ψ  ==
-               if o"Ks" ∈ optim.ParamOpt
+               if "Ks" ∈ optim.ParamOpt
                      Axis2 = Axis(Fig[1,2])
                      Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.(Int64.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]])))
                      Yticks = 1:1:6

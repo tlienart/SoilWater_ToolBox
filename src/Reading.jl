@@ -620,7 +620,7 @@ module reading
 						# Putting soil param in hydroHorizon
 
 						# θsMacMat value depends on θs
-						if  Symbol(Name_Unique[i]) == :θsMacMat_ƞ 
+						if  Symbol(Name_Unique[i]) == "θsMacMat_ƞ "
 							for iZ =1:length(Param_Vect)
 								hydroHorizon.θsMacMat[iZ] =  hydroHorizon.θs[iZ] * Param_Vect[iZ]
 							end
@@ -687,16 +687,16 @@ module reading
 				NparamOpt = length(ParamOpt)
 
 				# CHECKING FOR UNCONSISTENCY WITH OPTIONS	
-				if Flag_Opt && option.hyPix.σ_2_Ψm⍰ ≠ :No && "Ψm" ∈ ParamOpt
+				if Flag_Opt && option.hyPix.σ_2_Ψm⍰ ≠ "No" && "Ψm" ∈ ParamOpt
 					iψm = findfirst(isequal("Ψm"), ParamOpt)[1]
 
-					if option.hyPix.σ_2_Ψm⍰==:UniqueRelationship && "Ψm" ∈ ParamOpt
+					if option.hyPix.σ_2_Ψm⍰=="UniqueRelationship" && "Ψm" ∈ ParamOpt
 						error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==:UniqueRelationship) && (Optimise=Ψm)!")
 
-					elseif option.hyPix.σ_2_Ψm⍰==:Constrained && !("Ψm" ∈ ParamOpt)
+					elseif option.hyPix.σ_2_Ψm⍰=="Constrained" && !("Ψm" ∈ ParamOpt)
 						error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==:Constrained) && (not Optimising=Ψm)!")
 
-					elseif option.hyPix.σ_2_Ψm⍰==:Constrained && ParamOpt_LogTransform[iψm]==1
+					elseif option.hyPix.σ_2_Ψm⍰=="Constrained" && ParamOpt_LogTransform[iψm]==1
 						error("*** option.hyPix.σ_2_Ψm⍰==:Constrained CANNOT log transforme Ψm") 
 					end
 				end # Flag_Opt
@@ -735,12 +735,12 @@ module reading
 			Option_ReadTemperature = false
 
 			function CLIMATE(option, param, pathHyPix)
-				if option.hyPix.ClimateDataTimestep⍰ == :Daily
+				if option.hyPix.ClimateDataTimestep⍰ == "Daily"
 					Pr_Name          = "Rain(mm)"
 					Pet_Name         = "PET(mm)"
 					Temperature_Name = "Tmax(C)" # Maximum temperature which is not correct
 
-				elseif option.hyPix.ClimateDataTimestep⍰ == :Hourly
+				elseif option.hyPix.ClimateDataTimestep⍰ == "Hourly"
 					Pr_Name          = "Pr_mm"
 					Pet_Name         = "Pet_mm"
 					Temperature_Name = "Temp_c"

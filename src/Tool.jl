@@ -19,48 +19,6 @@ module tool
 	end  # module: normalize
 	# ............................................................
 
-	# =============================================================
-	#		MODULE: array
-	# =============================================================
-	# module array
-	# 	export SEARCH_INDEX, SEARCH_INDEX2
-
-	# 	function SEARCH_INDEX(Array, SearchValue)
-	# 		N = length(Array)
-	# 		iSearchValue = 1
-	# 		Value_SearchValue=1.
-	# 		Err_2 = 100000000000000.
-			
-	# 		for i = 1:N
-	# 			Err_1 = abs(Array[i] - SearchValue)
-			
-	# 			if Err_1 < Err_2
-	# 				iSearchValue = i
-	# 				Value_SearchValue = Array[i]
-	# 				Err_2 = Err_1
-	# 			end
-	# 		end
-	# 		return iSearchValue
-	# 	end # function SEARCH_INDEX
-
-	# 	function SEARCH_INDEX2(Find, Array, N )
-	# 		i = 2
-	# 		FlagBreak = false
-	# 		while !(FlagBreak)
-	# 			if (Array[i-1] <= Find <= Array[i]) || (i == N) 
-	# 				FlagBreak = true
-	# 				break
-	# 			else 
-	# 				i += 1
-	# 				FlagBreak = false
-	# 			end # if
-	# 		end # while
-			
-	# 		return i, Array[i] 
-	# 	end  # function SEARCH_INDEX2
-
-	# end  # module: array
-	# ............................................................
 
 
 	# =============================================================

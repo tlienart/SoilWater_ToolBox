@@ -11,7 +11,6 @@ module stats
 			Err = 0.0
 			iCount = 1
 			
-
 			for i = 1:N
 				if !(isnan(Sim[i]) || isnan(Obs[i]))
 					Err += abs(Sim[i] - Obs[i]) ^ Power

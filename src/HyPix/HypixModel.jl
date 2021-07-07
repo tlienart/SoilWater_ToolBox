@@ -51,7 +51,7 @@ module hypixModel
 			end  # for iZ=1:N_iZ
 
 		# ADAPTIVETIMESTEP
-			if option.hyPix.AdaptiveTimeStep⍰ == :ΔΨ
+			if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ"
 				ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option, param, ΔΨmax)
 			end #  option.hyPix.AdaptiveTimeStep⍰ == :ΔΨ
 

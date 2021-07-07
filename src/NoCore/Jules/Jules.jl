@@ -11,7 +11,7 @@ module jules
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    function START_JULES(path)
 
-      Options_θjules = "BrookCorey" # <"Texture">,<"vanGenuchten">,<"BrookCorey">
+      Options_θjules = "BrookCorey" # <"Texture">,<"Vangenuchten">,<"BrookCorey">
 
       pathHyPix = pathHypix.PATHHYPIX(1)
 
@@ -46,7 +46,7 @@ module jules
          for iSiteName in SiteName
 
             # Making a new pathHyPix if not exist
-               Path_Output =  pathHyPix.Home * "//INPUT//Data_Hypix//JULES//" * iSiteName
+               Path_Output =  pathHyPix.Path_home * "//INPUT//Data_Hypix//JULES//" * iSiteName
                mkpath(Path_Output) 
                
             # dictionary which correspond SiteName to VCSNgridnumber
@@ -311,16 +311,16 @@ module jules
    # Four nc files are saved at each station directory:
    loobos.p2.01d_CP.nc  loobos.p2.01d.nc  loobos.p2.01d_type.nc
 
-   Option" Texture":       loobos.p2.01d_type.nc is the simulation using soil type data from Landcare and Table 2 of Chen and Dudhia (2001) and Brook and Corey model.
-   Option" vanGenuchten":  loobos.p2.01d.nc is the simulation using van Genuchten model and the updated soil parameters from Landcare
-   Option "BrookCorey":    loobos.p2.01d_CP.nc is the simulation using Brook and Corey model and updated the soil parameters from Landcare.
+   Option" Texture"       loobos.p2.01d_type.nc is the simulation using soil type data from Landcare and Table 2 of Chen and Dudhia (2001) and Brook and Corey model.
+   Option" vanGenuchten"  loobos.p2.01d.nc is the simulation using van Genuchten model and the updated soil parameters from Landcare
+   Option "BrookCorey"    loobos.p2.01d_CP.nc is the simulation using Brook and Corey model and updated the soil parameters from Landcare.
 
    For the 4th nc file saved in each station dir such as: sm_sim_obs_11234.nc. It is the daily soil moisture observations and daily soil moisture simulations by JULES using our soil data at Station 11234. Please ignore this simulation for all stations. e.g., sm_sim_obs_11234.nc is for station 11234.
 
    """
       function READ_WRITE_θJULES(Path_θjules_Input, Path_θjules_Output, Options_θjules)
 
-         OptionsJules = ["Texture","vanGenuchten","BrookCorey"]
+         OptionsJules = ["Texture","Vangenuchten","BrookCorey"]
 
          OptionsFile =["loobos.p2.01d_type.nc", "loobos.p2.01d.nc", "loobos.p2.01d_CP.nc"]
 

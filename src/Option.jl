@@ -11,18 +11,18 @@ module options
 		Infilt::Bool
 		Jules::Bool
 		Kθ::Bool
-		Pedological⍰
+		Pedological⍰::String
 		Psd::Bool
 		RockWetability::Bool
 		SimulationKosugiθΨK::Bool
 		θΨ::Bool
-		Φ⍰
+		Φ⍰::String
 	end # struct DATA
 
 	# What model wanting to run
 	@option mutable struct RUN
       ChangeHydroModel::Bool
-      HydroLabθΨ⍰
+      HydroLabθΨ⍰::String
       Hypix::Bool
       Infilt::Bool
       IntergranularMixingPsd ::Bool
@@ -42,22 +42,22 @@ module options
 		Nothings
 	end
 	@option mutable struct HYDRO
-		HydroModel⍰
+		HydroModel⍰::String
 		HydroModel_List
-		θsOpt⍰
-		θrOpt⍰
-		σ_2_Ψm⍰
+		θsOpt⍰::String
+		θrOpt⍰::String
+		σ_2_Ψm⍰::String
 		Plot_θΨ::Bool
 	end
 	@option mutable struct PSD
-		Model⍰
-		OptimizePsd⍰
-		Psd_2_θr⍰
+		Model⍰::String
+		OptimizePsd⍰::String
+		Psd_2_θr⍰::String
 		∑Psd_2_ξ1::Bool
-		HydroModel⍰
-		θsOpt⍰
-		θrOpt⍰
-		σ_2_Ψm⍰
+		HydroModel⍰::String
+		θsOpt⍰::String
+		θrOpt⍰::String
+		σ_2_Ψm⍰::String
 		Plot_Psd_θΨ::Bool
 		Plot_θr::Bool
 		Plot_IMP_Model::Bool
@@ -65,42 +65,42 @@ module options
 	end
 	@option mutable struct ROCKFRAGMENT
 		CorectStoneRockWetability::Bool
-		RockInjectedIncluded⍰
+		RockInjectedIncluded⍰::String
 	end
 	@option mutable struct INFILT
-		DataSingleDoubleRing⍰  
-		OptimizeRun⍰  
-		Model⍰
+		DataSingleDoubleRing⍰::String  
+		OptimizeRun⍰::String  
+		Model⍰::String
 		BestUniv_Continous::Bool                	  
-		SorptivitySplitModel⍰  
-		SorptivityModel⍰     
-		HydroModel⍰       
-		θsOpt⍰            
-		θrOpt⍰            
-		σ_2_Ψm⍰               
+		SorptivitySplitModel⍰::String  
+		SorptivityModel⍰::String     
+		HydroModel⍰::String       
+		θsOpt⍰::String            
+		θrOpt⍰::String            
+		σ_2_Ψm⍰::String               
 		Plot_Sorptivity::Bool        	 
 		Plot_∑Infilt::Bool           
 		Plot_θΨ::Bool                
 	end
 	@option mutable struct HYPIX
-		ClimateDataTimestep⍰
+		ClimateDataTimestep⍰::String
 		RainfallInterception::Bool
 		Evaporation::Bool
 		RootWaterUptake::Bool
 		RootWaterUptakeComp::Bool
 		LookupTable_Lai::Bool
 		LookUpTable_CropCoeficient::Bool
-		HydroModel⍰
+		HydroModel⍰::String
 		BottomBoundary⍰
 		∂R∂Ψ_Numerical::Bool
-		AdaptiveTimeStep⍰
-		NormMin⍰
+		AdaptiveTimeStep⍰::String
+		NormMin⍰::String
 		Flag_ReRun::Bool
 		Qbottom_Correction::Bool
 		Lai_2_SintMax::Bool
-		σ_2_Ψm⍰
+		σ_2_Ψm⍰::String
 		σ_2_θr::Bool
-		θs_Opt⍰
+		θs_Opt⍰::String
 		Optimisation::Bool
 		θobs::Bool
 		θobs_Average::Bool
@@ -128,7 +128,7 @@ module options
 		Plot_WaterBalance::Bool
 		Plot_ΔT::Bool
 	end
-	@option mutable struct OPTION
+		@option mutable struct OPTION
 			data::DATA
 			hydro::HYDRO
 			hyPix::HYPIX
@@ -146,30 +146,12 @@ module options
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPTION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OPTIONS()
+		function OPTIONS(Path_Data, SiteName)
+			
+			Path = Path_Data * "/ParamOptionPath/" * SiteName * "_Option.toml"
 
-			Path= "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\Option.toml"
-
-			TomlOption = TOML.parsefile(Path)
-
-
-
-			option = Configurations.from_dict(OPTION, TomlOption)
-
-			FieldsInStruct=fieldnames(typeof(option));
-			for i=1:length(FieldsInStruct)
-				#Check field i
-				Value=getfield(option, FieldsInStruct[i])
-				# Value=getfield(Value, FieldsInStruct[i])
-				println(Value)
-				# Value=Value.+1;
-				# setfield!(option,FieldsInStruct[i],Value)
-			end
-
-		return option
+			return option = Configurations.from_toml(OPTION, Path)
 		end  # function: OPTION
 
 end # module option 
 # end OPTION
-
-options.OPTIONS()

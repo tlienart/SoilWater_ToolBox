@@ -7,7 +7,7 @@ module psdFunc
 	# ========================================
 		function PSD_MODEL(iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, option, param, paramPsd)
  		
-			if option.psd.Model⍰ == :IMP
+			if option.psd.Model⍰ == "IMP"
 				# Correction for the small PSD
 				Psd, ∑Psd = imp.SUBCLAY_CORRECTION(∑Psd, paramPsd.Subclay[iZ], N_Psd)  		
 
@@ -21,7 +21,7 @@ module psdFunc
 				# Computing Ψ from Psd
 					Ψ_Rpart = imp.RPART_2_ΨRPART(Rpart, N_Psd, param) 	# Computing  from Psd
 	
-			elseif option.psd.Model⍰ == :Chang2019Model
+			elseif option.psd.Model⍰ == "Chang2019Model"
 				# Computing θ from Psd
 					θ_Rpart = chang.RPART_2_θ(θs_Psd, Psd, Rpart, N_Psd, paramPsd.ξ1[iZ]) 
 				

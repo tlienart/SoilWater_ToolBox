@@ -22,11 +22,11 @@ module checkError
 			CHECK_IFOPEN(pathHyPix.Table_Se)
 
 		# CHECKING IF THE OPTIONS ARE VALID	
-			if option.hyPix.HydroModel⍰ ≠ :Kosugi && option.hyPix.HydroModel⍰ ≠ :vanGenuchten
-				error("\n Hypix error: HydroModel⍰ option = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [vanGenuchten] or [Kosugi]")
+			if option.hyPix.HydroModel⍰ ≠ "Kosugi" && option.hyPix.HydroModel⍰ ≠ "Vangenuchten"
+				error("\n Hypix error: HydroModel⍰ option = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [Vangenuchten] or [Kosugi]")
 			end
 
-			if option.hyPix.BottomBoundary⍰ ≠ :Free && option.hyPix.BottomBoundary⍰ ≠ :Pressure
+			if option.hyPix.BottomBoundary⍰ ≠ "Free" && option.hyPix.BottomBoundary⍰ ≠ "Pressure"
 				error("\n Hypix error: BottomBoundary⍰ option = $BottomBoundary⍰ not yet supported. BottomBoundary⍰ must = either [Free] or [Pressure]")
 			end
 
@@ -39,7 +39,7 @@ module checkError
 			end
 
 		# CHECKING HYDRO PARAMETERS
-			if option.hyPix.HydroModel⍰ == :Kosugi
+			if option.hyPix.HydroModel⍰ == "Kosugi"
 				for iHorizon in 1:N_iHorizon
 					if hydroHorizon.θs[iHorizon] <  hydroHorizon.θsMacMat[iHorizon]
 						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(pathHyPix.Hydraulic)")
