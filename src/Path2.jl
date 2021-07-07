@@ -3,6 +3,8 @@
 # =============================================================
 module paths
 
+	using Configurations
+
 	mutable struct INPUT_SMAP
 		LookupTable_RockWetability::String
 		Smap::String
@@ -119,7 +121,7 @@ module paths
 		# ------------------------END: hypix---------------------------  
 
 		mutable struct PATHS
-			Path_home
+			Path_Home
 			hyPix::PATHYPIXS
 			inputSmap::INPUT_SMAP
 			inputSoilwater::INPUT_SOILWATER
@@ -133,14 +135,20 @@ module paths
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PATHS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PATH(iSim, option, Path_Data, SiteName)
-		Home2 = @__DIR__
+	function PATH(iSim, opt, Path_Data, SiteName; Soilname=["Temporary"])
+
+		PathToml = Path_Data * "/ParamOptionPath/" * SiteName * "_Path.toml"
+
+		path = Configurations.from_toml(PATHS, PathToml)
+
+
+		Path_Home₀ = @__DIR__
 
 		# perform cs..
-			Path_home = dirname(Home2)
+			Path_Home = dirname(Path_Home₀)
 
 		# Change path name to /data/Private/
-			Path_home = Path_home * "/data/"
+			Path_Home = Path_Home * "/data/"
 			
 		# =============================================================
 		#		OPTIONS
@@ -153,9 +161,9 @@ module paths
 			option = OPTIONS(ModelName, Select, SiteName_Soilwater)
 	
 		# Paths
-			FileDataSoilhydro_Input = Path_home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
+			FileDataSoilhydro_Input = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
 
-			FileSoilHydro_Table₁ = Path_home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Table/" 
+			FileSoilHydro_Table₁ = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Table/" 
 				mkpath(FileSoilHydro_Table₁) 
 
 		# =============================================================
@@ -267,7 +275,7 @@ module paths
 		# =============================================================
 			# Output tables smap
 
-			Path_Smap2Hypix = Path_home *"OUTPUT/Smap2Hypix"
+			Path_Smap2Hypix = Path_Home *"OUTPUT/Smap2Hypix"
 			mkpath(Path_Smap2Hypix)
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -278,7 +286,7 @@ module paths
 		# =============================================================
 		#		PLOT SOILWATER
 		# =============================================================
-			FileSoilHydro_Plot = Path_home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Plots/"
+			FileSoilHydro_Plot = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Plots/"
 
 			Plot_θΨK = FileSoilHydro_Plot * "/Lab/" 
 				mkpath(Plot_θΨK)
@@ -383,12 +391,12 @@ module paths
 				JulesMetadata = "JULES_LinkingData.csv"
 
 			# HYPIX INPUT LEVEL 1 ===
-				FileHypix_Input₁ = Path_home * "/INPUT/Data_Hypix/" * SiteName_Hypix * "/"
+				FileHypix_Input₁ = Path_Home * "/INPUT/Data_Hypix/" * SiteName_Hypix * "/"
 				IdSelect =  FileHypix_Input₁ * SiteName_Hypix * "_" * IdSelect
 				JulesMetadata   =FileHypix_Input₁ * JulesMetadata
 
 			# HYPIX INPUT LEVEL 2 ===
-				FileHypix_Input₂  = Path_home * "/INPUT/Data_Hypix/" * SiteName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
+				FileHypix_Input₂  = Path_Home * "/INPUT/Data_Hypix/" * SiteName_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
 				Climate          = FileHypix_Input₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * Climate
 				Dates            = FileHypix_Input₂ * Dates
@@ -398,16 +406,16 @@ module paths
 				HyPixParamOpt      = FileHypix_Input₂ * HyPixParamOpt
 				obsTheta             = FileHypix_Input₂ * obsTheta
 
-				Input_OfStep     = Path_home * "/INPUT/Data_Hypix/RESULTS/"
+				Input_OfStep     = Path_Home * "/INPUT/Data_Hypix/RESULTS/"
 
 			# HYPIX LOOKUPTABLE ===
-			FileHypix_LookUpTable = Path_home * "/INPUT/Data_Hypix/LookUpTable/"
+			FileHypix_LookUpTable = Path_Home * "/INPUT/Data_Hypix/LookUpTable/"
 					
 				LookUpTable_CropCoeficient = FileHypix_LookUpTable * LookUpTable_CropCoeficient
 				LookUpTable_Lai            = FileHypix_LookUpTable * LookUpTable_Lai
 
 			# HYPIX OUTPUT TABLE
-			FileSoilHydro_Table = Path_home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Table/" 				
+			FileSoilHydro_Table = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Table/" 				
 				mkpath(FileSoilHydro_Table) #Make Folder if not exist
 
 				FileSoilHydro_Table = FileSoilHydro_Table * SiteName_Hypix * "_"
@@ -426,18 +434,18 @@ module paths
 				Table_θΨ              = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_θΨ
 				Table_Ψ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* Table_Ψ
 				
-			FileSoilHydro_Table_θaverage = Path_home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/SoilMoistureSim/" 				
+			FileSoilHydro_Table_θaverage = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/SoilMoistureSim/" 				
 				mkpath(FileSoilHydro_Table_θaverage) #Make Folder if not exist
 				Table_θaverage        = FileSoilHydro_Table_θaverage *  IdName_Hypix * "_"* Table_θaverage
 
-			# FileSoilHydro_Table_Performace = Path_home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/"
+			# FileSoilHydro_Table_Performace = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/"
 			# Table_Performance     = FileSoilHydro_Table_Performace  *  IdName_Hypix * "_"* string(iSim) * "_"* Table_Performance		
 				
 
 
 			# HYPIX PLOT CORE
-			# FileHypix_Plot = Path_home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/Plots/" 
-			FileHypix_Plot = Path_home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
+			# FileHypix_Plot = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/Plots/" 
+			FileHypix_Plot = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
 				mkpath(FileHypix_Plot)
 
 				Plot_HypixTime            = FileHypix_Plot * IdName_Hypix  * "_" * Plot_HypixTime
@@ -449,7 +457,7 @@ module paths
 				Vegetation                = FileHypix_Plot * IdName_Hypix  * "_" * Vegetation
 
 			# HYPIX PLOT OTHERS: RESULTS
-			FileHypix_Plot_Results = Path_home * "/OUTPUT/Hypix/RESULTS/"
+			FileHypix_Plot_Results = Path_Home * "/OUTPUT/Hypix/RESULTS/"
 				mkpath(FileHypix_Plot_Results)
 
 				Plot_OfStep   = FileHypix_Plot_Results
@@ -507,7 +515,7 @@ module paths
 					Plot_Ψmin_Ψmax,
 					Plot_θ∂θ∂Ψ)
 
-		path = PATHS(Path_home, hyPix, inputSmap, inputSoilwater, inputTemporary, option, plotSoilwater, smap2Hypix, tableSmap, tableSoilwater)
+		path = PATHS(Path_Home, hyPix, inputSmap, inputSoilwater, inputTemporary, option, plotSoilwater, smap2Hypix, tableSmap, tableSoilwater)
 
 	return path
 	end # function PATHS			

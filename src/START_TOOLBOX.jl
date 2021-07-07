@@ -16,23 +16,23 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 	# _______________________ START: option/ param/ path _______________________ 
 
 		Path_Home = @__DIR__
-		Path_Data = dirname(Path_Home)
+		Path_Data₀ = dirname(Path_Home)
 
 		if Soilwater_OR_Hypix⍰ == "Soilwater"
-			Path_Data = Path_Data * "/data/INPUT/Data_SoilWater/" * SiteName
+			Path_Data₀ = Path_Data₀ * "/data/INPUT/Data_SoilWater/" * SiteName
 
 		elseif Soilwater_OR_Hypix⍰ == "Hypix"
-			Path_Data = Path_Data * "/data/INPUT/Data_Hypix/" * SiteName
+			Path_Data₀ = Path_Data₀ * "/data/INPUT/Data_Hypix/" * SiteName
 
 		else
 			error("Soilwater_OR_Hypix⍰ = $Soilwater_OR_Hypix⍰ not available needs to be either <Soilwater> or <Hypix>")
 		end
 			
-		option = options.OPTIONS(Path_Data, SiteName)
+		option = options.OPTIONS(Path_Data₀, SiteName)
 
-		param = params.PARAM(Path_Data, SiteName)
+		param = params.PARAM(Path_Data₀, SiteName)
 
-		path = paths.PATH(1, option, Path_Data)
+		path = paths.PATH(1, option, Path_Data₀, SiteName)
 
 	# ------------------------END: option/ param/ path---------------------------
 
@@ -45,7 +45,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 	for iSim =1:N_Scenarios
 		if option.run.Smap
 			option.hydro.HydroModel⍰ = Scenarios[iSim]
-			path = paths.PATH(1, option)
+			path = paths.PATH(1, option, Path_Data, SiteName)
 			println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios \n \n")
 		end
 	#..............................................................................
@@ -291,7 +291,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 		# CHECKING THE DATA
 			checking.CHECKING(option, option.hydro, optim)
 
-		hypixStart.HYPIX_START(Soilname, option, param, path, Path_Data)
+		hypixStart.HYPIX_START(Soilname, option, param, Path_Data, SiteName)
 	end # option.run.Hypix
 	# ------------------------END: HyPix---------------------------
 
