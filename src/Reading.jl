@@ -9,11 +9,11 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ID
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ID(;PathIdSlect, PathOptionSelect, PathModelName)
-			println("    ~  $(PathIdSlect) ~")
+		function ID(;PathIdSelect, PathOptionSelect, PathModelName)
+			println("    ~  $(PathIdSelect) ~")
 
 			# Read data
-				Data = DelimitedFiles.readdlm(PathIdSlect, ',')
+				Data = DelimitedFiles.readdlm(PathIdSelect, ',')
 				Header = Data[1,begin:end]
 				Data = Data[2:end,begin:end]
 

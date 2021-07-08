@@ -19,7 +19,7 @@ module smap2hypix
             iSoilProfile_End, iSoilProfile_Start, N_SoilProfile, Soilname_SoilProfile = SMAP_SOILPROFILE(N_iZ, Soilname)
 
          # Input path of the hydraulic parameters
-            Path_Input =  path.tableSoilwater.FileSoilHydro_Table₁ *  "_" * "Kosugi" *  "_" * "Table_SmapThetaHK.csv"
+            Path_Input =  path.tableSoilwater.Path_Soilwater_Table *  "_" * "Kosugi" *  "_" * "Table_SmapThetaHK.csv"
 
          # For every soil profile
          for iSoilProfile=1:N_SoilProfile

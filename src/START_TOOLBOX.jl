@@ -4,35 +4,40 @@
 ##                                                                                      ##
 ##========================================================================================
 
-
 include("Including.jl")
-
 
 # ===============================================================
 #		FUNCTION : START_TOOLBOX
 # ==============================================================
-function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
+function START_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="NewFormat")
 
 	# _______________________ START: option/ param/ path _______________________ 
 
 		Path_Home = @__DIR__
 		Path_Data₀ = dirname(Path_Home)
 
-		if Soilwater_OR_Hypix⍰ == "Soilwater"
-			Path_Data₀ = Path_Data₀ * "/data/INPUT/Data_SoilWater/" * SiteName
+      PathData_SoilWater = Path_Data₀ * "/data/INPUT/Data_SoilWater/" * SiteName_Soilwater
+      PathData_Hypix     = Path_Data₀ * "/data/INPUT/Data_Hypix/" * SiteName_Hypix
+
+		if Soilwater_OR_Hypix⍰ == "SoilWater"
+			option = options.OPTIONS(PathData_SoilWater, SiteName_Soilwater)
+
+			param = params.PARAM(PathData_SoilWater, SiteName_Soilwater)
+
+			option.run.Hypix = false
 
 		elseif Soilwater_OR_Hypix⍰ == "Hypix"
-			Path_Data₀ = Path_Data₀ * "/data/INPUT/Data_Hypix/" * SiteName
+			option = options.OPTIONS(PathData_Hypix, SiteName_Hypix)
+
+			param = params.PARAM(PathData_Hypix, SiteName_Hypix)
+
+			option.run.Hypix = true
 
 		else
-			error("Soilwater_OR_Hypix⍰ = $Soilwater_OR_Hypix⍰ not available needs to be either <Soilwater> or <Hypix>")
+			error("Soilwater_OR_Hypix⍰ = $Soilwater_OR_Hypix⍰ not available needs to be either <SoilWater> or <Hypix>")
 		end
 			
-		option = options.OPTIONS(Path_Data₀, SiteName)
-
-		param = params.PARAM(Path_Data₀, SiteName)
-
-		path = paths.PATH(1, option, Path_Data₀, SiteName)
+	 	path = paths.PATH(1, option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 
 	# ------------------------END: option/ param/ path---------------------------
 
@@ -45,7 +50,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 	for iSim =1:N_Scenarios
 		if option.run.Smap
 			option.hydro.HydroModel⍰ = Scenarios[iSim]
-			path = paths.PATH(1, option, Path_Data, SiteName)
+			path = paths.PATH(1,  option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 			println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios \n \n")
 		end
 	#..............................................................................
@@ -55,16 +60,18 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 	println("----- START READING -----------------------------------------------")
 		
 		# DERIVING OPTIM PARAMETERS FOR OPTIONS. THIS WILL BE RECOMPUTED: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-		println(option.hydro)
-			hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
-			hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputSoilwater.HydroParam_ThetaH)
+
 	
 		# DETERMINE WHICH SOILS/ PROFILE TO RUN: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-		if option.run.Hypix
-			IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
+		if Soilwater_OR_Hypix⍰=="Hypix"
+			IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSelect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
 
 		else
-			IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSlect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
+			IdSelect, IdSelect_True, Soilname, N_iZ = reading.ID(PathIdSelect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
+
+			# Deriving opt parameters
+				hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
+				hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputSoilwater.HydroParam_ThetaH)
 		end # if: option.run.Hypix
 
 		# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -288,10 +295,7 @@ function START_TOOLBOX(;Soilwater_OR_Hypix⍰="Soilwater", SiteName="NewFormat")
 	
 	# _______________________ START: HyPix _______________________ 
 	if option.run.Hypix
-		# CHECKING THE DATA
-			checking.CHECKING(option, option.hydro, optim)
-
-		hypixStart.HYPIX_START(Soilname, option, param, Path_Data, SiteName)
+		hypixStart.HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 	end # option.run.Hypix
 	# ------------------------END: HyPix---------------------------
 

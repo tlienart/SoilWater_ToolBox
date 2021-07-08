@@ -40,7 +40,7 @@ module paths
 	end # struct INPUT_TABLE_SMAP	
 
 	@option mutable struct TABLE_SOILWATER
-		FileSoilHydro_Table₁::String
+		Path_Soilwater_Table::String
 		Table_HydroInfilt::String
 		Table_Infilt::String
 		Table_KΨ::String
@@ -114,8 +114,8 @@ module paths
 		Plot_Ψmin_Ψmax::String
 		Plot_θ∂θ∂Ψ::String
 	end
-# ------------------------END: hypix---------------------------  
-@option mutable struct PATHS
+	# ------------------------END: hypix---------------------------  
+	@option mutable struct PATHS
 		hyPix::PATHYPIXS
 		inputSmap::INPUT_SMAP
 		inputSoilwater::INPUT_SOILWATER
@@ -126,81 +126,85 @@ module paths
 		tableSmap::TABLE_SMAP
 		tableSoilwater::TABLE_SOILWATER
 	end
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PATHS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PATH(iSim, opt, Path_Data, SiteName; Soilname=["Temporary"])
+	function PATH(iSim, opt, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰; Soilname=["Temporary"])
 
-		PathToml = Path_Data * "/ParamOptionPath/" * SiteName * "_Path.toml"
+		if Soilwater_OR_Hypix⍰ == "SoilWater"
+			PathToml = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_Path.toml"
 
-		path = Configurations.from_toml(PATHS, PathToml)
+		elseif Soilwater_OR_Hypix⍰ == "Hypix"
+			PathToml = PathData_Hypix * "/ParamOptionPath/" * SiteName_Hypix * "_Path.toml"
+		end
 
-		Path_Home₀ = @__DIR__
+		# Reading toml -> path structure
+			path = Configurations.from_toml(PATHS, PathToml)
+
+		# Usefull path
+			Path_Home₀ = @__DIR__
 
 		# perform cs..
 			Path_Home = dirname(Path_Home₀)
-
-		# Change path name to /data/Private/
 			Path_Home = Path_Home * "/data/"
 			
 		# =============================================================
-		#		OPTIONS
+		#		SoilWater
 		# =============================================================
-			FileDataSoilhydro_Input = Path_Home * "INPUT/Data_SoilWater/" * SiteName * "/" * SiteName * "_"
-
-			FileSoilHydro_Table₁ = Path_Home * "/OUTPUT/SoilWater/" * SiteName * "/Table/" 
-				mkpath(FileSoilHydro_Table₁) 
+         Path_Soilwater_Data = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
 
 		# =============================================================
 		#		INPUT_SOILWATER
 		# =============================================================
-         path.inputSoilwater.BulkDensity        = FileDataSoilhydro_Input * path.inputSoilwater.BulkDensity
-         path.inputSoilwater.ConvertModel       = FileDataSoilhydro_Input * path.inputSoilwater.ConvertModel
-         path.inputSoilwater.HydroParam_Infilt  = FileDataSoilhydro_Input * path.inputSoilwater.HydroParam_Infilt
-         path.inputSoilwater.HydroParam_ThetaH  = FileDataSoilhydro_Input * path.inputSoilwater.HydroParam_ThetaH
-         path.inputSoilwater.IdSelect           = FileDataSoilhydro_Input * path.inputSoilwater.IdSelect
-         path.inputSoilwater.Infiltration       = FileDataSoilhydro_Input * path.inputSoilwater.Infiltration
-         path.inputSoilwater.Infiltration_Param = FileDataSoilhydro_Input * path.inputSoilwater.Infiltration_Param
-         path.inputSoilwater.Kunsat             = FileDataSoilhydro_Input * path.inputSoilwater.Kunsat
-         path.inputSoilwater.Psd                = FileDataSoilhydro_Input * path.inputSoilwater.Psd
-         path.inputSoilwater.Pedological⍰      = FileDataSoilhydro_Input * path.inputSoilwater.Pedological⍰
-         path.inputSoilwater.Φ                  = FileDataSoilhydro_Input * path.inputSoilwater.Φ
-         path.inputSoilwater.Ψθ                 = FileDataSoilhydro_Input * path.inputSoilwater.Ψθ
+         path.inputSoilwater.BulkDensity        = Path_Soilwater_Data * path.inputSoilwater.BulkDensity
+         path.inputSoilwater.ConvertModel       = Path_Soilwater_Data * path.inputSoilwater.ConvertModel
+         path.inputSoilwater.HydroParam_Infilt  = Path_Soilwater_Data * path.inputSoilwater.HydroParam_Infilt
+         path.inputSoilwater.HydroParam_ThetaH  = Path_Soilwater_Data * path.inputSoilwater.HydroParam_ThetaH
+         path.inputSoilwater.IdSelect           = Path_Soilwater_Data * path.inputSoilwater.IdSelect
+         path.inputSoilwater.Infiltration       = Path_Soilwater_Data * path.inputSoilwater.Infiltration
+         path.inputSoilwater.Infiltration_Param = Path_Soilwater_Data * path.inputSoilwater.Infiltration_Param
+         path.inputSoilwater.Kunsat             = Path_Soilwater_Data * path.inputSoilwater.Kunsat
+         path.inputSoilwater.Psd                = Path_Soilwater_Data * path.inputSoilwater.Psd
+         path.inputSoilwater.Pedological⍰      = Path_Soilwater_Data * path.inputSoilwater.Pedological⍰
+         path.inputSoilwater.Φ                  = Path_Soilwater_Data * path.inputSoilwater.Φ
+         path.inputSoilwater.Ψθ                 = Path_Soilwater_Data * path.inputSoilwater.Ψθ
 		
 		# =============================================================
 		#		INPUT_SMAP
-		#		None core
 		# =============================================================
-         path.inputSmap.LookupTable_RockWetability = FileDataSoilhydro_Input * path.inputSmap.LookupTable_RockWetability
-         path.inputSmap.Smap                       = FileDataSoilhydro_Input * path.inputSmap.Smap
+         path.inputSmap.LookupTable_RockWetability = Path_Soilwater_Data * path.inputSmap.LookupTable_RockWetability
+         path.inputSmap.Smap                       = Path_Soilwater_Data * path.inputSmap.Smap
 
 		# =============================================================
 		#		INPUT_TEMPORARY
-		#		None core
 		# =============================================================
-         path.inputTemporary.σ_ψM_Scenario = FileDataSoilhydro_Input * path.inputTemporary.σ_ψM_Scenario
+         path.inputTemporary.σ_ψM_Scenario = Path_Soilwater_Data * path.inputTemporary.σ_ψM_Scenario
 
 		# =============================================================
 		#		TABLE_SOILWATER
 		# =============================================================
- 
-      path.tableSoilwater.FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * SiteName
+		Path_Soilwater_Table    = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Table/"
+				mkpath(Path_Soilwater_Table) 
+	
+			Path_Soilwater_Table                     = Path_Soilwater_Table * SiteName_Soilwater
 
-      path.tableSoilwater.Table_HydroInfilt    = FileSoilHydro_Table₁ * string(opt.infilt.Model⍰) * "_" *  path.option.ModelName  *  "_" * path.tableSoilwater.Table_HydroInfilt
-      path.tableSoilwater.Table_Infilt         = FileSoilHydro_Table₁ * string(opt.infilt.Model⍰) *  "_" *  path.option.ModelName  *  "_" *  path.tableSoilwater.Table_Infilt
-      path.tableSoilwater.Table_KΨ             = FileSoilHydro_Table₁ * "_"  *  path.option.ModelName * "_" * path.tableSoilwater.Table_KΨ
-      path.tableSoilwater.Table_Psd            = FileSoilHydro_Table₁ * string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
-      path.tableSoilwater.Table_Psd_θΨ_θ       = FileSoilHydro_Table₁ * string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
-      path.tableSoilwater.Table_θΨ_Psd         = FileSoilHydro_Table₁ * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_θΨ_Psd
-      path.tableSoilwater.Table_θΨK            = FileSoilHydro_Table₁ *  "_" * string(opt.hydro.HydroModel⍰) * "_" * path.tableSoilwater.Table_θΨK
-      path.tableSoilwater.TableComplete_θΨ     = FileSoilHydro_Table₁ *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_θΨ
-      path.tableSoilwater.TableComplete_KΨ     = FileSoilHydro_Table₁ *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_KΨ
+			path.tableSoilwater.Path_Soilwater_Table = Path_Soilwater_Table
+			path.tableSoilwater.Table_HydroInfilt    = Path_Soilwater_Table * string(opt.infilt.Model⍰) * "_" *  path.option.ModelName  *  "_" * path.tableSoilwater.Table_HydroInfilt
+			path.tableSoilwater.Table_Infilt         = Path_Soilwater_Table * string(opt.infilt.Model⍰) *  "_" *  path.option.ModelName  *  "_" *  path.tableSoilwater.Table_Infilt
+			path.tableSoilwater.Table_KΨ             = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" * path.tableSoilwater.Table_KΨ
+			path.tableSoilwater.Table_Psd            = Path_Soilwater_Table * string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
+			path.tableSoilwater.Table_Psd_θΨ_θ       = Path_Soilwater_Table * string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
+			path.tableSoilwater.Table_θΨ_Psd         = Path_Soilwater_Table * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_θΨ_Psd
+			path.tableSoilwater.Table_θΨK            = Path_Soilwater_Table *  "_" * string(opt.hydro.HydroModel⍰) * "_" * path.tableSoilwater.Table_θΨK
+			path.tableSoilwater.TableComplete_θΨ     = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_θΨ
+			path.tableSoilwater.TableComplete_KΨ     = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_KΨ
 
 		# =============================================================
 		#		TABLE_SMAP
 		# =============================================================
-         path.tableSmap.Table_θΨK  = FileSoilHydro_Table₁ * "_" * string(opt.hydro.HydroModel⍰) * "_" *  path.tableSmap.Table_θΨK
-         path.tableSmap.Table_Smap = FileSoilHydro_Table₁ * path.tableSmap.Table_Smap
+         path.tableSmap.Table_θΨK  = Path_Soilwater_Table * "_" * string(opt.hydro.HydroModel⍰) * "_" *  path.tableSmap.Table_θΨK
+         path.tableSmap.Table_Smap = Path_Soilwater_Table * path.tableSmap.Table_Smap
 
 		# =============================================================
 		#		PATH SMAP_2_HYPIX
@@ -208,39 +212,38 @@ module paths
 			path.smap2Hypix.Path_Smap2Hypix = Path_Home *"OUTPUT/Smap2Hypix"
 				mkpath(path.smap2Hypix.Path_Smap2Hypix)
 
-	
 		# =============================================================
 		#		PLOT SOILWATER
 		# =============================================================
-			FileSoilHydro_Plot = Path_Home * "/OUTPUT/SoilWater/" * SiteName * "/Plots/"
+			Path_Soilwater_Plot = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Plots/"
 
-			Plot_θΨK = FileSoilHydro_Plot * "/Lab/" 
+			Plot_θΨK = Path_Soilwater_Plot * "/Lab/" 
 				mkpath(Plot_θΨK)
-				path.plotSoilwater.Plot_θΨK = Plot_θΨK * SiteName * "_"
+				path.plotSoilwater.Plot_θΨK = Plot_θΨK * SiteName_Soilwater * "_"
 
-			Plot_σΨm = FileSoilHydro_Plot * "/LabSigmaHm/" 
+			Plot_σΨm = Path_Soilwater_Plot * "/LabSigmaHm/" 
 				mkpath(Plot_σΨm)
-				path.plotSoilwater.Plot_σΨm = Plot_σΨm * SiteName * "_"
+				path.plotSoilwater.Plot_σΨm = Plot_σΨm * SiteName_Soilwater * "_"
 
-			Plot_Psd_θΨ = FileSoilHydro_Plot * "/Psd/IMP_ThetaH/"
+			Plot_Psd_θΨ = Path_Soilwater_Plot * "/Psd/IMP_ThetaH/"
 				mkpath(Plot_Psd_θΨ)				
-				path.plotSoilwater.Plot_Psd_θΨ = Plot_Psd_θΨ * SiteName * "_"
+				path.plotSoilwater.Plot_Psd_θΨ = Plot_Psd_θΨ * SiteName_Soilwater * "_"
 
-			Plot_IMP_model = FileSoilHydro_Plot * "/Psd/IMP/"
+			Plot_IMP_model = Path_Soilwater_Plot * "/Psd/IMP/"
 				mkpath(Plot_IMP_model)
-				path.plotSoilwater.Plot_IMP_model = Plot_IMP_model * SiteName * "_"
+				path.plotSoilwater.Plot_IMP_model = Plot_IMP_model * SiteName_Soilwater * "_"
 
-			Plot_Psd_θr = FileSoilHydro_Plot * "/Psd/ThetaR/" 
+			Plot_Psd_θr = Path_Soilwater_Plot * "/Psd/ThetaR/" 
 				mkpath(Plot_Psd_θr)
 				path.plotSoilwater.Plot_Psd_θr = Plot_Psd_θr * "Plot_ThetaR.svg"
 
-			Plot_∑infilt_Opt = FileSoilHydro_Plot * "/Infiltration/Optimize/"
+			Plot_∑infilt_Opt = Path_Soilwater_Plot * "/Infiltration/Optimize/"
 				mkpath(Plot_∑infilt_Opt)
-				path.plotSoilwater.Plot_∑infilt_Opt = Plot_∑infilt_Opt * SiteName * "_"
+				path.plotSoilwater.Plot_∑infilt_Opt = Plot_∑infilt_Opt * SiteName_Soilwater * "_"
 
-			Plot_∑infilt_θΨ = FileSoilHydro_Plot * "/Infiltration/ThetaH/"
+			Plot_∑infilt_θΨ = Path_Soilwater_Plot * "/Infiltration/ThetaH/"
 				mkpath(Plot_∑infilt_θΨ)
-				path.plotSoilwater.Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * SiteName * "_"
+				path.plotSoilwater.Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * SiteName_Soilwater * "_"
 		
 		# =============================================================
 		#		HYPIX MODEL
@@ -248,75 +251,75 @@ module paths
 			IdName_Hypix = Soilname[iSim]
 		
 		# HYPIX INPUT LEVEL 1 ===
-         FileHypix_Input₁         = Path_Home * "/INPUT/Data_Hypix/" * SiteName * "/"
-         path.hyPix.IdSelect      = FileHypix_Input₁ * SiteName * "_" * path.hyPix.IdSelect
-         path.hyPix.JulesMetadata = FileHypix_Input₁ * path.hyPix.JulesMetadata
+         Path_Hypix₁         = PathData_Hypix * "/"
+         path.hyPix.IdSelect      = Path_Hypix₁ * SiteName_Hypix * "_" * path.hyPix.IdSelect
+         path.hyPix.JulesMetadata = Path_Hypix₁ * path.hyPix.JulesMetadata
 
-			# HYPIX INPUT LEVEL 2 ===
-			FileHypix_Input₂            = Path_Home * "/INPUT/Data_Hypix/" * SiteName * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
+		# HYPIX INPUT LEVEL 2 ===
+		Path_Hypix₂            = PathData_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
-			path.hyPix.Climate          = FileHypix_Input₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * path.hyPix.Climate
-			path.hyPix.Dates            = FileHypix_Input₂ * path.hyPix.Dates
-			path.hyPix.Discretization   = FileHypix_Input₂ * path.hyPix.Discretization
-			path.hyPix.HyPix_HydroParam = FileHypix_Input₂ * path.hyPix.HyPix_HydroParam
-			path.hyPix.HyPix_VegParam   = FileHypix_Input₂ * path.hyPix.HyPix_VegParam
-			path.hyPix.HyPixParamOpt    = FileHypix_Input₂ * path.hyPix.HyPixParamOpt
-			path.hyPix.obsTheta         = FileHypix_Input₂ * path.hyPix.obsTheta
+			path.hyPix.Climate          = Path_Hypix₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * path.hyPix.Climate
+			path.hyPix.Dates            = Path_Hypix₂ * path.hyPix.Dates
+			path.hyPix.Discretization   = Path_Hypix₂ * path.hyPix.Discretization
+			path.hyPix.HyPix_HydroParam = Path_Hypix₂ * path.hyPix.HyPix_HydroParam
+			path.hyPix.HyPix_VegParam   = Path_Hypix₂ * path.hyPix.HyPix_VegParam
+			path.hyPix.HyPixParamOpt    = Path_Hypix₂ * path.hyPix.HyPixParamOpt
+			path.hyPix.obsTheta         = Path_Hypix₂ * path.hyPix.obsTheta
 
-			path.hyPix.Input_OfStep     = Path_Home * "/INPUT/Data_Hypix/RESULTS/"
+			path.hyPix.Input_OfStep     = PathData_Hypix * "/RESULTS/"
 
-			# HYPIX LOOKUPTABLE ===
-         FileHypix_LookUpTable                 = Path_Home * "/INPUT/Data_Hypix/LookUpTable/"
+		# HYPIX LOOKUPTABLE ===
+      Path_Hypix_LookUpTable                 = Path_Home * "/INPUT/Data_Hypix/LookUpTable/"
 					
-         path.hyPix.LookUpTable_CropCoeficient = FileHypix_LookUpTable * path.hyPix.LookUpTable_CropCoeficient
-         path.hyPix.LookUpTable_Lai                       = FileHypix_LookUpTable * path.hyPix.LookUpTable_Lai
+         path.hyPix.LookUpTable_CropCoeficient = Path_Hypix_LookUpTable * path.hyPix.LookUpTable_CropCoeficient
+         path.hyPix.LookUpTable_Lai                       = Path_Hypix_LookUpTable * path.hyPix.LookUpTable_Lai
 
 			# HYPIX OUTPUT TABLE
-			FileSoilHydro_Table = Path_Home * "/OUTPUT/Hypix/" * SiteName * "/" * IdName_Hypix *"/Table/" 				
-				mkpath(FileSoilHydro_Table) #Make Folder if not exist
+			Path_Hypix_Table = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Table/" 				
+				mkpath(Path_Hypix_Table) #Make Folder if not exist
 
-				FileSoilHydro_Table = FileSoilHydro_Table * SiteName * "_"
+				Path_Hypix_Table = Path_Hypix_Table * SiteName_Hypix * "_"
 
-            path.hyPix.Table_DailyClimate    = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_DailyClimate
-            path.hyPix.Table_Discretisation  = FileSoilHydro_Table  *  IdName_Hypix * "_" *path.hyPix.Table_Discretisation
-            path.hyPix.Table_Hydro           = FileSoilHydro_Table  *  IdName_Hypix * "_" *path.hyPix.Table_Hydro
-            path.hyPix.Table_KΨ              = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_KΨ
-            path.hyPix.Table_Performance     = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Performance
-            path.hyPix.Table_Q               = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Q
-            path.hyPix.Table_Signature       = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Signature
-            path.hyPix.Table_TimeSerie       = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_TimeSerie
-            path.hyPix.Table_TimeSerie_Daily = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_TimeSerie_Daily
-            path.hyPix.Table_Veg             = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Veg
-            path.hyPix.Table_θ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_θ
-            path.hyPix.Table_θΨ              = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_θΨ
-            path.hyPix.Table_Ψ               = FileSoilHydro_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Ψ
+            path.hyPix.Table_DailyClimate    = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_DailyClimate
+            path.hyPix.Table_Discretisation  = Path_Hypix_Table  *  IdName_Hypix * "_" *path.hyPix.Table_Discretisation
+            path.hyPix.Table_Hydro           = Path_Hypix_Table  *  IdName_Hypix * "_" *path.hyPix.Table_Hydro
+            path.hyPix.Table_KΨ              = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_KΨ
+            path.hyPix.Table_Performance     = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Performance
+            path.hyPix.Table_Q               = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Q
+            path.hyPix.Table_Signature       = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Signature
+            path.hyPix.Table_TimeSerie       = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_TimeSerie
+            path.hyPix.Table_TimeSerie_Daily = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_TimeSerie_Daily
+            path.hyPix.Table_Veg             = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Veg
+            path.hyPix.Table_θ               = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_θ
+            path.hyPix.Table_θΨ              = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_θΨ
+            path.hyPix.Table_Ψ               = Path_Hypix_Table  *  IdName_Hypix * "_"* path.hyPix.Table_Ψ
 				
-			FileSoilHydro_Table_θaverage = Path_Home * "/OUTPUT/Hypix/" * SiteName * "/SoilMoistureSim/" 				
-				mkpath(FileSoilHydro_Table_θaverage) #Make Folder if not exist
-				path.hyPix.Table_θaverage        = FileSoilHydro_Table_θaverage *  IdName_Hypix * "_"* path.hyPix.Table_θaverage
+			Path_Hypix_Table_θaverage = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/SoilMoistureSim/" 				
+				mkpath(Path_Hypix_Table_θaverage) #Make Folder if not exist
+				path.hyPix.Table_θaverage        = Path_Hypix_Table_θaverage *  IdName_Hypix * "_"* path.hyPix.Table_θaverage
 
 			# HYPIX PLOT CORE
-			FileHypix_Plot = Path_Home * "/OUTPUT/Hypix/" * SiteName * "/" * IdName_Hypix *"/Plots/" 	
-				mkpath(FileHypix_Plot)
+			Path_Hypix_Plot = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
+				mkpath(Path_Hypix_Plot)
 
-            path.hyPix.Plot_HypixTime  = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_HypixTime
-            path.hyPix.Plot_Hypix_θΨK  = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Hypix_θΨK
-            path.hyPix.Plot_RainfallInterception  = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_RainfallInterception
-            path.hyPix.Plot_Se_Time    = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Time
-            path.hyPix.Plot_Se_Z       = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Z
-            path.hyPix.Plot_Sorptivity = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Sorptivity
-            path.hyPix.Vegetation      = FileHypix_Plot * IdName_Hypix  * "_" * path.hyPix.Vegetation
+            path.hyPix.Plot_HypixTime  = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_HypixTime
+            path.hyPix.Plot_Hypix_θΨK  = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Hypix_θΨK
+            path.hyPix.Plot_RainfallInterception  = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_RainfallInterception
+            path.hyPix.Plot_Se_Time    = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Time
+            path.hyPix.Plot_Se_Z       = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Z
+            path.hyPix.Plot_Sorptivity = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Sorptivity
+            path.hyPix.Vegetation      = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Vegetation
 
 			# HYPIX PLOT OTHERS: RESULTS
-			FileHypix_Plot_Results = Path_Home * "/OUTPUT/Hypix/RESULTS/"
-				mkpath(FileHypix_Plot_Results)
+			Path_Hypix_Result= Path_Home * "/OUTPUT/Hypix/RESULTS/"
+				mkpath(Path_Hypix_Result)
 
-		path.hyPix.Plot_OfStep           = FileHypix_Plot_Results
-		path.hyPix.Plot_θ∂θ∂Ψ            = FileHypix_Plot_Results * path.hyPix.Plot_θ∂θ∂Ψ
-		path.hyPix.Plot_Ψmin_Ψmax        = FileHypix_Plot_Results * path.hyPix.Plot_Ψmin_Ψmax
-		path.hyPix.Plot_σ2θr             = FileHypix_Plot_Results * path.hyPix.Plot_σ2θr
-		path.hyPix.Plot_θΨ_Δθ            = FileHypix_Plot_Results * path.hyPix.Plot_θΨ_Δθ
-		path.hyPix.Plot_Se_Ψ_Constrained = FileHypix_Plot_Results * path.hyPix.Plot_Se_Ψ_Constrained
+				path.hyPix.Plot_OfStep           = Path_Hypix_Result
+				path.hyPix.Plot_θ∂θ∂Ψ            = Path_Hypix_Result* path.hyPix.Plot_θ∂θ∂Ψ
+				path.hyPix.Plot_Ψmin_Ψmax        = Path_Hypix_Result* path.hyPix.Plot_Ψmin_Ψmax
+				path.hyPix.Plot_σ2θr             = Path_Hypix_Result * path.hyPix.Plot_σ2θr
+				path.hyPix.Plot_θΨ_Δθ            = Path_Hypix_Result * path.hyPix.Plot_θΨ_Δθ
+				path.hyPix.Plot_Se_Ψ_Constrained = Path_Hypix_Result * path.hyPix.Plot_Se_Ψ_Constrained
 
 	
 	return path

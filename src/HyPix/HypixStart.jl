@@ -11,7 +11,7 @@ module hypixStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_START(Soilname, option, param, Path_Data, SiteName)
+	function HYPIX_START(Soilname, option, param,  PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
@@ -29,9 +29,8 @@ module hypixStart
 			println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 			println("		=== === === START: Looping with time $iOpt steps \n")
 
-
 			# READING STRUCTURE OF PATH
-				path = paths.PATH(iSim, option, Path_Data, SiteName; Soilname=Soilname)
+				path = paths.PATH(iSim, option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰; Soilname=Soilname)
 
 				println("\n	 ==== ==== ===  $(path.hyPix.IdName_Hypix) 	=== ==== ====\n")
 

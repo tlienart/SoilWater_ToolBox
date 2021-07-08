@@ -52,7 +52,7 @@ module paths
 	end # struct INPUT_TABLE_SMAP
 
 	mutable struct TABLE_SOILWATER
-		FileSoilHydro_Table₁::String
+		Path_Soilwater_Table::String
 		Table_HydroInfilt::String
 		Table_Infilt::String
 		Table_KΨ::String
@@ -161,10 +161,10 @@ module paths
 			option = OPTIONS(ModelName, Select, SiteName_Soilwater)
 	
 		# Paths
-			FileDataSoilhydro_Input = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
+			FileDataSoilwater_Input = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
 
-			FileSoilHydro_Table₁ = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Table/" 
-				mkpath(FileSoilHydro_Table₁) 
+			Path_Soilwater_Table = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Table/" 
+				mkpath(Path_Soilwater_Table) 
 
 		# =============================================================
 		#		INPUT_SOILWATER
@@ -184,18 +184,18 @@ module paths
             Ψθ                 = "ThetaH.csv"
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-            BulkDensity        = FileDataSoilhydro_Input * BulkDensity
-            ConvertModel       = FileDataSoilhydro_Input * ConvertModel
-            HydroParam_Infilt  = FileDataSoilhydro_Input * HydroParam_Infilt
-            HydroParam_ThetaH  = FileDataSoilhydro_Input * HydroParam_ThetaH
-            IdSelect           = FileDataSoilhydro_Input * IdSelect
-            Infiltration       = FileDataSoilhydro_Input * Infiltration
-            Infiltration_Param = FileDataSoilhydro_Input * Infiltration_Param
-            Kunsat             = FileDataSoilhydro_Input * Kunsat
-            Psd                = FileDataSoilhydro_Input * Psd
-            Pedological⍰    	= FileDataSoilhydro_Input * Pedological⍰
-            Φ                  = FileDataSoilhydro_Input * Φ
-            Ψθ                 = FileDataSoilhydro_Input * Ψθ
+            BulkDensity        = FileDataSoilwater_Input * BulkDensity
+            ConvertModel       = FileDataSoilwater_Input * ConvertModel
+            HydroParam_Infilt  = FileDataSoilwater_Input * HydroParam_Infilt
+            HydroParam_ThetaH  = FileDataSoilwater_Input * HydroParam_ThetaH
+            IdSelect           = FileDataSoilwater_Input * IdSelect
+            Infiltration       = FileDataSoilwater_Input * Infiltration
+            Infiltration_Param = FileDataSoilwater_Input * Infiltration_Param
+            Kunsat             = FileDataSoilwater_Input * Kunsat
+            Psd                = FileDataSoilwater_Input * Psd
+            Pedological⍰    	= FileDataSoilwater_Input * Pedological⍰
+            Φ                  = FileDataSoilwater_Input * Φ
+            Ψθ                 = FileDataSoilwater_Input * Ψθ
 
 			inputSoilwater = INPUT_SOILWATER(BulkDensity, ConvertModel, HydroParam_Infilt, HydroParam_ThetaH, IdSelect, Infiltration, Infiltration_Param, Kunsat, Psd, Pedological⍰, Φ, Ψθ)		
 				
@@ -208,8 +208,8 @@ module paths
 				Smap                    	= "SmapLayer.csv"
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-            LookupTable_RockWetability = FileDataSoilhydro_Input * LookupTable_RockWetability
-				Smap = FileDataSoilhydro_Input * Smap
+            LookupTable_RockWetability = FileDataSoilwater_Input * LookupTable_RockWetability
+				Smap = FileDataSoilwater_Input * Smap
 
 			inputSmap = INPUT_SMAP(LookupTable_RockWetability, Smap)
 				
@@ -222,7 +222,7 @@ module paths
 				σ_ψM_Scenario           = "σ_ψM_Scenario.csv"
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				σ_ψM_Scenario      = FileDataSoilhydro_Input * σ_ψM_Scenario
+				σ_ψM_Scenario      = FileDataSoilwater_Input * σ_ψM_Scenario
 				
 			inputTemporary = INPUT_TEMPORARY(σ_ψM_Scenario)
 
@@ -242,19 +242,19 @@ module paths
 				TableComplete_KΨ    = "TableCompleteKΨ.csv"
 			
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            FileSoilHydro_Table₁ = FileSoilHydro_Table₁ * SiteName_Soilwater 
+            Path_Soilwater_Table = Path_Soilwater_Table * SiteName_Soilwater 
 
-            Table_HydroInfilt    = FileSoilHydro_Table₁ * string(opt.infilt.Model⍰) * "_" *  ModelName  *  "_" * Table_HydroInfilt
-            Table_Infilt         = FileSoilHydro_Table₁ * string(opt.infilt.Model⍰) *  "_" *  ModelName  *  "_" *  Table_Infilt
-            Table_KΨ             = FileSoilHydro_Table₁ * "_"  *  ModelName * "_" * Table_KΨ
-            Table_Psd            = FileSoilHydro_Table₁ * string(opt.psd.Model⍰) *  "_" * ModelName * "_" * Table_Psd
-            Table_Psd_θΨ_θ       = FileSoilHydro_Table₁ * string(opt.psd.HydroModel⍰) *  "_" * ModelName * "_" *  Table_Psd_θΨ_θ
-            Table_θΨ_Psd         = FileSoilHydro_Table₁ * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * ModelName * "_" * Table_θΨ_Psd
-            Table_θΨK            = FileSoilHydro_Table₁ *  "_" * string(opt.hydro.HydroModel⍰) * "_" * Table_θΨK
-            TableComplete_θΨ     = FileSoilHydro_Table₁ *   "_" *  ModelName * "_" * TableComplete_θΨ
-            TableComplete_KΨ     = FileSoilHydro_Table₁ *   "_" *  ModelName * "_" * TableComplete_KΨ
+            Table_HydroInfilt    = Path_Soilwater_Table * string(opt.infilt.Model⍰) * "_" *  ModelName  *  "_" * Table_HydroInfilt
+            Table_Infilt         = Path_Soilwater_Table * string(opt.infilt.Model⍰) *  "_" *  ModelName  *  "_" *  Table_Infilt
+            Table_KΨ             = Path_Soilwater_Table * "_"  *  ModelName * "_" * Table_KΨ
+            Table_Psd            = Path_Soilwater_Table * string(opt.psd.Model⍰) *  "_" * ModelName * "_" * Table_Psd
+            Table_Psd_θΨ_θ       = Path_Soilwater_Table * string(opt.psd.HydroModel⍰) *  "_" * ModelName * "_" *  Table_Psd_θΨ_θ
+            Table_θΨ_Psd         = Path_Soilwater_Table * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * ModelName * "_" * Table_θΨ_Psd
+            Table_θΨK            = Path_Soilwater_Table *  "_" * string(opt.hydro.HydroModel⍰) * "_" * Table_θΨK
+            TableComplete_θΨ     = Path_Soilwater_Table *   "_" *  ModelName * "_" * TableComplete_θΨ
+            TableComplete_KΨ     = Path_Soilwater_Table *   "_" *  ModelName * "_" * TableComplete_KΨ
 			
-			tableSoilwater = TABLE_SOILWATER(FileSoilHydro_Table₁, Table_HydroInfilt, Table_Infilt, Table_KΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK, TableComplete_θΨ, TableComplete_KΨ)
+			tableSoilwater = TABLE_SOILWATER(Path_Soilwater_Table, Table_HydroInfilt, Table_Infilt, Table_KΨ, Table_Psd, Table_Psd_θΨ_θ, Table_θΨ_Psd, Table_θΨK, TableComplete_θΨ, TableComplete_KΨ)
 
 
 		# =============================================================
@@ -263,10 +263,10 @@ module paths
 			# Output tables smap
             Table_θΨK = "Table_SmapThetaHK.csv"
 
-            Table_θΨK = FileSoilHydro_Table₁ * "_" * string(opt.hydro.HydroModel⍰) * "_" * Table_θΨK
+            Table_θΨK = Path_Soilwater_Table * "_" * string(opt.hydro.HydroModel⍰) * "_" * Table_θΨK
 
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				Table_Smap =  FileSoilHydro_Table₁ * "Table_Smap.csv"
+				Table_Smap =  Path_Soilwater_Table * "Table_Smap.csv"
 
 				tableSmap = TABLE_SMAP(Table_Smap, Table_θΨK)
 
@@ -286,38 +286,38 @@ module paths
 		# =============================================================
 		#		PLOT SOILWATER
 		# =============================================================
-			FileSoilHydro_Plot = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Plots/"
+			Path_Soilwater_Plot = Path_Home * "/OUTPUT/SoilWater/" * SiteName_Soilwater * "/Plots/"
 
-			Plot_θΨK = FileSoilHydro_Plot * "/Lab/" 
+			Plot_θΨK = Path_Soilwater_Plot * "/Lab/" 
 				mkpath(Plot_θΨK)
 				Plot_θΨK = Plot_θΨK * SiteName_Soilwater * "_"
 
-			Plot_σΨm = FileSoilHydro_Plot * "/LabSigmaHm/" 
+			Plot_σΨm = Path_Soilwater_Plot * "/LabSigmaHm/" 
 				mkpath(Plot_σΨm)
 				Plot_σΨm = Plot_σΨm * SiteName_Soilwater * "_"
 
-			Plot_Psd_θΨ = FileSoilHydro_Plot * "/Psd/IMP_ThetaH/"
+			Plot_Psd_θΨ = Path_Soilwater_Plot * "/Psd/IMP_ThetaH/"
 				mkpath(Plot_Psd_θΨ)				
 				Plot_Psd_θΨ = Plot_Psd_θΨ * SiteName_Soilwater * "_"
 
-			Plot_IMP_model = FileSoilHydro_Plot * "/Psd/IMP/"
+			Plot_IMP_model = Path_Soilwater_Plot * "/Psd/IMP/"
 				mkpath(Plot_IMP_model)
 				Plot_IMP_model = Plot_IMP_model * SiteName_Soilwater * "_"
 
-			Plot_Psd_θr = FileSoilHydro_Plot * "/Psd/ThetaR/" 
+			Plot_Psd_θr = Path_Soilwater_Plot * "/Psd/ThetaR/" 
 				mkpath(Plot_Psd_θr)
 				Plot_Psd_θr = Plot_Psd_θr * "Plot_ThetaR.svg"
 
-			Plot_∑infilt_Opt = FileSoilHydro_Plot * "/Infiltration/Optimize/"
+			Plot_∑infilt_Opt = Path_Soilwater_Plot * "/Infiltration/Optimize/"
 				mkpath(Plot_∑infilt_Opt)
 				Plot_∑infilt_Opt = Plot_∑infilt_Opt * SiteName_Soilwater * "_"
 
 
-			Plot_∑infilt_θΨ = FileSoilHydro_Plot * "/Infiltration/ThetaH/"
+			Plot_∑infilt_θΨ = Path_Soilwater_Plot * "/Infiltration/ThetaH/"
 				mkpath(Plot_∑infilt_θΨ)
 				Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * SiteName_Soilwater * "_"
 
-			Plot_Sorptivity_Se = FileSoilHydro_Plot * "/Sorptivity/"
+			Plot_Sorptivity_Se = Path_Soilwater_Plot * "/Sorptivity/"
 				mkpath(Plot_Sorptivity_Se)
 				Plot_Sorptivity_Se = Plot_Sorptivity_Se * SiteName_Soilwater * "_"
 
