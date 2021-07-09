@@ -5,7 +5,7 @@
 
 using Suppressor
 
-@suppress begin
+# @suppress begin
     include("Option.jl")
     include("Path.jl")
 
@@ -87,4 +87,4 @@ using Suppressor
 
     include("Temporary/KS_SMAP.jl")
 
-end # Suppressor 
+# end # Suppressor 

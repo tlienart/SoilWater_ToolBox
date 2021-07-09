@@ -90,32 +90,6 @@ module ofHypix
 			return Rmse = √(Rmse / (Float64(iCount)))		
 			end # function WOF_θ
 
-
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : RMSE_θ
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function RMSE_θ(∑T, obsTheta, N_iT::Int, N_iZ::Int, θ, θSim)
-
-				θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.N_iT], obsTheta.N_iT, N_iT, N_iZ, θSim, θ)
-				
-				Rmse = 0.0
-				iCount = 0
-				for iZ=1:obsTheta.Ndepth
-
-					Wdepth = 2.0 * (Float64(obsTheta.Ndepth) + 1.0 - Float64(iZ) ) / (Float64(obsTheta.Ndepth) * (Float64(obsTheta.Ndepth) + 1.0))
-
-					for iT=1:obsTheta.N_iT 	
-						if θSim[iT,iZ] > 0.0 # avoiding no data
-							Rmse +=  Wdepth * (obsTheta.θobs[iT,iZ] - θSim[iT, obsTheta.ithetaObs[iZ]]) ^ 2
-							iCount += 1
-						end # if: obsTheta.θobs[iT,iZ] > 0.0
-					end # for it
-
-				end # for iZ
-
-			return Rmse = √(Rmse / (Float64(iCount)))		
-			end # function WOF_θ
-
 	end  # module θof
 
 	# ............................................................
