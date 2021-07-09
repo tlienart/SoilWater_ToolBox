@@ -4,143 +4,143 @@
 module plotHypix
 	import  ..cst, ..kunsat, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
 	import Dates: value, DateTime
-	using PGFPlots
+	# using PGFPlots
 
-	export θΨK
+	# export θΨK
 
 	# ========================================
 	# PLOTTING HYDRAULIC RELATIONSHIP FOR EVERY HORIZON
 	# ======================================== 
-	function θΨK(hydroHorizon, N_iHorizon, iOpt, pathHyPix)
+	# function θΨK(hydroHorizon, N_iHorizon, iOpt, pathHyPix)
 
-		# Deriving the Min and Max Ψ from principals of soil physics
-		Ψ_Min_Horizon = fill(0.0::Float64, N_iHorizon)
-		Ψ_Max_Horizon = fill(0.0::Float64, N_iHorizon)
-		for iZ=1:N_iHorizon
-			Ψ_Max_Horizon[iZ], Ψ_Min_Horizon[iZ] = ΨminΨmax.ΨMINΨMAX(hydroHorizon.θs[iZ], hydroHorizon.θsMacMat[iZ], hydroHorizon.σ[iZ], hydroHorizon.σMac[iZ], hydroHorizon.Ψm[iZ], hydroHorizon.ΨmMac[iZ])
-		end  # for iZ=1:N_iHorizon
+	# 	# Deriving the Min and Max Ψ from principals of soil physics
+	# 	Ψ_Min_Horizon = fill(0.0::Float64, N_iHorizon)
+	# 	Ψ_Max_Horizon = fill(0.0::Float64, N_iHorizon)
+	# 	for iZ=1:N_iHorizon
+	# 		Ψ_Max_Horizon[iZ], Ψ_Min_Horizon[iZ] = ΨminΨmax.ΨMINΨMAX(hydroHorizon.θs[iZ], hydroHorizon.θsMacMat[iZ], hydroHorizon.σ[iZ], hydroHorizon.σMac[iZ], hydroHorizon.Ψm[iZ], hydroHorizon.ΨmMac[iZ])
+	# 	end  # for iZ=1:N_iHorizon
 		
-		# PREPARING THE DATA
-			N_Se = 1000
-			local Ψplot = exp.(range(log(minimum(Ψ_Min_Horizon[1:N_iHorizon])), stop = log(maximum(Ψ_Max_Horizon[1:N_iHorizon])), length=N_Se)) 
+	# 	# PREPARING THE DATA
+	# 		N_Se = 1000
+	# 		local Ψplot = exp.(range(log(minimum(Ψ_Min_Horizon[1:N_iHorizon])), stop = log(maximum(Ψ_Max_Horizon[1:N_iHorizon])), length=N_Se)) 
 
-			local θplot    = fill(0.0::Float64, N_Se)
-			local Kplot    = fill(0.0::Float64, N_Se)
-			local ∂θ∂Ψplot = fill(0.0::Float64, N_Se)
-			local ∂K∂Ψplot = fill(0.0::Float64, N_Se)
+	# 		local θplot    = fill(0.0::Float64, N_Se)
+	# 		local Kplot    = fill(0.0::Float64, N_Se)
+	# 		local ∂θ∂Ψplot = fill(0.0::Float64, N_Se)
+	# 		local ∂K∂Ψplot = fill(0.0::Float64, N_Se)
 
-			Plot_θΨK = PGFPlots.GroupPlot(4, 100, groupStyle = "horizontal sep = 3.5cm, vertical sep = 3.5cm")
+	# 		Plot_θΨK = PGFPlots.GroupPlot(4, 100, groupStyle = "horizontal sep = 3.5cm, vertical sep = 3.5cm")
 
-		# FOR EVERY HORIZON
-		for iZ = 1:N_iHorizon
+	# 	# FOR EVERY HORIZON
+	# 	for iZ = 1:N_iHorizon
 			
-			for iΨ = 1:N_Se
-				if Ψ_Max_Horizon[iZ] ≥ Ψplot[iΨ] ≥ Ψ_Min_Horizon[iZ]
-					θplot[iΨ]    = wrc. Ψ_2_θDual(optionₘ,Ψplot[iΨ], iZ, hydroHorizon)
+	# 		for iΨ = 1:N_Se
+	# 			if Ψ_Max_Horizon[iZ] ≥ Ψplot[iΨ] ≥ Ψ_Min_Horizon[iZ]
+	# 				θplot[iΨ]    = wrc. Ψ_2_θDual(optionₘ,Ψplot[iΨ], iZ, hydroHorizon)
 					
-					Kplot[iΨ]    = kunsat.Ψ_2_KUNSAT(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
+	# 				Kplot[iΨ]    = kunsat.Ψ_2_KUNSAT(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 					
-					∂θ∂Ψplot[iΨ] = wrc.∂θ∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
+	# 				∂θ∂Ψplot[iΨ] = wrc.∂θ∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 
-					∂K∂Ψplot[iΨ] = kunsat.∂K∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
-				else
-					θplot[iΨ]    = NaN
+	# 				∂K∂Ψplot[iΨ] = kunsat.∂K∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
+	# 			else
+	# 				θplot[iΨ]    = NaN
 					
-					Kplot[iΨ]    = NaN
+	# 				Kplot[iΨ]    = NaN
 					
-					∂θ∂Ψplot[iΨ] = NaN
+	# 				∂θ∂Ψplot[iΨ] = NaN
 
-					∂K∂Ψplot[iΨ] = NaN
-				end
-			end # for iΨ
+	# 				∂K∂Ψplot[iΨ] = NaN
+	# 			end
+	# 		end # for iΨ
 
-			Θs_Max = maximum(hydroHorizon.θs[1:N_iHorizon]) + 0.05
-			Ks_Min = 10.0 ^ -7 * cst.MmS_2_CmH
-			Ks_Max = maximum(hydroHorizon.Ks[1:N_iHorizon]) * cst.MmS_2_CmH * 1.1
+	# 		Θs_Max = maximum(hydroHorizon.θs[1:N_iHorizon]) + 0.05
+	# 		Ks_Min = 10.0 ^ -7 * cst.MmS_2_CmH
+	# 		Ks_Max = maximum(hydroHorizon.Ks[1:N_iHorizon]) * cst.MmS_2_CmH * 1.1
 
-			Title =" $(pathHyPix.SiteName_Hypix)  Layer = $(iZ)"
+	# 		Title =" $(pathHyPix.SiteName_Hypix)  Layer = $(iZ)"
 		
-		# Plot 1: θΨ
-			Plot_θΨ = PGFPlots.Plots.Linear(log.(Ψplot) , θplot, style=" smooth, blue, very thick", mark="none", legendentry=L"$ \theta ( \Psi ) $")
+	# 	# Plot 1: θΨ
+	# 		Plot_θΨ = PGFPlots.Plots.Linear(log.(Ψplot) , θplot, style=" smooth, blue, very thick", mark="none", legendentry=L"$ \theta ( \Psi ) $")
 
-			Plot_hydro = [Plot_θΨ]
+	# 		Plot_hydro = [Plot_θΨ]
 
-			push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title, xlabel=L"$ Ln \ \Psi [mm]$", ylabel=L"$ \theta \ [mm{^3} \ mm^{-3}]$", xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), ymin=0.0, ymax=Θs_Max, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
+	# 		push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title, xlabel=L"$ Ln \ \Psi [mm]$", ylabel=L"$ \theta \ [mm{^3} \ mm^{-3}]$", xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), ymin=0.0, ymax=Θs_Max, legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
 
-		# Plot 2: Kplot(Ψplot)
-			Plot_Kθ = PGFPlots.Plots.Linear(log.(Ψplot), Kplot .* cst.MmS_2_CmH, style=" smooth, red, very thick", mark="none", legendentry=L"$ K_{unsat} \ ( \Psi ) $")
+	# 	# Plot 2: Kplot(Ψplot)
+	# 		Plot_Kθ = PGFPlots.Plots.Linear(log.(Ψplot), Kplot .* cst.MmS_2_CmH, style=" smooth, red, very thick", mark="none", legendentry=L"$ K_{unsat} \ ( \Psi ) $")
 
-			Plot_hydro = [Plot_Kθ]
+	# 		Plot_hydro = [Plot_Kθ]
 			
-			push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title,  xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), ymax=Ks_Max, ymode="log", xlabel=L"$Ln \  \Psi [mm]$", ylabel=L"$ K_{unsat} \ [cm \ h^{-1}]$", legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
+	# 		push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title,  xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), ymax=Ks_Max, ymode="log", xlabel=L"$Ln \  \Psi [mm]$", ylabel=L"$ K_{unsat} \ [cm \ h^{-1}]$", legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
 
-		# Plot 3: ∂θ∂Ψplot
-			Plot_∂θ∂Ψ = PGFPlots.Plots.Linear(log.(Ψplot), ∂θ∂Ψplot , style=" smooth, green, very thick", mark="none", legendentry=L"$ \partial \theta \partial \Psi $")
+	# 	# Plot 3: ∂θ∂Ψplot
+	# 		Plot_∂θ∂Ψ = PGFPlots.Plots.Linear(log.(Ψplot), ∂θ∂Ψplot , style=" smooth, green, very thick", mark="none", legendentry=L"$ \partial \theta \partial \Psi $")
 
-			Plot_hydro = [Plot_∂θ∂Ψ]
+	# 		Plot_hydro = [Plot_∂θ∂Ψ]
 
-			push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title, xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), xlabel=L"$Ln \  \Psi [mm] $", ylabel=L"$ \partial \theta \partial \Psi $", legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
+	# 		push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title, xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), xlabel=L"$Ln \  \Psi [mm] $", ylabel=L"$ \partial \theta \partial \Psi $", legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
 
-		# Plot 4: ∂K∂Ψplot
-			Plot_∂K∂Ψ = PGFPlots.Plots.Linear(log.(Ψplot), ∂K∂Ψplot, style=" smooth, teal, very thick", mark="none", legendentry=L"$ \partial K \partial \Psi $")
+	# 	# Plot 4: ∂K∂Ψplot
+	# 		Plot_∂K∂Ψ = PGFPlots.Plots.Linear(log.(Ψplot), ∂K∂Ψplot, style=" smooth, teal, very thick", mark="none", legendentry=L"$ \partial K \partial \Psi $")
 
-			Plot_hydro = [Plot_∂K∂Ψ]
+	# 		Plot_hydro = [Plot_∂K∂Ψ]
 
-			push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title, xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), xlabel=L"$Ln \  \Psi \ [mm]$", ylabel=L"$ \partial K \partial \Psi $", legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
+	# 		push!(Plot_θΨK, PGFPlots.Axis(Plot_hydro, style="width=20cm, height=10cm", title=Title, xmin=log(Ψ_Min_Horizon[iZ]), xmax=log(Ψ_Max_Horizon[iZ]), xlabel=L"$Ln \  \Psi \ [mm]$", ylabel=L"$ \partial K \partial \Psi $", legendStyle ="{at={(0.0,-0.25)}, anchor=south west, legend columns=1}"))
 
-		end #iZ ............................................
+	# 	end #iZ ............................................
 
-		Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iOpt) * ".svg"
-		PGFPlots.save(Path, Plot_θΨK) 
-	end # function θΨK
+	# 	Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iOpt) * ".svg"
+	# 	PGFPlots.save(Path, Plot_θΨK) 
+	# end # function θΨK
 
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : ROOTDENSITY
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function VEG_FUNCTIONS(discret, iOpt, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# #		FUNCTION : ROOTDENSITY
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# 	function VEG_FUNCTIONS(discret, iOpt, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
 
-			Plot_All = PGFPlots.GroupPlot(2, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
+	# 		Plot_All = PGFPlots.GroupPlot(2, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
 
-			# PLOT VEG_FUNCTIONS
-				ΔRootDensity_Norm = fill(0.0::Float64, N_iRoot)
-				# Taking accoung the tickness of the discretisation
-				# for iZ=1:N_iRoot
-				# 		ΔRootDensity_Norm[iZ] = Z[N_iRoot] * ΔRootDensity[iZ] / discret.ΔZ[iZ]
-				# end
+	# 		# PLOT VEG_FUNCTIONS
+	# 			ΔRootDensity_Norm = fill(0.0::Float64, N_iRoot)
+	# 			# Taking accoung the tickness of the discretisation
+	# 			# for iZ=1:N_iRoot
+	# 			# 		ΔRootDensity_Norm[iZ] = Z[N_iRoot] * ΔRootDensity[iZ] / discret.ΔZ[iZ]
+	# 			# end
 
-				# Plotting
-					Plot_RootDensity = PGFPlots.Plots.Linear(ΔRootDensity[1:N_iRoot], discret.Znode[1:N_iRoot], style=" smooth, cyan, very thick", mark="none")
+	# 			# Plotting
+	# 				Plot_RootDensity = PGFPlots.Plots.Linear(ΔRootDensity[1:N_iRoot], discret.Znode[1:N_iRoot], style=" smooth, cyan, very thick", mark="none")
 
-					Plot = [Plot_RootDensity]
+	# 				Plot = [Plot_RootDensity]
 
-					push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Delta Rdf \ [\%] $", ylabel=L"$Z \ [mm]$", title="(a)"))
+	# 				push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Delta Rdf \ [\%] $", ylabel=L"$Z \ [mm]$", title="(a)"))
 			
-			# PLOT StressReduction
-				# Data	
-				N_Se = 6
-				Ψstress = fill(0.0::Float64, 2, N_Se) 
-				Ψstress[1,1] = veg.Ψfeddes1 / 10.0
-				Ψstress[1,2] = veg.Ψfeddes1
-				Ψstress[1,3] = veg.Ψfeddes2
-				Ψstress[1,4] = veg.Ψfeddes3
-				Ψstress[1,5] = veg.Ψfeddes4
-				Ψstress[1,6] = veg.Ψfeddes4 * 2.0
+	# 		# PLOT StressReduction
+	# 			# Data	
+	# 			N_Se = 6
+	# 			Ψstress = fill(0.0::Float64, 2, N_Se) 
+	# 			Ψstress[1,1] = veg.Ψfeddes1 / 10.0
+	# 			Ψstress[1,2] = veg.Ψfeddes1
+	# 			Ψstress[1,3] = veg.Ψfeddes2
+	# 			Ψstress[1,4] = veg.Ψfeddes3
+	# 			Ψstress[1,5] = veg.Ψfeddes4
+	# 			Ψstress[1,6] = veg.Ψfeddes4 * 2.0
 
-				Wsf = fill(0.0::Float64, N_Se)
-				for iΨ ∈ 1:N_Se
-					Wsf[iΨ] = rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(2, iΨ, veg, Ψstress)
-				end
+	# 			Wsf = fill(0.0::Float64, N_Se)
+	# 			for iΨ ∈ 1:N_Se
+	# 				Wsf[iΨ] = rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(2, iΨ, veg, Ψstress)
+	# 			end
 
-				Plot_Wsf = PGFPlots.Plots.Linear(Ψstress[1,1:N_Se] .* cst.Mm_2_kPa, Wsf[1:N_Se], style="violet, very thick", mark="none")
+	# 			Plot_Wsf = PGFPlots.Plots.Linear(Ψstress[1,1:N_Se] .* cst.Mm_2_kPa, Wsf[1:N_Se], style="violet, very thick", mark="none")
 
-				Plot = [Plot_Wsf]
+	# 			Plot = [Plot_Wsf]
 
-				push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Psi \ [kPa]$", xmode="log", ylabel=L"$ F_{waterStress} \ [-]$", title="(b)"))
+	# 			push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Psi \ [kPa]$", xmode="log", ylabel=L"$ F_{waterStress} \ [-]$", title="(b)"))
 
-			Path = pathHyPix.Vegetation * "_" * string(iOpt) * ".svg"
-			PGFPlots.save(Path, Plot_All)	
-		end  # function ROOTDENSITY
+	# 		Path = pathHyPix.Vegetation * "_" * string(iOpt) * ".svg"
+	# 		PGFPlots.save(Path, Plot_All)	
+	# 	end  # function ROOTDENSITY
 
 
 
