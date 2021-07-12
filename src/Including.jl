@@ -3,9 +3,9 @@
 # =============================================================
 # module including
 
-using Suppressor
+# using Suppressor
 
-@suppress begin
+# @suppress begin
     include("Option.jl")
     include("Path.jl")
 
@@ -15,11 +15,11 @@ using Suppressor
     include("Param.jl")
     include("Hydro/ΨminΨmax.jl")
     include("Hydro/HydroStruct.jl")
-    include("Hypix/HorizonLayer.jl")
+    include("HyPix/HorizonLayer.jl")
     include("Hydro/HydroRelation.jl")
     include("Hydro/Wrc.jl")
     include("Optim/Optimize.jl")
-    include("reading.jl")
+    include("Reading.jl")
     include("Hydro/Kunsat.jl")
     include("Table.jl")
     include("hydro/θψ2Ks.jl")
@@ -29,8 +29,8 @@ using Suppressor
     
     include("Psd/PsdThetar.jl")
 
-    include("Hypix/VegStruct.jl")
-    include("Hypix/Discretization.jl")
+    include("HyPix/VegStruct.jl")
+    include("HyPix/Discretization.jl")
     include("NoCore/Smap/ReadSmap.jl")
     include("NoCore/Smap/TableSmap.jl")
     include("NoCore/Smap/Smap2Hypix.jl")
@@ -57,34 +57,34 @@ using Suppressor
 
     include("Plot.jl")
 
-    include("Hypix/Interpolate.jl")
-    include("Hypix/Opt/ThetaObs.jl")
+    include("HyPix/Interpolate.jl")
+    include("HyPix/Opt/ThetaObs.jl")
     include("HyPix/θini.jl")
-    include("Hypix/Opt/OfHypix.jl")
-    include("Hypix/Interception.jl")
-    include("Hypix/Flux.jl")
-    include("Hypix/Ponding.jl")
-    include("Hypix/Residual.jl")
-    include("Hypix/Δtchange.jl")
-    include("Hypix/TimeStep.jl")
-    include("Hypix/Richard.jl")
-    include("Hypix/WaterBalance.jl")
-    include("Hypix/Evaporation.jl")
-    include("Hypix/RootWaterUptake.jl")
-    include("Hypix/CheckError.jl")
-    include("Hypix/Pet.jl")
+    include("HyPix/Opt/OfHypix.jl")
+    include("HyPix/Interception.jl")
+    include("HyPix/Flux.jl")
+    include("HyPix/Ponding.jl")
+    include("HyPix/Residual.jl")
+    include("HyPix/ΔΔtchange.jl")
+    include("HyPix/TimeStep.jl")
+    include("HyPix/Richard.jl")
+    include("HyPix/WaterBalance.jl")
+    include("HyPix/Evaporation.jl")
+    include("HyPix/RootWaterUptake.jl")
+    include("HyPix/CheckError.jl")
+    include("HyPix/Pet.jl")
     include("HyPix/Other/θaver.jl")
-    include("Hypix/Memory.jl")
-    include("Hypix/Climate.jl")
+    include("HyPix/Memory.jl")
+    include("HyPix/Climate.jl")
 
-    include("Hypix/PlotHypix.jl")
+    include("HyPix/PlotHypix.jl")
 
-    include("Hypix/HypixModel.jl")
-    include("Hypix/Opt/HypixOpt.jl")
-    include("Hypix/HypixStart.jl")
+    include("HyPix/HypixModel.jl")
+    include("HyPix/Opt/HypixOpt.jl")
+    include("HyPix/HypixStart.jl")
 
     # include("NoCore/Jules/Jules.jl")
 
     include("Temporary/KS_SMAP.jl")
 
-end # Suppressor 
+# end # Suppressor 
