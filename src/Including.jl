@@ -5,7 +5,7 @@
 
 using Suppressor
 
-# @suppress begin
+@suppress begin
     include("Option.jl")
     include("Path.jl")
 
@@ -14,8 +14,8 @@ using Suppressor
     include("Cst.jl")
     include("Param.jl")
     include("Hydro/ΨminΨmax.jl")
-    include("Hypix/HorizonLayer.jl")
     include("Hydro/HydroStruct.jl")
+    include("Hypix/HorizonLayer.jl")
     include("Hydro/HydroRelation.jl")
     include("Hydro/Wrc.jl")
     include("Optim/Optimize.jl")
@@ -87,4 +87,4 @@ using Suppressor
 
     include("Temporary/KS_SMAP.jl")
 
-# end # Suppressor 
+end # Suppressor 
