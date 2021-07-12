@@ -4,7 +4,7 @@
 module psdThetar
 	import ..stats
 	import BlackBoxOptim
-	export PSD_2_θr_FUNC, OPTIMIZE_PSD_2_θr
+	export PSD_2_θr_FUNC, OPTIMIZE_PSD_2_θr, PSD_2_θr
 
 		# =========================================
 		#       MAIN PSD -> θr 
@@ -25,8 +25,7 @@ module psdThetar
 					fill!(paramPsd.Psd_2_θr_α1, param.psd.Psd_2_θr_α1) 
 					fill!(paramPsd.Psd_2_θr_α2, param.psd.Psd_2_θr_α2)
 				
-				else # if θr is not being optimised <>=<>=<>=<>=<>
-					
+				else # if θr is not being optimised <>=<>=<>=<>=<>				
 					θr_Psd =  fill(0.0::Float64, N_iZ)
 					fill!(paramPsd.θr_Psd, param.hydroPsd.θr)
 					fill!(paramPsd.Psd_2_θr_α1, 0.0) 
@@ -52,7 +51,7 @@ module psdThetar
 						println("    	~ Nse_θr_Psd = $(round(Nse_θr_Psd,digits=3)) ~ \n")
 					end
 					
-				return hydroPsd, paramPsd
+			return hydroPsd, paramPsd
 			end # function PSD_2_θr(N_iZ, ∑Psd, hydroPsd)
 
 		# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -81,7 +80,7 @@ module psdThetar
 						∑Rmse += abs(hydro.θr[iZ] - paramPsd.θr_Psd[iZ]) ^ Power
 					end
 				
-					return ∑Rmse
+				return ∑Rmse
 				end # function OF ======================================
 
 				SearchRange = [(param.psd.Psd_2_θr_α1_Min, param.psd.Psd_2_θr_α1_Max), (param.psd.Psd_2_θr_α2_Min, param.psd.Psd_2_θr_α2_Max)]
@@ -102,7 +101,7 @@ module psdThetar
 					println("    == Optimizing θr from PSD ==")
 					println("    	~ Psd_2_θr_α1 = $(round(Psd_2_θr_α1,digits=3)) ;  Psd_2_θr_α2 = $(round(Psd_2_θr_α2,digits=3)) ~")
 
-				return paramPsd
+			return paramPsd
 			end # function OPTIMIZE_PSD_2_θr
 	
 end  # module psdThetar
