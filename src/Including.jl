@@ -22,7 +22,7 @@
     include("Reading.jl")
     include("Hydro/Kunsat.jl")
     include("Table.jl")
-    include("hydro/θψ2Ks.jl")
+    include("Hydro/θψ2Ks.jl")
     include("Checking.jl")
     include("Stats.jl")
     include("RockFragment/RockFragment.jl")
