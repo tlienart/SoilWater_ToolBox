@@ -19,15 +19,16 @@
     include("Hydro/HydroRelation.jl")
     include("Hydro/Wrc.jl")
     include("Optim/Optimize.jl")
+    include("Stats.jl")
+    include("Psd/PsdThetar.jl")
     include("Reading.jl")
     include("Hydro/Kunsat.jl")
     include("Table.jl")
     include("Hydro/θψ2Ks.jl")
     include("Checking.jl")
-    include("Stats.jl")
+
     include("RockFragment/RockFragment.jl")
     
-    include("Psd/PsdThetar.jl")
 
     include("HyPix/VegStruct.jl")
     include("HyPix/Discretization.jl")
