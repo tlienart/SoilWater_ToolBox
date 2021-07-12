@@ -15,7 +15,7 @@
     include("Param.jl")
     include("Hydro/ΨminΨmax.jl")
     include("Hydro/HydroStruct.jl")
-    include("Hyix/HorizonLayer.jl")
+    include("HyPix/HorizonLayer.jl")
     include("Hydro/HydroRelation.jl")
     include("Hydro/Wrc.jl")
     include("Optim/Optimize.jl")
