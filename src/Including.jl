@@ -85,6 +85,6 @@
 
     # include("NoCore/Jules/Jules.jl")
 
-    include("Temporary/KS_SMAP.jl")
+    # include("Temporary/Ks_Smap.jl")
 
 # end # Suppressor 
