@@ -153,7 +153,7 @@ module plotHypix
 			export PLOT_SORPTIVITY
 
 				using Plots.PlotMeasures, LaTeXStrings
-				using Plots;pgfplotsx()
+				using Plots
 				using Dates
 				
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
