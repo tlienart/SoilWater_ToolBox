@@ -19,7 +19,7 @@
     include("Hydro/HydroRelation.jl")
     include("Hydro/Wrc.jl")
     include("Optim/Optimize.jl")
-    include("reading.jl")
+    include("Reading.jl")
     include("Hydro/Kunsat.jl")
     include("Table.jl")
     include("hydro/θψ2Ks.jl")
