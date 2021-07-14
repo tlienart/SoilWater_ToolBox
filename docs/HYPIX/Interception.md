@@ -1,5 +1,5 @@
 <!-- MathJax -->
-<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/Latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 <!-- <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
