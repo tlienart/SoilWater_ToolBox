@@ -5,7 +5,7 @@
 
 # SINK TERM MODEL
 
-The *sink term*, \[ varDelta Sink \], described in the Richards equation is a function of the *soil evaporation* depth, $\varDelta Evap$ [L], and the *root water uptake* depth of the vegetation, $\varDelta Rwu$ [L]:
+The *sink term*, \( varDelta Sink \), described in the Richards equation is a function of the *soil evaporation* depth, $\varDelta Evap$ [L], and the *root water uptake* depth of the vegetation, $\varDelta Rwu$ [L]:
 
 $$\varDelta Sink=\varDelta Evap+\varDelta Rwu$$
 
