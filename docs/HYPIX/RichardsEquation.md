@@ -50,7 +50,7 @@ $$\begin{equation}
 where $D(θ)$ is the diffusivity function with $D\left( \theta \right) =K\left( \theta \right) \frac{d\psi}{d\theta}$. This equation splits the integral 
 
 $$\begin{equation}
-Sorpt^2\left(\theta _0,\theta _s \right) =\int _{\theta _r}^{\theta _s}{\left(\theta _s+\theta -2\theta _0 \right)}D\left( \theta \right) d\theta
+Sorpt^2\left( \theta _0,\theta _s \right) =\int_{\theta _r}^{\theta _s}{\left( \theta _s+\theta -2\theta _0 \right)}D\left( \theta \right) d\theta
 \end{equation}$$
 
 into two parts to allow the integration of continuous functions over closed intervals. In the regular expression, the diffusivity function is infinite close to saturation, $θ \to θ_{s}$, which complexes its integration in the vicinity of $θ_{s}$. In the specific equation, the last part of the integration based on $ψ$ is replaced with the integration of the hydraulic conductivity as a function of the water pressure, $K(ψ)$, alleviating the problem of convergence. 
