@@ -34,10 +34,7 @@ $$ \varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground} $$
 
 where $\varDelta Pr_{ground}$ [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and $\varDelta Pr_{int}$ [L] is the *intercepted precipitation depth.* They are computed as:
 
-$$
-\begin{cases}                                                               \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr\\\end{cases}\,\,
-
-$$
+$$ \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr $$
 
 where the gap fraction, $G_{apFrac}$ [-], is calculated using the Beer–Lambert law as:
 
