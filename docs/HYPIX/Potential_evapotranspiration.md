@@ -1,3 +1,8 @@
+<!-- MathJax -->
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
 # POTENTIAL EVAPOTRANSPIRATION MODEL
 
 The *potential evapotranspiration* depth, $\varDelta Pet$ [L], for a time-step $\varDelta T$ is computed using the Penman–Monteith equation. Input variables used the estimates derived from New Zealand Virtual Climate Stations network (VCS), which are based on the spatial interpolation of actual data observations made at climate stations located around the country ([Tait et al., 2006](#_ENREF_4)). We assume that:
