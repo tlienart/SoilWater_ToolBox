@@ -8,7 +8,6 @@ As a vadose zone hydrological scientist and modeller, my principal role in the S
 
 Professor at the University of Granada in Spain working in the field of  environmental physics and, particularly, on improving knowledge on the unsaturated zone and the lower atmosphere, as well as the interactions at this interface. My research interest lies between soil physics and hydrology, exploring the nexus between soil, water and climate. 
 
-$$ $$ 
 
 
 
