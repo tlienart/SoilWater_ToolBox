@@ -64,4 +64,4 @@ Rainfall interception of gross rainfall loss, $InterceptionLoss$ [0–1], is com
 
 $$ InterceptionLoss\,\,=1-\frac{\sum_{\mathrm{t}=1}^{\mathrm{N}_{\mathrm{t}}}{\varDelta Pr_{through}^{\mathrm{t}}}}{\sum_{\mathrm{t}=1}^{\mathrm{N}_{\mathrm{t}}}{\varDelta Pr^{\mathrm{t}}}} $$
 
-In the HyPix model the rainfall interception module is run first, followed by the computation of $\varDelta Pet_{transp}$ and $\varDelta Pet_{evap}$.
+In the HyPix model the rainfall interception module is run first, followed by the computation of [$\varDelta Pet_{transp}$ and $\varDelta Pet_{evap}$](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Interceptionhttps://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Potential_evapotranspiration).
