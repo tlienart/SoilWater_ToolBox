@@ -36,7 +36,7 @@ $$\varDelta Rdf_{Top}=\frac{R_d^0-R_d^{30}}{1-R_d^{\left| Z_{root} \right|}}=\fr
 
 An example of $\varDelta Rdf$ is provided in Figure 6a for a soil that has equal discretization.
 
-![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/FIGURE/Figure6.bmp "Figure 6. Pasture grass models used for all lysimeters: (a) root density function plotted with depth and (b) schematic of the [Feddes et al. (1978)](#_ENDREF_10) plant water stress function.")
+![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp "Figure 6. Pasture grass models used for all lysimeters: (a) root density function plotted with depth and (b) schematic of the [Feddes et al. (1978)](#_ENDREF_10) plant water stress function.")
 
 
 #### *Water Stress response function*: $F_{WaterStress}$

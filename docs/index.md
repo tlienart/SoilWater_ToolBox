@@ -45,7 +45,7 @@ The following modules are implemented in the **SoilWater-ToolBox.** They were de
 
 A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, the required input data and outputs prodcued by the **SoilWater-ToolBox.** .
 
-![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox/FIGURE/SoilWater-ToolBox-FlowChart.bmp "SoilWater-ToolBox Flowchart")
+![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/SoilWater-ToolBox-FlowChart.bmp "SoilWater-ToolBox Flowchart")
 
 ## 5.  Current applications
 
