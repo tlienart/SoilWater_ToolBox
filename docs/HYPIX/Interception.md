@@ -9,32 +9,6 @@
   </script>
 <script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
-<!-- <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    TeX: {
-      equationNumbers: {
-        autoNumber: "AMS"
-      }
-    },
-    tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$'] ],
-    processEscapes: true,
-  }
-});
-MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
-	  alert("Math Processing Error: "+message[1]);
-	});
-MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
-	  alert("Math Processing Error: "+message[1]);
-	});
-</script>
-<script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script> -->
-
-
-
 # INTERCEPTION MODEL
 
 The parsimonious physically based interception model is an improvement of Pollacco *et al.* (2013a). The following interception model uses *potential evaporation of a wet canopy* (*ΔEvap_Int*),  *LAI* [-], and *extinction coefficient for solar radiation* (*K<sub>g</sub>* [-]) set to 0.5. The *gross precipitation depth* that falls on top of a canopy, [L], is partitioned following Rutter *et al.* (1971) as:
