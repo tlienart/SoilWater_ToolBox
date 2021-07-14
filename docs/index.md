@@ -9,11 +9,16 @@
 J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
 ---
 
-> 1. Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
-> 2. Department of Regional Geographic Analysis and Physical Geography, University of Granada, Granada, **Spain**
-> 3. Université de Strasbourg, CNRS/EOST, ITES UMR 7063, Institut Terre et Environnement de Strasbourg, Strasbourg, **France**
-> 4. Univ Lyon, Université Claude Bernard Lyon 1, CNRS, ENTPE, UMR5023 LEHNA, Vaulx en Velin, Lyon 69518, **France**
-> 5. National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
+> <sup> 1 </sup> Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
+
+> <sup> 2 </sup> Department of Regional Geographic Analysis and Physical Geography, University of Granada, Granada, **Spain**
+
+> <sup> 3 </sup> Université de Strasbourg, CNRS/EOST, ITES UMR 7063, Institut Terre et Environnement de Strasbourg, Strasbourg, **France**
+
+> <sup> 4 </sup> Univ Lyon, Université Claude Bernard Lyon 1, CNRS, ENTPE, UMR5023 LEHNA, Vaulx en Velin, Lyon 69518, **France**
+
+> <sup> 5 </sup> National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
+
 
 ---
 
