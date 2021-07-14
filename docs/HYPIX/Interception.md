@@ -1,6 +1,11 @@
 <!-- MathJax -->
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
+		     TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
       tex2jax: {
         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
         inlineMath: [['$','$']]
@@ -9,45 +14,26 @@
   </script>
 <script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
-<!-- <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    TeX: {
-      equationNumbers: {
-        autoNumber: "AMS"
-      }
-    },
-    tex2jax: {
-    inlineMath: [ ['$', '$'] ],
-    displayMath: [ ['$$', '$$'] ],
-    processEscapes: true,
-  }
-});
-MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
-	  alert("Math Processing Error: "+message[1]);
-	});
-MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
-	  alert("Math Processing Error: "+message[1]);
-	});
-</script>
-<script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script> -->
-
-
 
 # INTERCEPTION MODEL
 
 The parsimonious physically based interception model is an improvement of Pollacco *et al.* (2013a). The following interception model uses *potential evaporation of a wet canopy* (*ΔEvap_Int*),  *LAI* [-], and *extinction coefficient for solar radiation* (*K<sub>g</sub>* [-]) set to 0.5. The *gross precipitation depth* that falls on top of a canopy, [L], is partitioned following Rutter *et al.* (1971) as:
 
-$$ \varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground} $$
+$$\begin{equation} 
+	\varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground}
+\end{equation}$$
 
 where  $ \varDelta Pr_{ground} $ [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and $\varDelta Pr_{int}$ [L] is the *intercepted precipitation depth.* They are computed as:
 
-$$ \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr $$
+$$\begin{equation}
+ \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr 
+ \end{equation}$$
 
 where the gap fraction, $G_{apFrac}$ [-], is calculated using the Beer–Lambert law as:
 
-$$G_{apFrac}=1-\,\,e^{-K_g×LAI}$$
+$$\begin{equation}
+G_{apFrac}=1-\,\,e^{-K_g×LAI}
+ \end{equation}$$
 
 The foliage of the canopy is considered as a water storage filled up to a depth $Sint$ [L], *with a saturated storage capacity*, $Sint_{sat}$ [L]. When the canopy is fully saturated ($Sint=Sint_{sat}$), then any excess of $\varDelta Pr_{int}$ overflows, $\varDelta Pr_{over}$ [L], to the soil surface. The amount of water that reaches the soil surface is the *throughfall precipitation* [L]:
 
