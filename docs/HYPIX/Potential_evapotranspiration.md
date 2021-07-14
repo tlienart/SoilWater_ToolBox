@@ -5,7 +5,7 @@
 
 # POTENTIAL EVAPOTRANSPIRATION MODEL
 
-The *potential evapotranspiration* depth, $\varDelta Pet$ [L], for a time-step $\varDelta T$ is computed using the Penman–Monteith equation. Input variables used the estimates derived from New Zealand Virtual Climate Stations network (VCS), which are based on the spatial interpolation of actual data observations made at climate stations located around the country ([Tait et al., 2006](#_ENREF_4)). We assume that:
+The *potential evapotranspiration* depth, $\varDelta Pet$ [L], for a time-step $\varDelta T$ is computed using the Penman–Monteith equation. Input variables used the estimates derived from New Zealand Virtual Climate Stations network (VCS), which are based on the spatial interpolation of actual data observations made at climate stations located around the country ([Tait *et al*., 2006](#_ENREF_4)). We assume that:
 
  $$ \varDelta Pet=\varDelta Pet_{int} $$
  
@@ -20,4 +20,4 @@ The *potential transpiration* depth of vegetation, $\varDelta Pet_{transp}$ [L],
 $$\varDelta Pet_{evap}=\varDelta Pet_{et}\,\,e^{-K_{\mathrm{g}}×LAI} $$
 $$\varDelta Pet_{transp}=\varDelta Pet_{et}^{}-\varDelta Pet_{evap} $$
 
-where the extinction coefficient for solar radiation, $K_{g}$ [-], is set to 0.5 (e.g. [Varado et al., 2006](#_ENREF_5)).
+where the extinction coefficient for solar radiation, $K_{g}$ [-], is set to 0.5 (e.g. [Varado *et al*., 2006](#_ENREF_5)).
