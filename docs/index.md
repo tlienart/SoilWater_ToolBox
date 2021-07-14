@@ -11,9 +11,9 @@ J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilbur
 
 > <sup> 1 </sup> Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
 
-> <sup> 2 </sup> Department of Regional Geographic Analysis and Physical Geography, University of Granada, Granada, **Spain**
+> <sup> 2 </sup> Department of Regional Geographic Analysis and Physical Geography, University of Granada, **Spain**
 
-> <sup> 3 </sup> Université de Strasbourg, CNRS/EOST, ITES UMR 7063, Institut Terre et Environnement de Strasbourg, Strasbourg, **France**
+> <sup> 3 </sup> Université de Strasbourg, CNRS/EOST, ITES UMR 7063, Institut Terre et Environnement de Strasbourg, **France**
 
 > <sup> 4 </sup> Univ Lyon, Université Claude Bernard Lyon 1, CNRS, ENTPE, UMR5023 LEHNA, Vaulx en Velin, Lyon 69518, **France**
 
