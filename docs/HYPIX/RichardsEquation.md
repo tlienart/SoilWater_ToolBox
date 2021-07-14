@@ -31,7 +31,7 @@ where $\varDelta T^t$ [T] is the time-step at time $t$; $\varDelta Z_{i}$ [L] is
 
 ![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp "Figure 1. Diagram describing the 1D vertical discretization of the Richards equation, where i  is the cell number (cell 1 is the top cell and cell Ni is the bottom cell, therefore cell = i  is below cell = i¬–1); ΔPr  [L] is the precipitation reaching the top of the canopy; ΔPrground [L]  is the precipitation reaching the soil surface (cell = 1); ΔHpond  [L] is the ponding water; and ΔQi+1/2 = Qi+1/2 ΔT [L] is the inter-cell water volume (positive downwards). Water is removed from the soil profile by transpiration, ΔTransp [L], and evaporation, ΔEvapo [L], depending on θ and potential evapotranspiration, ΔPet [L] (partitioned between potential evaporation, ΔPetevap [L], and potential transpiration, ΔPettransp [L]).")
 
-### *Computing water infiltration into the soil profile*
+### ***Computing water infiltration into the soil profile***
 
 The amount of water infiltrating into the top cell, $i = 1$, for a period of time, $\varDelta T$, is computed by $\varDelta Q_{1/2}$ [L] ([Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/SoilWater-ToolBox-FlowChart.bmp)). As RE cannot compute the top air–soil boundary, we compute $\varDelta Q_{1/2}$ using the two-term approximation of [Haverkamp *et al*. (1994)](#_ENDREF_16), as suggested by [Fernández-Gálvez *et al*. (2019)](#_ENDREF_17). We do not include the 3D radial flux considered in the two-term expansions because HyPix computes 1D water infiltration. The maximum infiltration depth for a given $\varDelta T$ is $\varDelta Qmax_{\frac{1}{2}}^{t}$ [L], and is computed as:
 
@@ -70,4 +70,77 @@ $$\begin{equation}
 \end{equation}$$
 
 where $\varDelta Pr_{through}^{t}$ [L] is the *throughfall precipitation* (i.e., the amount of water reaching the top cell; computed in [rainfall interception](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Interception)).
+
+###	***Computing water fluxes, Q***
+
+   #### *Cells below the top cell: $2 ≤ i ≤ N_{i}$*
+
+   >>The Darcian fluid flux density, $Q_{i-\frac{1}{2}}^{t}$ [L T<sup>-1</sup>], is computed by using the inter-cell hydraulic conductivity between cell $i$ and $i – 1$ ([Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp)), as follows:
+
+   $$\begin{equation}
+   \begin{cases}	Q_{i-\frac{1}{2}}^{t}=-K_{i-\frac{1}{2}}\,\,\left[ \frac{\left| \psi _{i-1}^{t} \right|-\left| \psi _{i}^{t} \right|}{\varDelta Z_{i-\frac{1}{2}}}-\cos  \alpha \right]\\	\varDelta Z_{i-\frac{1}{2}}=\frac{\varDelta Z_i+\varDelta Z_{i-1}}{2}\\	K_{i-\frac{1}{2}}=\omega _i\,\,K_i\left( \psi _{i}^{t} \right) +\left[ 1-\omega _i \right] \,\,K_{i-1}\left( \psi _{i-1}^{t} \right)\\	\omega _i=\frac{\varDelta Z_i}{\varDelta Z_i+\varDelta Z_{i-1}}\\\end{cases}
+   \end{equation}$$
+
+   >>where $Q_{i-\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux entering cell $i$ from the top, and $ Q_{i+\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux exiting cell $i$ from the bottom; $K_{i-\frac{1}{2}}$ [L T<sup>-1</sup>] refers to the weighted average inter-cell hydraulic conductivity (e.g. [Haverkamp and Vauclin, 1979](#_ENDREF_21); [Belfort *et al*., 2013](#_ENDREF_22)), computed with $\omega _i$; and $\varDelta Z_{i-\frac{1}{2}}$ [L] is the distance between cell centres $i$ and $i – 1$, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp).
+
+#### *Free drainage bottom condition: $i = N_{i} + 1$*
+
+>>The water flux leaving the bottom cell represents the drainage, and it can be described as a function of the hydraulic conductivity of the bottom cell as:
+
+$$\begin{equation}
+Q_{N_{\mathrm{i}}+1}^{t}=K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right) \,\,\cos  \alpha 
+\end{equation}$$
+
+>>where $ K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right) $ is the *unsaturated hydraulic conductivity* described in [XXXX]().
+
+>>This free drainage condition is the most widely used when the water table is assumed to be at significant depth. Typically, our model addresses the modelling of water flow in the unsaturated or vadose zone.
+
+
+##	*Solving the Richards equation using the Newton–Raphson method*
+
+The Picard and Newton–Raphson (NR) iterative methods are the most widely used procedures for solving the RE. NR has been found to be more efficient than the Picard iteration method ([Lehmann and Ackerer, 1998](#_ENDREF_23); [Paniconi and Putti, 1994a](#_ENDREF_24), [1994b](#_ENDREF_25)), so we solved the RE by using the NR algorithm. NR is computed using a first-order Taylor development by solving the Jacobian matrices of the residuals, R [Eq. (12)] (described in Appendix 7.1) in an iterative way that updates $\left[ \psi _i^{t,k+1}-\psi _{i}^{t,k} \right] $ until convergence is achieved. The numerical discretization is a tridiagonal, nonlinear set of equations that needs to be solved for $\left[ \psi _i^{t,k+1}-\psi _{i}^{t,k} \right] $, and for every iteration, $k$:
+
+$$\begin{equation}
+\begin{cases}	
+\psi _i^{t,k=1}=\psi _{i}^{t-1}\\	
+\psi _i^{t,k+1}=\psi _i^{t,k}-\frac{R\left( \psi _{i}^{t,k} \right)}{\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i-1}^{t,k}}+\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i}^{t,k}}+\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i+1}^{t,k}}}\\	
+\psi _i^{t,k+1}=\varOmega \,\,\min \left[ \max \left( \psi _i^{t,k+1},0 \right) ,\psi _{\max} \right] +\left( 1-\varOmega \right) \psi _i^{t,k}\\
+\end{cases}
+\end{equation}$$
+
+where $\psi_{\max} = 10^{7}$ mm is the maximum value of $\psi $; and $Ω [1 ; 0[$ is a parameter used to avoid "overshooting" of the Newton step. Therefore, when $Ω = 1$ there is no reduction of the Newton step. We use $Ω = 0.5$, as recommended by ([Kelley, 2003](#_ENDREF_26)). The feasible range of Ω is set to $[0.2 ; 1.0]$ as indicated in [Table 2](XXXX). In this study the initial $\psi _{i}^{t=0}$ is derived from measured $θ^{t=0}$. 
+
+It is expected that for every $k$, $R$ decreases such that $\left| R\left( \psi _{i}^{t,k+1} \right) \right|\,\,\leqslant \left| R\left( \psi _{i}^{t,k} \right) \right|$. The solution of the Jacobian takes place by means of the *tridiagonal function* that is an effective modification of the Gauss algorithm for the solution of the tridiagonal linear set of equations ([Appendix 7.1](XXXXX)). We use the efficient *tridiagonal function* derived from the LAPACK package within Julia to solve the matrix (https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/). 
+
+### ***Residuals of the Richards equation***
+
+The NR method is used to solve $\psi _{i}^{t}$ such that the residuals of each cell, $R_{i}^{t}$ [L], equal close to 0:
+
+$$\begin{equation}
+\begin{cases}	R_{i}^{t}=\varDelta Z_i\left[ \theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t-1} \right) \right] -\varDelta Z_i\,\,S_o\frac{\theta _i\left( \psi _{i}^{t} \right)}{\theta _{s_i}}\left( \left| \psi _{i}^{t} \right|-\left| \psi _{i}^{t-1} \right| \right) -\varDelta T^t\left[ Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t} \right] +\varDelta Sink_i\left( \psi _{i}^{t-1} \right)\\	\varDelta Sink_i\left( \psi _{i}^{t-1} \right) =\varDelta Z_i\,\,\varDelta T^t\,\,Sink_i\left( \psi _{i}^{t-1} \right)\\\end{cases}
+\end{equation}$$
+
+where $\varDelta Sink_{i}$ [L] is the sink computed for a given $\varDelta T$. To stabilize the numerical scheme, $\varDelta Sink_{i}$ is computed with the $ψ_{i}$ values derived from the previous time-step. 
+
+### ***Automatic differentiation of the Jacobian with Julia language***
+
+One of the shortcomings of the NR solver is that it requires the mathematical derivatives of $R$ [Eq. (11)] (Appendix 7.2),  the implementation of which is complicated and time consuming. For example, if we wish to modify the inter-cell hydraulic conductivity [Eq. (9)], it requires recalculation of the derivatives.
+To address this shortcoming, HyPix implements an option whereby the derivatives are analytically derived automatically by using the forward-mode automatic differentiation *[ForwardDiff](https://github.com/JuliaDiff)* in the Julia package ([Revels *et al*., 2016](#_ENDREF_27)). *ForwardDiff* (version 0.10.16) was found to be as accurate as using the mathematical derivatives, and only 10–25% slower compared to using mathematical derivatives. 
+
+
+### ***Convergence criterion***
+
+For a given time-step, $\varDelta T$, the iteration of the NR stops either when $k = N_{k}$, where $N_{k}$ is a user-defined maximum number of iterations ([Table 2](XXXX)), or when a convergence criterion is satisfied for the overall water balance of the residuals, $WB_{residual}$ [T<sup>-1</sup>], as described below.
+
+TABLE 2
+
+We derive a convergence criterion for the NR method based on the Euclidean norm of a vector $R$ ([Driscoll and Braun, 2017](#_ENDREF_28); [Kochenderfer and Wheeler, 2019](#_ENDREF_29); [Kelley, 2003](#_ENDREF_26)), where the iteration stops when the following criterion for $WB_{residual}$ is met:
+
+$$\begin{equation}
+\sqrt{\frac{\sum_{i=1}^{N_{\mathrm{i}}}{\left[ \frac{R_{i}^{t}}{\varDelta T^t\,\,\varDelta Z_i} \right] ^2}}{N_{\mathrm{i}}}}\leqslant WB_{\mathrm{residual}}
+\end{equation}$$
+
+where Ni is the total number of cells, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp), and $WB_{residual}$ is the overall water balance of the residuals. The $R$ is normalized, such that WBresidual is independent of the cell size and the time-step. $WB_{residual}$ considers the overall error of the water balance of the soil profile. The feasible range of $WB_{residual}$ is provided in [Table 2](XXXX).
+
+### ***Novel adaptive time-step management***
 
