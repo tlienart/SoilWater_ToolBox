@@ -53,7 +53,7 @@ The *water stress response function*, $F_{WaterStress}$ [-] shown in Figure 6b i
 * for soil water pressure between $\varPsi _{\mathrm{Feddes}1}$ and $\varPsi _{\mathrm{Feddes}2}$, $F_{WaterStress}$ increases linearly
 * for soil water pressure between $\varPsi _{\mathrm{Feddes}3}$ and $\varPsi _{\mathrm{Feddes}4}$, $F_{WaterStress}$ decreases linearly.
 
-A schematic plot of this stress response function is depicted in Figure 6b.
+A schematic plot of this stress response function is depicted in [Figure 6b](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp).
 
 
 #### *Compensation mechanism*: $Root_{comp}$
