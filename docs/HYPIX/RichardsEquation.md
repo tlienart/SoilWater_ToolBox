@@ -9,7 +9,7 @@ Modelling unsaturated flow in highly heterogeneous soils can be accurately perfo
 
 ##	*Richards equation of HyPix model*
 
-Assuming a rigid solid matrix (Figure 1), the mixed form of RE is written as:
+Assuming a rigid solid matrix ([Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp)), the mixed form of RE is written as:
 
 $$\frac{\theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t-1} \right)}{\varDelta T^t}-S_o\frac{\theta _i\left( \psi _{i}^{t} \right)}{\theta _{s_i}}\frac{\left| \psi _{i}^{t} \right|-\left| \psi _{i}^{t-1} \right|}{\varDelta T^t}=\frac{Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t}}{\varDelta Z_i}-Sink_i\left( \psi _{i}^{t-1} \right) $$	
 
