@@ -8,9 +8,6 @@ As a vadose zone hydrological scientist and modeller, my principal role in the S
 
 Professor at the University of Granada in Spain working in the field of  environmental physics and, particularly, on improving knowledge on the unsaturated zone and the lower atmosphere, as well as the interactions at this interface. My research interest lies between soil physics and hydrology, exploring the nexus between soil, water and climate. 
 
-
-
-
 ### *Note from the authors*
 
 Deriving hydraulic parameters from laboratory work is expensive. Therefore, with international collaboration we derive hydraulic properties by using cost-effective methods derived from the principles of physics. This has led to the development of a set of novel methodologies, enabling to abstract more information from traditional physical measurements. 
