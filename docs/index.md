@@ -28,7 +28,7 @@ J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilbur
 
 ## 1. Open source software
 
-The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language ([https://julialang.org/](https://julialang.org/)). It can be downloaded from [https://github.com/manaakiwhenua/SoilWater_ToolBox/](https://github.com/manaakiwhenua/SoilWater_ToolBox/) and is available under the **GP-3.0 License**. This software includes a set of interlinked modules that can also be used independently.
+The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language ([https://julialang.org/](https://julialang.org/)). It can be downloaded from [https://github.com/manaakiwhenua/SoilWater_ToolBox.jl/](https://github.com/manaakiwhenua/SoilWater_ToolBox.jl/) and is available under the **GP-3.0 License**. This software includes a set of interlinked modules that can also be used independently.
 
 ## 2. Mission statement
 
