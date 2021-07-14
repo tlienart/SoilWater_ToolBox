@@ -5,11 +5,12 @@
         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
         inlineMath: [['$','$']]
       }
+
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
     });
   </script>
-  MathJax.Hub.Config({
-    TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
+ 
+
 <script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 # INTERCEPTION MODEL
