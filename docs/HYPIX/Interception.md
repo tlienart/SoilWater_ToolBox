@@ -1,7 +1,15 @@
 <!-- MathJax -->
-<!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        inlineMath: [['$','$']]
+      }
+    });
+  </script>
+<script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
-<script type="text/x-mathjax-config">
+<!-- <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
     TeX: {
       equationNumbers: {
@@ -23,7 +31,8 @@ MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
 </script>
 <script type="text/javascript" async
   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
+</script> -->
+
 
 
 # INTERCEPTION MODEL
@@ -32,7 +41,7 @@ The parsimonious physically based interception model is an improvement of Pollac
 
 $$ \varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground} $$
 
-where $\varDelta Pr_{ground}$ [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and $\varDelta Pr_{int}$ [L] is the *intercepted precipitation depth.* They are computed as:
+where  $ \varDelta Pr_{ground} $ [L] is the fraction of precipitation reaching the soil surface through gaps in the canopy, and $\varDelta Pr_{int}$ [L] is the *intercepted precipitation depth.* They are computed as:
 
 $$ \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr $$
 
