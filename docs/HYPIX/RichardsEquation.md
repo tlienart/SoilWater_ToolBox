@@ -30,6 +30,8 @@ $$\begin{equation}
 where $\varDelta T^t$ [T] is the time-step at time $t$; $\varDelta Z_{i}$ [L] is the mesh size of the cell $i$, with the vertical coordinate positive downwards; $θ_{i}$ [L<sup>3</sup> L<sup>-3</sup>] is the volumetric soil water content of the cell $i$; $θ_{s}$ [L<sup>3</sup> L<sup>-3</sup>]  is the saturated volumetric soil water content; $S_{0}$ [L<sup>-1</sup>] is a parameter that accounts for fluid compressibility, which is assumed to be constant with depth; $ψ_{i}$ [L] is the soil water pressure of cell $i$, considering $ψ > 0$ for unsaturated soils; $Q$ [L T<sup>-1</sup>] is the soil water flux based on the extended Darcy’s law, positive downward and negative when water moves upwards; and $Sink_{i}$ [L<sup>3</sup> L<sup>-3</sup>], taken as positive, is the sink term defined as the volume of water per unit time removed from cell $i$ by *evaporation* and *root water uptake*.
 
 ![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp "Figure 1. Diagram describing the 1D vertical discretization of the Richards equation, where i  is the cell number (cell 1 is the top cell and cell Ni is the bottom cell, therefore cell = i  is below cell = i¬–1); ΔPr  [L] is the precipitation reaching the top of the canopy; ΔPrground [L]  is the precipitation reaching the soil surface (cell = 1); ΔHpond  [L] is the ponding water; and ΔQi+1/2 = Qi+1/2 ΔT [L] is the inter-cell water volume (positive downwards). Water is removed from the soil profile by transpiration, ΔTransp [L], and evaporation, ΔEvapo [L], depending on θ and potential evapotranspiration, ΔPet [L] (partitioned between potential evaporation, ΔPetevap [L], and potential transpiration, ΔPettransp [L]).")
+<figcaption align = "center"><b>Figure 1 - Diagram describing the 1D vertical discretization of the Richards equation, where i  is the cell number (cell 1 is the top cell and cell Ni is the bottom cell, therefore cell = i  is below cell = i–1); ΔPr  [L] is the precipitation reaching the top of the canopy; ΔPrground [L]  is the precipitation reaching the soil surface (cell = 1); ΔHpond  [L] is the ponding water; and ΔQi+1/2 = Qi+1/2 ΔT [L] is the inter-cell water volume (positive downwards). Water is removed from the soil profile by transpiration, ΔTransp [L], and evaporation, ΔEvapo [L], depending on θ and potential evapotranspiration, ΔPet [L] (partitioned between potential evaporation, ΔPetevap [L], and potential transpiration, ΔPettransp [L]).</b></figcaption></figure>
+
 
 ### ***Computing water infiltration into the soil profile***
 
@@ -61,7 +63,7 @@ $$\begin{equation}
 \begin{cases}	\varDelta Sink_1\left( \psi _{1}^{t-1} \right) =\varDelta Z_i\,\,\varDelta T^t\,\,Sink_1\left( \psi _{1}^{t-1} \right)\\	\varDelta Qmax_{\frac{1}{2}}^{t}=\,\,Min\left[ \varDelta Qmax_{\frac{1}{2}}^{t}; \varDelta Z_1\left[ \theta s_1-\theta _{1}^{t-1} \right] +\varDelta Sink_1\left( \psi _{1}^{t-1} \right) \right]\\\end{cases}
 \end{equation}$$
 
-where $θs_{1}$ [L3 L-3] is the saturated volumetric soil water content and $\varDelta Sink_{1}$ [L] is the sink of the top cell.
+where $θs_{1}$ [L<sup>3</sup> L<sup>-3</sup>] is the saturated volumetric soil water content and $\varDelta Sink_{1}$ [L] is the sink of the top cell.
 
 The amount of water that is not able to infiltrate into the soil can either run off laterally due to the slope or get ponded at the surface, where the ponding $\varDelta H_{pond}^{t}$, [L] is computed as:
 
@@ -108,7 +110,7 @@ $$\begin{equation}
 \end{cases}
 \end{equation}$$
 
-where $\psi_{\max} = 10^{7}$ mm is the maximum value of $\psi $; and $Ω [1 ; 0[$ is a parameter used to avoid "overshooting" of the Newton step. Therefore, when $Ω = 1$ there is no reduction of the Newton step. We use $Ω = 0.5$, as recommended by ([Kelley, 2003](#_ENDREF_26)). The feasible range of Ω is set to $[0.2 ; 1.0]$ as indicated in [Table 2](XXXX). In this study the initial $\psi _{i}^{t=0}$ is derived from measured $θ^{t=0}$. 
+where $\psi_{\max} = 10^{7}$ mm is the maximum value of $\psi $; and $Ω [1 ; 0[$ is a parameter used to avoid "overshooting" of the Newton step. Therefore, when $Ω = 1$ there is no reduction of the Newton step. We use $Ω = 0.5$, as recommended by ([Kelley, 2003](#_ENDREF_26)). The feasible range of Ω is set to $[0.2 ; 1.0]$ as indicated in [Table 2](XXXX). In this study the initial $\psi _{i}^{t=0}$ is derived from measured $θ^{t=0}$.
 
 It is expected that for every $k$, $R$ decreases such that $\left| R\left( \psi _{i}^{t,k+1} \right) \right|\,\,\leqslant \left| R\left( \psi _{i}^{t,k} \right) \right|$. The solution of the Jacobian takes place by means of the *tridiagonal function* that is an effective modification of the Gauss algorithm for the solution of the tridiagonal linear set of equations ([Appendix 7.1](XXXXX)). We use the efficient *tridiagonal function* derived from the LAPACK package within Julia to solve the matrix (https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/). 
 
@@ -133,6 +135,14 @@ To address this shortcoming, HyPix implements an option whereby the derivatives 
 For a given time-step, $\varDelta T$, the iteration of the NR stops either when $k = N_{k}$, where $N_{k}$ is a user-defined maximum number of iterations ([Table 2](XXXX)), or when a convergence criterion is satisfied for the overall water balance of the residuals, $WB_{residual}$ [T<sup>-1</sup>], as described below.
 
 TABLE 2
+<figcaption align = "center"><b>Table 2 - Minimum, maximum, and universal values of Richards equation parameters.</b></figcaption></figure>
+
+
+ $\\$ | $\boldsymbol{\varDelta T_{min}}$ [s] | $\boldsymbol{\varDelta T_{max}}$ [s] | $\boldsymbol{P_{\varDelta θ_{max} Rerun}}$ [-] | $\boldsymbol{N_{k}}$ [-] | $\boldsymbol{WB_{residual}}$ [T <sup>-1</sup>] | $\boldsymbol{\varDelta θ_{max}}$ [L <sup>3</sup>L <sup>-3</sup>] | $\boldsymbol{Ω}$ [-]
+--|---|--------------------|-----|----|-----------|-----------|----
+**Min** | 1 | $\varDelta T_{min}$ | 1.0 | 10 | $10^{-8}$ | $10^{-2}$ | 0.2
+**Max** | $\varDelta T_{max}$ | 3600 | $\varDelta T_{max}/ \varDelta T_{min}$ | 50 | $10^{-20}$ | $10^{-6}$ | 1.0
+**Value** | **1** | **3600** | **1.2** | **30** | $\boldsymbol{10^{-11}}$ | $\boldsymbol{10^{-3.3}}$ | **0.5**
 
 We derive a convergence criterion for the NR method based on the Euclidean norm of a vector $R$ ([Driscoll and Braun, 2017](#_ENDREF_28); [Kochenderfer and Wheeler, 2019](#_ENDREF_29); [Kelley, 2003](#_ENDREF_26)), where the iteration stops when the following criterion for $WB_{residual}$ is met:
 
@@ -147,11 +157,15 @@ where Ni is the total number of cells, as described in [Figure 1](https://manaak
 POR AQUI!!!!!!!!!!!!!
 
 
- $\\$ | $\varDelta T_{min}$ | $\varDelta T_{max}$ | $P_{\varDelta θ_{max} Rerun}$ | $N_{k}$ | $WB_{residual}$ | $\varDelta θ_{max}$ | $Ω$
---|---|--------------------|-----|----|-----------|-----------|----
-**Min** | 1 | $\varDelta T_{min}$ | 1.0 | 10 | $10^{-8}$ | $10^{-2}$ | 0.2
-**Max** | $\varDelta T_{max}$ | 3600 | $\varDelta T_{max}/ \varDelta T_{min}$ | 50 | $10^{-20}$ | $10^{-6}$ | 1.0
-**Value** | **1** | **3600** | **1.2** | **30** | $\boldsymbol{10^{-11}}$ | $\boldsymbol{10^{-3.3}}$ | **0.5**
+ TABLE 1
+ <figcaption align = "center"><b>Table 2 - Feasible dynamic range of the optimized bimodal Kosugi hydraulic parameters from observed θ. Both the unconstrained and constrained sets of hydraulic parameters have five parameters to be optimized. The difference is that in the dynamically constrained set of hydraulic parameters there is a relationship between σ and ψm (Fernández-Gálvez et al., 2021). The feasible range of Ks is derived from Carsel and Parrish (1988). For both the unconstrained and constrained sets of hydraulic parameters, ψMacMat = 100 mm, and Pσ = 3. θr(σ) is described in Eq. (3).</b></figcaption></figure>
 
-
+ $\\$ | $\boldsymbol{\theta_{s}}$ [m <sup>3</sup>m<sup>-3</sup>] | $\boldsymbol{\theta_{r}}$ [m <sup>3</sup>m<sup>-3</sup>]| $\boldsymbol{σ}$ [-]| $\boldsymbol{\psi _{m}}$ [mm]| $\boldsymbol{K_{s}}$ [cm h<sup>-1</sup>] | $\boldsymbol{\theta_{sMacMat}}$ [m <sup>3</sup>m<sup>-3</sup>]| $\boldsymbol{\psi _{mMac}}$ [mm] | $\boldsymbol{σ_{Mac}}$ [-]
+--|---|--------------------|-----|----|-----------|-----------|----|---
+$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |
+**Min** | $Max(\theta)$ | $\theta_{r}(σ)$ | 0.75 | $\sqrt{\psi_{MacMat}}e^{σ_{min}P_{σ}}$ | 0.02 | $0.75\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
+**Max** | 0.65 | $\theta_{r}(σ)$ | 4.00 | $\sqrt{\psi_{MacMat}}e^{σ_{max}P_{σ}}$ | 30.00 | $\theta_s$ | $\sqrt{\psi_{MacMat}}$ |$ln \psi_{MacMat}/2P_{σ}$
+$\\$ |$\\$ |$\\$ |$\\ $ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |
+**Min** | $Max(\theta)$ | $\theta_{r}(σ)$ | 0.75 | $\sqrt{\psi_{MacMat}}e^{σP_{σ}}$ | 0.02 | $0.75\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
+**Max** | 0.65 | $\theta_{r}(σ)$ | 4.00 | $\sqrt{\psi_{MacMat}}e^{σP_{σ}}$ | 30.00 | $\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
 
