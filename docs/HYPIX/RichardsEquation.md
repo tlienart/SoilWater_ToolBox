@@ -144,3 +144,14 @@ where Ni is the total number of cells, as described in [Figure 1](https://manaak
 
 ### ***Novel adaptive time-step management***
 
+POR AQUI!!!!!!!!!!!!!
+
+
+ $\\$ | $\varDelta T_{min}$ | $\varDelta T_{max}$ | $P_{\varDelta θ_{max} Rerun}$ | $N_{k}$ | $WB_{residual}$ | $\varDelta θ_{max}$ | $Ω$
+--|---|--------------------|-----|----|-----------|-----------|----
+**Min** | 1 | $\varDelta T_{min}$ | 1.0 | 10 | $10^{-8}$ | $10^{-2}$ | 0.2
+**Max** | $\varDelta T_{max}$ | 3600 | $\varDelta T_{max}/ \varDelta T_{min}$ | 50 | $10^{-20}$ | $10^{-6}$ | 1.0
+**Value** | **1** | **3600** | **1.2** | **30** | $\boldsymbol{10^{-11}}$ | $\boldsymbol{10^{-3.3}}$ | **0.5**
+
+
+
