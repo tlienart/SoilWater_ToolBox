@@ -3,9 +3,9 @@
 # =============================================================
 # module including
 
-# using Suppressor
+using Suppressor
 
-# @suppress begin
+@suppress begin
     include("Option.jl")
     include("Path.jl")
 
@@ -84,7 +84,6 @@
     include("HyPix/HypixStart.jl")
 
     # include("NoCore/Jules/Jules.jl")
-
     # include("Temporary/Ks_Smap.jl")
 
-# end # Suppressor 
+end # Suppressor 

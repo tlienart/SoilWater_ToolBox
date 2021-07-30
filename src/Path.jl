@@ -157,16 +157,18 @@ module paths
 		# =============================================================
 		#		INPUT_SOILWATER
 		# =============================================================
+			path.inputSoilwater.HydroParam_ThetaH  = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_" * path.inputSoilwater.HydroParam_ThetaH
+
          path.inputSoilwater.BulkDensity        = Path_Soilwater_Data * path.inputSoilwater.BulkDensity
          path.inputSoilwater.ConvertModel       = Path_Soilwater_Data * path.inputSoilwater.ConvertModel
          path.inputSoilwater.HydroParam_Infilt  = Path_Soilwater_Data * path.inputSoilwater.HydroParam_Infilt
-         path.inputSoilwater.HydroParam_ThetaH  = Path_Soilwater_Data * path.inputSoilwater.HydroParam_ThetaH
+
          path.inputSoilwater.IdSelect           = Path_Soilwater_Data * path.inputSoilwater.IdSelect
          path.inputSoilwater.Infiltration       = Path_Soilwater_Data * path.inputSoilwater.Infiltration
          path.inputSoilwater.Infiltration_Param = Path_Soilwater_Data * path.inputSoilwater.Infiltration_Param
          path.inputSoilwater.Kunsat             = Path_Soilwater_Data * path.inputSoilwater.Kunsat
          path.inputSoilwater.Psd                = Path_Soilwater_Data * path.inputSoilwater.Psd
-         path.inputSoilwater.Pedological⍰      = Path_Soilwater_Data * path.inputSoilwater.Pedological⍰
+         path.inputSoilwater.Pedological⍰       = Path_Soilwater_Data * path.inputSoilwater.Pedological⍰
          path.inputSoilwater.Φ                  = Path_Soilwater_Data * path.inputSoilwater.Φ
          path.inputSoilwater.Ψθ                 = Path_Soilwater_Data * path.inputSoilwater.Ψθ
 		
@@ -193,9 +195,9 @@ module paths
 			path.tableSoilwater.Table_HydroInfilt    = Path_Soilwater_Table * string(opt.infilt.Model⍰) * "_" *  path.option.ModelName  *  "_" * path.tableSoilwater.Table_HydroInfilt
 			path.tableSoilwater.Table_Infilt         = Path_Soilwater_Table * string(opt.infilt.Model⍰) *  "_" *  path.option.ModelName  *  "_" *  path.tableSoilwater.Table_Infilt
 			path.tableSoilwater.Table_KΨ             = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" * path.tableSoilwater.Table_KΨ
-			path.tableSoilwater.Table_Psd            = Path_Soilwater_Table * string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
-			path.tableSoilwater.Table_Psd_θΨ_θ       = Path_Soilwater_Table * string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
-			path.tableSoilwater.Table_θΨ_Psd         = Path_Soilwater_Table * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_θΨ_Psd
+			path.tableSoilwater.Table_Psd            = Path_Soilwater_Table *  "_" * string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
+			path.tableSoilwater.Table_Psd_θΨ_θ       = Path_Soilwater_Table *  "_" * string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
+			path.tableSoilwater.Table_θΨ_Psd         = Path_Soilwater_Table *  "_" * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_θΨ_Psd
 			path.tableSoilwater.Table_θΨK            = Path_Soilwater_Table *  "_" * string(opt.hydro.HydroModel⍰) * "_" * path.tableSoilwater.Table_θΨK
 			path.tableSoilwater.TableComplete_θΨ     = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_θΨ
 			path.tableSoilwater.TableComplete_KΨ     = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_KΨ
@@ -204,7 +206,7 @@ module paths
 		#		TABLE_SMAP
 		# =============================================================
          path.tableSmap.Table_θΨK  = Path_Soilwater_Table * "_" * string(opt.hydro.HydroModel⍰) * "_" *  path.tableSmap.Table_θΨK
-         path.tableSmap.Table_Smap = Path_Soilwater_Table * path.tableSmap.Table_Smap
+         path.tableSmap.Table_Smap = Path_Soilwater_Table * "_" * path.tableSmap.Table_Smap
 
 		# =============================================================
 		#		PATH SMAP_2_HYPIX

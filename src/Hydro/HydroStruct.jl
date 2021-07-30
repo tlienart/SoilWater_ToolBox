@@ -4,11 +4,12 @@
 module hydroStruct
 	import ..tool
 	export HYDROSTRUCT
+   using Base
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : HYDRAULIC
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		mutable struct KOSUGI  # <>=<>=<>=<>=<>=<>=<>=<>=<>
+   Base.@kwdef mutable struct KOSUGI  # <>=<>=<>=<>=<>=<>=<>=<>=<>
          θs             :: Vector{Float64}
          θr             :: Vector{Float64}
          Ks             :: Vector{Float64}
@@ -47,7 +48,7 @@ module hydroStruct
 		end # struct KOSUGI
 
 		
-		mutable struct VANGENUCHTEN # <>=<>=<>=<>=<>=<>=<>=<>=<>
+		Base.@kwdef mutable struct VANGENUCHTEN # <>=<>=<>=<>=<>=<>=<>=<>=<>
          θs      ::	Vector{Float64}
          θr      ::	Vector{Float64}
          N       ::	Vector{Float64}
@@ -74,7 +75,7 @@ module hydroStruct
 		end # struct VANGENUCHTEN
 
 
-		mutable struct BROOKS_COREY # <>=<>=<>=<>=<>=<>=<>=<>=<>
+		Base.@kwdef mutable struct BROOKS_COREY # <>=<>=<>=<>=<>=<>=<>=<>=<>
          θs      ::	Vector{Float64}
          θr      ::	Vector{Float64}
          λbc     ::	Vector{Float64}
@@ -99,7 +100,7 @@ module hydroStruct
 		end # struct BROOKS COREY
 
 
-		mutable struct CLAPP_HORNBERGER # <>=<>=<>=<>=<>=<>=<>=<>=<>
+		Base.@kwdef mutable struct CLAPP_HORNBERGER # <>=<>=<>=<>=<>=<>=<>=<>=<>
 			θs        ::	Vector{Float64}
          θr        ::	Vector{Float64}
          λch       ::	Vector{Float64}
@@ -124,7 +125,7 @@ module hydroStruct
 		end # struct CLAPP_HORNBERGER
 
 
-		mutable struct HYDRO_OTHER # <>=<>=<>=<>=<>=<>=<>=<>=<>
+		Base.@kwdef mutable struct HYDRO_OTHER # <>=<>=<>=<>=<>=<>=<>=<>=<>
          Nse     :: 	Vector{Float64}
          Nse_θΨ  :: 	Vector{Float64}
          Nse_KΨ  :: 	Vector{Float64}

@@ -85,7 +85,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTRATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		mutable struct INFILT
+		Base.@kwdef mutable struct INFILT
 			RingRadius
 			θ_Ini
 			γ
@@ -326,7 +326,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDRO_PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		mutable struct OPTIM
+		Base.@kwdef mutable struct OPTIM
 			Param_Name :: Vector{String}
 			ParamOpt_Min :: Vector{Float64}
 			ParamOpt_Max :: Vector{Float64}
@@ -834,7 +834,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θOBSERVATION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			mutable struct θOBSERVATION
+			Base.@kwdef mutable struct θOBSERVATION
 				Date    :: Vector{DateTime}
 				Z  	  :: Vector{Float64}
 				ithetaObs   :: Vector{Int64}
