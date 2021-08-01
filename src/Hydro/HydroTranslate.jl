@@ -19,6 +19,6 @@
 			table.hydroLab.TABLE_EXTRAPOINTS_Kθ(hydroTranslate, IdSelect, param.hydro.TableComplete_θΨ, hydroTranslate.Ks[1:N_iZ], N_iZ::Int64, path.inputSoilwater.Kunsat)
 
 		# Creating an Id output required by the program
-			table.TABLE_ID(N_iZ::Int64, path.inputSoilwater.IdSelect)
+			table.TABLE_ID(N_iZ::Int64, path, path.inputSoilwater.IdSelect)
 	end # Option
 	# ------------------------END: ChangeHydroModel---------------------------  	
