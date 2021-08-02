@@ -25,7 +25,7 @@ module hydrolabOpt
 					optim.ParamOpt_Max[iθr] = hydro.θr_Max[iZ]
 
 				elseif ("θr" ∉ optim.ParamOpt) && (optionₘ.θrOpt⍰=="ParamPsd") && (option.data.Psd) # Derive θr frpm PSD
-					hydro.θr[iZ] = min(psdThetar.PSD_2_θr_FUNC(∑Psd, hydro, iZ, param), θobs_Min-θϵ)
+					hydro.θr[iZ] = min(psdThetar.PSD_2_θr_FUNC(∑Psd, hydro, iZ, param), max(θobs_Min-θϵ, 0.0))
 	
 				end # if ("θr" ∈ optim.ParamOpt)
 

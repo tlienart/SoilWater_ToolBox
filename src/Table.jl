@@ -179,7 +179,7 @@ module table
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [string.((Int64.(IdSelect)) round.(Matrix,digits=5)], ",")
+					DelimitedFiles.writedlm(io, [string.(Int64.(IdSelect)) round.(Matrix,digits=5)], ",")
 				end
 			return nothing
 			end

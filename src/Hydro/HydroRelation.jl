@@ -4,15 +4,15 @@
 module hydroRelation
 import BlackBoxOptim
 import ..tool
-export σ_2_Ψm⍰, σ_2_θr
+export σ_2_Ψm, σ_2_θr, FUNCTION_σ_2_Ψm_SOFTWARE
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : σ_2_Ψm⍰(iZ, hydro)
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function σ_2_Ψm⍰(σ₁, Ψσ, Ψm_Min, Ψm_Max; Pσ=3.0)
-			Ψm = Ψσ * exp(σ₁*Pσ)
+		function σ_2_Ψm(σ₁, Ψσ, Ψm_Min, Ψm_Max; Pσ=3.0)
+			Ψm = Ψσ * exp(σ₁ * Pσ)
 			return Ψm = max(min(Ψm , Ψm_Max), Ψm_Min)
-		end # function: σ_2_Ψm⍰
+		end # function: σ_2_Ψm
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +27,7 @@ export σ_2_Ψm⍰, σ_2_θr
 				hydro₂.Ψm[iZ] = tool.norm.∇NORM_2_PARAMETER(hydro₂.Ψm[iZ], Ψm_Min, Ψm_Max)
 
 			elseif (option₂.σ_2_Ψm⍰ == "UniqueRelationship") # <>=<>=<>=<>=<>
-				hydro₂.Ψm[iZ] = hydroRelation.σ_2_Ψm⍰(hydro₂.σ[iZ], param.hydro.Ψσ, hydro₂.Ψm_Min[iZ], hydro₂.Ψm_Max[iZ])
+				hydro₂.Ψm[iZ] = hydroRelation.σ_2_Ψm(hydro₂.σ[iZ], param.hydro.Ψσ, hydro₂.Ψm_Min[iZ], hydro₂.Ψm_Max[iZ])
 
 			end #option.infilt.σ_2_Ψm⍰
 

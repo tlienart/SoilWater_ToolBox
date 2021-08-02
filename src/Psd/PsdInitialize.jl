@@ -37,7 +37,7 @@ module psdInitialize
 			paramPsd = psdStruct.PSDSTRUCT(N_iZ, option, param)
 
 		# COMPUTING θr FROM PSD DATA
-		hydroPsd, paramPsd = psdThetar.PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, option, param, paramPsd)
+			hydroPsd, paramPsd = psdThetar.PSD_2_θr(∑Psd, hydro, hydroPsd, N_iZ, option, param, paramPsd)
 			
 		# COMPUTING θs FROM TOTAL POROSITY
 			θs_Psd = fill(0.0::Float64, N_iZ)

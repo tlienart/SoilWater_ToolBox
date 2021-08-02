@@ -14,14 +14,13 @@ module psdStart
 		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, option, param)
 
 		if option.psd.OptimizePsd⍰ == "Run"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			
 			println("\n    == RUN the PSD parameters with prescribed parameters ==") 
 			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd,  paramPsd.θr_Psd, option, param, paramPsd, hydroPsd)
 
 			if option.run.HydroLabθΨ⍰ ≠ "No" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
+				println("\n    == DERIVE HYDAULIC PARAMETERS FROM θ_Rpart, Ψ_Rpart ==")
+
 				paramPsd.Nse, Nse_Mean_Run, Nse_Std_Run = stats.NASH_SUTCLIFFE_θΨ(hydroPsd, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
-				
-				println("\n    == RUN the PSD parameters with prescribed parameters ==")
 				println("    ~ Nse_Mean_Run=$Nse_Mean_Run, Nse_Std_Run=$Nse_Std_Run ~")
 			end
 		

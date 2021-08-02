@@ -62,8 +62,7 @@ module psdThetar
 		#       PSD -> θr 
 		# =========================================
 			function PSD_2_θr_FUNC(∑Psd, hydroPsd, iZ, param; Psd_2_θr_Size=param.psd.Psd_2_θr_Size, Psd_2_θr_α1=param.psd.Psd_2_θr_α1, Psd_2_θr_α2=param.psd.Psd_2_θr_α2)
-
-				return θr_Psd = max(hydroPsd.θr_Max[iZ] * (1.0 - exp(- ( Psd_2_θr_α1 * (∑Psd[iZ,Psd_2_θr_Size] ^ Psd_2_θr_α2) ) )) , 0.0)		
+				return θr_Psd = max(hydroPsd.θr_Max[iZ] * (1.0 - exp(- (Psd_2_θr_α1 * (∑Psd[iZ,Psd_2_θr_Size] ^ Psd_2_θr_α2) ) )), 0.0)		
 			end # Function PSD_2_θr_FUNC
 
 		
