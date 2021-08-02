@@ -17,7 +17,7 @@
 
 # HYPIX
 
-Modelling unsaturated flow in highly heterogeneous soils can be accurately performed by solving the [Richards (1931)](#_ENDREF_13) equation (RE), which is commonly adopted by soil vegetation atmosphere transfer models. However, RE is highly nonlinear, and despite numerous efforts over the last decade its solution using numerical methods is demanding, and problems finding techniques to achieve fast and accurate solutions are unresolved (e.g. [Zha *et al*., 2019](#_ENDREF_14)). Here, we propose improvements to RE and implement them in HyPi, using the mixed form of RE, as recommended by [Celia *et al*. (1990)](#_ENDREF_14). The solution of RE is based on [Hassane Maina and Ackerer (2017)](#_ENDREF_15), for which the RE partial differential equation is solved using a *cell-centered finite-volume (implicit finite differences)* scheme for the spatial discretization, with an implicit Euler scheme for the temporal discretization by using the weighted average inter-cell hydraulic conductivity.
+Modelling unsaturated flow in highly heterogeneous soils can be accurately performed by solving the [Richards (1931)](#_ENDREF_13) equation (RE), which is commonly adopted by soil vegetation atmosphere transfer models. However, RE is highly nonlinear, and despite numerous efforts over the last decade its solution using numerical methods is demanding, and problems finding techniques to achieve fast and accurate solutions are unresolved (e.g. [Zha *et al*., 2019](#_ENDREF_14)). Here, we propose improvements to RE and implement them in HyPix, using the mixed form of RE, as recommended by [Celia *et al*. (1990)](#_ENDREF_14). The solution of RE is based on [Hassane Maina and Ackerer (2017)](#_ENDREF_15), for which the RE partial differential equation is solved using a *cell-centered finite-volume (implicit finite differences)* scheme for the spatial discretization, with an implicit Euler scheme for the temporal discretization by using the weighted average inter-cell hydraulic conductivity.
 
 ##	*Richards equation of HyPix model*
 
@@ -126,7 +126,7 @@ where $\varDelta Sink_{i}$ [L] is the sink computed for a given $\varDelta T$. T
 
 ### ***Automatic differentiation of the Jacobian with Julia language***
 
-One of the shortcomings of the NR solver is that it requires the mathematical derivatives of $R$ [Eq. (11)] (Appendix 7.2),  the implementation of which is complicated and time consuming. For example, if we wish to modify the inter-cell hydraulic conductivity [Eq. (9)], it requires recalculation of the derivatives.
+One of the shortcomings of the NR solver is that it requires the mathematical derivatives of $R$ [Eq. (9)]() (Appendix 7.2),  the implementation of which is complicated and time consuming. For example, if we wish to modify the inter-cell hydraulic conductivity [Eq. (7)](), it requires recalculation of the derivatives.
 To address this shortcoming, HyPix implements an option whereby the derivatives are analytically derived automatically by using the forward-mode automatic differentiation *[ForwardDiff](https://github.com/JuliaDiff)* in the Julia package ([Revels *et al*., 2016](#_ENDREF_27)). *ForwardDiff* (version 0.10.16) was found to be as accurate as using the mathematical derivatives, and only 10–25% slower compared to using mathematical derivatives. 
 
 
@@ -154,11 +154,109 @@ where Ni is the total number of cells, as described in [Figure 1](https://manaak
 
 ### ***Novel adaptive time-step management***
 
+The time management module optimizes the size of the time-step, $\varDelta T$, such that HyPix uses the largest $\varDelta T$ while meeting the targeted water balance accuracy. There are a large number of heuristic time-stepping methods in the literature (e.g. [Thomas and Gladwell, 1988](#_ENDREF_30); [Kavetski *et al.*, 2001](#_ENDREF_31); [Kavetski and Binning, 2004](#_ENDREF_32); [Miller *et al.*, 2006](#_ENDREF_33)). Among them we selected and improved on the adaptive time-step management of Kirkland et al. (1992) and Ross (2003), because their method is physically based, such that $\varDelta T$ is directly derived from the residuals of the water balance [Eq. (10)]() and requires only one physical fitting physical parameter. $\varDelta T$ is calculated via a maximum increase or decrease of the degree of saturation for each cell, which ensures a higher time resolution when $θ$ variations are large. This improves the convergence rate at the wetting front.
+
+#### ***Traditional adaptive time-step management: $\varDelta T$-$\varDelta θ$*** 
+
+The time-step management of [Kirkland *et al.* (1992)](#_ENDREF_34) and [Ross (2003)](#_ENDREF_35) was developed specifically for the RE based on $θ$. $\varDelta T$-$Δθ$ is derived by rearranging the terms of the residual [Eq. (10)]() assuming that $R ≈ 0$ and $S_{0} ≈ 0$ ($S_{0}$ is by definition small and strictly 0 for non-compressible fluids), leading to:
+
+$$\begin{equation}
+\begin{cases}	\varDelta T_i=\frac{\varDelta Z_i\,\,\varDelta \theta _{max_i}+\varDelta Sink_i\left( \psi _{i}^{t-1} \right)}{\left[ Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t} \right] +\epsilon}\\	\varDelta \theta _{max_i}=\left| \theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t-1} \right) \right|\\\end{cases}
+\end{equation}$$
+
+where $\epsilon$ is a small, positive, infinitesimal quantity used to avoid dividing by 0, and $\varDeltaθ_{max}$ [L<sup>3</sup> L<sup>-3</sup>] is a parameter describing the maximum change ‘allowed’ of $θ$ for a given $\varDelta T$. This is to assure numerical stability as well as to avoid oscillation in the solution. The $\Delta θ_{max}$ feasible range is provided in [Table 2](). The selected $\varDelta T$ is computed by using the Euclidean norm of a vector based on [Driscoll and Braun (2017)](#_ENDREF_36), [Kochenderfer and Wheeler (2019)](#_ENDREF_37), and [Kelley, (2003)](#_ENDREF_38) by using an algorithm similar to [Eq. (11)]():
+
+$$\begin{equation}
+\begin{cases}	\varDelta T^t=\sqrt{\frac{\sum_{i=1}^{N_i}{\varDelta T_i^2}}{N_i}}\\	\varDelta T_{min}\leqslant \varDelta T^t\leqslant \varDelta T_{max}\\\end{cases}
+\end{equation}$$
+
+where $N_i$ is the total number of cells, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp)), and $\Delta T_{min}$ [T] and $\Delta T_{max}$ [T] are the user-defined minimum and maximum time-steps described in [Table 2]().
+
+The computational time in HyPix decreases when $\varDelta T$ increases when, for example: **(a)** the size of the cell, $\varDelta Z$, increases, **(b)** the hydraulic properties from one cell to another, depicted by $Q$, do not change dramatically (homogeneous soils), and **(c)** the amplitude of the variation of $θ$ decreases.
+
+#### ***Novel adaptive time-step management: $\varDelta T$-$\varDelta \psi$*** 
+
+For the robustness of the solution of the RE [(Eq. (1))]() based on $ψ$ , the change of $\varDelta \psi$ between two consecutive time-steps needs to be small. Nevertheless, as shown in [Figure 2](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp), a small change of $θ$ could result in a large change of $\psi$, particularly near saturation and at the dry end of the $θ(ψ)$ curve. To address this shortcoming, we improve the traditional [Ross (2003)](#_ENDREF_39) time-step, $\varDelta T-\varDeltaθ$ [(Eq. (12))](), by allowing $\varDelta θ_{max}$ to vary $\varDelta θ_{max_i}$. For that we introduce a temporary parameter, $\varDelta ψ_{max}$, computed from $θ(ψ)$ and $\varDelta θ_{max}$ [(Eq. (12))]():
+
+$$\begin{equation}
+\varDelta \psi _{max_i}\geqslant \left| \psi _{i}^{t}-\psi _{i}^{t-1} \right|
+\end{equation}$$
+
+To avoid introducing a second parameter we derive $\varDelta ψ_{max}$ from $\varDelta θ_{max}$. As shown in [Figure 2](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp), for a given $θ(ψ)$, the smallest $\varDelta ψ$ occurs around $(θ_s-θ_r)/2$ or at the Kosugi parameter $ψ = ψ_m$. Therefore, $\varDelta ψ_{max}$ is computed for every cell as follows:
+
+$$\begin{equation}
+\begin{cases}	\theta _{\frac{1}{2}}=\frac{\theta _{r_i}+\theta _{s_{MacMat_i}}}{2}\\	\varDelta \psi_{\max_i}=\psi \left( \theta _{\frac{1}{2}}-\frac{\varDelta \theta _{max_i}}{2} \right) -\psi \left( \theta _{\frac{1}{2}}+\frac{\varDelta \theta _{max_i}}{2} \right)\\\end{cases}\end{equation}$$
+
+The $\varDelta θ_{max}$ feasible range is provided in [Table 2](), and $\varDelta θ_{max}(ψ)$ is adjusted based on the maximum allowed change of $\varDelta ψ_{max}$, and $ψ$:
+
+$$\begin{equation}
+\varDelta \theta _{\max _i}=\frac{\theta _i\left( \max \left\{ \psi _{i}^{t}-\varDelta \psi _{\max _i},0 \right\} \right) -\theta _i\left( \psi _{i}^{t}+\varDelta \psi _{\max _i} \right)}{2}
+\end{equation}$$
+
+$\varDelta T_i$ is computed using [Eq. (12)]() but using $\varDelta \theta_{max_i}$ instead of $\varDelta θ_{max}$:
+
+$$\begin{equation}
+\varDelta T_i=\frac{\varDelta Z_i\,\,\varDelta \theta_{max _i}+\varDelta Sink_i\left( \psi _{i}^{t-1} \right)}{\left[ Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t} \right] +\epsilon}
+\end{equation}$$
+
+The selected $\varDelta T$ is computed using [Eq. (13)]().
+
+![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp "Figure 2. Example illustrating that small changes of θ could result in large changes of ψ, particularly near saturation and at the dry end of the unimodal θ(ψ) [Eq. (1)].")
+<figcaption align = "center"><b>Figure 2 - Example illustrating that small changes of θ could result in large changes of ψ, particularly near saturation and at the dry end of the unimodal θ(ψ) [Eq. (1) FROM HYDRAULIC FUNCTIONS!!!!].</b></figcaption></figure>
+
+### ***Condition to rerun the time-step*** 
+
+$\varDelta T^t$ is computed by using past pressure, $ψ^{t-1}$, which may not reflect, for example, the passage of a wetting front. Therefore, to assure a good water balance and the stability of the solution of the RE, HyPix recomputes $\varDelta T^t$ if $\varDelta T^t(\psi ^t)\ll \varDelta T^t(\psi ^{t-1})$. HyPix is rerun if the following condition is met:
+
+$$\begin{equation}
+\frac{\varDelta T_{}^{t}\left( \psi _{}^{t-1} \right)}{\varDelta T_{}^{t}\left( \psi _{}^{t} \right)}>P_{\varDelta \theta _{max}\_Rerun}
+\end{equation}$$
+
+where $P_{\varDelta θ _{max}\_Rerun}$ is a user-defined parameter for which the feasible range is provided in [Table 2]().
+
+
+### ***Accuracy and efficiency of simulations***
+
+#### ***Water balance***
+
+The overall water balance, $WB$ [L], of the simulation is derived from the residuals, $R$ [[Eq. (10)]](), and is computed for every time-step as follows:
+
+$$\begin{equation}
+WB_{}^{t}=\sum_{i=1}^{N_i}{\varDelta Z_i\left[ \theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t=0} \right) \right]}-\sum_{i=1}^{N_i}{\sum_{t=1}^{N_t}{\varDelta Z_i\,\,S_o\frac{\theta _i\left( \psi _{i}^{t} \right)}{\theta s_i}\left( \left| \psi _{i}^{t} \right|-\left| \psi _{i}^{t-1} \right| \right)}}\\-\sum_{t=1}^{N_t}{\varDelta T^t\left[ Q_{\frac{1}{2}}^{t}-Q_{N_{i+\frac{1}{2}}}^{t} \right] +\sum_{i=1}^{N_i}{\sum_{t=1}^{N_t}{\varDelta Sink_i\left( \psi _{i}^{t} \right)}}}
+\end{equation}$$
+
+where $N_t$ is the final time-step and $N_i$ is the bottom cell.
+Because $WB$ increases with the length of the simulation, it is normalized, $WB^*$, to the cumulative infiltration:
+
+$$\begin{equation}
+WB^{*t}=\frac{WB_{}^{t}}{\sum_{t=1}^{Nt}{\varDelta Q_{\frac{1}{2}}^{t}}}
+\end{equation}$$
+
+An acceptable water balance at the end of the simulation occurs when $WB^{*t}$ is smaller than the uncertainty of measuring precipitation.
+
+#### ***Efficiency of solving the Richards equation***
+
+The efficiency of a simulation, $E_{ff}$ [T <sup>-1</sup>], is defined as the average number of iterations, $k$, per day required to achieve a suitable $WB^*$ [[Eq.(20)]](), and it is computed as:
+
+$$\begin{equation}
+E_{ff}=\frac{N_{iter}}{\sum_{t=1}^{N_{\mathrm{t}}}{\varDelta T^t}}\,\, 
+\end{equation}$$
+
+where $N_{iter}$ is the number of iterations. Therefore, the smaller the $E_{ff}$, the faster HyPix would run for a given $WB^*$.
+
+
 POR AQUI!!!!!!!!!!!!!
 
 
+
+
+
+
+
+
+
  TABLE 1
- <figcaption align = "center"><b>Table 2 - Feasible dynamic range of the optimized bimodal Kosugi hydraulic parameters from observed θ. Both the unconstrained and constrained sets of hydraulic parameters have five parameters to be optimized. The difference is that in the dynamically constrained set of hydraulic parameters there is a relationship between σ and ψm (Fernández-Gálvez et al., 2021). The feasible range of Ks is derived from Carsel and Parrish (1988). For both the unconstrained and constrained sets of hydraulic parameters, ψMacMat = 100 mm, and Pσ = 3. θr(σ) is described in Eq. (3).</b></figcaption></figure>
+ <figcaption align = "center"><b>Table 1 - Feasible dynamic range of the optimized bimodal Kosugi hydraulic parameters from observed θ. Both the unconstrained and constrained sets of hydraulic parameters have five parameters to be optimized. The difference is that in the dynamically constrained set of hydraulic parameters there is a relationship between σ and ψm (Fernández-Gálvez et al., 2021). The feasible range of Ks is derived from Carsel and Parrish (1988). For both the unconstrained and constrained sets of hydraulic parameters, ψMacMat = 100 mm, and Pσ = 3. θr(σ) is described in [Eq. (3, FROM BIMODEL KOSUGY MODEL!!!!!!!)].</b></figcaption></figure>
 
  $\\$ | $\boldsymbol{\theta_{s}}$ [m <sup>3</sup>m<sup>-3</sup>] | $\boldsymbol{\theta_{r}}$ [m <sup>3</sup>m<sup>-3</sup>]| $\boldsymbol{σ}$ [-]| $\boldsymbol{\psi _{m}}$ [mm]| $\boldsymbol{K_{s}}$ [cm h<sup>-1</sup>] | $\boldsymbol{\theta_{sMacMat}}$ [m <sup>3</sup>m<sup>-3</sup>]| $\boldsymbol{\psi _{mMac}}$ [mm] | $\boldsymbol{σ_{Mac}}$ [-]
 --|---|--------------------|-----|----|-----------|-----------|----|---
