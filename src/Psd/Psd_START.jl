@@ -13,7 +13,9 @@ module psdStart
 		# INITIATING THE PSD DATA		
 		N_Psd, N_Psd_Max, Psd, θs_Psd, hydroPsd, paramPsd = psdInitialize.PSD_INITIALIZE(∑Psd, hydro, hydroPsd, N_Psd, N_iZ, option, param)
 
-		if option.psd.OptimizePsd⍰ == "Run"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
+		if option.psd.OptimizePsd⍰ == "Run"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			
+			println("\n    == RUN the PSD parameters with prescribed parameters ==") 
 			θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd,  paramPsd.θr_Psd, option, param, paramPsd, hydroPsd)
 
 			if option.run.HydroLabθΨ⍰ ≠ "No" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 

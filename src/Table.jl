@@ -9,7 +9,7 @@ module table
 	#		FUNCTION : TABLE_EXTRAPOINTS_K
 	# 		Tabular values of the PSD model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TABLE_ID(N_iZ::Int64, Path::String)
+		function TABLE_ID(N_iZ::Int64, path, Path::String)
 			println("    ~  $(Path) ~")
 
 			IdSelect = collect(1:1:N_iZ)
@@ -24,7 +24,7 @@ module table
 
 			open(Path, "w") do io
 				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-				DelimitedFiles.writedlm(io, [IdSelect[1:N_iZ] Select[1:N_iZ]], ",")
+				DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Select[1:N_iZ]], ",")
 			end
 		return nothing
 		end  # function:  TABLE_ID
@@ -52,7 +52,7 @@ module table
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [IdSelect Matrix₁ Matrix₂ Kₛ_Model], ",")
+					DelimitedFiles.writedlm(io, [string.(IdSelect) Matrix₁ Matrix₂ Kₛ_Model], ",")
 				end
 			return nothing
 			end  # function:  θΨK
@@ -110,7 +110,7 @@ module table
 
 					open(Path, "w") do io
 						DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-						DelimitedFiles.writedlm(io, [Id₂[1:N] Ψ₂[1:N] θ₂[1:N]], ",")
+						DelimitedFiles.writedlm(io, [string.(Id₂[1:N]) Ψ₂[1:N] θ₂[1:N]], ",")
 					end
 				else
 					error("SoilWaterToolBox Error in TABLE_EXTRAPOINTS_θΨ $Orientation not understood")
@@ -150,9 +150,8 @@ module table
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [Id₂[1:N] Ψ₂[1:N] Kunsat₂[1:N]], ",")
-				end
-				
+					DelimitedFiles.writedlm(io, [string.(Id₂[1:N]) Ψ₂[1:N] Kunsat₂[1:N]], ",")
+				end		
 		return nothing
 		end  # function:  θΨ
 			
@@ -180,7 +179,7 @@ module table
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [Int64.(IdSelect) round.(Matrix,digits=5)], ",")
+					DelimitedFiles.writedlm(io, [string.((Int64.(IdSelect)) round.(Matrix,digits=5)], ",")
 				end
 			return nothing
 			end
@@ -202,7 +201,7 @@ module table
 				Matrix =  round.(Matrix, digits=5)
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [IdSelect Matrix], ",")
+					DelimitedFiles.writedlm(io, [string.(IdSelect) Matrix], ",")
 				end
 			return nothing
 			end  # function:  θΨK_PSD
@@ -278,7 +277,7 @@ module table
 				Matrix =  round.(Matrix, digits=10)
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [IdSelect Matrix], ",")
+					DelimitedFiles.writedlm(io, [string.(IdSelect) Matrix], ",")
 				end
 			return nothing
 			end  # function: HYDRO_INFILT
@@ -297,7 +296,7 @@ module table
 				Matrix =  round.(Matrix, digits=5)
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [IdSelect Matrix], ",")
+					DelimitedFiles.writedlm(io, [string.(IdSelect) Matrix], ",")
 				end
 			return nothing
 			end  # function: HYDRO_INFILT

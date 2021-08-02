@@ -15,7 +15,7 @@ module SoilWater_ToolBox
 	# ==============================================================
 	function SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="NewFormat")
 
-		println("Test3")
+		println("Test2")
 
 		# _______________________ START: option/ param/ path _______________________ 
 
@@ -57,7 +57,7 @@ module SoilWater_ToolBox
 			if option.run.Smap
 				option.hydro.HydroModel⍰ = Scenarios[iSim]
 				path = paths.PATH(1,  option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
-				println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / N_Scenarios \n \n")
+				println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / $N_Scenarios \n \n")
 			end
 		#..............................................................................
 
@@ -141,7 +141,7 @@ module SoilWater_ToolBox
 					IsTopsoil, RockClass = reading.PEDOLOGICAL(IdSelect, N_iZ, path.inputSoilwater.Pedological⍰)
 				
 				elseif option.data.Pedological⍰ == "Smap"
-					IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname = readSmap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
+					IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname = readSmap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
 
 				end  # if: option.data.Pedological⍰
 
@@ -355,7 +355,7 @@ module SoilWater_ToolBox
 
 					# When all the models are performed
 					if iSim==length(Scenarios)
-						tableSmap.SMAP(hydro, IdSelect, IsTopsoil, N_iZ, option.hydro, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname)
+						tableSmap.SMAP(hydro, IdSelect, IsTopsoil, N_iZ, option.hydro, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname)
 					end
 				end # option.run.Smap	
 			end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File

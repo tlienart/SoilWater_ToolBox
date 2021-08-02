@@ -32,8 +32,12 @@
 				Smap_RockDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockDepth_mm", N_iZ; N_Point_Max=1)
 
 				Smap_MaxRootingDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "MaxRootingDepth_mm", N_iZ; N_Point_Max=1)
+
+				Smap_SmapFH, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "SmapFH", N_iZ; N_Point_Max=1)
+
+				Smap_PermeabilityClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "PermeabilityClass", N_iZ; N_Point_Max=1)
 		
-			return IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname
+			return IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname
 			end  # function: SMAP
 
 

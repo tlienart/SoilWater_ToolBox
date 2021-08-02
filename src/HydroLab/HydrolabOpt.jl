@@ -26,7 +26,7 @@ module hydrolabOpt
 
 				elseif ("θr" ∉ optim.ParamOpt) && (optionₘ.θrOpt⍰=="ParamPsd") && (option.data.Psd) # Derive θr frpm PSD
 					hydro.θr[iZ] = min(psdThetar.PSD_2_θr_FUNC(∑Psd, hydro, iZ, param), θobs_Min-θϵ)
-
+	
 				end # if ("θr" ∈ optim.ParamOpt)
 
 			# TEST IF EXIST Ψ=0  ~~~

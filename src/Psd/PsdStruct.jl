@@ -7,7 +7,7 @@ module psdStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : HYDRAULIC
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	mutable struct IMP
+	Base.@kwdef mutable struct IMP
 		ξ1             :: Vector{Float64}
 		ξ2             :: Vector{Float64}
 		∑Psd_2_ξ2_β1   :: Vector{Float64}
@@ -24,15 +24,13 @@ module psdStruct
 	end # struct IMP
 
 
-	mutable struct CHANG
+	Base.@kwdef mutable struct CHANG
       ξ1          :: Vector{Float64}
       Psd_2_θr_α1 :: Vector{Float64}
       Psd_2_θr_α2 :: Vector{Float64}
       θr_Psd      :: Vector{Float64}
 		Err_θr_Psd  :: Vector{Float64}
 		Nse         :: Vector{Float64}
-
-   	# FieldName   :: Vector{Symbol} # Need to put
 	end # struct CHANG
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

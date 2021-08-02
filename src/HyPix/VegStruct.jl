@@ -8,25 +8,25 @@ module vegStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : veg
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	mutable struct VEG	
-      Zroot                :: Float64
-      ΔRdf_Top             :: Float64
-      Zroot_Top            :: Float64
-      Lai                  :: Float64
-      Lai_Min              :: Float64
-      Lai_Max              :: Float64
-      CropCoeficient       :: Float64
-      CropCoeficient_Min   :: Float64
-      CropCoeficient_Max   :: Float64
-      ExtinctCoefRadiation :: Float64
-      Ψfeddes1             :: Float64
-      Ψfeddes2             :: Float64
-      Ψfeddes3             :: Float64
-      Ψfeddes4             :: Float64
-      RootWaterUptakeComp  :: Float64
-      Zevapo               :: Float64
-      Sint_Lai             :: Float64
-      Sint_Sat             :: Float64
+	Base.@kwdef mutable struct VEG	
+            Zroot                :: Float64
+            ΔRdf_Top             :: Float64
+            Zroot_Top            :: Float64
+            Lai                  :: Float64
+            Lai_Min              :: Float64
+            Lai_Max              :: Float64
+            CropCoeficient       :: Float64
+            CropCoeficient_Min   :: Float64
+            CropCoeficient_Max   :: Float64
+            ExtinctCoefRadiation :: Float64
+            Ψfeddes1             :: Float64
+            Ψfeddes2             :: Float64
+            Ψfeddes3             :: Float64
+            Ψfeddes4             :: Float64
+            RootWaterUptakeComp  :: Float64
+            Zevapo               :: Float64
+            Sint_Lai             :: Float64
+            Sint_Sat             :: Float64
 	end # struct VEG
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

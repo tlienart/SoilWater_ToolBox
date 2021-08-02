@@ -8,13 +8,13 @@ module infiltStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		STRUCTURE : HYDRAULIC
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		mutable struct INFILT
-            Sorptivity         :: 	Vector{Float64}
-            iT_TransSteady_Data :: 	Vector{Int64}
-            T_TransSteady_Data  :: 	Vector{Float64}
-            Nse_Trans          ::	Vector{Float64}
-				Nse_Steady         ::	Vector{Float64}
-				Nse			       ::	Vector{Float64}
+		Base.@kwdef mutable struct INFILT
+			Sorptivity         :: 	Vector{Float64}
+			iT_TransSteady_Data :: 	Vector{Int64}
+			T_TransSteady_Data  :: 	Vector{Float64}
+			Nse_Trans          ::	Vector{Float64}
+			Nse_Steady         ::	Vector{Float64}
+			Nse			       ::	Vector{Float64}
 		end # struct KOSUGI
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

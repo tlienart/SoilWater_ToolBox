@@ -48,7 +48,7 @@ module checking
 			elseif  (optionₘ.θrOpt⍰=="ParamPsd") && ("θr"∈ optim.ParamOpt) # Derive θr frpm PSD
 				error("*** optionₘ.θrOpt⍰==ParamPsd && θr does not need to be optimized ***")
 
-			elseif  (optionₘ.θrOpt⍰=="ParamPsd") && ("θr"∉ optim.ParamOpt) && !(option.run.IntergranularMixingPsd) # Derive θr frpm PSD
+			elseif  (optionₘ.θrOpt⍰=="ParamPsd") && ("θr"∉ optim.ParamOpt) && !(option.data.Psd) # Derive θr frpm PSD
 				error("*** optionₘ.θrOpt⍰==ParamPsd THAN option.run.IntergranularMixingPsd=true ***")
 
         	elseif option.data.SimulationKosugiθΨK && "Ks" ∉ optim.ParamOpt
@@ -61,6 +61,9 @@ module checking
 			# ------------ CHECKING Particle Size Distribution model--------------------
 			elseif option.run.IntergranularMixingPsd && !(option.data.Psd)
 				error("***  option.run.IntergranularMixingPsd ⇒option.data.Psd ***")
+
+			elseif option.run.IntergranularMixingPsd && option.data.Φ⍰=="No"
+				error("***  option.run.IntergranularMixingPsd ⇒ option.data.Φ⍰ ≠ No ***")
 
 			elseif option.run.IntergranularMixingPsd && "Ks" ∈ optim.ParamOpt
 					error("*** option.run.IntergranularMixingPsd ⇒ Ks ∉ optim.ParamOpt ***")

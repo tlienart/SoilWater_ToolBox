@@ -22,11 +22,11 @@ module tableSmap
 
                FieldName_String = vcat(FieldName_String, FieldName_String2)
 
-               FieldName_String = vcat("Id", "SoilName", "Depth", "KunsatModel", FieldName_String)
+               FieldName_String = vcat("Id", "SoilName", "Depth", FieldName_String, "Ks_Model[mm/s]")
 
                 open(Path, "w") do io
                   DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-                  DelimitedFiles.writedlm(io, [IdSelect[1:N_iZ] Soilname[1:N_iZ] Smap_Depth[1:N_iZ] Matrix], ",")
+                  DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Soilname[1:N_iZ] Smap_Depth[1:N_iZ] Matrix], ",")
                end
          return nothing
          end  # function:  θΨK
@@ -42,10 +42,11 @@ module tableSmap
    JulesModel_VangenuchtenJules = ["ThetaS_VgJules[mm3 mm-3]";"ThetaR_VgJules[mm3 mm-3]";"n_VgJules[-]";"Hvg_VgJules[mm]"; "Ks_VgJules[mm s-1]";"3300mm";"10000mm"]
 
    """
-      function SMAP(hydro, IdSelect, IsTopsoil, N_iZ, optionₘ, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_RockDepth, Soilname)
+      function SMAP(hydro, IdSelect, IsTopsoil, N_iZ, optionₘ, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname)
+
          println("    ~  $(path.tableSmap.Table_Smap) ~")
 
-         HeaderSmap = true # <true> the greek characters are replaced by alphabet; <false> original parameter names with no units usefull to use values in SoilWater-ToolBox
+         HeaderSmap = false # <true> the greek characters are replaced by alphabet; <false> original parameter names with no units usefull to use values in SoilWater-ToolBox
 
          # User input
             Option_BrooksCorey       = true
@@ -53,9 +54,9 @@ module tableSmap
             Option_VanGenuchten      = true
             Option_VanGenuchtenJules = true
             Option_Kosugi            = true
-            Option_Kosugi_Table      = true
+            Option_Kosugi_Table      = false
 
-         Header = ["Id"; "SoilName"; "Depth_mm"; "IsTopsoil"; "RockFragment_%";"RockDepth_mm"; "MaxRootingDepth_mm"]
+         Header = ["Id"; "SoilName"; "Depth_mm"; "IsTopsoil"; "RockFragment_%";"RockDepth_mm"; "MaxRootingDepth_mm"; "PermeabilityClass"; "SmapFH"]
          Data = []
       
       # Select data
@@ -63,7 +64,7 @@ module tableSmap
          if Option_BrooksCorey # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "BrooksCorey"
 
-            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_SmapThetaHK.csv"
+            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_Smap_θΨK.csv"
             
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"λbc";"Ψbc"; "Ks"; "Ψga"]
@@ -93,7 +94,7 @@ module tableSmap
          if  Option_ClappHornberger # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "ClappHornberger"
 
-            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_SmapThetaHK.csv"
+            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_Smap_θΨK.csv"
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"λch";"Ψch";"Ks";"Ψga"]
@@ -123,7 +124,7 @@ module tableSmap
          if Option_VanGenuchten # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "Vangenuchten"
 
-            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_SmapThetaHK.csv"
+            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_Smap_θΨK.csv"
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"N";"Ψvg"; "Ks"]
@@ -153,7 +154,7 @@ module tableSmap
          if Option_VanGenuchtenJules # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "VangenuchtenJules"
 
-            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_SmapThetaHK.csv"
+            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_Smap_θΨK.csv"
 
             if isfile(Path_θΨ)
                Select_θΨ = ["θs";"θr";"N";"Ψvg"; "Ks"]
@@ -183,10 +184,10 @@ module tableSmap
          if Option_Kosugi # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
             HydroModel_θΨ = "Kosugi"
 
-            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_SmapThetaHK.csv"
+            Path_θΨ =  path.tableSoilwater.Path_Soilwater_Table *  "_" * string(HydroModel_θΨ) *  "_" * "Table_Smap_θΨK.csv"
 
             if isfile(Path_θΨ)
-               Select_θΨ =["θs";"θr";"Ks";"Ψm";"σ";"σMac";"ΨmMac";"θsMacMat"; "θsMacMat_ƞ"]
+               Select_θΨ =["θs";"θr";"Ks";"Ψm";"σ";"θsMacMat_ƞ";"σMac";"ΨmMac"; "θsMacMat";"Φ"]
                    
                Data_θΨ = Tables.matrix(CSV.File(Path_θΨ, select=Select_θΨ))
                   
@@ -197,7 +198,7 @@ module tableSmap
                end
          
                if HeaderSmap
-                  Header_θΨ = ["ThetaS_Kg[mm3 mm-3]";"ThetaR_Kg[mm3 mm-3]";"Ks_Kg[mm s-1]";"Hm_Kg[mm]";"Sigma_Kg";"SigmaMac_Kg";"HmMac_Kg[mm]";"ThetaSMacMat_Kg[mm3 mm-3]"]
+                  Header_θΨ = ["ThetaS_Kg[mm3 mm-3]";"ThetaR_Kg[mm3 mm-3]";"Ks_Kg[mm s-1]";"Hm_Kg[mm]";"Sigma_Kg";"ThetaSMacMatNorm_Kg[mm3 mm-3]";"SigmaMac_Kg";"HmMac_Kg[mm]";"θsMacMat_Kg[mm3 mm-3]";"TotalPorosity[mm3 mm-3]"]
                else
                   Header_θΨ = Select_θΨ
                end
@@ -219,11 +220,11 @@ module tableSmap
          for iZ=1:N_iZ
             for iΨ =1:N_Ψ
                Ψ₂ = param.smap.Ψ_Table[iΨ]
-               θ₂[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
+               θ₂[iZ, iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
             end # iΨ
          end # iZ
 
-         # if isfile(Path_θΨ)
+         if isfile(Path_θΨ)
             Select_θΨ = string.(Int64.(param.smap.Ψ_Table)) .* "mm"            
 
             Data = hcat(Data[1:N_iZ, :], θ₂[1:N_iZ, :])
@@ -231,18 +232,18 @@ module tableSmap
             Header_θΨ = Select_θΨ
 
             Header =  append!(Header, Header_θΨ)
+         end
       end # Option_Kosugi
 
          
       # COMBINING OUTPUTS   
          open(path.tableSmap.Table_Smap, "w") do io
             DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Soilname[1:N_iZ] Smap_Depth[1:N_iZ] IsTopsoil[1:N_iZ] RockFragment[1:N_iZ] Smap_RockDepth[1:N_iZ] Smap_MaxRootingDepth[1:N_iZ] Data[1:N_iZ,:]], ",")
+            DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Soilname[1:N_iZ] Smap_Depth[1:N_iZ] IsTopsoil[1:N_iZ] RockFragment[1:N_iZ] Smap_RockDepth[1:N_iZ] Smap_MaxRootingDepth[1:N_iZ] Smap_PermeabilityClass[1:N_iZ] Smap_SmapFH[1:N_iZ] Data[1:N_iZ,:]], ",")
          end	
       return nothing
       end  # function:  smap
 	# ............................................................
-
   
 end  # module: tableSmap
 # ............................................................
