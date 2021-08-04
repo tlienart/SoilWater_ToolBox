@@ -83,7 +83,8 @@ where $\varDelta Pr_{through}^{t}$ [L] is the *throughfall precipitation* (i.e.,
    \begin{cases}	Q_{i-\frac{1}{2}}^{t}=-K_{i-\frac{1}{2}}\,\,\left[ \frac{\left| \psi _{i-1}^{t} \right|-\left| \psi _{i}^{t} \right|}{\varDelta Z_{i-\frac{1}{2}}}-\cos  \alpha \right]\\	\varDelta Z_{i-\frac{1}{2}}=\frac{\varDelta Z_i+\varDelta Z_{i-1}}{2}\\	K_{i-\frac{1}{2}}=\omega _i\,\,K_i\left( \psi _{i}^{t} \right) +\left[ 1-\omega _i \right] \,\,K_{i-1}\left( \psi _{i-1}^{t} \right)\\	\omega _i=\frac{\varDelta Z_i}{\varDelta Z_i+\varDelta Z_{i-1}}\\\end{cases}
    \end{equation}$$
 
-   >>where $Q_{i-\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux entering cell $i$ from the top, and $ Q_{i+\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux exiting cell $i$ from the bottom; $K_{i-\frac{1}{2}}$ [L T<sup>-1</sup>] refers to the weighted average inter-cell hydraulic conductivity (e.g. [Haverkamp and Vauclin, 1979](#_ENDREF_21); [Belfort *et al*., 2013](#_ENDREF_22)), computed with $\omega _i$; and $\varDelta Z_{i-\frac{1}{2}}$ [L] is the distance between cell centres $i$ and $i – 1$, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp).
+   >>where $Q_{i-\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux entering cell $i$ from the top, and $ Q_{i+\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux exiting cell $i$ from the bottom; $K_{i-\frac{1}{2}}$ [L T<sup>-1</sup>] refers to the weighted average inter-cell hydraulic conductivity (e.g. [Haverkamp and Vauclin, 1979](#_ENDREF_21); [Belfort *et al*., 2013](#_ENDREF_22)), computed with $\omega _i$; and $\varDelta Z_{i-\frac{1}{2}}$ [L] is the distance between cell centres $i$ and $i – 1$, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp). 
+   
 
 #### *Free drainage bottom condition: $i = N_{i} + 1$*
 
@@ -93,7 +94,7 @@ $$\begin{equation}
 Q_{N_{\mathrm{i}}+1}^{t}=K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right) \,\,\cos  \alpha 
 \end{equation}$$
 
->>where $ K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right) $ is the *unsaturated hydraulic conductivity* described in [XXXX]().
+>>where $K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right)$ is the [*unsaturated hydraulic conductivity*](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions)
 
 >>This free drainage condition is the most widely used when the water table is assumed to be at significant depth. Typically, our model addresses the modelling of water flow in the unsaturated or vadose zone.
 
