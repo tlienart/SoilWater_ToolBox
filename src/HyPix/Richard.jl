@@ -197,7 +197,7 @@ module richard
 		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_Constrain_K1
-	# 		Making sure that the steps og NR are not too big and within the limits of Δθ_Max
+	# 		Making sure that the steps of NR are not too big and within the limits of Δθ_Max
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_Constrain_K1(iT, iZ, ΔΨmax, Ψ)
 			if Ψ[iT,iZ] ≤ Ψ[iT-1,iZ]		
