@@ -105,7 +105,7 @@ module SoilWater_ToolBox
 					catch
 						@warn "\n *** option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠:Kosugi => Kosugi simulation not performed yet! *** \n"
 						if "Ks" ∈ optim.ParamOpt
-							K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, Path.inputSoilwater.Kunsat)
+							K_KΨobs, Ψ_KΨobs, N_KΨobs = reading.KUNSATΨ(IdSelect, N_iZ, path.inputSoilwater.Kunsat)
 						end
 					end # catch
 				end  # if: Kθ			
@@ -437,6 +437,6 @@ module SoilWater_ToolBox
 
 end # module soilwater_toolbox # module soilwater_toolbox
 
-# println("\n\n ===== START SOIL WATER TOOLBOX =====")
-# 	@time START_TOOLBOX(;param1=1,param2=2)
-# println("==== END SOIL WATER TOOLBOX ====")
+println("\n\n ===== START SOIL WATER TOOLBOX =====")
+	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210622")
+println("==== END SOIL WATER TOOLBOX ====")

@@ -17,7 +17,7 @@ module psdOpt
 				θ_Rpart[iZ,1:N_Psd[iZ]], Ψ_Rpart[iZ,1:N_Psd[iZ]] = psdFunc.PSD_MODEL(iZ, Psd[iZ,1:N_Psd[iZ]], ∑Psd[iZ,1:N_Psd[iZ]], Rpart[iZ,1:N_Psd[iZ]], N_Psd[iZ], θs_Psd[iZ], θr_Psd[iZ], option, param, paramPsd)
 			end # for iZ = 1:N_iZ
 
-			return θ_Rpart, Ψ_Rpart
+		return θ_Rpart, Ψ_Rpart
 		end # function PSD_RUN_ALLMODEL
 
 	

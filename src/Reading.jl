@@ -16,7 +16,6 @@ module reading
 				Data = DelimitedFiles.readdlm(PathIdSelect, ',')
 				Header = Data[1,begin:end]
 				Data = Data[2:end,begin:end]
-
 				Data = sortslices(Data, dims=1)
 
 				Id, N_iZ_All  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
