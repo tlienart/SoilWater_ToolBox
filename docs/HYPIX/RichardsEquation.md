@@ -91,10 +91,10 @@ where $\varDelta Pr_{through}^{t}$ [L] is the *throughfall precipitation* (i.e.,
 >>The water flux leaving the bottom cell represents the drainage, and it can be described as a function of the hydraulic conductivity of the bottom cell as:
 
 $$\begin{equation}
-Q_{N_{\mathrm{i}}+1}^{t}=K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right) \,\,\cos  \alpha 
+Q_{N_{{i}}+1}^{t}=K_{N_{{i}}}\left( \psi _{N_{{i}}}^{t} \right) \,\,\cos \alpha 
 \end{equation}$$
 
->>where $K_{N_{\mathrm{i}}}\left( \psi _{N_{\mathrm{i}}}^{t} \right)$ is the [*unsaturated hydraulic conductivity*](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions)
+>>where $K_{N_{{i}}}\left( \psi_{N_{{i}}}^{t} \right)$ is the [*unsaturated hydraulic conductivity*](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions)
 
 >>This free drainage condition is the most widely used when the water table is assumed to be at significant depth. Typically, our model addresses the modelling of water flow in the unsaturated or vadose zone.
 
@@ -245,26 +245,4 @@ E_{ff}=\frac{N_{iter}}{\sum_{t=1}^{N_{\mathrm{t}}}{\varDelta T^t}}\,\,
 
 where $N_{iter}$ is the number of iterations. Therefore, the smaller the $E_{ff}$, the faster HyPix would run for a given $WB^*$.
 
-
-POR AQUI!!!!!!!!!!!!!
-
-
-
-
-
-
-
-
-
- TABLE 1
- <figcaption align = "center"><b>Table 1 - Feasible dynamic range of the optimized bimodal Kosugi hydraulic parameters from observed θ. Both the unconstrained and constrained sets of hydraulic parameters have five parameters to be optimized. The difference is that in the dynamically constrained set of hydraulic parameters there is a relationship between σ and ψm (Fernández-Gálvez et al., 2021). The feasible range of Ks is derived from Carsel and Parrish (1988). For both the unconstrained and constrained sets of hydraulic parameters, ψMacMat = 100 mm, and Pσ = 3. θr(σ) is described in [Eq. (3, FROM BIMODEL KOSUGY MODEL!!!!!!!)].</b></figcaption></figure>
-
- $\\$ | $\boldsymbol{\theta_{s}}$ [m <sup>3</sup>m<sup>-3</sup>] | $\boldsymbol{\theta_{r}}$ [m <sup>3</sup>m<sup>-3</sup>]| $\boldsymbol{σ}$ [-]| $\boldsymbol{\psi _{m}}$ [mm]| $\boldsymbol{K_{s}}$ [cm h<sup>-1</sup>] | $\boldsymbol{\theta_{sMacMat}}$ [m <sup>3</sup>m<sup>-3</sup>]| $\boldsymbol{\psi _{mMac}}$ [mm] | $\boldsymbol{σ_{Mac}}$ [-]
---|---|--------------------|-----|----|-----------|-----------|----|---
-$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |
-**Min** | $Max(\theta)$ | $\theta_{r}(σ)$ | 0.75 | $\sqrt{\psi_{MacMat}}e^{σ_{min}P_{σ}}$ | 0.02 | $0.75\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
-**Max** | 0.65 | $\theta_{r}(σ)$ | 4.00 | $\sqrt{\psi_{MacMat}}e^{σ_{max}P_{σ}}$ | 30.00 | $\theta_s$ | $\sqrt{\psi_{MacMat}}$ |$ln \psi_{MacMat}/2P_{σ}$
-$\\$ |$\\$ |$\\$ |$\\ $ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |
-**Min** | $Max(\theta)$ | $\theta_{r}(σ)$ | 0.75 | $\sqrt{\psi_{MacMat}}e^{σP_{σ}}$ | 0.02 | $0.75\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
-**Max** | 0.65 | $\theta_{r}(σ)$ | 4.00 | $\sqrt{\psi_{MacMat}}e^{σP_{σ}}$ | 30.00 | $\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
 
