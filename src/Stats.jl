@@ -48,9 +48,17 @@ module stats
 				end
 			end
 		return 1.0 - (Err / Obs_Mean_Err)
-		end # function RMSE
+		end # function NSE
 
 
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : WILLMOTT
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function WILLMOTT((Obs, Sim; C=2)
+				N = length(Obs)
+				
+			return Wilmot
+			end  # function: WILLMOTT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
@@ -70,7 +78,6 @@ module stats
 			end
 		return Err / Obs_Mean_Err 
 		end  # function: NASH_SUTCLIFE_MINIMIZE
-
 
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
