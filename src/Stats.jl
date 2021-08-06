@@ -1,6 +1,6 @@
 module stats
 	import ..wrc
-	export RMSE, NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION
+	export RMSE, NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION, WILLMOTT
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -56,8 +56,33 @@ module stats
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function WILLMOTT((Obs, Sim; C=2)
 				N = length(Obs)
+				Err = 0.0
+				iCount = 1
+
+				∑Obs = 0.0
+				iCount = 1
+			
+				for i = 1:N
+					if !(isnan(Sim[i]) || isnan(Obs[i]))
+					∑Obs += Obs[i]
+					iCount += 1
+					end
+				end
+				Obs_Mean = ∑Obs / Float64(iCount)
 				
-			return Wilmot
+				# or can we used just this -->   Obs_Mean = Statistics.mean(Obs[1:N])
+
+				for i = 1:N
+					if Statistics.sum(abs.(Sim[1:N] .- Obs[1:N])) <= C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean)))
+						Willmott_dr = 1 - (Statistics.sum(abs.(Sim[1:N] .- Obs[1:N]))) / (C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean))))
+					else
+						Willmott_dr = (C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean)))) / (Statistics.sum(abs.(Sim[1:N] .- Obs[1:N]))) -1 
+					end
+
+
+				end # for
+
+			return Willmott_dr
 			end  # function: WILLMOTT
 
 			
