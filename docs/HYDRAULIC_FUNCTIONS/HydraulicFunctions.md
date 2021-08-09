@@ -60,3 +60,9 @@ $\\$ |$\\$ |$\\$ |$\\ $ |$\\$ |$\\$ |$\\$ |$\\$ |$\\$ |
 **Min** | $Max(\theta)$ | $\theta_{r}(σ)$ | 0.75 | $\sqrt{\psi_{MacMat}}e^{σP_{σ}}$ | 0.02 | $0.75\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
 **Max** | 0.65 | $\theta_{r}(σ)$ | 4.00 | $\sqrt{\psi_{MacMat}}e^{σP_{σ}}$ | 30.00 | $\theta_s$ | $\sqrt{\psi_{MacMat}}$ | $ln \psi_{MacMat}/2P_{σ}$
 
+
+## Bimodal van Genuchten hydraulic functions
+
+## Brorks and Corey hydraulic functions
+
+## Clapp and Hornberger hydraulic functions
