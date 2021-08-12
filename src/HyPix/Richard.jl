@@ -211,7 +211,7 @@ module richard
 				Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψ△)
 			end
 
-			return Ψ
+		return Ψ
 		end  # function: Ψ_Constrain_K1
 		
 
