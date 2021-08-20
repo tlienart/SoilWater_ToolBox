@@ -84,6 +84,7 @@ using Suppressor
     include("HyPix/HypixStart.jl")
 
     # include("NoCore/Jules/Jules.jl")
-    # include("Temporary/Ks_Smap.jl")
+    include("Temporary/Ks_Smap.jl")
 
+    # include("NoCore/NSDR/ReadNsdr.jl")
 end # Suppressor 

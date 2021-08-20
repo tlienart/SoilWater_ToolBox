@@ -8,8 +8,10 @@ module temporary
 	CairoMakie.activate!()
 
 	function KS_SMAP()
-		PathInput = "D:/DATAraw/SOILS/SoilWater_ToolBox/Ksat/Smap Hydrological_Ksat20210624_Cleaned.csv"
-		PathOutput = "D:/Main/MODELS/SoilWater-ToolBox2/data/OUTPUT/Temporary/PlotSmap.svg"
+		PathInput = "D:\\DATAraw\\SoilWater_ToolBox\\Ksat\\Smap Hydrological_Ksat20210624_Cleaned.csv"
+		PathOutput = "D:\\Main\\MODELS\\SoilWater_ToolBox\\data\\OUTPUT\\Temporary\\PlotSmap.svg"
+
+		println(" === KS_SMAP ====")
 
 		# READING
 			Data = DelimitedFiles.readdlm(PathInput, ',')

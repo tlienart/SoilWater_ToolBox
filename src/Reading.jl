@@ -171,10 +171,63 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
 
-			# Get the data of interest
-				Ψ_θΨobs, N_θΨobs  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_iZ)
+			# Determeining if data has only 3 columns: Id, H and Theta
+			if length(Header) == 3
+				# Get the data of interest
+					Ψ_θΨobs, N_θΨobs  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_iZ)
 			
-				θ_θΨobs, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta[0-1]", N_iZ)
+					θ_θΨobs, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta[0-1]", N_iZ)
+			
+			# Data is in square [X=iZ, Y =iΨ]
+			else
+				Header_Ψ = fill(0.0, length(Header)-1)
+				θ_Data = zeros(Union{Float64,Missing}, (N_iZ, length(Header)-1))
+				iΨ=1
+				for iHeader_Ψ in Header
+					if iHeader_Ψ  ≠ "\ufeffId" && iHeader_Ψ  ≠ "Id"
+						θ₀, N_θΨobs = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, string(iHeader_Ψ), N_iZ)
+
+						# Reading the θ data for every column
+							θ_Data[1:N_iZ, iΨ] = θ₀[1:N_iZ]
+
+						# Converting the value of Ψ (e.g. 100mm) -> 100
+							iHeader_Ψ = replace(iHeader_Ψ, "mm" => "")
+							iHeader_Ψ = replace(iHeader_Ψ, " " => "")
+							iHeader_Float =  parse(Float64, iHeader_Ψ)
+							Header_Ψ[iΨ] = iHeader_Float
+
+							iΨ += 1
+					end # if iHeader_Ψ  ≠ "\ufeffId" && iHeader_Ψ  ≠ "Id"
+				end # for iHeader_Ψ in Header
+
+
+				θ_θΨobs = fill(0.0::Float64, (N_iZ, length(Header)-1))
+				Ψ_θΨobs = fill(0.0::Float64, (N_iZ, length(Header)-1))
+				N_θΨobs = fill(0::Int64, N_iZ)
+
+				for iZ=1:N_iZ
+					Header_Ψ₂ = deepcopy(Header_Ψ)
+					
+					# Finding Missing data
+						Missing_Data = findall(x->x===missing, θ_Data[iZ, 1:length(Header)-1])
+
+					# Deleating the missing data
+						θ_Data2 = deleteat!(θ_Data[iZ, 1:length(Header)-1], Missing_Data)
+
+						deleteat!(Header_Ψ₂, Missing_Data)
+
+					# Finding the number of data points for every iZ
+						N_θΨobs[iZ] = length(Header_Ψ₂)
+
+					# Writing non missing data
+						θ_θΨobs[iZ, 1:N_θΨobs[iZ]] = θ_Data2[1:N_θΨobs[iZ]]
+
+						Ψ_θΨobs[iZ,1:N_θΨobs[iZ]] = Header_Ψ₂[1:N_θΨobs[iZ]]
+	
+				end # for iZ=1:N_iZ
+			end # length(Header) == 3
+
+
 		return θ_θΨobs, Ψ_θΨobs, N_θΨobs
 		end  # function: θΨ
 

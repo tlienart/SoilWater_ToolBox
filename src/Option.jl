@@ -11,6 +11,7 @@ module options
 		Infilt::Bool
 		Jules::Bool
 		Kθ::Bool
+		Nsdr::Bool
 		Pedological⍰::String
 		Psd::Bool
 		RockWetability::Bool

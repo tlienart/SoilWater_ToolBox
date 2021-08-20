@@ -94,9 +94,14 @@ module tool
             N_Point = fill(0::Int64, N_iZ)
             iSelect = 1; iPoint = 1
 
-				if typeof(Data_Output[1]) == SubString{String}
+				if isempty(Data_Output[1])
+					Flag_String = false
+					Data_Select = zeros(Union{Float64,Missing}, (N_iZ, N_Point_Max))
+
+				elseif typeof(Data_Output[1]) == SubString{String}
 					Data_Select = fill("A"::String, (N_iZ, N_Point_Max))
 					Flag_String = true
+
 				else
 					Flag_String = false
 					Data_Select = fill(0.0::Float64, (N_iZ, N_Point_Max))
@@ -108,7 +113,11 @@ module tool
 						if Flag_String
 							Data_Output[i] = replace(Data_Output[i], " " => "") # Remove white spaces
 						end
-						Data_Select[iSelect,iPoint] = Data_Output[i]
+						if isempty(Data_Output[i])
+							Data_Select[iSelect,iPoint] = missing
+						else
+							Data_Select[iSelect,iPoint] = Data_Output[i]
+						end
 						# append!(Data_Select, Data_Output[i])
 						N_Point[iSelect] += 1
 						iPoint += 1

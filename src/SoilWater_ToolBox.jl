@@ -133,6 +133,8 @@ module SoilWater_ToolBox
 			# IF WE HAVE PSD DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				if option.data.Psd
 					Rpart, ∑Psd, N_Psd = reading.PSD(IdSelect, N_iZ, path.inputSoilwater.Psd)
+				else
+					∑Psd = []
 				end  # if: option.data.Psd
 
 
@@ -438,5 +440,6 @@ module SoilWater_ToolBox
 end # module soilwater_toolbox # module soilwater_toolbox
 
 println("\n\n ===== START SOIL WATER TOOLBOX =====")
-	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210622")
+	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210622")
+	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Nsdr")
 println("==== END SOIL WATER TOOLBOX ====")

@@ -54,7 +54,7 @@ module stats
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : WILLMOTT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function WILLMOTT((Obs, Sim; C=2)
+			function WILLMOTT(Obs, Sim; C=2)
 				N = length(Obs)
 				Err = 0.0
 				iCount = 1
@@ -72,13 +72,13 @@ module stats
 				
 				# or can we used just this -->   Obs_Mean = Statistics.mean(Obs[1:N])
 
+				Willmott_dr = 0.0
 				for i = 1:N
 					if Statistics.sum(abs.(Sim[1:N] .- Obs[1:N])) <= C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean)))
 						Willmott_dr = 1 - (Statistics.sum(abs.(Sim[1:N] .- Obs[1:N]))) / (C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean))))
 					else
 						Willmott_dr = (C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean)))) / (Statistics.sum(abs.(Sim[1:N] .- Obs[1:N]))) -1 
 					end
-
 
 				end # for
 
