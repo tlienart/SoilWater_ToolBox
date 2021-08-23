@@ -26,27 +26,27 @@ module tool
 	# =============================================================
 	module readWrite
 		import DelimitedFiles
-		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, TOML_2_STRUCT
+		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, TOML_2_STRUCT, READ_θΨK_2D
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_HEADER_FAST
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READ_HEADER_FAST(Data, Header, Name)
-			N_X, N_Y = size(Data) # Size of the array
+			function READ_HEADER_FAST(Data, Header, Name)
+				N_X, N_Y = size(Data) # Size of the array
 
-			Header = reshape(Header, N_Y, 1)
-			
-		# Getting the column which matches the name of the header
-			Name = replace(Name, " " => "") # Remove white spaces
-			try
-				iColumn = Int64(findfirst(isequal(Name), Header)[1])
-				global Data_Output = Data[1:N_X,iColumn]
-			catch
-				println(Header)
-				error("\n          SOILWATERTOOLBOX ERROR: cannot find  $Name   \n \n")
-			end
-		return Data_Output, N_X
-		end # function READ_HEADER
+				Header = reshape(Header, N_Y, 1)
+				
+			# Getting the column which matches the name of the header
+				Name = replace(Name, " " => "") # Remove white spaces
+				try
+					iColumn = Int64(findfirst(isequal(Name), Header)[1])
+					global Data_Output = Data[1:N_X,iColumn]
+				catch
+					println(Header)
+					error("\n          SOILWATERTOOLBOX ERROR: cannot find  $Name   \n \n")
+				end
+			return Data_Output, N_X
+			end # function READ_HEADER
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,6 +137,58 @@ module tool
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : READ_θΨK_2D
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
+				Ψheader = fill(0.0, length(Header)-1)
+				Xdata = zeros(Union{Float64,Missing}, (N_iZ, length(Header)-1))
+
+				iΨ=1
+				for iHeader_Ψ in Header
+					if iHeader_Ψ  ≠ "\ufeffId" && iHeader_Ψ  ≠ "Id"
+						Xdata_Column, ~ = readWrite.READ_ROW_SELECT(IdSelect, Data, Header, string(iHeader_Ψ), N_iZ; N_Point_Max=1)
+
+						# Reading Xdata for every column
+							Xdata[1:N_iZ, iΨ] = Xdata_Column[1:N_iZ]
+
+						# Converting the value of header into number by removing all characters Ψ (e.g. H_100_mm) -> 100
+							iFindall = findall("_", iHeader_Ψ)
+							iHeader_Ψ =  iHeader_Ψ[iFindall[1][1]+1:iFindall[2][1]-1]
+							iHeader_Float =  parse(Float64, iHeader_Ψ)
+							Ψheader[iΨ] = iHeader_Float
+							iΨ += 1
+					end # if iHeader_Ψ  ≠ "\ufeffId" && iHeader_Ψ  ≠ "Id"
+				end # for iHeader_Ψ in Header
+
+				Ψdata_NoMissing = fill(0.0::Float64, (N_iZ, length(Header)-1))
+				Xdata_NoMissing = fill(0.0::Float64, (N_iZ, length(Header)-1))
+				NΨobs = fill(0::Int64, N_iZ)
+
+				for iZ=1:N_iZ
+					Header_Ψ₂ = deepcopy(Ψheader)
+					
+					# Finding Missing data
+						Ψheader_Missing = findall(x->x===missing, Xdata[iZ, 1:length(Header)-1])
+
+					# Deleating the missing data in a row
+						Xdata_Row = deleteat!(Xdata[iZ, 1:length(Header)-1], Ψheader_Missing)
+
+						deleteat!(Header_Ψ₂, Ψheader_Missing)
+
+					# Finding the number of data points for every iZ which are not missing
+						NΨobs[iZ] = length(Header_Ψ₂)
+
+					# Writing non missing data
+						Xdata_NoMissing[iZ, 1:NΨobs[iZ]] = Xdata_Row[1:NΨobs[iZ]]
+
+						Ψdata_NoMissing[iZ,1:NΨobs[iZ]] = Header_Ψ₂[1:NΨobs[iZ]]
+
+				end # for iZ=1:N_iZ	
+			return NΨobs, Xdata_NoMissing, Ψdata_NoMissing
+			end  # function: Read_2	
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : FIELDNAME_2_STRUC
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function FIELDNAME_2_STRUCT_VECT(Structure, NameStruct)
@@ -183,6 +235,7 @@ module tool
 					end
 				return Matrix, FieldName_String
 				end # function STRUCT_2_FIELDNAME
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TOML_2_STRUCT

@@ -75,7 +75,7 @@ module hydrolabOpt
 				if "Ks" ∈ optim.ParamOpt
 					# test if exist Ψ=0
 					if "Ks" ∈ optim.ParamOpt
-						if minimum(Ψ_KΨobs[iZ,1:N_θΨobs[iZ]]) < eps(100.0)
+						if minimum(Ψ_KΨobs[iZ,1:N_KΨobs[iZ]]) < eps(100.0)
 							Flag_K0 = true
 						else
 							Flag_K0 = false
@@ -89,7 +89,8 @@ module hydrolabOpt
 
 						# Modifying the searchrange
 						iKs = findfirst(isequal("Ks"), optim.ParamOpt)[1]
-						optim.ParamOpt_Min[iKs] = K_KΨobs_Max
+						optim.ParamOpt_Min[iKs] = hydro.Ks_Min[iZ]
+						optim.ParamOpt_Max[iKs] = max(optim.ParamOpt_Max[iKs], hydro.Ks_Min[iZ] + 0.01)
 
 					elseif Flag_K0 && ("Ks" ∈ optim.ParamOpt)
 						hydro.Ks_Max[iZ] = K_KΨobs_Max # Greatest measure of Kunsat
@@ -97,6 +98,7 @@ module hydrolabOpt
 						# Modifying the searchrange
 							iKs = findfirst(isequal("Ks"), optim.ParamOpt)[1]
 							optim.ParamOpt_Max[iKs] = hydro.Ks_Max[iZ]
+							optim.ParamOpt_Min[iKs] = max(hydro.Ks_Max[iZ] - eps(1000.0), eps(10.0))
 
 					elseif ("Ks" ∉ optim.ParamOpt)
 						hydro.Ks_Max[iZ]  = K_KΨobs_Max
@@ -107,6 +109,7 @@ module hydrolabOpt
 			
 			# Updated searchrange
 				SearchRange = optimize.SEARCHRANGE(optionₘ, optim)
+
 
 			# OPTIMIZATION: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
