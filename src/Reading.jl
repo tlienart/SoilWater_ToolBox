@@ -158,14 +158,6 @@ module reading
 				# Data is in square [X=iZ, Y =iΨ]
 				else
 					N_θΨobs, θ_θΨobs, Ψ_θΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
-
-					
-					for iZ=1:N_iZ
-						println(iZ)
-					println(Ψ_θΨobs[iZ,1:N_θΨobs[iZ]])
-					println(θ_θΨobs[iZ,1:N_θΨobs[iZ]])
-					println("")
-					end
 				end # length(Header) == 3
 
 		return θ_θΨobs, Ψ_θΨobs, N_θΨobs
