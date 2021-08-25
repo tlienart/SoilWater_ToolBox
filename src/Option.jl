@@ -50,6 +50,12 @@ module options
 		σ_2_Ψm⍰::String
 		Plot_θΨ::Bool
 	end
+
+	@option mutable struct KSMODEL
+		Model⍰::String
+		OptimizeKsModel⍰::String
+	end
+
 	@option mutable struct PSD
 		Model⍰::String
 		OptimizePsd⍰::String
@@ -139,6 +145,7 @@ module options
 			rockFragment::ROCKFRAGMENT
 			run::RUN
 			smap::SMAP
+			ksModel::KSMODEL
 		end # struct OPTION
 	
 	#__________________________________________________________________

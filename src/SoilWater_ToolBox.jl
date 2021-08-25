@@ -184,7 +184,7 @@ module SoilWater_ToolBox
 					θ_θΨobs = rockFragment.injectRock.CORECTION_θΨ!(N_iZ, N_θΨobs, RockFragment, θ_θΨobs)
 				end #  option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock
 
-				if option.rockFragment.CorrectStoneWetability
+				if option.rockFragment.CorectStoneRockWetability
 					θ_θΨobs = rockFragment.CORECTION_θΨ_WETABLE!(N_iZ, N_θΨobs, rfWetable, RockClass, RockFragment, θ_θΨobs, Ψ_θΨobs)
 				end # option.rockFragment.CorrectStoneWetability
 			end # if:option.run.RockCorection
@@ -330,9 +330,9 @@ module SoilWater_ToolBox
 		
 		# _______________________ START: Temporary _______________________ 
 
-		if option.run.Temporary
-			temporary.KS_SMAP()
-		end
+		# if option.run.Temporary
+		# 	temporary.KS_SMAP()
+		# end
 
 		# ------------------------END: Temporary---------------------------  
 
@@ -348,7 +348,7 @@ module SoilWater_ToolBox
 				if option.hydro.HydroModel⍰ == "Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained"
 					table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.TableComplete_KΨ)
 			
-					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Horizontal")
+					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
 				end # if: option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰ == :Constrained
 
 				# IF SMAP OUTPUTS
@@ -441,5 +441,6 @@ end # module soilwater_toolbox # module soilwater_toolbox
 
 println("\n\n ===== START SOIL WATER TOOLBOX =====")
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210622")
-	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Nsdr")
+	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Nsdr")
+	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210823")
 println("==== END SOIL WATER TOOLBOX ====")

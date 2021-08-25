@@ -26,7 +26,7 @@ module tool
 	# =============================================================
 	module readWrite
 		import DelimitedFiles
-		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, TOML_2_STRUCT, READ_θΨK_2D
+		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, READ_θΨK_2D
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_HEADER_FAST
@@ -240,32 +240,32 @@ module tool
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TOML_2_STRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function TOML_2_STRUCT2(Structure, TomlParse)
-      # LOOPING THROUGH THE DICT
-      for (iKey, iValue₀) in TomlParse
-      for iValue in (keys(iValue₀))
-         if uppercase.(iKey) == (string(typeof(Structure)))
-            setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
-         end 
-      end
-   end
-   return Structure
-   end  # function: TOML_2_STRUCT
+   # function TOML_2_STRUCT2(Structure, TomlParse)
+   #    # LOOPING THROUGH THE DICT
+   #    for (iKey, iValue₀) in TomlParse
+   #    for iValue in (keys(iValue₀))
+   #       if uppercase.(iKey) == (string(typeof(Structure)))
+   #          setfield!(Structure, Symbol(iValue), TomlParse[iKey][iValue])
+   #       end 
+   #    end
+   # end
+   # return Structure
+   # end  # function: TOML_2_STRUCT
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : TOML_2_STRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TOML_2_STRUCT(Structure, TomlParse; MyType_LowerCase=true, MyType=:MyType)
-			if MyType_LowerCase == false
-				MyType = string(MyType)
-			else
-				MyType = lowercase.(string(Structure))
-			end
+		# function TOML_2_STRUCT(Structure, TomlParse; MyType_LowerCase=true, MyType=:MyType)
+		# 	if MyType_LowerCase == false
+		# 		MyType = string(MyType)
+		# 	else
+		# 		MyType = lowercase.(string(Structure))
+		# 	end
 
-			Output = NamedTuple{Tuple(Symbol.(keys(TomlParse[MyType])))}(values(TomlParse[MyType]))
-		return Structure(Output...)
-		end # function TOML_2_STRUC
+		# 	Output = NamedTuple{Tuple(Symbol.(keys(TomlParse[MyType])))}(values(TomlParse[MyType]))
+		# return Structure(Output...)
+		# end # function TOML_2_STRUC
 
 
 	end  # module readWrite ************************

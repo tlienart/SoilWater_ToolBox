@@ -46,7 +46,7 @@ module tableSmap
 
          println("    ~  $(path.tableSmap.Table_Smap) ~")
 
-         HeaderSmap = false # <true> the greek characters are replaced by alphabet; <false> original parameter names with no units usefull to use values in SoilWater-ToolBox
+         HeaderSmap = true # <true> the greek characters are replaced by alphabet; <false> original parameter names with no units usefull to use values in SoilWater-ToolBox
 
          # User input
             Option_BrooksCorey       = true
@@ -54,7 +54,7 @@ module tableSmap
             Option_VanGenuchten      = true
             Option_VanGenuchtenJules = true
             Option_Kosugi            = true
-            Option_Kosugi_Table      = false
+            Option_Kosugi_Table      = true
 
          Header = ["Id"; "SoilName"; "Depth_mm"; "IsTopsoil"; "RockFragment_%";"RockDepth_mm"; "MaxRootingDepth_mm"; "PermeabilityClass"; "SmapFH"]
          Data = []

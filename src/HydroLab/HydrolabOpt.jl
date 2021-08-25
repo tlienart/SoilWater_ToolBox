@@ -17,6 +17,7 @@ module hydrolabOpt
 				θobs_Max = maximum(θ_θΨobs[iZ, 1:N_θΨobs[iZ]])  	# Greatest measure θ
 
 			# CORRECTING Θr ~~~
+			# We overwrite  if optionₘ.θrOpt⍰=="ParamPsd"
 				if ("θr" ∈ optim.ParamOpt)
 					hydro.θr_Max[iZ] = max( min(θobs_Min-θϵ, hydro.θr_Max[iZ]), hydro.θr_Min[iZ] ) # Maximum value of θr
 

@@ -79,7 +79,6 @@ module θψ2Ks
 			
 			else
 				kₛ_Model = cst.KunsatModel * QuadGK.quadgk(Se -> Kunsat_Uni(Se), 0.0, Se_Max; rtol=Rtol)[1]
-
 			end   
 
 			kₛ_Model = min(max(hydroParam.Ks_Min[iZ], kₛ_Model), hydroParam.Ks_Max[iZ])

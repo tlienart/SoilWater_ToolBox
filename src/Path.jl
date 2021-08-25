@@ -192,13 +192,13 @@ module paths
 			Path_Soilwater_Table                     = Path_Soilwater_Table * SiteName_Soilwater
 
 			path.tableSoilwater.Path_Soilwater_Table = Path_Soilwater_Table
-			path.tableSoilwater.Table_HydroInfilt    = Path_Soilwater_Table * string(opt.infilt.Model⍰) * "_" *  path.option.ModelName  *  "_" * path.tableSoilwater.Table_HydroInfilt
-			path.tableSoilwater.Table_Infilt         = Path_Soilwater_Table * string(opt.infilt.Model⍰) *  "_" *  path.option.ModelName  *  "_" *  path.tableSoilwater.Table_Infilt
+			path.tableSoilwater.Table_HydroInfilt    = Path_Soilwater_Table * path.option.ModelName * "_" *string(opt.infilt.Model⍰) * "_" *  path.option.ModelName  *  "_" * path.tableSoilwater.Table_HydroInfilt
+			path.tableSoilwater.Table_Infilt         = Path_Soilwater_Table * path.option.ModelName * "_" *string(opt.infilt.Model⍰) *  "_" *  path.option.ModelName  *  "_" *  path.tableSoilwater.Table_Infilt
 			path.tableSoilwater.Table_KΨ             = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" * path.tableSoilwater.Table_KΨ
-			path.tableSoilwater.Table_Psd            = Path_Soilwater_Table *  "_" * string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
-			path.tableSoilwater.Table_Psd_θΨ_θ       = Path_Soilwater_Table *  "_" * string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
-			path.tableSoilwater.Table_θΨ_Psd         = Path_Soilwater_Table *  "_" * string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_θΨ_Psd
-			path.tableSoilwater.Table_θΨK            = Path_Soilwater_Table *  "_" * string(opt.hydro.HydroModel⍰) * "_" * path.tableSoilwater.Table_θΨK
+			path.tableSoilwater.Table_Psd            = Path_Soilwater_Table *  "_" * path.option.ModelName * "_" *string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
+			path.tableSoilwater.Table_Psd_θΨ_θ       = Path_Soilwater_Table *  "_" * path.option.ModelName * "_" *string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
+			path.tableSoilwater.Table_θΨ_Psd         = Path_Soilwater_Table *  "_" * path.option.ModelName * "_" *string(opt.psd.HydroModel⍰) *  "_" * string(opt.hydro.σ_2_Ψm⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_θΨ_Psd
+			path.tableSoilwater.Table_θΨK            = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * string(opt.hydro.HydroModel⍰) * "_" * path.tableSoilwater.Table_θΨK
 			path.tableSoilwater.TableComplete_θΨ     = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_θΨ
 			path.tableSoilwater.TableComplete_KΨ     = Path_Soilwater_Table *   "_" *  path.option.ModelName * "_" * path.tableSoilwater.TableComplete_KΨ
 

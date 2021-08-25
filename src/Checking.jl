@@ -21,15 +21,12 @@ module checking
 			elseif option.run.HydroLabθΨ⍰≠"No" && !option.data.θΨ
 				error("*** If option.run.HydroLabθΨ⍰ ⇒option.data.θΨ ***")
 
-			elseif option.run.RockCorection && option.rockFragment.RockInjectedIncluded⍰ =="InjectRock" && !( option.data.BulkDensity && option.data.θΨ)
-				error("*** If option.run.RockCorrection && option.rockFragment.RockInjectedIncluded⍰ ==InjectRock ⇒ option.data.BulkDensity OR option.data.θΨ ***")
+			# elseif option.run.RockCorection && option.rockFragment.RockInjectedIncluded⍰ =="InjectRock" && !( option.data.Φ⍰ && option.data.θΨ)
+			# 	error("*** If option.run.RockCorrection && option.rockFragment.RockInjectedIncluded⍰ ==InjectRock ⇒ option.data.BulkDensity OR option.data.θΨ ***")
 
 			elseif optionₘ.HydroModel⍰=="Kosugi" && "θsMacMat" ∈ optim.ParamOpt
 				error("*** optionₘ.HydroModel⍰==Kosugi && optionₘ.HydroModel⍰==Bimodal THAN optionₘ.HydroModel⍰ == Φ ***")
-					
-			elseif optionₘ.θrOpt⍰≠"Opt" && "θr" ∈ optim.ParamOpt
-				error("*** optionₘ.θrOpt≠Opt && θr ∈ ParamOpt THAN do not optimize θr ***")
-			              
+							              
 			elseif optionₘ.σ_2_Ψm⍰ =="UniqueRelationship" && "Ψm" ∈ optim.ParamOpt
 				error("*** optionₘ.σ_2_Ψm⍰ ==UniqueRelationship THAN Ψm does not need to be optimised ***")
 			
@@ -41,12 +38,6 @@ module checking
 
 			elseif (optionₘ.θrOpt⍰=="σ_2_θr") && ("σ" ∉ optim.ParamOpt)
 				error("*** optionₘ.θrOpt⍰==σ_2_θr THAN σ needs to be optimized ***")
-				
-			elseif  (optionₘ.θrOpt⍰=="ParamPsd") && ("θr"∈ optim.ParamOpt) # Derive θr frpm PSD
-				error("*** optionₘ.θrOpt⍰==ParamPsd && θr does not need to be optimized ***")
-
-			elseif  (optionₘ.θrOpt⍰=="ParamPsd") && ("θr"∈ optim.ParamOpt) # Derive θr frpm PSD
-				error("*** optionₘ.θrOpt⍰==ParamPsd && θr does not need to be optimized ***")
 
 			elseif  (optionₘ.θrOpt⍰=="ParamPsd") && ("θr"∉ optim.ParamOpt) && !(option.data.Psd) # Derive θr frpm PSD
 				error("*** optionₘ.θrOpt⍰==ParamPsd THAN option.run.IntergranularMixingPsd=true ***")

@@ -24,7 +24,7 @@ using Suppressor
     include("Reading.jl")
     include("Hydro/Kunsat.jl")
     include("Table.jl")
-    include("Hydro/θψ2Ks.jl")
+    include("Ksmodel/θψ2Ks.jl")
     include("Checking.jl")
 
     include("RockFragment/RockFragment.jl")
