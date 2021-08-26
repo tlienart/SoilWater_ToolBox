@@ -28,6 +28,7 @@ module options
       Infilt::Bool
       IntergranularMixingPsd ::Bool
 		Jules::Bool
+		KsModel::Bool
       RockCorection::Bool
 		Smap::Bool
 		Smap2Hypix::Bool
@@ -52,7 +53,7 @@ module options
 	end
 
 	@option mutable struct KSMODEL
-		Model⍰::String
+		KsModel⍰::String
 		OptimizeKsModel⍰::String
 	end
 

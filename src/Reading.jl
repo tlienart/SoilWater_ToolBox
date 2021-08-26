@@ -296,6 +296,7 @@ module reading
 		end  # function: θψ_ADDPOINTS+
 
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : READ_STRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -335,6 +336,7 @@ module reading
 
 		return structures, N_iZ
 		end  # function: READ_STRUCT
+
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -479,8 +481,141 @@ module reading
 		end
 
 	return hydro, optim
-	end  # function: HydroParam_ThetaH
+	end  # function: GUI_HydroParam
 
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION :  KSMODEL_PARAM
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Base.@kwdef mutable struct OPTIMKS
+         Param_Name   :: Vector{String}
+         ParamOpt_Min :: Vector{Float64}
+         ParamOpt_Max :: Vector{Float64}
+         ParamOpt     :: Vector{String}
+         NparamOpt    :: Int64
+         Flag_Opt     :: Bool
+		end
+
+		function KSMODEL_PARAM(ksmodelτ, option, Path)
+			# Read data
+				Data = DelimitedFiles.readdlm(Path, ',')
+			# Read header
+				Header = Data[1,1:end]
+			# Remove first READ_ROW_SELECT
+				Data = Data[2:end,begin:end]
+			# Reading Model data
+				KsModel⍰, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, "LAYER")
+
+			# Determening which parameters correspond to the selected model
+			iSelectModel = [] 
+			for i=1:Ndata
+				if KsModel⍰[i] == string(option.ksModel.KsModel⍰)
+					append!(iSelectModel, i)
+				end
+			end # for i=1:Ndata
+
+			# Reading names of the parameters
+				Param_Name, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "ParamName")
+					# Selecing data
+					Param_Name = Param_Name[iSelectModel]
+
+			# Reading minimum value of the parameters
+				Param_Min, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MIN")
+					# Selecing data
+					Param_Min = Param_Min[iSelectModel]
+
+			# Reading maximum value of the parameters
+				Param_Max, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MAX")
+					# Selecing data
+					Param_Max = Param_Max[iSelectModel]
+
+			# Reading values of the default values of the parameters
+				ParamValue, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "VALUE")
+					# Selecing data
+					ParamValue = ParamValue[iSelectModel]
+
+			# Reading which parameters to be optimized [1 or 0]
+				Opt, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "OPT")
+				# Selecing data
+				Opt = Opt[iSelectModel]
+				
+			# Determine if we need to optimize
+				if sum(Opt) ≥ 1
+					Flag_Opt = true
+				else
+					Flag_Opt = false
+				end
+
+			# ====================================================
+			ParamOpt              = []
+			ParamOpt_Max          = []
+			ParamOpt_Min          = []
+
+			# For every parameter
+			# The τ[1] = TopLayer and   τ[3] = SubLayer			
+			i = 1
+			for ipParamName in Param_Name
+				if occursin("_Top", ipParamName)
+					ipParamName = replace(ipParamName, "_Top" => "" )
+					iLayer = 1
+				elseif occursin("_Sub", ipParamName)
+					ipParamName = replace(ipParamName, "_Sub" => "" )
+					iLayer = 2
+				end
+
+				# Getting the Vector values of the τ parameters
+					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName))
+					ParamValue_Vector[iLayer] = Float64(ParamValue[i])
+					# Storing the value
+					setfield!(ksmodelτ, Symbol(ipParamName), ParamValue_Vector)
+
+				# Putting the minimum value in the parameter
+					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName * "_Min"))
+					ParamValue_Vector[iLayer] = Float64(Param_Min[i])
+					# Storing the value
+					setfield!(ksmodelτ, Symbol(ipParamName * "_Min"), ParamValue_Vector)
+
+				# Putting the maximum value in the parameter
+					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName * "_Max"))
+					ParamValue_Vector[iLayer] = Float64(Param_Max[i])
+					# Storing the value
+					setfield!(ksmodelτ, Symbol(ipParamName * "_Min"), ParamValue_Vector)
+
+				# ParamValue to optimize.  
+				if Opt[i] == 1
+					# appending the values of the parameters
+					append!(ParamOpt, [Param_Name[i]])
+
+					append!(ParamOpt_Min, Param_Min[i])
+					
+					append!(ParamOpt_Max, Param_Max[i])
+
+					# Checking error
+						if Param_Min[i] > Param_Max[i]
+							error("SoilWater LabOpt ERROR: $(Param_Name[i]) $(Param_Min[i]) < $(ParamValue[i]) < $(Param_Max[i]) !")
+						end
+				end # if Flag_Opt
+			i += 1
+			end # for loop
+
+			# Number of parameters to be optimised
+				NparamOpt = length(ParamOpt)
+
+			# Putting all the in mutable structure
+				optimKsmodel = 	OPTIMKS(Param_Name, ParamOpt_Min, ParamOpt_Max, ParamOpt, NparamOpt, Flag_Opt)
+
+			if Flag_Opt == true
+				println("	=== === Optimizing the following τ parameters === === \n")
+				println("		KsModel=" , option.ksModel.KsModel⍰)
+				println("		NparamOpt_τ=" , optimKsmodel.NparamOpt)
+				println("		ParamOpt_τ= " ,  optimKsmodel.ParamOpt)
+				println("		Min_Value-τ= " , optimKsmodel.ParamOpt_Min)
+				println("		Max_Value_τ = " , optimKsmodel.ParamOpt_Max)
+				println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n")
+			end
+	return ksmodelτ, optimKsmodel
+	end  # function: KSMODEL_PARAM
 
 
 	# =============================================================

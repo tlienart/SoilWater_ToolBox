@@ -24,7 +24,10 @@ using Suppressor
     include("Reading.jl")
     include("Hydro/Kunsat.jl")
     include("Table.jl")
+
     include("Ksmodel/θψ2Ks.jl")
+    include("Ksmodel/StructKsmodel.jl")
+    
     include("Checking.jl")
 
     include("RockFragment/RockFragment.jl")
@@ -34,7 +37,6 @@ using Suppressor
     include("NoCore/Smap/ReadSmap.jl")
     include("NoCore/Smap/TableSmap.jl")
     include("NoCore/Smap/Smap2Hypix.jl")
-
     include("NoCore/Smap/PlotSmap.jl")
 
     include("HydroLab/OfHydrolab.jl")

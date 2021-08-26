@@ -19,7 +19,6 @@ module paths
 		BulkDensity::String
 		ConvertModel::String
 		HydroParam_Infilt::String
-		HydroParam_ThetaH::String 
 		IdSelect::String
 		Infiltration::String
 		Infiltration_Param::String
@@ -28,6 +27,11 @@ module paths
 		Pedological⍰::String
 		Φ::String
 		Ψθ::String
+	end # struct INPUT_SOILWATER
+
+	@option mutable struct INPUT_GUISOILWATER
+		GUI_HydroParam::String
+		GUI_KsModel::String 
 	end # struct INPUT_SOILWATER
 
 	@option mutable struct INPUT_TEMPORARY
@@ -119,6 +123,7 @@ module paths
 		hyPix::PATHYPIXS
 		inputSmap::INPUT_SMAP
 		inputSoilwater::INPUT_SOILWATER
+		inputGuiSoilwater::INPUT_GUISOILWATER
 		inputTemporary::INPUT_TEMPORARY
 		option::OPTIONS
 		plotSoilwater::PLOT_SOILWATER
@@ -150,19 +155,14 @@ module paths
 			Path_Home = Path_Home * "/data/"
 			
 		# =============================================================
-		#		SoilWater
-		# =============================================================
-         Path_Soilwater_Data = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
-
-		# =============================================================
 		#		INPUT_SOILWATER
 		# =============================================================
-			path.inputSoilwater.HydroParam_ThetaH  = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_" * path.inputSoilwater.HydroParam_ThetaH
-
+			Path_Soilwater_Data = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
+			
          path.inputSoilwater.BulkDensity        = Path_Soilwater_Data * path.inputSoilwater.BulkDensity
          path.inputSoilwater.ConvertModel       = Path_Soilwater_Data * path.inputSoilwater.ConvertModel
          path.inputSoilwater.HydroParam_Infilt  = Path_Soilwater_Data * path.inputSoilwater.HydroParam_Infilt
-
+			
          path.inputSoilwater.IdSelect           = Path_Soilwater_Data * path.inputSoilwater.IdSelect
          path.inputSoilwater.Infiltration       = Path_Soilwater_Data * path.inputSoilwater.Infiltration
          path.inputSoilwater.Infiltration_Param = Path_Soilwater_Data * path.inputSoilwater.Infiltration_Param
@@ -171,6 +171,13 @@ module paths
          path.inputSoilwater.Pedological⍰       = Path_Soilwater_Data * path.inputSoilwater.Pedological⍰
          path.inputSoilwater.Φ                  = Path_Soilwater_Data * path.inputSoilwater.Φ
          path.inputSoilwater.Ψθ                 = Path_Soilwater_Data * path.inputSoilwater.Ψθ
+			
+		# =============================================================
+		#		INPUT_GUISOILWATER
+		# =============================================================
+			path.inputGuiSoilwater.GUI_HydroParam  = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_" * path.inputGuiSoilwater.GUI_HydroParam
+			path.inputGuiSoilwater.GUI_KsModel  = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_" * path.inputGuiSoilwater.GUI_KsModel
+		
 		
 		# =============================================================
 		#		INPUT_SMAP

@@ -65,7 +65,11 @@ module checking
 
 			elseif option.rockFragment.CorectStoneRockWetability && !(option.run.Smap)
 				@warn("*** If option.data.RockWetability ⇒ option.run.Smap ***")
-	
+			
+			# ------------ CHECKING KsModel---------------------
+			elseif option.run.KsModel && !(option.data.θΨ)
+				error("*** If option.run.KsModel ⇒ option.data.θΨ == true ***")
+
 			# ------------ CHECKING Smap_2_Hypix---------------------
 
 			elseif option.run.Smap2Hypix && (option.data.Pedological⍰≠"Smap")

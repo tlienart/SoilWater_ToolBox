@@ -7,7 +7,7 @@
 			N_iZ=1000
 			hydroTranslate = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
 			hydroOtherTranslate = hydroStruct.HYDRO_OTHERS(N_iZ)
-			hydroTranslate, optimTranslate = reading.HYDRO_PARAM(option.hydro, hydroTranslate, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
+			hydroTranslate, optimTranslate = reading.HYDRO_PARAM(option.hydro, hydroTranslate, N_iZ, path.inputGuiSoilwater.GUI_HydroParam)
 		
 		# Temporary Id
 			IdSelect = collect(1:1:N_iZ)

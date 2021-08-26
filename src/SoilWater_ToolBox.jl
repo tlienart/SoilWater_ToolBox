@@ -77,7 +77,7 @@ module SoilWater_ToolBox
 
 				# Deriving opt parameters
 					hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
-					hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputSoilwater.HydroParam_ThetaH)
+					hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputGuiSoilwater.GUI_HydroParam)
 			end # if: option.run.Hypix
 
 			# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -93,6 +93,7 @@ module SoilWater_ToolBox
 						θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, N_iZ, path.inputSoilwater.Ψθ)
 					end 		
 				end  # if: option.data.θΨ
+
 
 			# IF WE HAVE K(Θ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				if option.data.Kθ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠"Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained")
@@ -130,12 +131,23 @@ module SoilWater_ToolBox
 					Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam = reading.INFILTRATION(IdSelect, N_iZ, path.inputSoilwater.Infiltration, path.inputSoilwater.Infiltration_Param)
 				end  # if: option.data.Infilt
 
+
 			# IF WE HAVE PSD DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				if option.data.Psd
 					Rpart, ∑Psd, N_Psd = reading.PSD(IdSelect, N_iZ, path.inputSoilwater.Psd)
 				else
 					∑Psd = []
 				end  # if: option.data.Psd
+
+				
+			# IF WE WANT TO DERIVE Ks FROM θ(Ψ)
+				if option.run.KsModel
+					ksmodelτ = ksModel.STRUCT_KSMODEL()
+
+					ksmodelτ, optimKsmodel = reading.KSMODEL_PARAM(ksmodelτ, option, path.inputGuiSoilwater.GUI_KsModel)
+
+					@show ksmodelτ.τ₁
+				end
 
 
 			# IF WE HAVE PEDOLOGICAL⍰: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -146,6 +158,7 @@ module SoilWater_ToolBox
 					IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname = readSmap.SMAP(IdSelect, N_iZ, path.inputSmap.Smap)
 
 				end  # if: option.data.Pedological⍰
+
 
 
 			#--- NON CORE ----
@@ -166,7 +179,7 @@ module SoilWater_ToolBox
 			# STRUCTURES
 				hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
 				hydroOther = hydroStruct.HYDRO_OTHERS(N_iZ)
-				hydro, optim = reading.HYDRO_PARAM(option.hydro, hydro, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
+				hydro, optim = reading.HYDRO_PARAM(option.hydro, hydro, N_iZ, path.inputGuiSoilwater.GUI_HydroParam)
 
 			# CHECKING THE DATA
 				checking.CHECKING(option, option.hydro, optim)
@@ -241,7 +254,7 @@ module SoilWater_ToolBox
 			# STRUCTURES
 				hydroPsd = hydroStruct.HYDROSTRUCT(option.psd, N_iZ)
 				hydroOther_Psd = hydroStruct.HYDRO_OTHERS(N_iZ)
-				hydroPsd, optim_Psd = reading.HYDRO_PARAM(option.psd, hydroPsd, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
+				hydroPsd, optim_Psd = reading.HYDRO_PARAM(option.psd, hydroPsd, N_iZ, path.inputGuiSoilwater.GUI_HydroParam)
 
 			# CHECKING THE DATA
 				checking.CHECKING(option, option.psd, optim)
@@ -278,7 +291,7 @@ module SoilWater_ToolBox
 			# STRUCTURES
 				hydroInfilt = hydroStruct.HYDROSTRUCT(option.infilt, N_iZ)
 				hydroOther_Infilt = hydroStruct.HYDRO_OTHERS(N_iZ)
-				hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(option.psd, hydroInfilt, N_iZ, path.inputSoilwater.HydroParam_ThetaH)
+				hydroInfilt, optim_Infilt = reading.HYDRO_PARAM(option.psd, hydroInfilt, N_iZ, path.inputGuiSoilwater.GUI_HydroParam)
 
 			# CHECKING THE DATA
 				checking.CHECKING(option, option.infilt, optim)
@@ -441,6 +454,6 @@ end # module soilwater_toolbox # module soilwater_toolbox
 
 println("\n\n ===== START SOIL WATER TOOLBOX =====")
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210622")
-	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Nsdr")
-	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210823")
+	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Nsdr")
+	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210823")
 println("==== END SOIL WATER TOOLBOX ====")
