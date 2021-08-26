@@ -3,6 +3,7 @@
 # =============================================================
 module startKsModel
 	import ..θψ2Ks, ..stats
+	import BlackBoxOptim
 	export START_KSMODEL
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
