@@ -27,6 +27,7 @@ using Suppressor
 
     include("Ksmodel/θψ2Ks.jl")
     include("Ksmodel/StructKsmodel.jl")
+    include("Ksmodel/Start_KsModel.jl")
     
     include("Checking.jl")
 

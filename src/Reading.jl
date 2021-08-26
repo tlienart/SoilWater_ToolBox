@@ -603,7 +603,7 @@ module reading
 				NparamOpt = length(ParamOpt)
 
 			# Putting all the in mutable structure
-				optimKsmodel = 	OPTIMKS(Param_Name, ParamOpt_Min, ParamOpt_Max, ParamOpt, NparamOpt, Flag_Opt)
+				optimKsmodel = OPTIMKS(Param_Name, ParamOpt_Min, ParamOpt_Max, ParamOpt, NparamOpt, Flag_Opt)
 
 			if Flag_Opt == true
 				println("	=== === Optimizing the following τ parameters === === \n")

@@ -145,8 +145,6 @@ module SoilWater_ToolBox
 					ksmodelτ = ksModel.STRUCT_KSMODEL()
 
 					ksmodelτ, optimKsmodel = reading.KSMODEL_PARAM(ksmodelτ, option, path.inputGuiSoilwater.GUI_KsModel)
-
-					@show ksmodelτ.τ₁
 				end
 
 
@@ -212,28 +210,27 @@ module SoilWater_ToolBox
 
 			end # "Ks" ∈ optim.ParamOpt
 
+			# _______________________ START: COMPUTE KS FROM Θ(Ψ) _______________________ 
 			# COMPUTE KS FROM Θ(Ψ)
 				Kₛ_Model = fill(0.0::Float64, N_iZ)
-				if option.hydro.HydroModel⍰ == "Kosugi"
-					println("\n	=== === Computing model Ks === === ")
+				if option.hydro.HydroModel⍰ == "Kosugi" && option.run.KsModel
+				println("\n	=== === Computing model Ks === === ")
+					if  (@isdefined RockFragment) && (@isdefined IsTopsoil)
+						startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
+					
+					elseif (@isdefined RockFragment) && !(@isdefined IsTopsoil)	
+						startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
+					
+					elseif !(@isdefined RockFragment) && (@isdefined IsTopsoil)
+						startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
+					
+					elseif !(@isdefined RockFragment) && !(@isdefined IsTopsoil)
+						startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel)
 
-					IsTopsoil₁ = 0.0 ; RockFragment₁ = 0.0
-					for iZ=1:N_iZ
-						if @isdefined RockFragment
-							RockFragment₁ = RockFragment[iZ]
-						end #@isdefined RockFragment
-						if @isdefined IsTopsoil
-							IsTopsoil₁ = IsTopsoil[iZ]					
-						end  # if: @isdefined IsTopsoil
-
-						Kₛ_Model[iZ] = θψ2Ks.θΨ_2_KS(hydro, iZ, param; RockFragment=RockFragment₁, IsTopsoil=IsTopsoil₁)
-
-						if !("Ks" ∈ optim.ParamOpt)
-							hydro.Ks[iZ] = Kₛ_Model[iZ]
-						end #  hydro.Ks[iZ] < eps(100.0)
-					end # if: hydro.Ks[iZ] > eps(10.0)
-					println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~ === === ")
-				end # if: option.hydro.HydroModel⍰ == :Kosugi 
+					end # if: RockFragment && IsTopsoil
+				println("\n	=== === End computing model Ks === === \n")
+				end # if: option.hydro.HydroModel⍰ == :Kosugi
+				# ------------------------END:  COMPUTE KS FROM Θ(Ψ) -------------------------- 
 
 
 			# SPECIAL CASE

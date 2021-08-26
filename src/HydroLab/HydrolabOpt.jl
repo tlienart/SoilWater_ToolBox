@@ -173,44 +173,44 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function PARAM_2_hydro(hydro, iZ, optim, optionₘ, param, X)
-		for iParam = 1:optim.NparamOpt
-			# Determening if parameters are Log transformed
-				if (optim.ParamOpt_LogTransform[iParam]) && !(optim.ParamOpt[iParam]=="Ψm" && optionₘ.σ_2_Ψm⍰ == "Constrained")
-					Paramₐ = expm1(X[iParam])
-				else
-					Paramₐ = X[iParam]
-				end  # if: optim.ParamOpt_LogTransform
+		function PARAM_2_hydro(hydro, iZ, optim, optionₘ, param, X)
+			for iParam = 1:optim.NparamOpt
+				# Determening if parameters are Log transformed
+					if (optim.ParamOpt_LogTransform[iParam]) && !(optim.ParamOpt[iParam]=="Ψm" && optionₘ.σ_2_Ψm⍰ == "Constrained")
+						Paramₐ = expm1(X[iParam])
+					else
+						Paramₐ = X[iParam]
+					end  # if: optim.ParamOpt_LogTransform
 
-			# Getting the current values of every layer of the hydro parameter of interest
-				vectParam = getfield(hydro, Symbol(optim.ParamOpt[iParam]))
+				# Getting the current values of every layer of the hydro parameter of interest
+					vectParam = getfield(hydro, Symbol(optim.ParamOpt[iParam]))
 
-			# Updating the value of the parameters for the soil wanting to optimize by keeping the values constant
-				vectParam[iZ] = Paramₐ
+				# Updating the value of the parameters for the soil wanting to optimize by keeping the values constant
+					vectParam[iZ] = Paramₐ
 
-			# Putting the updated hydro into hydro
-				setfield!(hydro, Symbol(optim.ParamOpt[iParam]), vectParam)
-		end # for loop
+				# Putting the updated hydro into hydro
+					setfield!(hydro, Symbol(optim.ParamOpt[iParam]), vectParam)
+			end # for loop
 
-		# ==================== SPECIAL CASE ====================
+			# ==================== SPECIAL CASE ====================
 
-		# RELATIONSHIP BETWEEN σ AND Ψm
-		if (optionₘ.σ_2_Ψm⍰ ≠ "No") && ("Ψm" ∈ optim.ParamOpt)
-			hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ, param; Pσ=3.0)
-		end # optionₘ.σ_2_Ψm⍰ ≠ :No
+			# RELATIONSHIP BETWEEN σ AND Ψm
+			if (optionₘ.σ_2_Ψm⍰ ≠ "No") && ("Ψm" ∈ optim.ParamOpt)
+				hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ, param; Pσ=3.0)
+			end # optionₘ.σ_2_Ψm⍰ ≠ :No
 
-		#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
-		if optionₘ.θrOpt⍰=="σ_2_θr" && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
-			hydro.θr[iZ] = hydroRelation.σ_2_θr(hydro, iZ)
-		end
+			#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
+			if optionₘ.θrOpt⍰=="σ_2_θr" && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
+				hydro.θr[iZ] = hydroRelation.σ_2_θr(hydro, iZ)
+			end
 
-		# Converting θsMacMat_ƞ -> θsMacMat
-		if  optionₘ.HydroModel⍰ == "Kosugi"
-			hydro.θsMacMat[iZ] = hydro.θsMacMat_ƞ[iZ] * hydro.θs[iZ]
-		end
+			# Converting θsMacMat_ƞ -> θsMacMat
+			if  optionₘ.HydroModel⍰ == "Kosugi"
+				hydro.θsMacMat[iZ] = hydro.θsMacMat_ƞ[iZ] * hydro.θs[iZ]
+			end
 
-	return hydro
-	end  # function: PARAM
+		return hydro
+		end  # function: PARAM
 
 end  # module hypixOpt
 # ............................................................
