@@ -160,6 +160,35 @@ module table
 
 
 	# =============================================================
+	#		module: ksmodel
+	# =============================================================
+	module ksmodel
+		import ...tool
+		import DelimitedFiles
+		export KSMODEL
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : KSMODEL
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function KSMODEL_τ(IdSelect, ksmodelτ, Path)
+				println("    ~  $Path ~")
+
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2,  ksmodelτ)
+				
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
+					DelimitedFiles.writedlm(io, [round.(Matrix,digits=5)], ",")
+				end
+			return nothing
+				
+			return
+			end  # function: KSMODEL
+			# ------------------------------------------------------------------
+		
+	end  # module: ksmodel
+	# ............................................................
+
+	# =============================================================
 	#		MODULE: psd
 	# =============================================================
 	module psd

@@ -372,6 +372,10 @@ module SoilWater_ToolBox
 				end # option.run.Smap	
 			end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
 
+			if option.run.KsModel # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+				table.ksmodel.KSMODEL_τ(IdSelect, ksmodelτ, path.tableSoilwater.Table_KsModel_τ)
+			end  # if: option.run.KsModel
+
 
 			if option.run.Infilt # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				table.infilt.HYDRO_INFILT(hydroInfilt, IdSelect, N_iZ, path.tableSoilwater.Table_HydroInfilt)

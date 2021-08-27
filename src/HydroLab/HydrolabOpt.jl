@@ -52,7 +52,8 @@ module hydrolabOpt
 						hydro.θs[iZ] = θobs_Max
 						hydro.Φ[iZ] = hydro.θs[iZ] / param.hydro.Coeff_Φ_2_θs
 
-				elseif  ("θs" ∉ optim.ParamOpt) && (optionₘ.θsOpt⍰=="Φ") # <>=<>=<>=<>=<>
+				# elseif  ("θs" ∉ optim.ParamOpt) && (optionₘ.θsOpt⍰=="Φ") # <>=<>=<>=<>=<>
+				elseif  ("θs" ∉ optim.ParamOpt) # <>=<>=<>=<>=<>
 						if hydro.Φ[iZ] * 0.95 > θobs_Max + θϵ
 							hydro.θs[iZ] = hydro.Φ[iZ] * 0.95
 						elseif hydro.Φ[iZ] * 0.965 > θobs_Max + θϵ
@@ -61,14 +62,14 @@ module hydrolabOpt
 							hydro.θs[iZ] = max(hydro.Φ[iZ] - θϵ, θobs_Max + θϵ)
 						end # hydro.Φ[iZ] * 0.95 > θobs_Max + θϵ
 
-				elseif ("θs" ∈ optim.ParamOpt) && (optionₘ.θsOpt⍰=="FromData") # <>=<>=<>=<>=<>
-					hydro.θs_Min[iZ] = θobs_Max - θϵ
-					hydro.θs_Max[iZ] = max(θobs_Max + 0.10, hydro.θs_Max[iZ])
+				# elseif ("θs" ∈ optim.ParamOpt) && (optionₘ.θsOpt⍰=="FromData") # <>=<>=<>=<>=<>
+				# 	hydro.θs_Min[iZ] = θobs_Max - θϵ
+				# 	hydro.θs_Max[iZ] = max(θobs_Max + 0.10, hydro.θs_Max[iZ])
 
-					# Changing the feasible range of θs
-						iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
-						optim.ParamOpt_Min[iθs] = hydro.θs_Min[iZ]
-						optim.ParamOpt_Max[iθs] = hydro.θs_Max[iZ]
+				# 	# Changing the feasible range of θs
+				# 		iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
+				# 		optim.ParamOpt_Min[iθs] = hydro.θs_Min[iZ]
+				# 		optim.ParamOpt_Max[iθs] = hydro.θs_Max[iZ]
 		
 				end # optionₘ.θsOpt⍰
 				

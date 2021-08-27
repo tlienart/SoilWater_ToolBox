@@ -54,7 +54,6 @@ module options
 
 	@option mutable struct KSMODEL
 		KsModel⍰::String
-		OptimizeKsModel⍰::String
 	end
 
 	@option mutable struct PSD

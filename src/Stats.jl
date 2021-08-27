@@ -74,12 +74,11 @@ module stats
 
 				Willmott_dr = 0.0
 				for i = 1:N
-					if Statistics.sum(abs.(Sim[1:N] .- Obs[1:N])) <= C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean)))
+					if Statistics.sum(abs.(Sim[1:N] .- Obs[1:N])) ≤ C .* Statistics.sum(abs.(Obs[1:N].-Obs_Mean))
 						Willmott_dr = 1 - (Statistics.sum(abs.(Sim[1:N] .- Obs[1:N]))) / (C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean))))
 					else
 						Willmott_dr = (C*(Statistics.sum(abs.(Obs[1:N]-Obs_Mean)))) / (Statistics.sum(abs.(Sim[1:N] .- Obs[1:N]))) -1 
 					end
-
 				end # for
 
 			return Willmott_dr

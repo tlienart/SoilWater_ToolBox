@@ -25,9 +25,10 @@ using Suppressor
     include("Hydro/Kunsat.jl")
     include("Table.jl")
 
-    include("Ksmodel/θψ2Ks.jl")
-    include("Ksmodel/StructKsmodel.jl")
+    include("Ksmodel/θψ_2_KsModel.jl")
+    include("Ksmodel/Opt_KsModel.jl")
     include("Ksmodel/Start_KsModel.jl")
+    include("Ksmodel/Struct_Ksmodel.jl")
     
     include("Checking.jl")
 

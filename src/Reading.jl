@@ -194,28 +194,28 @@ module reading
 
 		
 	
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : PSD
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD(IdSelect, N_iZ, Path) # TODO make sure that the particles are ordered from smalest to largest
-				println("    ~  $(Path) ~")
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : PSD
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function PSD(IdSelect, N_iZ, Path) # TODO make sure that the particles are ordered from smalest to largest
+			println("    ~  $(Path) ~")
 
-				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first RockWetability
-					Data = Data[2:end,begin:end]
-				# Sort data
-					Data = sortslices(Data, dims=1)
+			# Read data
+				Data = DelimitedFiles.readdlm(Path, ',')
+			# Read header
+				Header = Data[1,1:end]
+			# Remove first RockWetability
+				Data = Data[2:end,begin:end]
+			# Sort data
+				Data = sortslices(Data, dims=1)
 
-            Diameter_Psd, N_Psd = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Diameter[mm]", N_iZ)
+			Diameter_Psd, N_Psd = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Diameter[mm]", N_iZ)
 
-            ∑Psd , ~            = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Psd", N_iZ)
+			∑Psd , ~            = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Psd", N_iZ)
 
-				Rpart = @. Diameter_Psd / 2.0
-			return Rpart, ∑Psd, N_Psd
-			end  # function: PSD
+			Rpart = @. Diameter_Psd / 2.0
+		return Rpart, ∑Psd, N_Psd
+		end  # function: PSD
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -489,11 +489,11 @@ module reading
 	#		FUNCTION :  KSMODEL_PARAM
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Base.@kwdef mutable struct OPTIMKS
-         Param_Name   :: Vector{String}
-         ParamOpt_Min :: Vector{Float64}
-         ParamOpt_Max :: Vector{Float64}
-         ParamOpt     :: Vector{String}
-         NparamOpt    :: Int64
+         Param_Name   :: Array{String}
+         ParamOpt_Min :: Array{Float64}
+         ParamOpt_Max :: Array{Float64}
+         ParamOpt     :: Array{String}
+         NparamOpt    :: Vector{Int64}
          Flag_Opt     :: Bool
 		end
 
@@ -540,17 +540,19 @@ module reading
 				# Selecing data
 				Opt = Opt[iSelectModel]
 				
+			N_Opt = sum(Opt)
 			# Determine if we need to optimize
-				if sum(Opt) ≥ 1
+				if N_Opt ≥ 1
 					Flag_Opt = true
 				else
 					Flag_Opt = false
 				end
 
 			# ====================================================
-			ParamOpt              = []
-			ParamOpt_Max          = []
-			ParamOpt_Min          = []
+            ParamOpt     = fill(""::String, (2, N_Opt))
+            ParamOpt_Min = fill(0.0::Float64, (2, N_Opt))
+            ParamOpt_Max = fill(0.0::Float64, (2, N_Opt))
+            NparamOpt    = fill(0::Int64, 2)
 
 			# For every parameter
 			# The τ[1] = TopLayer and   τ[3] = SubLayer			
@@ -559,9 +561,14 @@ module reading
 				if occursin("_Top", ipParamName)
 					ipParamName = replace(ipParamName, "_Top" => "" )
 					iLayer = 1
+					Param_Name[i] = ipParamName
+					Flag_Top = true
+					
 				elseif occursin("_Sub", ipParamName)
 					ipParamName = replace(ipParamName, "_Sub" => "" )
 					iLayer = 2
+					Param_Name[i] = ipParamName
+					Flag_Top = false
 				end
 
 				# Getting the Vector values of the τ parameters
@@ -580,27 +587,29 @@ module reading
 					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName * "_Max"))
 					ParamValue_Vector[iLayer] = Float64(Param_Max[i])
 					# Storing the value
-					setfield!(ksmodelτ, Symbol(ipParamName * "_Min"), ParamValue_Vector)
+					setfield!(ksmodelτ, Symbol(ipParamName * "_Max"), ParamValue_Vector)
 
 				# ParamValue to optimize.  
 				if Opt[i] == 1
-					# appending the values of the parameters
-					append!(ParamOpt, [Param_Name[i]])
+					NparamOpt[iLayer] += 1
 
-					append!(ParamOpt_Min, Param_Min[i])
-					
-					append!(ParamOpt_Max, Param_Max[i])
+					if Flag_Top
+                  ParamOpt[iLayer, NparamOpt[iLayer]]     = Param_Name[i]
+                  ParamOpt_Min[iLayer, NparamOpt[iLayer]] = Param_Min[i]
+                  ParamOpt_Max[iLayer, NparamOpt[iLayer]] = Param_Max[i]
+					else
+                  ParamOpt[iLayer, NparamOpt[iLayer]]     = [Param_Name[i]]
+                  ParamOpt_Min[iLayer, NparamOpt[iLayer]] = Param_Min[i]
+                  ParamOpt_Max[iLayer, NparamOpt[iLayer]] = Param_Max[i]
+					end
 
 					# Checking error
-						if Param_Min[i] > Param_Max[i]
-							error("SoilWater LabOpt ERROR: $(Param_Name[i]) $(Param_Min[i]) < $(ParamValue[i]) < $(Param_Max[i]) !")
+						if ParamOpt_Min[iLayer, NparamOpt[iLayer]] > ParamOpt_Max[iLayer, NparamOpt[iLayer]]
+							error("SoilWater LabOpt ERROR: $(ParamOpt[iLayer, NparamOpt[iLayer]]) $(ParamOpt_Min[iLayer, NparamOpt[iLayer]] ) < $(ParamValue[i]) < $( ParamOpt_Max[iLayer, NparamOpt[iLayer]]) !")
 						end
 				end # if Flag_Opt
 			i += 1
 			end # for loop
-
-			# Number of parameters to be optimised
-				NparamOpt = length(ParamOpt)
 
 			# Putting all the in mutable structure
 				optimKsmodel = OPTIMKS(Param_Name, ParamOpt_Min, ParamOpt_Max, ParamOpt, NparamOpt, Flag_Opt)
@@ -608,14 +617,17 @@ module reading
 			if Flag_Opt == true
 				println("	=== === Optimizing the following τ parameters === === \n")
 				println("		KsModel=" , option.ksModel.KsModel⍰)
+				println("		ksmodelτ=", Param_Name)
+				# println("		ksmodelτ=", ksmodelτ)
 				println("		NparamOpt_τ=" , optimKsmodel.NparamOpt)
 				println("		ParamOpt_τ= " ,  optimKsmodel.ParamOpt)
-				println("		Min_Value-τ= " , optimKsmodel.ParamOpt_Min)
+				println("		Min_Value_τ= " , optimKsmodel.ParamOpt_Min)
 				println("		Max_Value_τ = " , optimKsmodel.ParamOpt_Max)
 				println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n")
 			end
 	return ksmodelτ, optimKsmodel
 	end  # function: KSMODEL_PARAM
+	# ............................................................
 
 
 	# =============================================================

@@ -22,10 +22,11 @@
 			"# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
 			"#		FUNCTION : ${1:name}",
 			"# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-			"function ${1:name}($2)",
-			"\t$0",
-			"	return",
-			"end  # function: ${1:name}"
+				"function ${1:name}($2)",
+				"\t$0",
+				"return",
+				"end  # function: ${1:name}",
+			"# ------------------------------------------------------------------"
 		],
 		"description": "Function declaration with ending comment"
 	},
@@ -35,7 +36,8 @@
 			"macro ${1:name}($2)",
 			"\t$0",
 			"	return",
-			"end  # macro ${1:name}"
+			"end  # macro ${1:name}",
+			"# ------------------------------------------------------------------"
 		],
 		"description": "Macro declaration with function ending comment"
 }
