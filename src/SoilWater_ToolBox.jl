@@ -5,7 +5,6 @@
 ##========================================================================================
 
 
-
 module SoilWater_ToolBox
 
 	include("Including.jl")
@@ -375,7 +374,7 @@ module SoilWater_ToolBox
 			end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
 
 			if option.run.KsModel # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-				table.ksmodel.KSMODEL_τ(IdSelect, ksmodelτ, path.tableSoilwater.Table_KsModel_τ)
+				table.ksmodel.KSMODEL_τ(ksmodelτ, path.tableSoilwater.Table_KsModel_τ)
 			end  # if: option.run.KsModel
 
 
@@ -408,7 +407,7 @@ module SoilWater_ToolBox
 				param.globalparam.N_iZ_Plot_End = min(param.globalparam.N_iZ_Plot_End, N_iZ)
 
 				if option.run.HydroLabθΨ⍰ ≠ "No"
-					plot.lab.HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
+					plot.lab.HYDROPARAM(hydro, hydroOther, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 				end
 				if option.run.IntergranularMixingPsd
 					if option.psd.Plot_θr && option.run.HydroLabθΨ⍰ ≠ "No" # <>=<>=<>=<>=<>

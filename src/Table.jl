@@ -168,14 +168,12 @@ module table
 		export KSMODEL_τ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : KSMODEL
+		#		FUNCTION : KSMODEL_τ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function KSMODEL_τ(IdSelect, ksmodelτ, Path)
+			function KSMODEL_τ(ksmodelτ, Path)
 				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2,  ksmodelτ)
-
-				println(Matrix)
 				
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
@@ -184,7 +182,7 @@ module table
 			return nothing
 				
 			return
-			end  # function: KSMODEL
+			end  # function: KSMODEL_τ
 			# ------------------------------------------------------------------
 		
 	end  # module: ksmodel

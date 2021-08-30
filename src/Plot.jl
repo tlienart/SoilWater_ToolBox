@@ -14,15 +14,16 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDROPARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYDROPARAM(hydro, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+			function HYDROPARAM(hydro, hydroOther, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+
 				println("  ==  START: Plotting HydroParam  ==")
+
 		
 				# ===================== DATA =====================
 				θ_Sim             = fill(0.0,N_Se)
 				Kunsat_Sim        = fill(0.0,N_Se)
 
 				Ψ_θΨobs_Min = 0.0
-
 				for iZ = param.globalparam.N_iZ_Plot_Start:param.globalparam.N_iZ_Plot_End
 					Ψ_θΨobs_Max = maximum(Ψ_θΨobs[iZ,N_θΨobs[iZ]]) + 100000.0
 
@@ -40,39 +41,41 @@ module plot
 					# _______________________ START: Plotting _______________________
 								
 					Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=16)
+
+					Title = "θ(Ψ) Nse_θΨ=" * string(round(hydroOther.Nse_θΨ[iZ], digits=2)) * "; Nse_KΨ=" * string(round(hydroOther.Nse_KΨ[iZ], digits=2)) * "; Wilmot_θΨ=" *  string(round(hydroOther.NseWilmot_θΨ[iZ],digits=2)) * "; Wilmot_KΨ=" * string(round(hydroOther.NseWilmot_KΨ[iZ], digits=2))
 					
 					#  == Plot_θ_Ψ  ==
-						Axis1 = Axis(Fig[1,1], title="θ(Ψ)", titlesize=24, xlabel="ln(1 + Ψ) [kPa]", ylabel="θ [mm³ mm⁻³]", xlabelsize=10, backgroundcolor=:white)
+						Axis1 = Axis(Fig[1,1], title=Title, titlesize=24, xlabel="ln(1 + Ψ) [kPa]", ylabel="θ [mm³ mm⁻³]", xlabelsize=10, backgroundcolor=:white)
 
 						xlims!(Axis1, log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Max ))
 						ylims!(Axis1, 0.0, 0.75)
 						Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.( floor.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]], digits=1)))
 
-						Fig_θΨobs = scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), Float64.(θ_θΨobs[iZ,1:N_θΨobs[iZ]]), color=:red, markersize=15, marker = '■')
+						Fig_θΨobs = scatter!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), Float64.(θ_θΨobs[iZ,1:N_θΨobs[iZ]]), color=:red, markersize=25, marker = '■')
 
 						Fig_θΨsim = lines!(Fig[1,1], log1p.(cst.Mm_2_kPa .* Ψ_Sim[1:N_Se]), θ_Sim[1:N_Se], color=:blue, linewidth=3)
 
 					# Plot_θ_Ψ: Total porosity point
-						Fig_TotalPorosity = scatter!(Fig[1,1], [log1p.(cst.Mm_2_kPa .* 0.0)], [hydro.Φ[iZ]], color=:green, markersize=20, marker ='●')
+						Fig_TotalPorosity = scatter!(Fig[1,1], [log1p.(cst.Mm_2_kPa .* 0.0)], [hydro.Φ[iZ]], color=:green, markersize=25, marker ='●')
 
 					# == Plot_K_Ψ  ==
 					# If Ks is not computed it is computed from Ks_Model
 
-						Axis2 = Axis(Fig[1,2], title="K(Ψ)", titlesize=24, xlabel = "ln(1 + Ψ) [kPa]", ylabel = "ln ( 1 + K (Ψ) ) [mm h⁻¹]")
+						Axis2 = Axis(Fig[1,2], title="K(Ψ)", titlesize=24, xlabel = "ln(1 + Ψ) [kPa]", ylabel = "ln ( K (Ψ) ) [mm h⁻¹]")
 
 						xlims!(Axis2, log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Min), log1p.(cst.Mm_2_kPa * Ψ_θΨobs_Max))
 
-						ylims!(Axis2, 0.0, 6.0)
+						ylims!(Axis2, 0.0001*cst.MmS_2_MmH, log(hydro.Ks[iZ]*cst.MmS_2_MmH))
 						
 						Axis2.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.(floor.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]], digits=1)))
 						Yticks = 1:1:6
 						Axis2.yticks = (Yticks,string.(Yticks))
 
-						Fig_Kθobs = scatter!(Fig[1,2], log1p.(Ψ_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.Mm_2_kPa), log1p.(K_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.MmS_2_MmH), color=:red, markersize=15, marker = '■')
+						Fig_Kθobs = scatter!(Fig[1,2], log1p.(Ψ_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.Mm_2_kPa), log.(K_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.MmS_2_MmH), color=:red, markersize=25, marker = '■')
 
-						Fig_Kθsim = lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_Sim[1:N_Se].*cst.MmS_2_MmH), color=:blue, linewidth=3)
+						Fig_Kθsim = lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log.(Kunsat_Sim[1:N_Se] .* cst.MmS_2_MmH), color=:blue, linewidth=3)
 
-						Fig_Ks = scatter!(Fig[1,2], [log1p.(cst.Mm_2_kPa .* 0.0)], [hydro.Ks[iZ] * cst.cst.MmS_2_MmH], color=:green, markersize=20, marker ='●')
+						Fig_Ks = scatter!(Fig[1,2], [log1p.(cst.Mm_2_kPa .* 0.0)], [log(hydro.Ks[iZ] * cst.cst.MmS_2_MmH)], color=:green, markersize=25, marker ='●')
 
 						
 					Leg = Fig[1, end+1] = Legend(Fig, [Fig_θΨobs, Fig_θΨsim, Fig_TotalPorosity, Fig_Kθobs, Fig_Kθsim, Fig_Ks], ["θobs(Ψ)", "θsim(Ψ)", "Φ", "Kobs(Ψ)", "Ksim(Ψ)", "Ksₛᵢₘ"])
@@ -127,7 +130,7 @@ module plot
 				ylims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
 				# Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.( floor.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]], digits=1)))
 
-				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=:red, markersize=15, marker = '■')
+				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=:red, markersize=25, marker = '■')
 
 				Line = range(log1p(Ks_Min.* cst.MmS_2_CmH), stop=log1p(Ks_Max.* cst.MmS_2_CmH), length=100) 
 				Fig_Ks = lines!(Fig[1,1], Line, Line, color=:blue)

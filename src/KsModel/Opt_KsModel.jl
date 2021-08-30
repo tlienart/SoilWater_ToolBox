@@ -48,7 +48,7 @@ module optKsModel
 
 				# Of_Ks = stats.NASH_SUTCLIFE_MINIMIZE(log.(hydro.Ks[1:N_iZ]) , log.(Kₛ_Model[1:N_iZ]))
 
-				Of_Ks = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+				Of_Ks = stats.RMSE(log.(hydro.Ks[1:N_iZ]) , log.(Kₛ_Model[1:N_iZ]))
 
 				# println("		====  $Of_Ks ====")
 

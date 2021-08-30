@@ -33,10 +33,9 @@ module startKsModel
 
 
 			# STATISTICS
-			println("End")
-				ksmodelτ.Nse_τ[1] = stats.NSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
-				ksmodelτ.Rmse_τ[1] = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
-				# ksmodelτ.Wilmot_τ[1] =  stats.WILLMOTT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+            ksmodelτ.Nse_τ[1]    = stats.NSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+            ksmodelτ.Rmse_τ[1]   = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+            ksmodelτ.Wilmot_τ[1] = stats.WILMOT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
 
 				println("		 Nse_τ    =  $(ksmodelτ.Nse_τ)")
 				println("		 Rmse_τ   =  $(ksmodelτ.Rmse_τ)")
@@ -51,10 +50,6 @@ module startKsModel
 		return hydro, Kₛ_Model
 		end  # function: START_KSMODEL
 		#..................................................................
-
-
-
-
 		
 	end  # module: startKsModel
 	# =====================================================================

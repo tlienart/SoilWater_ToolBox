@@ -54,6 +54,7 @@ module θψ2KsModel
 					T1 = 10.0 ^ -τ₁
 					T2 = 2.0 * (1.0 - τ₂)
 					T3 = 1.0 / (1.0 - τ₃)
+					# τ₄
 
 				# Transformation macro
 					T1Mac = 10.0 ^ - τ₁Mac 

@@ -2,7 +2,7 @@
 #		module: hypixOpt
 # =============================================================
 module hydrolabOpt
-	import ..ofHydrolab, ..tool, ..optimize, ..hydroRelation, ..psdThetar
+	import ..ofHydrolab, ..tool, ..optimize, ..hydroRelation, ..psdThetar, ..stats
 	using BlackBoxOptim, Statistics
 	export HYDROLABOPT_START
 
@@ -126,18 +126,28 @@ module hydrolabOpt
 					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
 					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
-
-					hydroOther.Nse[iZ]    = 1.0 - Of
-					hydroOther.Nse_θΨ[iZ] = 1.0 - Of_θΨ
-
-					if "Ks" ∈ optim.ParamOpt
-						hydroOther.Nse_KΨ[iZ] = 1.0 - Of_Kunsat
-					end
 		end # for iZ = 1:N_iZ
+
+		hydroOther.Nse_θΨ, ~, ~ = stats.NASH_SUTCLIFFE_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
+
+		hydroOther.NseWilmot_θΨ, ~, ~ = stats.NSEWILMOT_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
+	
+		if "Ks" ∈ optim.ParamOpt
+			hydroOther.Nse_KΨ, ~, ~ = stats.NASH_SUTCLIFFE_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
+
+			hydroOther.NseWilmot_KΨ, ~, ~ = stats.NSEWILMOT_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
+
+			hydroOther.Nse = (hydroOther.Nse_KΨ .+ hydroOther.Nse_θΨ) ./ 2.0
+		else
+			hydroOther.Nse = deepcopy(hydroOther.Nse_θΨ)
+		end
 
 		# OVERALL STATISTICS OF THE OPTIMIZATION
 			Nse_θΨ_Aver = Statistics.mean(hydroOther.Nse_θΨ[1:N_iZ])
-			Nse_KΨ_Aver = Statistics.mean(max.(hydroOther.Nse_KΨ[1:N_iZ],0.0))
+			Nse_KΨ_Aver = Statistics.mean(max.(hydroOther.Nse_KΨ[1:N_iZ], 0.0))
+
+			NseWilmot_θΨ_Aver = Statistics.mean(hydroOther.NseWilmot_θΨ[1:N_iZ])
+			NseWilmot_KΨ_Aver = Statistics.mean(max.(hydroOther.NseWilmot_KΨ[1:N_iZ], 0.0))
 
 			Rmse_Aver    = Statistics.mean(hydroOther.Rmse[1:N_iZ])
 			Rmse_θΨ_Aver = Statistics.mean(hydroOther.Rmse_θΨ[1:N_iZ])
@@ -150,7 +160,7 @@ module hydrolabOpt
 			end
 
 			println("	=== === Optimizing Hydraulic parameters === ")
-			println("    		~  Nse_θΨ = $(round(Nse_θΨ_Aver,digits=3)),  Nse_KΨ = $(round(Nse_KΨ_Aver,digits=3)), Nse = $(round(Nse_Aver,digits=3))  ~")
+			println("    		~  Nse_θΨ= $(round(Nse_θΨ_Aver,digits=3)),  NseWilmot_θΨ= $(round(NseWilmot_θΨ_Aver,digits=3)), Nse_KΨ_Aver= $(round(Nse_KΨ_Aver,digits=3)), NseWilmot_KΨ= $(round(NseWilmot_KΨ_Aver,digits=3)), Nse = $(round(Nse_Aver,digits=3))  ~")
 			println("    		~  Rmse_θΨ = $(round(Rmse_θΨ_Aver,digits=4)),  Rlmse_KΨ = $(round(Rmse_KΨ_Aver,digits=4)), Rmse = $(round(Rmse_Aver,digits=4))  ~ \n")
 			println( "	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === ===")
 	return hydro, hydroOther

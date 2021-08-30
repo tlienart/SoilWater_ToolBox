@@ -129,6 +129,8 @@ module hydroStruct
          Nse     :: 	Vector{Float64}
          Nse_θΨ  :: 	Vector{Float64}
          Nse_KΨ  :: 	Vector{Float64}
+         NseWilmot_θΨ  :: Vector{Float64}
+         NseWilmot_KΨ  :: Vector{Float64}
          Rmse    :: 	Vector{Float64}
          Rmse_θΨ :: 	Vector{Float64}
          Rmse_KΨ :: 	Vector{Float64}
@@ -228,7 +230,7 @@ module hydroStruct
 				λch_Max = fill(0.0::Float64, N_iZ)
 				Ψch_Max  = fill(0.0::Float64, N_iZ)
 
-				hydro = CLAPP_HORNBERGER(θs, θr, λch, Ψch, Ks, Φ, Ψga,  θs_Min, θr_Min, λch_Min, Ψch_Min, Ks_Min, Φ_Max, θs_Max, θr_Max, λch_Max, Ψch_Max, Ks_Max, Φ_Max)
+				hydro = CLAPP_HORNBERGER(θs, θr, λch, Ψch, Ks, Φ, Ψga, θs_Min, θr_Min, λch_Min, Ψch_Min, Ks_Min, Φ_Max, θs_Max, θr_Max, λch_Max, Ψch_Max, Ks_Max, Φ_Max)
 				return hydro
 			end # optionₘ.HydroModel⍰
 
@@ -239,14 +241,16 @@ module hydroStruct
 		#		FUNCTION : HYDRO_OTHER
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function HYDRO_OTHERS(N_iZ::Int64)
-				Nse = fill(0.0::Float64, N_iZ)
-            Nse_θΨ  = fill(0.0::Float64, N_iZ)
-            Nse_KΨ  = fill(0.0::Float64, N_iZ)
-            Rmse    = fill(0.0::Float64, N_iZ)
-            Rmse_θΨ = fill(0.0::Float64, N_iZ)
-            Rmse_KΨ = fill(0.0::Float64, N_iZ)
+            Nse           = fill(0.0::Float64, N_iZ)
+            Nse_θΨ        = fill(0.0::Float64, N_iZ)
+            Nse_KΨ        = fill(0.0::Float64, N_iZ)
+            NseWilmot_θΨ  = fill(0.0::Float64, N_iZ)
+            NseWilmot_KΨ  = fill(0.0::Float64, N_iZ)
+            Rmse          = fill(0.0::Float64, N_iZ)
+            Rmse_θΨ       = fill(0.0::Float64, N_iZ)
+            Rmse_KΨ       = fill(0.0::Float64, N_iZ)
 
-				hydroOther = HYDRO_OTHER(Nse, Nse_θΨ, Nse_KΨ, Rmse, Rmse_θΨ, Rmse_KΨ)	
+				hydroOther = HYDRO_OTHER(Nse, Nse_θΨ, Nse_KΨ, NseWilmot_θΨ, NseWilmot_KΨ, Rmse, Rmse_θΨ, Rmse_KΨ)	
 				return hydroOther
 			end  # function: HYDRO_OTHER
 end  # module: hydroStruct
