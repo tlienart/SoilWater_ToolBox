@@ -103,6 +103,49 @@ module plot
 	# ............................................................
 
 
+	# =============================================================
+	#		module: ksmodel
+
+	# =============================================================
+	module ksmodel
+		import ...cst
+		using CairoMakie
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : KSMODEL
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function KSMODEL(hydro, Kₛ_Model, N_iZ, path)
+
+			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(Kₛ_Model[1:N_iZ])])
+			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(Kₛ_Model[1:N_iZ])])
+
+			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=35)
+					
+			#  == Plot_θ_Ψ  == 
+				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=24, xlabel="ln ( 1 + KsModel_Obs) [cm hour⁻¹ ]", ylabel="ln ( 1 + KsModel_Sim) [cm hour⁻¹ ]", xlabelsize=35,  ylabelsize=35, backgroundcolor=:white)
+
+				xlims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
+				ylims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
+				# Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.( floor.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]], digits=1)))
+
+				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=:red, markersize=15, marker = '■')
+
+				Line = range(log1p(Ks_Min.* cst.MmS_2_CmH), stop=log1p(Ks_Max.* cst.MmS_2_CmH), length=100) 
+				Fig_Ks = lines!(Fig[1,1], Line, Line, color=:blue)
+				
+			trim!(Fig.layout)
+			
+			Path = path.plotSoilwater.Plot_θΨK * "KsModel.svg" 
+			save(Path, Fig)
+			display(Fig)
+
+		return nothing
+		end  # function: KSMODEL
+		# ------------------------------------------------------------------
+
+		
+	end  # module: ksmodel
+
+	# ............................................................
 
 	# =============================================================
 	#		MODULE: psd

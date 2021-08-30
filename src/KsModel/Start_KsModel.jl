@@ -40,7 +40,13 @@ module startKsModel
 
 				println("		 Nse_τ    =  $(ksmodelτ.Nse_τ)")
 				println("		 Rmse_τ   =  $(ksmodelτ.Rmse_τ)")
-				# println("		 Wilmot_τ =  $(ksmodelτ.Wilmot_τ)")
+				println("		 Wilmot_τ =  $(ksmodelτ.Wilmot_τ)")
+
+				for iParam = 1:optimKsmodel.NparamOpt[ipLayer]	
+					# Getting the current values of every layer of the hydro parameter of interest
+						vectParam = getfield(ksmodelτ, Symbol(optimKsmodel.ParamOpt[ipLayer, iParam]))
+						println("		", Symbol(optimKsmodel.ParamOpt[ipLayer, iParam]) , "=" ,vectParam)
+				end # for loop
 				
 		return hydro, Kₛ_Model
 		end  # function: START_KSMODEL

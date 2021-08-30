@@ -15,7 +15,8 @@ module optKsModel
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals=150)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent)
+				# MaxFuncEvals=1500
 
 				# Deriving the optimal τ parameters from X
 					X = BlackBoxOptim.best_candidate(Optimization)
@@ -43,9 +44,13 @@ module optKsModel
 				Kₛ_Model = θψ2KsModel.KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 			# Computing the Objective function
-				Of_Ks = stats.NASH_SUTCLIFE_MINIMIZE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+				# Of_Ks = stats.NASH_SUTCLIFE_MINIMIZE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
 
-				println("		====  $Of_Ks ====")
+				# Of_Ks = stats.NASH_SUTCLIFE_MINIMIZE(log.(hydro.Ks[1:N_iZ]) , log.(Kₛ_Model[1:N_iZ]))
+
+				Of_Ks = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+
+				# println("		====  $Of_Ks ====")
 
 		return Of_Ks
 		end  # function: OF_KSMODEL
@@ -70,7 +75,6 @@ module optKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
 
-			println("	=== === Optimizing τ parameters === === \n")
 			for iParam = 1:optimKsmodel.NparamOpt[ipLayer]
 
 				Paramₐ = X[iParam]
@@ -84,9 +88,8 @@ module optKsModel
 				# Putting the updated hydro into ksmodelτ
 					setfield!(ksmodelτ, Symbol(optimKsmodel.ParamOpt[ipLayer, iParam]), vectParam)
 
-					println("		", Symbol(optimKsmodel.ParamOpt[ipLayer, iParam]) , "=" ,vectParam)
+					# println("		", Symbol(optimKsmodel.ParamOpt[ipLayer, iParam]) , "=" ,vectParam)
 			end # for loop
-			println("	=== === Optimizing τ parameters === === \n")
 
 		return ksmodelτ
 		end  # function: PARAM

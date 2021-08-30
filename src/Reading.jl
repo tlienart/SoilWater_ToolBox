@@ -2,7 +2,7 @@
 #		MODULE: reading
 # =============================================================
 module reading
-	import ..tool
+	import ..tool, ..table
 	import  DelimitedFiles
 	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
 
@@ -136,11 +136,11 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨ(IdSelect, N_iZ, Path)
-				println("    ~  $(Path) ~")
+			function θΨ(IdSelect, N_iZ, path)
+				println("    ~  $(path.inputSoilwater.Ψθ) ~")
 
 				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
+					Data = DelimitedFiles.readdlm(path.inputSoilwater.Ψθ, ',')
 				# Read header
 					Header = Data[1,1:end]
 				# Remove first row
@@ -158,6 +158,8 @@ module reading
 				# Data is in square [X=iZ, Y =iΨ]
 				else
 					N_θΨobs, θ_θΨobs, Ψ_θΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
+
+					table.convert.CONVERT_θΨ_2D_2_1D(IdSelect, N_iZ, N_θΨobs, path.convertSoilwater.Table_Convert_θΨ_2D_2_1D, θ_θΨobs, Ψ_θΨobs)
 				end # length(Header) == 3
 
 		return θ_θΨobs, Ψ_θΨobs, N_θΨobs
@@ -167,7 +169,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KUNSATΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function KUNSATΨ(IdSelect, N_iZ, Path)
+			function KUNSATΨ(IdSelect, N_iZ, path, Path)
 				println("    ~  $(Path) ~")
 
 				# Read data
@@ -188,6 +190,8 @@ module reading
 				# Data is in square [X=iZ, Y =iΨ]
 				else
 					N_KΨobs, K_KΨobs, Ψ_KΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
+
+					table.convert.CONVERT_KΨ_2D_2_1D(IdSelect, N_iZ, N_KΨobs, path.convertSoilwater.Table_Convert_KΨ_2D_2_1D, K_KΨobs, Ψ_KΨobs)
 				end
 			return K_KΨobs, Ψ_KΨobs, N_KΨobs 
 			end  # function: θΨ

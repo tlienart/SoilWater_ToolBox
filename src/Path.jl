@@ -34,6 +34,11 @@ module paths
 		GUI_KsModel::String 
 	end # struct INPUT_SOILWATER
 
+	@option mutable struct  CONVERT_SOILWATER
+   	Table_Convert_θΨ_2D_2_1D::String
+   	Table_Convert_KΨ_2D_2_1D::String
+	end
+
 	@option mutable struct INPUT_TEMPORARY
 		σ_ψM_Scenario::String
 	end
@@ -126,6 +131,7 @@ module paths
 		inputSmap::INPUT_SMAP
 		inputSoilwater::INPUT_SOILWATER
 		inputGuiSoilwater::INPUT_GUISOILWATER
+		convertSoilwater::CONVERT_SOILWATER
 		inputTemporary::INPUT_TEMPORARY
 		option::OPTIONS
 		plotSoilwater::PLOT_SOILWATER
@@ -179,8 +185,16 @@ module paths
 		# =============================================================
 			path.inputGuiSoilwater.GUI_HydroParam  = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_" * path.inputGuiSoilwater.GUI_HydroParam
 			path.inputGuiSoilwater.GUI_KsModel  = PathData_SoilWater * "/ParamOptionPath/" * SiteName_Soilwater * "_" * path.inputGuiSoilwater.GUI_KsModel
-		
-		
+
+		# =============================================================
+		#		CONVERT_SOILWATER
+		# =============================================================
+			Path_ConvertSoilWater = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * "Convert/"
+				Path_ConvertSoilWater = Path_ConvertSoilWater * SiteName_Soilwater * "_"
+
+				path.convertSoilwater.Table_Convert_θΨ_2D_2_1D = Path_ConvertSoilWater * path.convertSoilwater.Table_Convert_θΨ_2D_2_1D
+				path.convertSoilwater.Table_Convert_KΨ_2D_2_1D = Path_ConvertSoilWater * path.convertSoilwater.Table_Convert_KΨ_2D_2_1D
+
 		# =============================================================
 		#		INPUT_SMAP
 		# =============================================================

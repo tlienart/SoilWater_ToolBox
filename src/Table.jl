@@ -165,7 +165,7 @@ module table
 	module ksmodel
 		import ...tool
 		import DelimitedFiles
-		export KSMODEL
+		export KSMODEL_τ
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KSMODEL
@@ -174,10 +174,12 @@ module table
 				println("    ~  $Path ~")
 
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2,  ksmodelτ)
+
+				println(Matrix)
 				
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-					DelimitedFiles.writedlm(io, [round.(Matrix,digits=5)], ",")
+					DelimitedFiles.writedlm(io, [round.(Matrix, digits=5)], ",")
 				end
 			return nothing
 				
@@ -187,6 +189,7 @@ module table
 		
 	end  # module: ksmodel
 	# ............................................................
+
 
 	# =============================================================
 	#		MODULE: psd
@@ -641,6 +644,70 @@ module table
 				end # function: θAVERAGE
 
 	end  # module hyPix ............................................................
+
+
+	# =============================================================
+	#		module: other
+	# =============================================================
+		module convert
+			import DelimitedFiles
+			export CONVERT_θΨ_2D_2_1D
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : CONVERT_θΨ_2D_2_1D
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				function CONVERT_θΨ_2D_2_1D(IdSelect, N_iZ, N_θΨobs, Path, θ_θΨobs, Ψ_θΨobs)
+					println("			~  $(Path) ~")
+
+					Header = ["Id","H[mm]","Theta[0-1]"]
+
+					Ψ_1D=[]; θ_1D=[]; Id_Repeat=[]
+
+					for iZ = 1:N_iZ
+						for iΨ = 1:N_θΨobs[iZ]
+							append!(Id_Repeat, IdSelect[iZ])
+							append!(Ψ_1D, Ψ_θΨobs[iZ, iΨ])
+							append!(θ_1D, θ_θΨobs[iZ, iΨ])
+						end # for: iΨ = 1:Ψ_θΨobs
+					end # for: iZ = 1:N_iZ
+
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+					DelimitedFiles.writedlm(io, [Id_Repeat Ψ_1D θ_1D] , ",")
+				end # open
+			return nothing
+			end  # function: CONVERT_θΨ_2D_2_1D
+			# ------------------------------------------------------------------
+
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : CONVERT_KΨ_2D_2_1D
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				function CONVERT_KΨ_2D_2_1D(IdSelect, N_iZ, N_KΨobs, Path, K_KΨobs, Ψ_KΨobs)
+					println("			~  $(Path) ~")
+
+					Header = ["Id","H[mm]","Kunsat[mm_s]"]
+
+					Ψ_1D=[]; θ_1D=[]; Id_Repeat=[]
+
+					for iZ = 1:N_iZ
+						for iΨ = 1:N_KΨobs[iZ]
+							append!(Id_Repeat, IdSelect[iZ])
+							append!(Ψ_1D, Ψ_KΨobs[iZ, iΨ])
+							append!(θ_1D, K_KΨobs[iZ, iΨ])
+						end # for: iΨ = 1:Ψ_θΨobs
+					end # for: iZ = 1:N_iZ
+
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+					DelimitedFiles.writedlm(io, [Id_Repeat Ψ_1D θ_1D] , ",")
+				end # open
+			return nothing
+			end  # function: CONVERT_KΨ_2D_2_1D
+		# ------------------------------------------------------------------
+		
+			
+		end  # module: convert
+		# ............................................................
 
 end  # module table
 # ............................................................

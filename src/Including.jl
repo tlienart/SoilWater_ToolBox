@@ -21,9 +21,9 @@ using Suppressor
     include("Stats.jl")
     include("Psd/PsdThetar.jl")
     include("Optim/Optimize.jl")
+    include("Table.jl")
     include("Reading.jl")
     include("Hydro/Kunsat.jl")
-    include("Table.jl")
 
     include("Ksmodel/θψ_2_KsModel.jl")
     include("Ksmodel/Opt_KsModel.jl")
