@@ -61,8 +61,6 @@ module θψ2KsModel
 					T2mac = 2.0 * (1.0 - τ₂Mac)
 					T3mac = 1.0 / (1.0 - τ₃Mac)
 
-
-
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : KS_MODEL_1
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,12 +73,11 @@ module θψ2KsModel
 
 						Mode_Mat = exp(Ψm - σ ^ 2)
 						Ψ₁ = wrc.Se_2_ΨDual(optionₘ, Se, iZ, hydroParam)
-
-						@show Ψ₁
+						# @show Ψ₁
 					return ∂θ∂Ψ_Mat = -  exp( -((log(Ψ₁ / Ψm)) ^ 2) / (2.0 * σ ^ 2)) / (Ψ₁ * σ * √(π * 2.0)) / Mode_Mat
 					end # function ∂θ∂Ψ
 
-					∂θ∂Ψ = ∂θ∂Ψ_η(Se, iZ, hydroParam)
+					# ∂θ∂Ψ = ∂θ∂Ψ_η(Se, iZ, hydroParam)
 
 					Kunsat_Matrix =  T1 * ((θsMacMat - θr) ^ T3) * ((cst.Y / Ψm) / (exp( erfcinv(2.0 * Se) * σ * √2.0 )) ) ^ T2 
 
