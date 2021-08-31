@@ -52,7 +52,7 @@ module θψ2KsModel
 			if Model=="Model1" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				# Transformation matrix
 					T1 = 10.0 ^ -τ₁
-					T2 = 2.0 * (1.0 - τ₂)
+					T2 = 2.0 * (1.0 - τ₂*σ)
 					T3 = 1.0 / (1.0 - τ₃)
 					# τ₄
 
