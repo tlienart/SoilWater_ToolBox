@@ -406,7 +406,7 @@ module SoilWater_ToolBox
 			# Checking the maximum number of plotting
 				param.globalparam.N_iZ_Plot_End = min(param.globalparam.N_iZ_Plot_End, N_iZ)
 
-				if option.run.HydroLabθΨ⍰ ≠ "No"
+				if option.run.HydroLabθΨ⍰ ≠ "No" && option.hydro.Plot_θΨ
 					plot.lab.HYDROPARAM(hydro, hydroOther, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 				end
 				if option.run.IntergranularMixingPsd
