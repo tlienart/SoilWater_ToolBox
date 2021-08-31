@@ -122,7 +122,7 @@ module tool
             N_Point = fill(0::Int64, N_iZ)
 				
 				for i = 1:N_X
-					if Id_Data[i] > IdSelect[iSelect]
+					if Id_Data[i] > IdSelect[iSelect] && iSelect ≠ N_iZ
 						error("READ_ROW_SELECT problem with no matching id:  i= $i IdSelect[iSelect] = $( IdSelect[iSelect])< Id_Data[i] = $(Id_Data[i])")
 					end
 
