@@ -215,16 +215,16 @@ module SoilWater_ToolBox
 				if option.hydro.HydroModel⍰ == "Kosugi" && option.run.KsModel
 				println("\n	=== === Computing model Ks === === ")
 					if  (@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
 					
 					elseif (@isdefined RockFragment) && !(@isdefined IsTopsoil)	
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro; Flag_RockFragment=true, RockFragment=RockFragment)
 					
 					elseif !(@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
 					
 					elseif !(@isdefined RockFragment) && !(@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro)
 
 					end # if: RockFragment && IsTopsoil
 
