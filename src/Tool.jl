@@ -86,15 +86,25 @@ module tool
 
 				Data_Output, N_X = READ_HEADER_FAST(Data, Header, Name)
 
+				# if N_iZ ≠ N_X
+				# 	error("READ_ROW_SELECT  N_iZ ≠ N_X")
+				# end
+
 			# ===========================================
 			# Only keeping data which is selected
 			# ===========================================
 				Id_Data = Int64.(Data[1:end,1])
 
-            N_Point = fill(0::Int64, N_iZ)
-            iSelect = 1; iPoint = 1
+				# Determening if there is existence of an empty cell
+				Flag_IsEmpty = false
+				for i = 1:N_X
+					if isempty(Data_Output[i])
+						Flag_IsEmpty = true
+						break
+					end
+				end
 
-				if isempty(Data_Output[1])
+				if Flag_IsEmpty
 					Flag_String = false
 					Data_Select = zeros(Union{Float64,Missing}, (N_iZ, N_Point_Max))
 
@@ -108,9 +118,16 @@ module tool
 				end
 
 				# For all soils in the file
+				iSelect = 1; iPoint = 1
+            N_Point = fill(0::Int64, N_iZ)
+				
 				for i = 1:N_X
+					if Id_Data[i] > IdSelect[iSelect]
+						error("READ_ROW_SELECT problem with no matching id:  i= $i IdSelect[iSelect] = $( IdSelect[iSelect])< Id_Data[i] = $(Id_Data[i])")
+					end
+
 					if Id_Data[i] == IdSelect[iSelect] # Only append Ids which correspond to the selected one
-						if Flag_String
+						if Data_Output[i] == SubString{String}
 							Data_Output[i] = replace(Data_Output[i], " " => "") # Remove white spaces
 						end
 						if isempty(Data_Output[i])
@@ -118,19 +135,29 @@ module tool
 						else
 							Data_Select[iSelect,iPoint] = Data_Output[i]
 						end
-						# append!(Data_Select, Data_Output[i])
 						N_Point[iSelect] += 1
-						iPoint += 1
-					end
-
-					# Since there are many Data_Output with the same Id only update IdSelect if we are changing soils and IdSelect[iSelect] == Id_Data[i]
-					if i ≤ N_X -1
-						if Id_Data[i+1] > Id_Data[i] && IdSelect[iSelect] == Id_Data[i] && iSelect ≤ N_iZ -1
+		
+						if (i ≤ N_X - 1) && (iSelect ≤ N_iZ -1) && (Id_Data[i+1] > Id_Data[i]) 
 							iSelect += 1
 							iPoint = 1
+						else
+							iPoint += 1
 						end # if:
 					end # if: i ≤ N_X -1
-				end # for: i = 1:N_X
+				end
+
+				if iSelect ≠ N_iZ
+					error("READ_ROW_SELECT error: iSelect=$iSelect ≠ N_iZ=$N_iZ")
+				end
+
+					# Since there are many Data_Output with the same Id only update IdSelect if we are changing soils and IdSelect[iSelect] == Id_Data[i]
+					# if i ≤ N_X - 1
+					# 	if (Id_Data[i+1] > Id_Data[i]) && (IdSelect[iSelect] == Id_Data[i]) && (iSelect ≤ N_iZ -1)
+					# 		iSelect += 1
+					# 		iPoint = 1
+					# 	end # if:
+					# end # if: i ≤ N_X -1
+				# end # for: i = 1:N_X
 	
 		return Data_Select, N_Point
 		end # function READ_ROW_SELECT

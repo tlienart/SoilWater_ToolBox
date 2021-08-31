@@ -190,6 +190,7 @@ module paths
 		#		CONVERT_SOILWATER
 		# =============================================================
 			Path_ConvertSoilWater = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * "Convert/"
+			mkpath(Path_ConvertSoilWater)
 				Path_ConvertSoilWater = Path_ConvertSoilWater * SiteName_Soilwater * "_"
 
 				path.convertSoilwater.Table_Convert_θΨ_2D_2_1D = Path_ConvertSoilWater * path.convertSoilwater.Table_Convert_θΨ_2D_2_1D
