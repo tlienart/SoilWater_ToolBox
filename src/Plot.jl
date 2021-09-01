@@ -131,7 +131,7 @@ module plot
 
 				ΔΘsMacΘr = hydro.θsMacMat .- hydro.θr
 
-				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=hydro.σ[1:N_iZ], markersize=175*ΔΘsMacΘr, marker =:circle)
+				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=hydro.σ[1:N_iZ], markersize=150*ΔΘsMacΘr, marker =:circle)
 
 				Colorbar(Fig[1, 2], limits=(0.75, 4), colormap = cgrad(:Spectral, 5, categorical = true), size = 25,  label="sigma", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
 
