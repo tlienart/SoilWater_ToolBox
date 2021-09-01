@@ -56,19 +56,19 @@ module θψ2KsModel
 					T3 = 1.0 / (1.0 - τ₃)
 
 				# Transformation macro
-					T1Mac = 10.0 ^ - τ₁Mac 
-					T2mac = 2.0 * (1.0 - τ₂Mac)
-					T3mac = 1.0 / (1.0 - τ₃Mac)
+					T1Mac = 10.0 ^ -(τ₁Mac * τ₁)
+					T2Mac = 2.0 * (1.0 - τ₂Mac * τ₂)
+					T3Mac = 1.0 / (1.0 - τ₃Mac * τ₃)
 
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		FUNCTION : KS_MODEL_1
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function KS_MODEL_1(Se, T1, T2, T3, T1Mac, T2mac, T3mac)
+				function KS_MODEL_1(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac)
 
 					Kunsat_Matrix =  T1 * ((θsMacMat - θr) ^ T3) * ((cst.Y / Ψm) / (exp( erfcinv(2.0 * Se) * σ * √2.0 )) ) ^ T2
 
 					if θs - θsMacMat > 0.001
-						Kunsat_Macro = T1Mac * ((θs - θsMacMat) ^ T3mac) * ((cst.Y / ΨmMac) / ( exp( erfcinv(2.0 * Se) * σMac * √2.0))) ^ T2mac 
+						Kunsat_Macro = T1Mac * ((θs - θsMacMat) ^ T3Mac) * ((cst.Y / ΨmMac) / ( exp( erfcinv(2.0 * Se) * σMac * √2.0))) ^ T2Mac 
 					else
 						Kunsat_Macro = 0.0
 					end
@@ -76,7 +76,7 @@ module θψ2KsModel
 				end  # function: KS_MODEL_1
 				# ------------------------------------------------------------------
 				
-				kₛ_Model = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL_1(Se, T1, T2, T3, T1Mac, T2mac, T3mac), 0.0, Se_Max; rtol=Rtol)[1]
+				kₛ_Model = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL_1(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac), 0.0, Se_Max; rtol=Rtol)[1]
 
 				return kₛ_Model
 
