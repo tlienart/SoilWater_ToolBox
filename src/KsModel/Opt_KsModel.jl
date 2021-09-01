@@ -15,7 +15,7 @@ module optKsModel
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals = 1000)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals = 10000)
 				# 
             # MaxFuncEvals = 1500
 
