@@ -123,7 +123,7 @@ module plot
 			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=35, xgridstyle=:dash, ygridstyle=:dash, xtickalign=1, ytickalign=1)
 					
 			#  == Plot_θ_Ψ  == 
-				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=24, xlabel="ln ( 1 + KsModel_Obs) [cm hour⁻¹ ]", ylabel="ln ( 1 + KsModel_Sim) [cm hour⁻¹ ]", xlabelsize=35,  ylabelsize=35, backgroundcolor=:white)
+				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=24, xlabel="ln (1 + KsModel_Obs) [cm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [cm hour⁻¹ ]", xlabelsize=35,  ylabelsize=35, backgroundcolor=:white)
 
 				xlims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
 				ylims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
@@ -131,10 +131,14 @@ module plot
 
 				ΔΘsMacΘr = hydro.θsMacMat .- hydro.θr
 
-				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color =ΔΘsMacΘr, colormap=:plasma, markersize=12*hydro.σ[1:N_iZ], marker =:circle)
+				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=hydro.σ[1:N_iZ], markersize=175*ΔΘsMacΘr, marker =:circle)
+
+				Colorbar(Fig[1, 2], limits=(0.75, 4), colormap = cgrad(:Spectral, 5, categorical = true), size = 25,  label="sigma", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
 
 				Line = range(log1p(Ks_Min.* cst.MmS_2_CmH), stop=log1p(Ks_Max.* cst.MmS_2_CmH), length=100) 
+
 				Fig_Ks = lines!(Fig[1,1], Line, Line, color=:blue)
+
 				# "θsMacMat-θr"
 				# Leg1 = Colorbar(Fig, Fig_Ks, label = "Theta", ticklabelsize = 14, labelpadding = 5, width = 10)
 				
@@ -143,7 +147,9 @@ module plot
 			Fig[1, 1] = Axis1
    		# Fig[1, 2] = Leg1
 			
-			Path = path.plotSoilwater.Plot_θΨK * "KsModel.svg" 
+			Path = path.plotSoilwater.Plot_θΨK * "\\KsModel\\" 
+			mkpath(Path)
+			Path = Path * "KsModel.svg" 
 			save(Path, Fig)
 			display(Fig)
 
