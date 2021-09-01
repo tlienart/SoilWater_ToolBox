@@ -7,7 +7,7 @@ module options
 
 	# What available data we have?
 	@option struct DATA
-		HydroParam::Bool
+		HydroParamPrecomputed::Bool
 		Infilt::Bool
 		Jules::Bool
 		Kθ::Bool

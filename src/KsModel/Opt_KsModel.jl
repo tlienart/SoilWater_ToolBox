@@ -9,13 +9,14 @@ module optKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_OPT_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function START_OPT_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, optionₘ)
+		function START_OPT_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel)
 				
 			# Deriving the feasible range of the τ parameters
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X, optionₘ; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals = 500)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals = 1000)
+				# 
             # MaxFuncEvals = 1500
 
 				# Deriving the optimal τ parameters from X
@@ -25,7 +26,7 @@ module optKsModel
 					ksmodelτ = X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
 
 				# Computing optimal Kₛ_Model
-					Kₛ_Model = θψ2KsModel.KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, optionₘ; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+					Kₛ_Model = θψ2KsModel.KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 		return Kₛ_Model
 		end  # function: START_OPT_KSMODEL
@@ -35,13 +36,13 @@ module optKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X, optionₘ; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+		function OF_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 			# Deriving the optimal τ parameters from X
 				ksmodelτ = X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
 
 			#	Compuring Ks model
-				Kₛ_Model = θψ2KsModel.KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, optionₘ; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+				Kₛ_Model = θψ2KsModel.KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 			# Computing the Objective function
 				# Of_Ks = stats.NASH_SUTCLIFE_MINIMIZE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))

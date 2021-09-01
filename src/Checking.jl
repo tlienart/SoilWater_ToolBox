@@ -43,7 +43,10 @@ module checking
 				error("*** optionₘ.θrOpt⍰==ParamPsd THAN option.run.IntergranularMixingPsd=true ***")
 
         	elseif option.data.SimulationKosugiθΨK && "Ks" ∉ optim.ParamOpt
-            	error("***  Ks  ∉ optim.ParamOpt && option.smap.SimulationKosugiθΨK THAN Ks ∈ optim.ParamOpt***")
+            	error("***  Ks  ∉ optim.ParamOpt && option.smap.SimulationKosugiθΨK THAN Ks ∈ optim.ParamOpt ***")
+
+			  elseif option.run.HydroLabθΨ⍰ == "File" && option.data.HydroParamPrecomputed == false
+				error("***  option.run.HydroLabθΨ⍰ == File THAN option.data.HydroParamPrecomputed == true ***") 
 
 			# ------------ CHECKING Infiltration model--------------------
 			elseif option.run.Infilt && !(option.data.Infilt)

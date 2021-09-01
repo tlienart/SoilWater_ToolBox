@@ -13,9 +13,6 @@ module SoilWater_ToolBox
 	#		FUNCTION : START_TOOLBOX
 	# ==============================================================
 	function SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="NewFormat")
-
-		println("Test2")
-
 		# _______________________ START: option/ param/ path _______________________ 
 
 			Path_Home = @__DIR__
@@ -111,6 +108,15 @@ module SoilWater_ToolBox
 				end  # if: Kθ			
 
 
+			# IF WE HAVE THE HYDRAULIC PARAMETERS PRECOMPUTED FROM PREVIOUS SIMULATIONS	
+				if option.run.HydroLabθΨ⍰ == "File"
+					hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
+
+					hydro, N_iZ = reading.READ_STRUCT(hydroₒ, path.inputSoilwater.HydroParamPrecomputed)
+					@info "\n	*** Reading hydro parameters from file *** \n "
+
+				end
+
 			# IF WE HAVE BULK DENSITY AND ROCK FRAGMENT DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				if option.data.Φ⍰ == "ρᵦ"
 					RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil = reading.BULKDENSITY(IdSelect, N_iZ, path.inputSoilwater.BulkDensity)
@@ -171,7 +177,7 @@ module SoilWater_ToolBox
 
 
 		# _______________________ START: running HydroLabθΨ _______________________ 
-		if option.run.HydroLabθΨ⍰ ≠ "No"
+		if option.run.HydroLabθΨ⍰ ≠ "No" && option.run.HydroLabθΨ⍰ ≠ "File"
 		println("----- START RUNNING HYDROLABΘΨ -----------------------------------------------")
 			# STRUCTURES
 				hydro = hydroStruct.HYDROSTRUCT(option.hydro, N_iZ)
@@ -209,30 +215,7 @@ module SoilWater_ToolBox
 
 			end # "Ks" ∈ optim.ParamOpt
 
-			# _______________________ START: COMPUTE KS FROM Θ(Ψ) _______________________ 
-			# COMPUTE KS FROM Θ(Ψ)
-				Kₛ_Model = fill(0.0::Float64, N_iZ)
-				if option.hydro.HydroModel⍰ == "Kosugi" && option.run.KsModel
-				println("\n	=== === Computing model Ks === === ")
-					if  (@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
-					
-					elseif (@isdefined RockFragment) && !(@isdefined IsTopsoil)	
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro; Flag_RockFragment=true, RockFragment=RockFragment)
-					
-					elseif !(@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
-					
-					elseif !(@isdefined RockFragment) && !(@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel, option.hydro)
-
-					end # if: RockFragment && IsTopsoil
-
-					plot.ksmodel.KSMODEL(hydro, Kₛ_Model, N_iZ, path)
-				println("\n	=== === End computing model Ks === === \n")
-				end # if: option.hydro.HydroModel⍰ == :Kosugi
-				# ------------------------END:  COMPUTE KS FROM Θ(Ψ) -------------------------- 
-
+			
 
 			# SPECIAL CASE
 				if option.hydro.HydroModel⍰=="BrooksCorey" || option.hydro.HydroModel⍰=="ClappHornberger"
@@ -244,6 +227,31 @@ module SoilWater_ToolBox
 		println("----- END: RUNNING HYDROLABΘΨ ----------------------------------------------- \n")
 		end # option.run.HydroLabθΨ⍰
 		# ------------------------END: running HydroLabθΨ--------------------------
+
+
+		# _______________________ START: COMPUTE KS FROM Θ(Ψ) _______________________ 
+			# COMPUTE KS FROM Θ(Ψ)
+				Kₛ_Model = fill(0.0::Float64, N_iZ)
+				if option.hydro.HydroModel⍰ == "Kosugi" && option.run.KsModel
+				println("\n	=== === Computing model Ks === === ")
+					if  (@isdefined RockFragment) && (@isdefined IsTopsoil)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
+					
+					elseif (@isdefined RockFragment) && !(@isdefined IsTopsoil)	
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
+					
+					elseif !(@isdefined RockFragment) && (@isdefined IsTopsoil)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
+					
+					elseif !(@isdefined RockFragment) && !(@isdefined IsTopsoil)
+						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel)
+
+					end # if: RockFragment && IsTopsoil
+
+					plot.ksmodel.KSMODEL(hydro, Kₛ_Model, N_iZ, path)
+				println("\n	=== === End computing model Ks === === \n")
+				end # if: option.hydro.HydroModel⍰ == :Kosugi
+		# ------------------------END:  COMPUTE KS FROM Θ(Ψ) -------------------------- 
 
 
 		# _______________________ START: IntergranularMixingPsd _______________________ 
@@ -406,7 +414,7 @@ module SoilWater_ToolBox
 			# Checking the maximum number of plotting
 				param.globalparam.N_iZ_Plot_End = min(param.globalparam.N_iZ_Plot_End, N_iZ)
 
-				if option.run.HydroLabθΨ⍰ ≠ "No" && option.hydro.Plot_θΨ
+				if option.run.HydroLabθΨ⍰ ≠ "No" && option.run.HydroLabθΨ⍰ ≠ "File" && option.hydro.Plot_θΨ
 					plot.lab.HYDROPARAM(hydro, hydroOther, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 				end
 				if option.run.IntergranularMixingPsd
@@ -455,12 +463,14 @@ module SoilWater_ToolBox
 end # module soilwater_toolbox # module soilwater_toolbox
 
 println("\n\n ===== START SOIL WATER TOOLBOX =====")
-	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210622")
 	
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="NewFormat")
 	
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Nsdr")
 
 	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Int")
+
+	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Unsoda")
+
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapNZSnapshot20210823")
 println("==== END SOIL WATER TOOLBOX ====")

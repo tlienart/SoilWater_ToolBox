@@ -18,6 +18,7 @@ module paths
 	@option mutable struct INPUT_SOILWATER
 		BulkDensity::String
 		ConvertModel::String
+		HydroParamPrecomputed::String
 		HydroParam_Infilt::String
 		IdSelect::String
 		Infiltration::String
@@ -167,18 +168,19 @@ module paths
 		# =============================================================
 			Path_Soilwater_Data = Path_Home * "INPUT/Data_SoilWater/" * SiteName_Soilwater * "/" * SiteName_Soilwater * "_"
 			
-         path.inputSoilwater.BulkDensity        = Path_Soilwater_Data * path.inputSoilwater.BulkDensity
-         path.inputSoilwater.ConvertModel       = Path_Soilwater_Data * path.inputSoilwater.ConvertModel
-         path.inputSoilwater.HydroParam_Infilt  = Path_Soilwater_Data * path.inputSoilwater.HydroParam_Infilt
-			
-         path.inputSoilwater.IdSelect           = Path_Soilwater_Data * path.inputSoilwater.IdSelect
-         path.inputSoilwater.Infiltration       = Path_Soilwater_Data * path.inputSoilwater.Infiltration
-         path.inputSoilwater.Infiltration_Param = Path_Soilwater_Data * path.inputSoilwater.Infiltration_Param
-         path.inputSoilwater.Kunsat             = Path_Soilwater_Data * path.inputSoilwater.Kunsat
-         path.inputSoilwater.Psd                = Path_Soilwater_Data * path.inputSoilwater.Psd
-         path.inputSoilwater.Pedological⍰       = Path_Soilwater_Data * path.inputSoilwater.Pedological⍰
-         path.inputSoilwater.Φ                  = Path_Soilwater_Data * path.inputSoilwater.Φ
-         path.inputSoilwater.Ψθ                 = Path_Soilwater_Data * path.inputSoilwater.Ψθ
+         path.inputSoilwater.BulkDensity           = Path_Soilwater_Data * path.inputSoilwater.BulkDensity
+         path.inputSoilwater.ConvertModel          = Path_Soilwater_Data * path.inputSoilwater.ConvertModel
+         path.inputSoilwater.HydroParamPrecomputed = Path_Soilwater_Data * path.inputSoilwater.HydroParamPrecomputed
+         path.inputSoilwater.HydroParam_Infilt     = Path_Soilwater_Data * path.inputSoilwater.HydroParam_Infilt
+
+         path.inputSoilwater.IdSelect              = Path_Soilwater_Data * path.inputSoilwater.IdSelect
+         path.inputSoilwater.Infiltration          = Path_Soilwater_Data * path.inputSoilwater.Infiltration
+         path.inputSoilwater.Infiltration_Param    = Path_Soilwater_Data * path.inputSoilwater.Infiltration_Param
+         path.inputSoilwater.Kunsat                = Path_Soilwater_Data * path.inputSoilwater.Kunsat
+         path.inputSoilwater.Pedological⍰          = Path_Soilwater_Data * path.inputSoilwater.Pedological⍰
+         path.inputSoilwater.Psd                   = Path_Soilwater_Data * path.inputSoilwater.Psd
+         path.inputSoilwater.Φ                     = Path_Soilwater_Data * path.inputSoilwater.Φ
+         path.inputSoilwater.Ψθ                    = Path_Soilwater_Data * path.inputSoilwater.Ψθ
 			
 		# =============================================================
 		#		INPUT_GUISOILWATER
