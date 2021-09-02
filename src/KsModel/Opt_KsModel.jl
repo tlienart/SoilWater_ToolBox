@@ -15,7 +15,7 @@ module optKsModel
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals = 1000)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals = 2000)
 				# 
             # MaxFuncEvals = 1500
 
@@ -50,7 +50,6 @@ module optKsModel
 				#3 similar to 2 nut more spread
 				Of_Ks = 1.0 - stats.WILMOT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
 			
-
 			# NOT AS GOOD
 				# 1 Of_Ks = 1.0 - stats.WILMOT(log1p.(3600*hydro.Ks[1:N_iZ]) , log1p.(3600*KₛModel[1:N_iZ]))
 				#4 the 2 is better Of_Ks = 1.0 - stats.WILMOT((hydro.Ks[1:N_iZ]) , (KₛModel[1:N_iZ]))
