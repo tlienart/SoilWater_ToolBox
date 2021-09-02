@@ -5,7 +5,9 @@
       const Cm_2_Mm        = 10.0
       const Day_2_Second   = 86400.0
       const Hour_2_Second  = 3600.0
-      const KunsatModel    = 119980.32407407407 # [mm s ⁻¹]
+      # const KunsatModel    = 119980.32407407407 # [mm s ⁻¹]
+      const KunsatModel    = 9595.085098 # [mm⁻¹ s ⁻¹]
+
       const MmS_2_CmH      = 3600. / 10.0
       const MmS_2_MmH      = 3600.0
       const Mm_2_Cm        = 0.1
