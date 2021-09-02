@@ -8,34 +8,34 @@ module startKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], ipLayer=1)
+		function START_KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], ipLayer=1)
 
-			# OPTIMISE Kₛ_Model
+			# OPTIMISE KₛModel
 			if sum(optimKsmodel.NparamOpt) ≥ 1
 
 				for ipLayer = 1:2
 					if optimKsmodel.NparamOpt[ipLayer] ≥ 1
-						Kₛ_Model = optKsModel.START_OPT_KSMODEL(hydro, ipLayer, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel)
+						KₛModel = optKsModel.START_OPT_KSMODEL(hydro, ipLayer, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel)
 					end
 				end
 
-			# RUN Kₛ_Model
+			# RUN KₛModel
 			else
-				Kₛ_Model = θψ2KsModel.KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+				KₛModel = θψ2KsModel.KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 	
 			end  # if: optimKsmodel
 			
 			for iZ=1:N_iZ
 				if "Ks" ∉ optim.ParamOpt
-					hydro.Ks[iZ] = Kₛ_Model[iZ]
+					hydro.Ks[iZ] = KₛModel[iZ]
 				end #  hydro.Ks[iZ] < eps(100.0)
 			end # if: hydro.Ks[iZ] > eps(10.0)
 
 
 			# STATISTICS
-            ksmodelτ.Nse_τ[1]    = stats.NSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
-            ksmodelτ.Rmse_τ[1]   = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
-            ksmodelτ.Wilmot_τ[1] = stats.WILMOT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(Kₛ_Model[1:N_iZ]))
+            ksmodelτ.Nse_τ[1]    = stats.NSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
+            ksmodelτ.Rmse_τ[1]   = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
+            ksmodelτ.Wilmot_τ[1] = stats.WILMOT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
 
 				println("		 Nse_τ    =  $(ksmodelτ.Nse_τ)")
 				println("		 Rmse_τ   =  $(ksmodelτ.Rmse_τ)")
@@ -47,7 +47,7 @@ module startKsModel
 						println("		", Symbol(optimKsmodel.ParamOpt[ipLayer, iParam]) , "=" ,vectParam)
 				end # for loop
 				
-		return hydro, Kₛ_Model
+		return hydro, KₛModel
 		end  # function: START_KSMODEL
 		#..................................................................
 		

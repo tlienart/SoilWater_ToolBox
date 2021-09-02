@@ -10,7 +10,7 @@ module θψ2KsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : KS_MODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+		function KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 			for iZ=1:N_iZ
 				if Flag_RockFragment
 					RockFragment₁ = RockFragment[iZ]
@@ -24,9 +24,9 @@ module θψ2KsModel
 					IsTopsoil₁ = 1	# Default value				
 				end  # if: @isdefined IsTopsoil
 
-				Kₛ_Model[iZ] = θΨ_2_KSMODEL(hydro, IsTopsoil₁, iZ, ksmodelτ; RockFragment=RockFragment₁)
+				KₛModel[iZ] = θΨ_2_KSMODEL(hydro, IsTopsoil₁, iZ, ksmodelτ; RockFragment=RockFragment₁)
 			end # if: hydro.Ks[iZ] > eps(10.0)	
-		return Kₛ_Model
+		return KₛModel
 		end  # function: KS_MODEL
 	#..................................................................
 
@@ -34,7 +34,7 @@ module θψ2KsModel
 #		FUNCTION : KUNSAT_MODEL
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017"""
-		function θΨ_2_KSMODEL(hydroParam, IsTopsoil, iZ::Int64, ksmodelτ; RockFragment=0.0, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], τ₁=ksmodelτ.τ₁[IsTopsoil], τ₂=ksmodelτ.τ₂[IsTopsoil], τ₃=ksmodelτ.τ₃[IsTopsoil], τ₄=ksmodelτ.τ₄[IsTopsoil], τ₁Mac=ksmodelτ.τ₁Mac[IsTopsoil], τ₂Mac=ksmodelτ.τ₂Mac[IsTopsoil], τ₃Mac=ksmodelτ.τ₃Mac[IsTopsoil], RockFragment_Treshold=0.4, Rtol=1.0E-3, Se_Max=0.9999, Model="Model1" )
+		function θΨ_2_KSMODEL(hydroParam, IsTopsoil, iZ::Int64, ksmodelτ; RockFragment=0.0, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], τ₁=ksmodelτ.τ₁[IsTopsoil], τ₂=ksmodelτ.τ₂[IsTopsoil], τ₃=ksmodelτ.τ₃[IsTopsoil], τ₄=ksmodelτ.τ₄[IsTopsoil], τ₅=ksmodelτ.τ₅[IsTopsoil], τ₁Mac=ksmodelτ.τ₁Mac[IsTopsoil], τ₂Mac=ksmodelτ.τ₂Mac[IsTopsoil], τ₃Mac=ksmodelτ.τ₃Mac[IsTopsoil], RockFragment_Treshold=0.4, Rtol=1.0E-3, Se_Max=0.9999, Model="Model1" )
 
 			# Determine when Ks increases for increasing RockFragment	
 				if RockFragment > RockFragment_Treshold
@@ -76,9 +76,9 @@ module θψ2KsModel
 				end  # function: KS_MODEL_1
 				# ------------------------------------------------------------------
 				
-				kₛ_Model = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL_1(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac), 0.0, Se_Max; rtol=Rtol)[1]
+				KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL_1(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac), 0.0, Se_Max; rtol=Rtol)[1]
 
-				return kₛ_Model
+				return KₛModel
 
 			elseif Model=="Model2"  # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			return nothing

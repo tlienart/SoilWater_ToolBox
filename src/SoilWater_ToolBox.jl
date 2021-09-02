@@ -231,24 +231,24 @@ module SoilWater_ToolBox
 
 		# _______________________ START: COMPUTE KS FROM Θ(Ψ) _______________________ 
 			# COMPUTE KS FROM Θ(Ψ)
-				Kₛ_Model = fill(0.0::Float64, N_iZ)
+				KₛModel = fill(0.0::Float64, N_iZ)
 				if option.hydro.HydroModel⍰ == "Kosugi" && option.run.KsModel
 				println("\n	=== === Computing model Ks === === ")
 					if  (@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
 					
 					elseif (@isdefined RockFragment) && !(@isdefined IsTopsoil)	
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
 					
 					elseif !(@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
 					
 					elseif !(@isdefined RockFragment) && !(@isdefined IsTopsoil)
-						hydro, Kₛ_Model = startKsModel.START_KSMODEL(hydro, Kₛ_Model, ksmodelτ, N_iZ, optim, optimKsmodel)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel)
 
 					end # if: RockFragment && IsTopsoil
 
-					plot.ksmodel.KSMODEL(hydro, Kₛ_Model, N_iZ, path)
+					plot.ksmodel.KSMODEL(hydro, KₛModel, N_iZ, path)
 				println("\n	=== === End computing model Ks === === \n")
 				end # if: option.hydro.HydroModel⍰ == :Kosugi
 		# ------------------------END:  COMPUTE KS FROM Θ(Ψ) -------------------------- 
@@ -285,7 +285,6 @@ module SoilWater_ToolBox
 			println("----- END: RUNNING IntergranularMixingPsd ----------------------------------------------- \n")
 		end
 		# ------------------------END: IntergranularMixingPsd---------------------------  
-
 
 
 		# _______________________ START: Infiltration _______________________ 
@@ -361,7 +360,7 @@ module SoilWater_ToolBox
 
 		if option.run.HydroLabθΨ⍰ ≠ "No" && option.run.HydroLabθΨ⍰ ≠ "File" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			# CORE OUTPUT
-				table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], Kₛ_Model[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
+				table.hydroLab.θΨK(hydro, hydroOther, IdSelect[1:N_iZ], KₛModel[1:N_iZ], N_iZ, path.tableSoilwater.Table_θΨK)
 
 				# When optimising other model than Kosugi we do not have a model for σ_2_Ψm⍰. Therefore we assume that θ(Ψ) and K(θ) derived by Kosugi from very dry to very wet are physical points
 				if option.hydro.HydroModel⍰ == "Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained"
@@ -372,7 +371,7 @@ module SoilWater_ToolBox
 
 				# IF SMAP OUTPUTS
 				if option.run.Smap
-					tableSmap.θΨK(hydro, hydroOther, IdSelect, Kₛ_Model, N_iZ, path.tableSmap.Table_θΨK, Smap_Depth, Soilname)
+					tableSmap.θΨK(hydro, hydroOther, IdSelect, KₛModel, N_iZ, path.tableSmap.Table_θΨK, Smap_Depth, Soilname)
 
 					# When all the models are performed
 					if iSim==length(Scenarios)
@@ -382,9 +381,9 @@ module SoilWater_ToolBox
 			end # option.run.HydroLabθΨ⍰ ≠ :No && option.run.HydroLabθΨ⍰ ≠ :File
 
 			if option.run.KsModel # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+				table.ksmodel.KSMODEL(hydro, IdSelect, KₛModel,  path.tableSoilwater.Table_KsModel)
 				table.ksmodel.KSMODEL_τ(ksmodelτ, path.tableSoilwater.Table_KsModel_τ)
 			end  # if: option.run.KsModel
-
 
 			if option.run.Infilt # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				table.infilt.HYDRO_INFILT(hydroInfilt, IdSelect, N_iZ, path.tableSoilwater.Table_HydroInfilt)
@@ -443,7 +442,7 @@ module SoilWater_ToolBox
 				end # option.run.Infilt
 
 				if option.run.Smap # <>=<>=<>=<>=<>
-					plotSmap.makie.HYDROPARAM(hydro, IdSelect, K_KΨobs, Kₛ_Model, N_iZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
+					plotSmap.makie.HYDROPARAM(hydro, IdSelect, K_KΨobs, KₛModel, N_iZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs)
 				end # option.run.Smap
 			
 			println("		=== END: PLOTTING  === \n")

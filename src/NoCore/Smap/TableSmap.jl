@@ -8,7 +8,7 @@ module tableSmap
    	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function θΨK(hydro, hydroOther, IdSelect, Kₛ_Model, N_iZ, Path, Smap_Depth, Soilname)
+         function θΨK(hydro, hydroOther, IdSelect, KₛModel, N_iZ, Path, Smap_Depth, Soilname)
             println("    ~  $(Path) ~")
 
             Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydro)
@@ -18,7 +18,7 @@ module tableSmap
             # Concatenating matrices
                Matrix = hcat(Matrix, Matrix2)
 
-               Matrix = hcat(Matrix, Kₛ_Model)
+               Matrix = hcat(Matrix, KₛModel)
 
                FieldName_String = vcat(FieldName_String, FieldName_String2)
 

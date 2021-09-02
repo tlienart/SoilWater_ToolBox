@@ -41,7 +41,7 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK(hydro, hydroOther, IdSelect, Kₛ_Model, N_iZ::Int64, Path)
+			function θΨK(hydro, hydroOther, IdSelect, KₛModel, N_iZ::Int64, Path)
 				println("    ~  $(Path) ~")
 
 				Matrix₁, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydro)
@@ -52,7 +52,7 @@ module table
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [string.(IdSelect) Matrix₁ Matrix₂ Kₛ_Model], ",")
+					DelimitedFiles.writedlm(io, [string.(IdSelect) Matrix₁ Matrix₂ KₛModel], ",")
 				end
 			return nothing
 			end  # function:  θΨK
@@ -163,9 +163,37 @@ module table
 	#		module: ksmodel
 	# =============================================================
 	module ksmodel
-		import ...tool
+		import ...tool, ...cst
 		import DelimitedFiles
 		export KSMODEL_τ
+
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : KSMODEL
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function KSMODEL(hydro, IdSelect, KₛModel, Path)
+				println("    ~  $Path ~")
+
+				# Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2,  ksmodelτ)
+				Header = ["IdSelect", "θs", "θsMacMat","θr","Ψm[mm]","LnΨm[mm]","σ","σMac","ΨmMac","ΔθsMacMat-θr","Δθs-ΔθsMacMat","Ks[mm h⁻¹]", "KsModel[mm h⁻¹]","LnKs[mm h⁻¹]","LnKsModel[mm h⁻¹]","ΔKs-KsModel[mm h⁻¹]","ΔLnKs-LnKsModel[mm h⁻¹]"]
+
+				KsObs = hydro.Ks .* cst.MmS_2_MmH
+				kₛ_Model₂ = KₛModel.* cst.MmS_2_MmH
+
+				LnKsObs = log.(KsObs)
+				Lnkₛ_Model = log.(kₛ_Model₂)
+
+				ΔKsKsModel = KsObs-kₛ_Model₂
+				ΔLnKsKsModel = LnKsObs-Lnkₛ_Model
+
+				open(Path, "w") do io
+					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
+					DelimitedFiles.writedlm(io, [string.(Int64.(IdSelect)) round.(hydro.θs, digits=2)  round.(hydro.θsMacMat, digits=2) round.(hydro.θr, digits=2) round.(hydro.Ψm, digits=0) round.(log.(hydro.Ψm), digits=0)  round.(hydro.σ, digits=2) round.(hydro.σMac, digits=2) round.(hydro.ΨmMac, digits=2) round.(hydro.θsMacMat.-hydro.θr, digits=2)  round.(hydro.θs.-hydro.θsMacMat, digits=2)  round.(KsObs, digits=2)  round.(KₛModel, digits=2) round.(LnKsObs, digits=2)  round.(Lnkₛ_Model, digits=2)  round.(ΔKsKsModel, digits=2) round.(ΔLnKsKsModel, digits=2)], ",")
+				end
+			return nothing
+			end  # function: KSMODEL
+		# ------------------------------------------------------------------
+
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KSMODEL_τ
@@ -180,8 +208,6 @@ module table
 					DelimitedFiles.writedlm(io, [round.(Matrix, digits=5)], ",")
 				end
 			return nothing
-				
-			return
 			end  # function: KSMODEL_τ
 			# ------------------------------------------------------------------
 		

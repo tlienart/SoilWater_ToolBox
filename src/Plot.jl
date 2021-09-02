@@ -115,10 +115,10 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KSMODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KSMODEL(hydro, Kₛ_Model, N_iZ, path)
+		function KSMODEL(hydro, KₛModel, N_iZ, path)
 
-			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(Kₛ_Model[1:N_iZ])])
-			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(Kₛ_Model[1:N_iZ])])
+			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(KₛModel[1:N_iZ])])
+			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(KₛModel[1:N_iZ])])
 
 			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=35, xgridstyle=:dash, ygridstyle=:dash, xtickalign=1, ytickalign=1)
 					
@@ -131,7 +131,7 @@ module plot
 
 				ΔΘsMacΘr = hydro.θsMacMat .- hydro.θr
 
-				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(Kₛ_Model[1:N_iZ] .* cst.MmS_2_CmH), color=hydro.σ[1:N_iZ], markersize=150*ΔΘsMacΘr, marker =:circle)
+				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(KₛModel[1:N_iZ] .* cst.MmS_2_CmH), color=hydro.σ[1:N_iZ], markersize=150*ΔΘsMacΘr, marker =:circle)
 
 				Colorbar(Fig[1, 2], limits=(0.75, 4), colormap = cgrad(:Spectral, 5, categorical = true), size = 25,  label="sigma", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
 

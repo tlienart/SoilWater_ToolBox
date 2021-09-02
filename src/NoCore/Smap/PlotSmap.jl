@@ -13,7 +13,7 @@ module plotSmap
          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          #		FUNCTION : HYDROPARAM
          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function HYDROPARAM(hydro, IdSelect, K_KΨobs, Kₛ_Model, N_iZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+         function HYDROPARAM(hydro, IdSelect, K_KΨobs, KₛModel, N_iZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
             println("  ==  START: Plotting HydroParam  ==")
       
             Flag_OtherData1 = true
