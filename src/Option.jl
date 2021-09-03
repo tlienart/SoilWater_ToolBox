@@ -53,7 +53,7 @@ module options
 	end
 
 	@option mutable struct KSMODEL
-		KsModel⍰::String
+		 KₛModel⍰::String
 	end
 
 	@option mutable struct PSD

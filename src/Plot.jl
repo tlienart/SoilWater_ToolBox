@@ -37,7 +37,6 @@ module plot
 							Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydro)
 						end # iΨ = 1:N_Se
 
-	
 					# _______________________ START: Plotting _______________________
 								
 					Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=16)
@@ -112,44 +111,46 @@ module plot
 	module ksmodel
 		import ...cst
 		using CairoMakie
+		# using GLMakie
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KSMODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KSMODEL(hydro, KₛModel, N_iZ, path)
-
+		function KSMODEL(hydro, KₛModel, N_iZ, Path)
 			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(KₛModel[1:N_iZ])])
 			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(KₛModel[1:N_iZ])])
+			
+			CairoMakie.activate!()
 
-			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=35, xgridstyle=:dash, ygridstyle=:dash, xtickalign=1, ytickalign=1)
+			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=20, xgridstyle=:dash, ygridstyle=:dash, xtickalign=1, ytickalign=1)
 					
 			#  == Plot_θ_Ψ  == 
-				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=24, xlabel="ln (1 + KsModel_Obs) [cm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [cm hour⁻¹ ]", xlabelsize=35,  ylabelsize=35, backgroundcolor=:white)
+				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=25, xlabel="ln (1 + KsModel_Obs) [mm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [mm hour⁻¹ ]", xlabelsize=25,  ylabelsize=25, xticksize=20,  yticksize=20)
 
-				xlims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
-				ylims!(Axis1, log1p.(Ks_Min * cst.MmS_2_CmH), log1p.(Ks_Max * cst.MmS_2_CmH))
-				# Axis1.xticks = (log1p.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]]), string.( floor.(cst.Mm_2_kPa * Ψ_θΨobs[iZ,1:N_θΨobs[iZ]], digits=1)))
+
+				CairoMakie.xlims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
+				CairoMakie.ylims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
+
+				KsTicks = expm1.(range(log1p(0.0), stop=log1p(Ks_Max * cst.MmS_2_MmH), length=10)) 
+				Axis1.xticks = (log1p.(KsTicks), string.( floor.(KsTicks, digits=1)))
+				Axis1.yticks = (log1p.(KsTicks), string.( floor.(KsTicks, digits=1)))
 
 				ΔΘsMacΘr = hydro.θsMacMat .- hydro.θr
 
-				Fig_Ks = scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_CmH), log1p.(KₛModel[1:N_iZ] .* cst.MmS_2_CmH), color=hydro.σ[1:N_iZ], markersize=150*ΔΘsMacΘr, marker =:circle)
+				Fig_Ks = CairoMakie.scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_MmH), log1p.(KₛModel[1:N_iZ] .* cst.MmS_2_MmH), color=hydro.σ[1:N_iZ], markersize=120*ΔΘsMacΘr, marker =:circle)
 
-				Colorbar(Fig[1, 2], limits=(0.75, 4), colormap = cgrad(:Spectral, 5, categorical = true), size = 25,  label="sigma", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
+				CairoMakie.Colorbar(Fig[1, 2], limits=(minimum(hydro.σ_Min[1:N_iZ]), maximum(hydro.σ_Max[1:N_iZ])), colormap = CairoMakie.cgrad(:viridis, 5, categorical = true), size = 25,  label="σ[-]", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
 
-				Line = range(log1p(Ks_Min.* cst.MmS_2_CmH), stop=log1p(Ks_Max.* cst.MmS_2_CmH), length=100) 
+				Line = range(log1p(Ks_Min.* cst.MmS_2_MmH), stop=log1p(Ks_Max.* cst.MmS_2_MmH), length=10) 
 
-				Fig_Ks = lines!(Fig[1,1], Line, Line, color=:blue)
+				Fig_Ks = CairoMakie.lines!(Fig[1,1], Line, Line, color=:blue)
 
-				# "θsMacMat-θr"
 				# Leg1 = Colorbar(Fig, Fig_Ks, label = "Theta", ticklabelsize = 14, labelpadding = 5, width = 10)
 				
-			trim!(Fig.layout)
+				CairoMakie.trim!(Fig.layout)
 
 			Fig[1, 1] = Axis1
    		# Fig[1, 2] = Leg1
-			
-			Path = path.plotSoilwater.Plot_θΨK * "\\KsModel\\" 
-			mkpath(Path)
-			Path = Path * "KsModel.svg" 
+
 			save(Path, Fig)
 			display(Fig)
 
@@ -157,6 +158,27 @@ module plot
 		end  # function: KSMODEL
 		# ------------------------------------------------------------------
 
+
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		#		FUNCTION : KsModel_3D
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function KsModel_3D(hydro, N_iZ, path)
+
+			GLMakie.activate!()
+
+			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=35)
+
+			Ks_3D = surface(Fig[1,1], hydro.θs[1:N_iZ] .- hydro.θr[1:N_iZ], hydro.σ[1:N_iZ], hydro.Ks[1:N_iZ]; shading=false, colormap = :deep, axis = (show_axis = false,))
+
+			Path = path.plotSoilwater.Plot_θΨK * "//KsModel//" 
+			mkpath(Path)
+			Path = Path * "KsModel_3D.svg" 
+			save(Path, Fig)
+			display(Fig)
+
+		return nothing
+		end  # function: KsModel_3D
+		# ------------------------------------------------------------------
 		
 	end  # module: ksmodel
 

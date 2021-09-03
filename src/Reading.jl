@@ -511,12 +511,12 @@ module reading
 			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,begin:end]
 			# Reading Model data
-				KsModel⍰, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, "LAYER")
+				 KₛModel⍰, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, "LAYER")
 
 			# Determening which parameters correspond to the selected model
 			iSelectModel = [] 
 			for i=1:Ndata
-				if KsModel⍰[i] == string(option.ksModel.KsModel⍰)
+				if  KₛModel⍰[i] == string(option.ksModel. KₛModel⍰)
 					append!(iSelectModel, i)
 				end
 			end # for i=1:Ndata
@@ -622,7 +622,7 @@ module reading
 
 			if Flag_Opt == true
 				println("	=== === Optimizing the following τ parameters === === \n")
-				println("		KsModel=" , option.ksModel.KsModel⍰)
+				println("		KsModel=" , option.ksModel. KₛModel⍰)
 				println("		ksmodelτ=", Param_Name)
 				# println("		ksmodelτ=", ksmodelτ)
 				println("		NparamOpt_τ=" , optimKsmodel.NparamOpt)

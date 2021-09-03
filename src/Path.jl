@@ -69,6 +69,7 @@ module paths
 		Plot_∑infilt_Opt::String
 		Plot_∑infilt_θΨ::String
 		Plot_IMP_model::String
+		Plot_KsModel::String
 		Plot_Psd_θr::String
 		Plot_Psd_θΨ::String				
 		Plot_θΨK::String
@@ -251,19 +252,24 @@ module paths
 
 			Plot_θΨK = Path_Soilwater_Plot * "/Lab/" 
 				mkpath(Plot_θΨK)
-				path.plotSoilwater.Plot_θΨK = Plot_θΨK * SiteName_Soilwater * "_"
+				path.plotSoilwater.Plot_θΨK = Plot_θΨK * SiteName_Soilwater * "_" * path.option.ModelName *  "_"
+
+			Plot_KsModel₀ = Path_Soilwater_Plot * "/KsModel/"
+				mkpath(Plot_KsModel₀)
+				path.plotSoilwater.Plot_KsModel = Plot_KsModel₀ * SiteName_Soilwater * "_"  * path.option.ModelName *  "_" * path.plotSoilwater.Plot_KsModel
+
 
 			Plot_σΨm = Path_Soilwater_Plot * "/LabSigmaHm/" 
 				mkpath(Plot_σΨm)
-				path.plotSoilwater.Plot_σΨm = Plot_σΨm * SiteName_Soilwater * "_"
+				path.plotSoilwater.Plot_σΨm = Plot_σΨm * SiteName_Soilwater * "_"  * path.option.ModelName *  "_"
 
 			Plot_Psd_θΨ = Path_Soilwater_Plot * "/Psd/IMP_ThetaH/"
 				mkpath(Plot_Psd_θΨ)				
-				path.plotSoilwater.Plot_Psd_θΨ = Plot_Psd_θΨ * SiteName_Soilwater * "_"
+				path.plotSoilwater.Plot_Psd_θΨ = Plot_Psd_θΨ * SiteName_Soilwater * "_"  * path.option.ModelName *  "_"
 
 			Plot_IMP_model = Path_Soilwater_Plot * "/Psd/IMP/"
 				mkpath(Plot_IMP_model)
-				path.plotSoilwater.Plot_IMP_model = Plot_IMP_model * SiteName_Soilwater * "_"
+				path.plotSoilwater.Plot_IMP_model = Plot_IMP_model * SiteName_Soilwater * "_"  * path.option.ModelName *  "_"
 
 			Plot_Psd_θr = Path_Soilwater_Plot * "/Psd/ThetaR/" 
 				mkpath(Plot_Psd_θr)
@@ -271,11 +277,11 @@ module paths
 
 			Plot_∑infilt_Opt = Path_Soilwater_Plot * "/Infiltration/Optimize/"
 				mkpath(Plot_∑infilt_Opt)
-				path.plotSoilwater.Plot_∑infilt_Opt = Plot_∑infilt_Opt * SiteName_Soilwater * "_"
+				path.plotSoilwater.Plot_∑infilt_Opt = Plot_∑infilt_Opt * SiteName_Soilwater * "_"  * path.option.ModelName *  "_"
 
 			Plot_∑infilt_θΨ = Path_Soilwater_Plot * "/Infiltration/ThetaH/"
 				mkpath(Plot_∑infilt_θΨ)
-				path.plotSoilwater.Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * SiteName_Soilwater * "_"
+				path.plotSoilwater.Plot_∑infilt_θΨ = Plot_∑infilt_θΨ * SiteName_Soilwater * "_"  * path.option.ModelName *  "_"
 		
 		# =============================================================
 		#		HYPIX MODEL

@@ -8,20 +8,20 @@ module startKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function START_KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], ipLayer=1)
+		function START_KSMODEL(hydro, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], ipLayer=1)
 
 			# OPTIMISE KₛModel
 			if sum(optimKsmodel.NparamOpt) ≥ 1
 
 				for ipLayer = 1:2
 					if optimKsmodel.NparamOpt[ipLayer] ≥ 1
-						KₛModel = optKsModel.START_OPT_KSMODEL(hydro, ipLayer, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel)
+						KₛModel = optKsModel.START_OPT_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰,ksmodelτ, N_iZ, optim, optimKsmodel)
 					end
 				end
 
 			# RUN KₛModel
 			else
-				KₛModel = θψ2KsModel.KSMODEL(hydro, KₛModel, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+				KₛModel = θψ2KsModel.KSMODEL(hydro, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 	
 			end  # if: optimKsmodel
 			

@@ -178,17 +178,17 @@ module table
 				Header = ["IdSelect", "θs", "θsMacMat","θr","Ψm[mm]","LnΨm[mm]","σ","σMac","ΨmMac","ΔθsMacMat-θr","Δθs-ΔθsMacMat","Ks[mm h⁻¹]", "KsModel[mm h⁻¹]","LnKs[mm h⁻¹]","LnKsModel[mm h⁻¹]","ΔKs-KsModel[mm h⁻¹]","ΔLnKs-LnKsModel[mm h⁻¹]"]
 
 				KsObs = hydro.Ks .* cst.MmS_2_MmH
-				kₛ_Model₂ = KₛModel.* cst.MmS_2_MmH
+				kₛ_Model₂ = KₛModel .* cst.MmS_2_MmH
 
 				LnKsObs = log.(KsObs)
 				Lnkₛ_Model = log.(kₛ_Model₂)
 
-				ΔKsKsModel = KsObs-kₛ_Model₂
-				ΔLnKsKsModel = LnKsObs-Lnkₛ_Model
+				ΔKsKsModel = KsObs .- kₛ_Model₂
+				ΔLnKsKsModel = LnKsObs .- Lnkₛ_Model
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [string.(Int64.(IdSelect)) round.(hydro.θs, digits=2)  round.(hydro.θsMacMat, digits=2) round.(hydro.θr, digits=2) round.(hydro.Ψm, digits=0) round.(log.(hydro.Ψm), digits=0)  round.(hydro.σ, digits=2) round.(hydro.σMac, digits=2) round.(hydro.ΨmMac, digits=2) round.(hydro.θsMacMat.-hydro.θr, digits=2)  round.(hydro.θs.-hydro.θsMacMat, digits=2)  round.(KsObs, digits=2)  round.(KₛModel, digits=2) round.(LnKsObs, digits=2)  round.(Lnkₛ_Model, digits=2)  round.(ΔKsKsModel, digits=2) round.(ΔLnKsKsModel, digits=2)], ",")
+					DelimitedFiles.writedlm(io, [string.(Int64.(IdSelect)) round.(hydro.θs, digits=2)  round.(hydro.θsMacMat, digits=2) round.(hydro.θr, digits=2) round.(hydro.Ψm, digits=0) round.(log.(hydro.Ψm), digits=0)  round.(hydro.σ, digits=2) round.(hydro.σMac, digits=2) round.(hydro.ΨmMac, digits=2) round.(hydro.θsMacMat.-hydro.θr, digits=2)  round.(hydro.θs.-hydro.θsMacMat, digits=2)  round.(KsObs, digits=0)  round.(kₛ_Model₂, digits=0) round.(LnKsObs, digits=2)  round.(Lnkₛ_Model, digits=2)  round.(ΔKsKsModel, digits=2) round.(ΔLnKsKsModel, digits=2)], ",")
 				end
 			return nothing
 			end  # function: KSMODEL
@@ -201,7 +201,10 @@ module table
 			function KSMODEL_τ(ksmodelτ, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2,  ksmodelτ)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2, ksmodelτ)
+
+				X, Y = size(Matrix)
+				Matrix = Matrix[1,:]
 				
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header

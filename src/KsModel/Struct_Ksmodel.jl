@@ -50,7 +50,7 @@ module ksModel
 			τ₃       = fill(0.0::Float64, Nτ_Layer)
 			τ₄       = fill(0.0::Float64, Nτ_Layer)
 			τ₅       = fill(0.0::Float64, Nτ_Layer)
-			τ₆
+			τ₆       = fill(0.0::Float64, Nτ_Layer)
 			τ₁Mac    = fill(0.0::Float64, Nτ_Layer)
 			τ₂Mac    = fill(0.0::Float64, Nτ_Layer)
 			τ₃Mac    = fill(0.0::Float64, Nτ_Layer)
