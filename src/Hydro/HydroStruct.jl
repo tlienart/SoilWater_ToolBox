@@ -126,14 +126,15 @@ module hydroStruct
 
 
 		Base.@kwdef mutable struct HYDRO_OTHER # <>=<>=<>=<>=<>=<>=<>=<>=<>
-         Nse     :: 	Vector{Float64}
-         Nse_θΨ  :: 	Vector{Float64}
-         Nse_KΨ  :: 	Vector{Float64}
-         NseWilmot_θΨ  :: Vector{Float64}
-         NseWilmot_KΨ  :: Vector{Float64}
-         Rmse    :: 	Vector{Float64}
-         Rmse_θΨ :: 	Vector{Float64}
-         Rmse_KΨ :: 	Vector{Float64}
+         Nse            :: 	Vector{Float64}
+         Nse_θΨ         :: 	Vector{Float64}
+         Nse_KΨ         :: 	Vector{Float64}
+         NseWilmot_θΨ   ::    Vector{Float64}
+         NseWilmot_KΨ   ::    Vector{Float64}
+         Rmse           :: 	Vector{Float64}
+         Rmse_θΨ        :: 	Vector{Float64}
+         Rmse_KΨ        :: 	Vector{Float64}
+         NseConcordanceCorelationCoeficient :: 	Vector{Float64}
 		end
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -249,8 +250,9 @@ module hydroStruct
             Rmse          = fill(0.0::Float64, N_iZ)
             Rmse_θΨ       = fill(0.0::Float64, N_iZ)
             Rmse_KΨ       = fill(0.0::Float64, N_iZ)
+            NseConcordanceCorelationCoeficient = fill(0.0::Float64, N_iZ)
 
-				hydroOther = HYDRO_OTHER(Nse, Nse_θΨ, Nse_KΨ, NseWilmot_θΨ, NseWilmot_KΨ, Rmse, Rmse_θΨ, Rmse_KΨ)	
+				hydroOther = HYDRO_OTHER(Nse, Nse_θΨ, Nse_KΨ, NseWilmot_θΨ, NseWilmot_KΨ, Rmse, Rmse_θΨ, Rmse_KΨ, NseConcordanceCorelationCoeficient)	
 				return hydroOther
 			end  # function: HYDRO_OTHER
 end  # module: hydroStruct

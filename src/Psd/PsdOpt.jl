@@ -69,7 +69,7 @@ module psdOpt
 				end
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
+				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NSE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
 			end # function: OPTIMIZATION_SINGLE_SOIL
@@ -105,7 +105,7 @@ module psdOpt
 								θΨ[iRpart] = wrc. Ψ_2_θDual(option.psd,Ψ_Rpart[iZ, iRpart], iZ, hydro)
 							end
 
-							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
+							Of += stats.NSE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
 						end # for iZ = 1:N_iZ
 						return Of
 					end  # function OF_ALL_SOIL
@@ -147,7 +147,7 @@ module psdOpt
 				end
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
+				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NSE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
 				
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
@@ -175,7 +175,7 @@ module psdOpt
 						θΨ[iRpart] = wrc. Ψ_2_θDual(option.psd, Ψ_Rpart[iRpart], iZ, hydro)
 					end
 
-					Of = stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)
+					Of = stats.NSE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)
 				end  # function OF_SINGLE_SOIL
 		
 	end  # module imp
@@ -209,7 +209,7 @@ module psdOpt
 				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, option, param, paramPsd, hydro)
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NASH_SUTCLIFFE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
+				paramPsd.Nse, Nse_Mean_SingleOpt, Nse_Std_SingleOpt = stats.NSE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_SingleOpt, Nse_Std_SingleOpt
 			end # function: OPTIMIZATION_SINGLE_SOIL
@@ -241,7 +241,7 @@ module psdOpt
 								θΨ[iRpart] = wrc. Ψ_2_θDual(option.psd,Ψ_Rpart[iZ, iRpart], iZ, hydro)
 							end
 
-							Of += stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
+							Of += stats.NSE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
 						end # for iZ = 1:N_iZ
 						return Of
 					end  # function OF_ALL_SOIL
@@ -260,7 +260,7 @@ module psdOpt
 				θ_Rpart, Ψ_Rpart = psdOpt.PSD_RUN_ALLMODEL(N_Psd_Max, N_iZ, Psd, ∑Psd, Rpart, N_Psd, θs_Psd, θr_Psd, option, param, paramPsd, hydro)
 
 				# Statistics
-				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NASH_SUTCLIFFE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
+				paramPsd.Nse, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil = stats.NSE_θΨ(hydro, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
 
 				return paramPsd, θ_Rpart, Ψ_Rpart, Nse_Mean_OptAllSoil, Nse_Std_OptAllSoil
 			end # function OPTIMIZATION_ALL_SOIL
@@ -283,7 +283,7 @@ module psdOpt
 						θΨ[iRpart] = wrc. Ψ_2_θDual(option.psd,Ψ_Rpart[iRpart], iZ, hydro)
 					end
 
-					Of = stats.NASH_SUTCLIFE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)
+					Of = stats.NSE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)
 				end  # function OF_SINGLE_SOIL
 		
 		

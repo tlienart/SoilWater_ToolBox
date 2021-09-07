@@ -20,7 +20,7 @@ module psdStart
 			if option.run.HydroLabθΨ⍰ ≠ "No" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<> 
 				println("\n    == DERIVE HYDAULIC PARAMETERS FROM θ_Rpart, Ψ_Rpart ==")
 
-				paramPsd.Nse, Nse_Mean_Run, Nse_Std_Run = stats.NASH_SUTCLIFFE_θΨ(hydroPsd, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
+				paramPsd.Nse, Nse_Mean_Run, Nse_Std_Run = stats.NSE_θΨ(hydroPsd, N_Psd, N_iZ, option.psd, θ_Rpart, Ψ_Rpart)
 				println("    ~ Nse_Mean_Run=$Nse_Mean_Run, Nse_Std_Run=$Nse_Std_Run ~")
 			end
 		

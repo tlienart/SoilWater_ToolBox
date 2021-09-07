@@ -1,10 +1,10 @@
 module stats
 	import ..wrc, ..kunsat
-	export RMSE, NASH_SUTCLIFE_MINIMIZE, NASH_SUTCLIFFE_θΨ, RELATIVE_ERR, NASH_SUTCLIFFE_EFFICIENCY, LINEAR_REGRESSION, WILMOT
+	export RMSE, NSE_MINIMIZE, NSE_θΨ, RELATIVE_ERR, NSE_EFFICIENCY, LINEAR_REGRESSION, NSE_WILMOT
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
+	#		FUNCTION : NSE_MINIMIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RMSE(Obs, Sim; Power=2.0)
 			N = length(Obs)
@@ -22,7 +22,7 @@ module stats
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
+	#		FUNCTION : NSE_MINIMIZE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function NSE(Obs, Sim; Power=2.0)
 			N = length(Obs)
@@ -52,9 +52,9 @@ module stats
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : WILMOT
+		#		FUNCTION : NSE_WILMOT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function WILMOT(Obs, Sim; C=2)
+			function NSE_WILMOT(Obs, Sim; C=2)
 				N = length(Obs)
 				∑Obs = 0.0
 				iCount = 1
@@ -78,13 +78,28 @@ module stats
 				end # for
 
 			return Nse_Wilmot
-			end  # function: WILMOT
+			end  # function: NSE_WILMOT
 
-			
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFE_MINIMIZE
+	#		FUNCTION : NSE_CONCORDANCE_CORELATION_COEFICIENT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=2.0)
+		function NSE_CONCORDANCE_CORELATION_COEFICIENT(Obs, Sim)
+			PersonCorelation = Statistics.cor(Obs, Sim)
+			σₒᵦₛ             = Statistics.std(Obs)
+			σₛᵢₘ             = Statistics.std(Sim)
+			Meanₒᵦₛ          = Statistics.mean(Obs)
+			Meanₛᵢₘ          = Statistics.mean(Sim)
+
+		return NseConcordanceCorelationCoeficient = (2.0 * PersonCorelation * σₒᵦₛ * σₛᵢₘ) / (σₒᵦₛ ^ 2.0 +  σₛᵢₘ ^ 2.0 + (Meanₒᵦₛ - Meanₛᵢₘ) ^ 2.0)
+		end  # function: BestConcordanceCorrelationCoeficient
+	# ------------------------------------------------------------------
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : NSE_MINIMIZE
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function NSE_MINIMIZE(Obs, Sim; Power=2.0)
 			N = length(Obs)
 			Obs_Mean = Statistics.mean(Obs[1:N])
 			Obs_Mean_Err = Statistics.sum(abs.(Obs_Mean .- Obs[1:N]) .^ Power)
@@ -98,14 +113,13 @@ module stats
 				Err += abs(Sim[i] - Obs[i]) ^ Power
 			end
 		return Err / Obs_Mean_Err 
-		end  # function: NASH_SUTCLIFE_MINIMIZE
+		end  # function: NSE_MINIMIZE
 
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFFE_θΨ
+	#		FUNCTION : NSE_θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NASH_SUTCLIFFE_θΨ(hydro, N_Data, N_iZ, optionₘ, θobs, Ψobs)
-
+		function NSE_θΨ(hydro, N_Data, N_iZ, optionₘ, θobs, Ψobs)
 			Nse = zeros(Float64, N_iZ)
 
 			for iZ = 1:N_iZ	
@@ -113,7 +127,7 @@ module stats
 				for iΨ = 1:N_Data[iZ]
 					θΨsim[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
 				end
-				Nse[iZ] = 1.0 - NASH_SUTCLIFE_MINIMIZE( θobs[iZ,1:N_Data[iZ]], θΨsim[1:N_Data[iZ]])	
+				Nse[iZ] = 1.0 - NSE_MINIMIZE( θobs[iZ,1:N_Data[iZ]], θΨsim[1:N_Data[iZ]])	
 			end
 
 			# Cumulating the objective function to get the overview
@@ -121,13 +135,13 @@ module stats
 			Nse_Std  = round(Statistics.std(max.(Nse[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return Nse, Nse_Mean, Nse_Std
-		end # function NASH_SUTCLIFFE_θΨ
+		end # function NSE_θΨ
 
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NSEWILMOT_θΨ
+	#		FUNCTION : NSE_WILMOT_θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NSEWILMOT_θΨ(hydro, N_Data, N_iZ, optionₘ, θobs, Ψobs)
+		function NSE_WILMOT_θΨ(hydro, N_Data, N_iZ, optionₘ, θobs, Ψobs)
 
 			NseWilmot_θΨ = zeros(Float64, N_iZ)
 
@@ -136,7 +150,7 @@ module stats
 				for iΨ = 1:N_Data[iZ]
 					θΨsim[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
 				end
-				NseWilmot_θΨ[iZ] = WILMOT( θobs[iZ,1:N_Data[iZ]], θΨsim[1:N_Data[iZ]])	
+				NseWilmot_θΨ[iZ] = NSE_WILMOT( θobs[iZ,1:N_Data[iZ]], θΨsim[1:N_Data[iZ]])	
 			end
 
 			# Cumulating the objective function to get the overview
@@ -144,13 +158,13 @@ module stats
 			NseWilmot_Std  = round(Statistics.std(max.(NseWilmot_θΨ[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return NseWilmot_θΨ, NseWilmot_Mean, NseWilmot_Std
-		end # function NSEWILMOT_θΨ
+		end # function NSE_WILMOT_θΨ
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFFE_KΨ
+	#		FUNCTION : NSE_KΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NASH_SUTCLIFFE_KΨ(hydro, N_Data, N_iZ, optionₘ, Kobs, Ψobs)
+		function NSE_KΨ(hydro, N_Data, N_iZ, optionₘ, Kobs, Ψobs)
 
 			Nse_KΨ = zeros(Float64, N_iZ)
 
@@ -159,7 +173,7 @@ module stats
 				for iΨ = 1:N_Data[iZ]
 					KΨsim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
 				end
-				Nse_KΨ[iZ] = 1.0 - NASH_SUTCLIFE_MINIMIZE(log.(Kobs[iZ,1:N_Data[iZ]]), log.(KΨsim[1:N_Data[iZ]]))	
+				Nse_KΨ[iZ] = 1.0 - NSE_MINIMIZE(log.(Kobs[iZ,1:N_Data[iZ]]), log.(KΨsim[1:N_Data[iZ]]))	
 			end
 
 			# Cumulating the objective function to get the overview
@@ -167,13 +181,13 @@ module stats
 			Nse_Std  = round(Statistics.std(max.(Nse_KΨ[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return Nse_KΨ, Nse_Mean, Nse_Std
-		end # function NASH_SUTCLIFFE_KΨ
+		end # function NSE_KΨ
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NSEWILMOT_KΨ
+	#		FUNCTION : NSE_WILMOT_KΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NSEWILMOT_KΨ(hydro, N_Data, N_iZ, optionₘ, Kobs, Ψobs)
+		function NSE_WILMOT_KΨ(hydro, N_Data, N_iZ, optionₘ, Kobs, Ψobs)
 
 			NseWilmot_KΨ = zeros(Float64, N_iZ)
 
@@ -182,7 +196,7 @@ module stats
 				for iΨ = 1:N_Data[iZ]
 					KΨsim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
 				end
-				NseWilmot_KΨ[iZ] = WILMOT(log.(Kobs[iZ,1:N_Data[iZ]]), log.(KΨsim[1:N_Data[iZ]]))	
+				NseWilmot_KΨ[iZ] = NSE_WILMOT(log.(Kobs[iZ,1:N_Data[iZ]]), log.(KΨsim[1:N_Data[iZ]]))	
 			end
 
 			# Cumulating the objective function to get the overview
@@ -190,15 +204,15 @@ module stats
 			Nse_Std  = round(Statistics.std(max.(NseWilmot_KΨ[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return NseWilmot_KΨ, Nse_Mean, Nse_Std
-		end # function NSEWILMOT_KΨ
+		end # function NSE_WILMOT_KΨ
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : NASH_SUTCLIFFE_EFFICIENCY
+	#		FUNCTION : NSE_EFFICIENCY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NASH_SUTCLIFFE_EFFICIENCY(;Obs=Obs, Sim=Sim, Power=2.0)
-			return Nse = 1 - NASH_SUTCLIFE_MINIMIZE(Obs, Sim; Power=Power)
-		end  # function: NASH_SUTCLIFFE_EFFICIENCY
+		function NSE_EFFICIENCY(;Obs=Obs, Sim=Sim, Power=2.0)
+			return Nse = 1 - NSE_MINIMIZE(Obs, Sim; Power=Power)
+		end  # function: NSE_EFFICIENCY
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

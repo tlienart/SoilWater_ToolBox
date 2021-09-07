@@ -14,9 +14,9 @@ module ofBest
 
 		iT_TransSteady = infiltOutput.iT_TransSteady_Data[iZ]
 
-		Nse_Trans = stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iZ,1:iT_TransSteady], ∑Infilt_3D[iZ, 1:iT_TransSteady]; Power=2.0)
+		Nse_Trans = stats.NSE_MINIMIZE( ∑Infilt_Obs[iZ,1:iT_TransSteady], ∑Infilt_3D[iZ, 1:iT_TransSteady]; Power=2.0)
 
-		Nse_Steady = stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iZ,iT_TransSteady+1:N_Infilt[iZ]]), log10.(∑Infilt_3D[iZ,iT_TransSteady+1:N_Infilt[iZ]]); Power=2.0)
+		Nse_Steady = stats.NSE_MINIMIZE( log10.(∑Infilt_Obs[iZ,iT_TransSteady+1:N_Infilt[iZ]]), log10.(∑Infilt_3D[iZ,iT_TransSteady+1:N_Infilt[iZ]]); Power=2.0)
 
 		Penalty = abs(∑Infilt_Obs[iZ,N_Infilt[iZ]] - ∑Infilt_3D[iZ,N_Infilt[iZ] ]) /  ∑Infilt_Obs[iZ,N_Infilt[iZ]]
 

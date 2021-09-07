@@ -16,7 +16,7 @@ module ofHydrolab
 					θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,  Ψ_θΨobs[iZ,iΨ], iZ, hydro)
 				end # for iΨ = 1:N_θΨobs[iZ]
 
-				Of_θΨ = stats.NASH_SUTCLIFE_MINIMIZE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
+				Of_θΨ = stats.NSE_MINIMIZE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
 
 			# === OF Kunsat ====
 			if "Ks" ∈ optim.ParamOpt
@@ -36,7 +36,7 @@ module ofHydrolab
 					Kunsat_Sim_Ln[iΨ] = log1p(kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_KΨobs[iZ,iΨ], iZ, hydro))
 				end # for iΨ = 1:N_KΨobs[iZ]
 
-				Of_Kunsat = stats.NASH_SUTCLIFE_MINIMIZE(Kunsat_Obs_Ln[iStart:N_KΨobs[iZ]], Kunsat_Sim_Ln[iStart:N_KΨobs[iZ]])			
+				Of_Kunsat = stats.NSE_MINIMIZE(Kunsat_Obs_Ln[iStart:N_KΨobs[iZ]], Kunsat_Sim_Ln[iStart:N_KΨobs[iZ]])			
 				Of = Wof * Of_θΨ + (1.0 - Wof) * Of_Kunsat
 
 			else		

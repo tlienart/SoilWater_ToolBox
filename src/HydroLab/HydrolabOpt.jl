@@ -128,14 +128,14 @@ module hydrolabOpt
 					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 		end # for iZ = 1:N_iZ
 
-		hydroOther.Nse_θΨ, ~, ~ = stats.NASH_SUTCLIFFE_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
+		hydroOther.Nse_θΨ, ~, ~ = stats.NSE_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
 
-		hydroOther.NseWilmot_θΨ, ~, ~ = stats.NSEWILMOT_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
+		hydroOther.NseWilmot_θΨ, ~, ~ = stats.NSE_WILMOT_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
 	
 		if "Ks" ∈ optim.ParamOpt
-			hydroOther.Nse_KΨ, ~, ~ = stats.NASH_SUTCLIFFE_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
+			hydroOther.Nse_KΨ, ~, ~ = stats.NSE_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
 
-			hydroOther.NseWilmot_KΨ, ~, ~ = stats.NSEWILMOT_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
+			hydroOther.NseWilmot_KΨ, ~, ~ = stats.NSE_WILMOT_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
 
 			hydroOther.Nse = (hydroOther.Nse_KΨ .+ hydroOther.Nse_θΨ) ./ 2.0
 		else

@@ -91,9 +91,9 @@ module infiltStart
 			# Statistics
 				iT_TransSteady = infiltOutput.iT_TransSteady_Data[iZ]
 
-				infiltOutput.Nse_Trans[iZ] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( ∑Infilt_Obs[iZ,2:iT_TransSteady], ∑Infilt_3D[iZ, 2:iT_TransSteady]; Power=2.0)
+				infiltOutput.Nse_Trans[iZ] = 1.0 - stats.NSE_MINIMIZE( ∑Infilt_Obs[iZ,2:iT_TransSteady], ∑Infilt_3D[iZ, 2:iT_TransSteady]; Power=2.0)
 
-				infiltOutput.Nse_Steady[iZ] = 1.0 - stats.NASH_SUTCLIFE_MINIMIZE( log10.(∑Infilt_Obs[iZ,iT_TransSteady+1:N_Infilt[iZ]]), log10.(∑Infilt_3D[iZ,iT_TransSteady+1:N_Infilt[iZ]]); Power=2.0)
+				infiltOutput.Nse_Steady[iZ] = 1.0 - stats.NSE_MINIMIZE( log10.(∑Infilt_Obs[iZ,iT_TransSteady+1:N_Infilt[iZ]]), log10.(∑Infilt_3D[iZ,iT_TransSteady+1:N_Infilt[iZ]]); Power=2.0)
 
 				infiltOutput.Nse[iZ] = 0.5 * infiltOutput.Nse_Trans[iZ] + 0.5 * infiltOutput.Nse_Steady[iZ]
 
