@@ -15,7 +15,7 @@ module optKsModel
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals=5000)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals=4000)
 
 				# Deriving the optimal τ parameters from X
 					X = BlackBoxOptim.best_candidate(Optimization)
@@ -34,7 +34,7 @@ module optKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], Unit="MmH", No_Log_Square⍰="Log", WilMot_Ccc⍰="Ccc", DataSplit=true, KsMinMax=0.002777778, Wsmall=0.5)
+		function OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], Unit="MmH", No_Log_Square⍰="Log", WilMot_Ccc⍰="Ccc", DataSplit=true, KsMinMax=0.002777778, Wsmall=0.6)
 
 			# Deriving the optimal τ parameters from X
 				ksmodelτ = X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
@@ -42,11 +42,9 @@ module optKsModel
 			#	Compuring Ks model
 				KₛModel = θψ2KsModel.KSMODEL(hydro, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
-
 			# Computing the Objective function ========================================================
 				Ks_ObsTransformed = fill(0.0,N_iZ)
 				Ks_SimTransformed = fill(0.0,N_iZ)
-
 			
 			# Determening when Ks < KsMinMax
 				if DataSplit

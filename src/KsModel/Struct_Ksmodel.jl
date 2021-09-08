@@ -38,6 +38,7 @@ module ksModel
 		Nse_τ     :: Vector{Float64}
 		Rmse_τ    :: Vector{Float64}
 		Wilmot_τ  :: Vector{Float64}
+		Ccc_τ  :: Vector{Float64}
 	end # mutable struct KSMODEL
 
 	
@@ -78,8 +79,9 @@ module ksModel
 			Nse_τ  = fill(0.0::Float64, Nτ_Layer)
 			Rmse_τ = fill(0.0::Float64, Nτ_Layer)
 			Wilmot_τ = fill(0.0::Float64, Nτ_Layer)
+			Ccc_τ = fill(0.0::Float64, Nτ_Layer)
 
-			ksmodelτ = KSMODELτ(τ₁, τ₂, τ₃, τ₄, τ₅, τ₆, τ₁Mac, τ₂Mac, τ₃Mac, τ₁_Min, τ₂_Min, τ₃_Min, τ₄_Min, τ₅_Min, τ₆_Min, τ₁Mac_Min, τ₂Mac_Min, τ₃Mac_Min, τ₁_Max, τ₂_Max, τ₃_Max, τ₄_Max, τ₅_Max, τ₆_Max, τ₁Mac_Max,τ₂Mac_Max, τ₃Mac_Max, Nse_τ, Rmse_τ, Wilmot_τ)
+			ksmodelτ = KSMODELτ(τ₁, τ₂, τ₃, τ₄, τ₅, τ₆, τ₁Mac, τ₂Mac, τ₃Mac, τ₁_Min, τ₂_Min, τ₃_Min, τ₄_Min, τ₅_Min, τ₆_Min, τ₁Mac_Min, τ₂Mac_Min, τ₃Mac_Min, τ₁_Max, τ₂_Max, τ₃_Max, τ₄_Max, τ₅_Max, τ₆_Max, τ₁Mac_Max,τ₂Mac_Max, τ₃Mac_Max, Nse_τ, Rmse_τ, Wilmot_τ, Ccc_τ)
 
 		return ksmodelτ 
 		end  # function: STRUCT_KSMODEL

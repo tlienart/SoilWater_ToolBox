@@ -36,10 +36,12 @@ module startKsModel
             ksmodelτ.Nse_τ[1]    = stats.NSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
             ksmodelτ.Rmse_τ[1]   = stats.RMSE(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
             ksmodelτ.Wilmot_τ[1] = stats.NSE_WILMOT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
+				ksmodelτ.Ccc_τ[1] = stats.stats.NSE_CONCORDANCE_CORELATION_COEFICIENT(log1p.(hydro.Ks[1:N_iZ]) , log1p.(KₛModel[1:N_iZ]))
 
 				println("		 Nse_τ    =  $(ksmodelτ.Nse_τ)")
 				println("		 Rmse_τ   =  $(ksmodelτ.Rmse_τ)")
 				println("		 Wilmot_τ =  $(ksmodelτ.Wilmot_τ)")
+				println("		 Ccc_τ    =  $(ksmodelτ.Ccc_τ)")
 
 				for iParam = 1:optimKsmodel.NparamOpt[ipLayer]	
 					# Getting the current values of every layer of the hydro parameter of interest
