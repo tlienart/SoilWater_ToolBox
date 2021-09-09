@@ -118,6 +118,9 @@ module plot
 		function KSMODEL(hydro, KₛModel, N_iZ, Path)
 			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(KₛModel[1:N_iZ])])
 			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(KₛModel[1:N_iZ])])
+
+			Ks_Max = 0.099371778 # mm/s
+
 			
 			CairoMakie.activate!()
 
@@ -125,7 +128,6 @@ module plot
 					
 			#  == Plot_θ_Ψ  == 
 				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=25, xlabel="ln (1 + KsModel_Obs) [mm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [mm hour⁻¹ ]", xlabelsize=25,  ylabelsize=25, xticksize=20,  yticksize=20)
-
 
 				CairoMakie.xlims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
 				CairoMakie.ylims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
