@@ -34,7 +34,7 @@ module θψ2KsModel
 #		FUNCTION : KUNSAT_MODEL
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725–2737. https://doi.org/10.5194/hess-21-2725-2017"""
-		function θΨ_2_KSMODEL(hydroParam, IsTopsoil, iZ::Int64, KₛModel⍰,ksmodelτ; RockFragment=0.0, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], τ₁=ksmodelτ.τ₁[IsTopsoil], τ₂=ksmodelτ.τ₂[IsTopsoil], τ₃=ksmodelτ.τ₃[IsTopsoil], τ₄=ksmodelτ.τ₄[IsTopsoil], τ₅=ksmodelτ.τ₅[IsTopsoil], τ₆=ksmodelτ.τ₆[IsTopsoil], τ₁Mac=ksmodelτ.τ₁Mac[IsTopsoil], τ₂Mac=ksmodelτ.τ₂Mac[IsTopsoil], τ₃Mac=ksmodelτ.τ₃Mac[IsTopsoil], RockFragment_Treshold=0.4, Rtol=1.0E-3, Se_Max=0.9999 )
+		function θΨ_2_KSMODEL(hydroParam, IsTopsoil, iZ::Int64, KₛModel⍰,ksmodelτ; RockFragment=0.0, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], τ₁Max=ksmodelτ.τ₁Max[IsTopsoil], τ₂=ksmodelτ.τ₂[IsTopsoil], τ₃=ksmodelτ.τ₃[IsTopsoil], τ₄=ksmodelτ.τ₄[IsTopsoil], τ₅=ksmodelτ.τ₅[IsTopsoil], τ₆=ksmodelτ.τ₆[IsTopsoil], τ₁Mac=ksmodelτ.τ₁Mac[IsTopsoil], τ₂Mac=ksmodelτ.τ₂Mac[IsTopsoil], τ₃Mac=ksmodelτ.τ₃Mac[IsTopsoil], RockFragment_Treshold=0.4, Rtol=1.0E-3, Se_Max=0.9999 )
 
 			# Determine when Ks increases for increasing RockFragment	
 				if RockFragment > RockFragment_Treshold
@@ -50,14 +50,14 @@ module θψ2KsModel
 
 			# Model traditional 1 =================================================================
 
-			if KₛModel⍰=="Model_101" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+			if KₛModel⍰=="Model_1" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - τ₁ ))) / 0.1
+					T1 =  (10.0 ^ - (1.0 / (1.0 - τ₁Max ))) / 0.1
 					T2 = 2.0 * (1.0 - τ₂)
 					T3 = 1.0 / (1.0 - τ₃)
 
 				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
+					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
 					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
 					T3Mac = 1.0 / (1.0 - τ₃Mac)
 			
@@ -65,9 +65,8 @@ module θψ2KsModel
 				return KₛModel
 
 		
-			elseif KₛModel⍰=="Model_102" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false)
+			elseif KₛModel⍰=="Model_2" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₄, τ₁Max, σ; Inverse=false, τ₅=0.5)
 
 				# Transformation matrix
 					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
@@ -75,7 +74,7 @@ module θψ2KsModel
 					T3 = 1.0 / (1.0 - τ₃)
 
 				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
+					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
 					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
 					T3Mac = 1.0 / (1.0 - τ₃Mac)
 		
@@ -83,27 +82,9 @@ module θψ2KsModel
 
 				return KₛModel
 
-			elseif KₛModel⍰=="Model_102c" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false, τ₅=τ₅)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂)
-					T3 = 1.0 / (1.0 - τ₃)
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-		
-				KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-
-				return KₛModel
-
-			elseif KₛModel⍰=="Model_103" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false,  τ₅=τ₅ )
+			elseif KₛModel⍰=="Model_3" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₄, τ₁Max, σ; Inverse=false,  τ₅=τ₅ )
 
 				# Transformation matrix
 					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
@@ -112,7 +93,7 @@ module θψ2KsModel
 					T4 = τ₆
 
 				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Mac))) / 0.1
+					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
 					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
 					T3Mac = 1.0 / (1.0 - τ₃Mac)
 		
@@ -120,9 +101,9 @@ module θψ2KsModel
 
 				return KₛModel
 
-			elseif KₛModel⍰=="Model_103b" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ;  τ₅=0.5 )
+		
+			elseif KₛModel⍰=="Model_4" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₄, τ₁Max, σ;  τ₅=0.5 )
 
 				# Transformation matrix
 					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
@@ -131,227 +112,13 @@ module θψ2KsModel
 					T4 = τ₆
 
 				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 -  τ₁ * τ₁Mac))) / 0.1
+					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
 					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
 					T3Mac = 1.0 / (1.0 - τ₃Mac)
 		
 				KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
 
 				return KₛModel
-
-			elseif KₛModel⍰=="Model_103c" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-				Tσ₁ = τMODEL_σ2(hydroParam, iZ, τ₁ * τ₄, τ₁, σ;   τ₅=τ₅ )
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂)
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 = τ₆
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-		
-				KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-
-				return KₛModel
-
-			elseif KₛModel⍰=="Model_104a" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-				
-				Tσ₁ = τMODEL_σ2(hydroParam, iZ, τ₁ * τ₄, τ₁, σ;   τ₅=τ₅ )
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂)
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 = τ₆
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-		
-				KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-
-				return KₛModel
-
-
-			elseif KₛModel⍰=="Model_105" #  <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-				OptionKsCorection = "Integral" # Integral , Outside
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false)
-
-				Tσ₂= τMODEL_σSilt(hydroParam, iZ,  τ₂ * τ₅, τ₂,  σ; σSilt_η=τ₆, Pσ=4.0, Distribution⍰="LogNormal", Normalise=true, Invert=false)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - Tσ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.1
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-
-					if OptionKsCorection == "Outside"
-						KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-			
-						return KₛModel ^ T4
-					else
-						return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-					end
-
-			elseif KₛModel⍰=="Model_106" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-				OptionKsCorection = "Integral" # Integral , Outside
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false)
-
-				Tσ₂= τMODEL_σSilt(hydroParam, iZ,  τ₂ * τ₅, τ₂,  σ; σSilt_η=τ₆, Pσ=4.0, Distribution⍰="Normal", Normalise=true, Invert=false)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - Tσ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.1
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-
-					if OptionKsCorection == "Outside"
-						KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-			
-						return KₛModel ^ T4
-					else
-						return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-					end
-
-			elseif KₛModel⍰=="Model_107" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-				OptionKsCorection = "Outside" # Integral , Outside
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false)
-
-				Tσ₂= τMODEL_σSilt(hydroParam, iZ,  τ₂ * τ₅, τ₂,  σ; σSilt_η=τ₆, Pσ=4.0, Distribution⍰="Normal", Normalise=true, Invert=false)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - Tσ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.2
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-
-					if OptionKsCorection == "Outside"
-						KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-			
-						return KₛModel ^ T4
-					else
-						return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-					end
-	
-			elseif KₛModel⍰=="Model_108" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-				OptionKsCorection = "Integral" # Integral , Outside
-
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false)
-
-				Tσ₂= τMODEL_σSilt(hydroParam, iZ,  τ₂ * τ₅, τ₂,  σ; σSilt_η=0.45, Pσ=3.0, Distribution⍰="Normal", Normalise=true, Invert=false)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - Tσ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.5
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-
-					if OptionKsCorection == "Outside"
-						KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-			
-						return KₛModel ^ T4
-					else
-						return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-					end		
-			elseif KₛModel⍰=="Model_109" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false, τ₅=τ₅)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.2
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-				
-				return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-
-			elseif KₛModel⍰=="Model_110" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false, τ₅=τ₅)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.3
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-
-				return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]	
-				
-			elseif KₛModel⍰=="Model_111" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			
-				Tσ₃ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false, τ₅=τ₅)
-
-				Tσ₃Mac = τMODEL_θsθr(hydroParam, iZ,  τ₅ * τ₃Mac, τ₃Mac, θs, θr, θsMacMat)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - τ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  1.0
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - Tσ₃Mac)
-
-				return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]		
-								
-			elseif KₛModel⍰=="Model_112" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			
-				Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁ * τ₄, τ₁, σ; Inverse=false, τ₅=τ₅)
-
-				# Transformation matrix
-					T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁ ))) / 0.1
-					T2 = 2.0 * (1.0 - τ₂ )
-					T3 = 1.0 / (1.0 - τ₃)
-					T4 =  τ₆
-
-				# Transformation macro
-					T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁ * τ₁Mac))) / 0.1
-					T2Mac = 2.0 * (1.0 -  τ₂Mac)
-					T3Mac = 1.0 / (1.0 - τ₃Mac)
-
-				return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KS_MODEL2(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]		
-								
 		end  # if: Model=="Model3"
 
 	

@@ -15,8 +15,9 @@ module optKsModel
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals=3000)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent)
 
+				# , MaxFuncEvals=6000
 				# Deriving the optimal τ parameters from X
 					X = BlackBoxOptim.best_candidate(Optimization)
 
@@ -34,7 +35,7 @@ module optKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], Unit="MmH", No_Log_Square⍰="Log", WilMot_Ccc⍰="Ccc", DataSplit=true, KsMinMax=0.005555556, Wsmall=0.54)
+		function OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], Unit="MmH", No_Log_Square⍰="No", WilMot_Ccc⍰="Ccc", DataSplit=false, KsMinMax=0.005555556, Wsmall=0.54)
 
 			# Deriving the optimal τ parameters from X
 				ksmodelτ = X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
