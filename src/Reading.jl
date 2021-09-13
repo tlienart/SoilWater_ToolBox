@@ -564,14 +564,14 @@ module reading
 			# The τ[1] = TopLayer and   τ[3] = SubLayer			
 			i = 1
 			for ipParamName in Param_Name
-				if occursin("_Top", ipParamName)
-					ipParamName = replace(ipParamName, "_Top" => "" )
+				if occursin("_1", ipParamName)
+					ipParamName = replace(ipParamName, "_1" => "" )
 					iLayer = 1
 					Param_Name[i] = ipParamName
 					Flag_Top = true
 					
-				elseif occursin("_Sub", ipParamName)
-					ipParamName = replace(ipParamName, "_Sub" => "" )
+				elseif occursin("_2", ipParamName)
+					ipParamName = replace(ipParamName, "_2" => "" )
 					iLayer = 2
 					Param_Name[i] = ipParamName
 					Flag_Top = false
@@ -604,7 +604,7 @@ module reading
                   ParamOpt_Min[iLayer, NparamOpt[iLayer]] = Param_Min[i]
                   ParamOpt_Max[iLayer, NparamOpt[iLayer]] = Param_Max[i]
 					else
-                  ParamOpt[iLayer, NparamOpt[iLayer]]     = [Param_Name[i]]
+                  ParamOpt[iLayer, NparamOpt[iLayer]]     = Param_Name[i]
                   ParamOpt_Min[iLayer, NparamOpt[iLayer]] = Param_Min[i]
                   ParamOpt_Max[iLayer, NparamOpt[iLayer]] = Param_Max[i]
 					end

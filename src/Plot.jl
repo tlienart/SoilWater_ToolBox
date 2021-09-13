@@ -18,7 +18,6 @@ module plot
 
 				println("  ==  START: Plotting HydroParam  ==")
 
-		
 				# ===================== DATA =====================
 				θ_Sim             = fill(0.0,N_Se)
 				Kunsat_Sim        = fill(0.0,N_Se)
@@ -115,7 +114,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KSMODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KSMODEL(hydro, KₛModel, N_iZ, Path)
+		function KSMODEL(hydro,  KₛModel, N_iZ, Path)
 			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(KₛModel[1:N_iZ])])
 			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(KₛModel[1:N_iZ])])
 

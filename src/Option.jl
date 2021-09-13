@@ -54,6 +54,8 @@ module options
 
 	@option mutable struct KSMODEL
 		 KₛModel⍰::String
+		 Group::Bool
+		 Of_Split_KsSlowKsFast::Bool
 	end
 
 	@option mutable struct PSD

@@ -9,15 +9,14 @@ module optKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_OPT_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function START_OPT_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel)
+		function START_OPT_KSMODEL(hydro, option, param, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel)
 				
 			# Deriving the feasible range of the τ parameters
 			SearchRange = SEARCHRANGE(ipLayer, optimKsmodel)
 
 			# Optimisation algorithme
-				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent)
+				Optimization = BlackBoxOptim.bboptimize(X -> OF_KSMODEL(hydro, option, param, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[]); SearchRange=SearchRange, NumDimensions=optimKsmodel.NparamOpt[ipLayer], TraceMode=:silent, MaxFuncEvals=100)
 
-				# , MaxFuncEvals=6000
 				# Deriving the optimal τ parameters from X
 					X = BlackBoxOptim.best_candidate(Optimization)
 
@@ -25,30 +24,28 @@ module optKsModel
 					ksmodelτ = X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
 
 				# Computing optimal KₛModel
-					KₛModel = θψ2KsModel.KSMODEL(hydro, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
-
+					KₛModel = θψ2KsModel.KSMODEL(hydro, option, param, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 		return KₛModel
 		end  # function: START_OPT_KSMODEL
 	# ------------------------------------------------------------------
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_KSMODEL(hydro, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], Unit="MmH", No_Log_Square⍰="No", WilMot_Ccc⍰="Ccc", DataSplit=false, KsMinMax=0.005555556, Wsmall=0.54)
+		function OF_KSMODEL(hydro, option, param, ipLayer, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, X; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], Unit="MmH", No_Log_Square⍰="No", WilMot_Ccc⍰="Ccc", KsMinMax=0.005555556)
 
 			# Deriving the optimal τ parameters from X
 				ksmodelτ = X_2_τ(ipLayer, ksmodelτ, optimKsmodel, X)
 
 			#	Compuring Ks model
-				KₛModel = θψ2KsModel.KSMODEL(hydro, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+				KₛModel = θψ2KsModel.KSMODEL(hydro, option, param, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 			# Computing the Objective function ========================================================
 				Ks_ObsTransformed = fill(0.0,N_iZ)
 				Ks_SimTransformed = fill(0.0,N_iZ)
 			
 			# Determening when Ks < KsMinMax
-				if DataSplit
+				if option.ksModel.Of_Split_KsSlowKsFast
 					KsSmall_True = fill(false, N_iZ)
 					KsLarge_True = fill(false, N_iZ)
 					for iZ=1:N_iZ
@@ -60,7 +57,7 @@ module optKsModel
 							KsLarge_True[iZ] = false
 						end # if hydro.Ks[iZ] ≥ KsMinMax
 					end # for iZ=1:N_iZ
-				end # if DataSplit
+				end # if option.ksModel.Of_Split_KsSlowKsFast
 				#____________________________________
 
 			
@@ -80,7 +77,7 @@ module optKsModel
 				end
 			end
 
-			if DataSplit
+			if option.ksModel.Of_Split_KsSlowKsFast
 				Ks_ObsTransformed_Small = Ks_ObsTransformed[KsSmall_True[1:N_iZ]]
 				Ks_ObsTransformed_Large = Ks_ObsTransformed[KsLarge_True[1:N_iZ]]
 
@@ -89,7 +86,7 @@ module optKsModel
 			end
 
 			if No_Log_Square⍰ == "Log"
-				if DataSplit
+				if option.ksModel.Of_Split_KsSlowKsFast
 					# Ks_ObsTransformed_Small = log1p.(Ks_ObsTransformed_Small)
 					Ks_ObsTransformed_Large = log1p.(Ks_ObsTransformed_Large)
 					# Ks_SimTransformed_Small = log1p.(Ks_SimTransformed_Small)
@@ -101,7 +98,7 @@ module optKsModel
 				end
 
 			elseif No_Log_Square⍰ == "Square"
-				if DataSplit
+				if option.ksModel.Of_Split_KsSlowKsFast
 					# Ks_ObsTransformed_Small = (Ks_ObsTransformed_Small) .^ 0.5
 					Ks_ObsTransformed_Large = (Ks_ObsTransformed_Large) .^ 0.5
 
@@ -115,23 +112,23 @@ module optKsModel
 			end
 
 			if WilMot_Ccc⍰ == "Wilmot"
-				if DataSplit == true
+				if option.ksModel.Of_Split_KsSlowKsFast
 					Of_KsSmall = 1.0 - stats.NSE_WILMOT(Ks_ObsTransformed_Small , Ks_SimTransformed_Small)
 					Of_KsLarge = 1.0 - stats.NSE_WILMOT(Ks_ObsTransformed_Large , Ks_SimTransformed_Large)
 
-					Of_Ks = Wsmall * Of_KsSmall + (1 - Wsmall) * Of_KsLarge
+					Of_Ks = param.ksModel.WeightKsSlow * Of_KsSmall + (1 - param.ksModel.WeightKsSlow) * Of_KsLarge
 				
 				else
 					Of_Ks = 1.0 - stats.NSE_WILMOT(Ks_ObsTransformed[1:N_iZ] , Ks_SimTransformed[1:N_iZ])
 				end
 
 			elseif  WilMot_Ccc⍰ == "Ccc"
-				if DataSplit == true
+				if option.ksModel.Of_Split_KsSlowKsFast
 					Of_KsSmall = 1.0 - stats.NSE_CONCORDANCE_CORELATION_COEFICIENT(Ks_ObsTransformed_Small , Ks_SimTransformed_Small)
 
 					Of_KsLarge = 1.0 - stats.NSE_CONCORDANCE_CORELATION_COEFICIENT(Ks_ObsTransformed_Large , Ks_SimTransformed_Large)
 
-					Of_Ks = Wsmall * Of_KsSmall + (1 - Wsmall) * Of_KsLarge
+					Of_Ks = param.ksModel.WeightKsSlow * Of_KsSmall + (1 - param.ksModel.WeightKsSlow) * Of_KsLarge
 					
 				else
 					Of_Ks = 1.0 - stats.NSE_CONCORDANCE_CORELATION_COEFICIENT(Ks_ObsTransformed[1:N_iZ] , Ks_SimTransformed[1:N_iZ])
