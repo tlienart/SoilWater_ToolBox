@@ -234,20 +234,19 @@ module SoilWater_ToolBox
 				if option.hydro.HydroModel⍰ == "Kosugi" && option.run.KsModel
 				println("\n	=== === Computing model Ks === === ")
 					if  (@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, path, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, Flag_RockFragment=true, IsTopsoil=IsTopsoil, RockFragment=RockFragment)
 					
 					elseif (@isdefined RockFragment) && !(@isdefined IsTopsoil)	
-						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, path, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_RockFragment=true, RockFragment=RockFragment)
 					
 					elseif !(@isdefined RockFragment) && (@isdefined IsTopsoil)
-						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, path, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=true, IsTopsoil=IsTopsoil)
 					
 					elseif !(@isdefined RockFragment) && !(@isdefined IsTopsoil)
-						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel)
+						hydro, KₛModel = startKsModel.START_KSMODEL(hydro, option, param, path, KₛModel, path.option.ModelName, ksmodelτ, N_iZ, optim, optimKsmodel)
 
 					end # if: RockFragment && IsTopsoil
 
-					plot.ksmodel.KSMODEL(hydro, KₛModel, N_iZ, path.plotSoilwater.Plot_KsModel)
 					# plot.ksmodel.KsModel_3D(hydro, N_iZ, path)
 				println("\n	=== === End computing model Ks === === \n")
 				end # if: option.hydro.HydroModel⍰ == :Kosugi

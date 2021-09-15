@@ -28,6 +28,7 @@ using Suppressor
     include("Distribution.jl")
     include("Ksmodel/θψ_2_KsModel.jl")
     include("Ksmodel/Opt_KsModel.jl")
+    include("Plot.jl")
     include("Ksmodel/Start_KsModel.jl")
     include("Ksmodel/Struct_Ksmodel.jl")
     
@@ -60,7 +61,7 @@ using Suppressor
     include("Psd/PsdOpt.jl")
     include("Psd/Psd_START.jl")
 
-    include("Plot.jl")
+
 
     # include("HyPix/Interpolate.jl")
     # include("HyPix/Opt/ThetaObs.jl")

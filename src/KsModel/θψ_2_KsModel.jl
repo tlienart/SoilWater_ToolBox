@@ -10,7 +10,8 @@ module θψ2KsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : KS_MODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KSMODEL(hydro, option, param, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+		function KSMODEL(GroupBool_Select, hydro, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, N_iZ::Int64, optim, optimKsmodel, option, param; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], iGroup_Opt=1)
+
 			for iZ=1:N_iZ
 				if Flag_RockFragment
 					RockFragment₁ = RockFragment[iZ]
@@ -18,30 +19,27 @@ module θψ2KsModel
 					RockFragment₁ = 0.0
 				end #@isdefined RockFragment
 
-				if Flag_IsTopsoil
-					IsTopsoil₁ = Int64(IsTopsoil[iZ])
-				else
-					IsTopsoil₁ = 1	# Default value				
-				end  # if: @isdefined IsTopsoil
+				# if Flag_IsTopsoil
+				# 	IsTopsoil₁ = Int64(IsTopsoil[iZ])
+				# else
+				# 	IsTopsoil₁ = 1	# Default value				
+				# end  # if: @isdefined IsTopsoil
 
-				if option.ksModel.Group
-					if hydro.σ[iZ] ≤ param.ksModel.σₛₚₗᵢₜ
-						ipGroup = 1
-					else
-						ipGroup = 2
-					end  # if: hydro. 
-				end  # if: option.ksModel.
+				# To save time
+				if GroupBool_Select[iZ]
+					KₛModel[iZ] = θΨ_2_KSMODEL(hydro, option, ipGroup[iZ], iZ,  KₛModel⍰, ksmodelτ; RockFragment=RockFragment₁)
+				end
+			end # if: hydro.Ks[iZ] > eps(10.0)
 
-				KₛModel[iZ] = θΨ_2_KSMODEL(hydro, option, ipGroup, iZ,  KₛModel⍰, ksmodelτ; RockFragment=RockFragment₁)
-			end # if: hydro.Ks[iZ] > eps(10.0)	
 		return KₛModel
 		end  # function: KS_MODEL
 	#..................................................................
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : KUNSAT_MODELS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θΨ_2_KSMODEL(hydroParam, option, ipGroup, iZ::Int64, KₛModel⍰,ksmodelτ; RockFragment=0.0, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], τ₁Max=ksmodelτ.τ₁Max[ipGroup], τ₂=ksmodelτ.τ₂[ipGroup], τ₃=ksmodelτ.τ₃[ipGroup], τ₁ηMin=ksmodelτ.τ₁ηMin[ipGroup], τ₅=ksmodelτ.τ₅[ipGroup], τ₄=ksmodelτ.τ₄[ipGroup], τ₁Mac=ksmodelτ.τ₁Mac[ipGroup], τ₂Mac=ksmodelτ.τ₂Mac[ipGroup], τ₃Mac=ksmodelτ.τ₃Mac[ipGroup], RockFragment_Treshold=0.4, Rtol=1.0E-3, Se_Max=0.9999 )
+		function θΨ_2_KSMODEL(hydroParam, option, iGroup, iZ::Int64, KₛModel⍰, ksmodelτ; RockFragment=0.0, θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ], Ks=hydroParam.Ks[iZ], τ₁Max=ksmodelτ.τ₁Max[iGroup], τ₂=ksmodelτ.τ₂[iGroup], τ₃=ksmodelτ.τ₃[iGroup], τ₁ηMin=ksmodelτ.τ₁ηMin[iGroup], τ₅=ksmodelτ.τ₅[iGroup], τ₄=ksmodelτ.τ₄[iGroup], τ₁Mac=ksmodelτ.τ₁Mac[iGroup], τ₂Mac=ksmodelτ.τ₂Mac[iGroup], τ₃Mac=ksmodelτ.τ₃Mac[iGroup], RockFragment_Treshold=0.4, Rtol=1.0E-3, Se_Max=0.9999 )
 
 			# Determine when Ks increases for increasing RockFragment	
 				if RockFragment > RockFragment_Treshold
@@ -60,69 +58,39 @@ module θψ2KsModel
 
 				if option.ksModel.KₛModel⍰ =="KsModel_Traditional" # Original <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 					# Transforming matrix
-						T1 =  (10.0 ^ - (1.0 / (1.0 - τ₁Max ))) / 0.1
+						T1 =  10.0 ^ (τ₁Max / (τ₁Max - 1.0))
+						# T1 =  (10.0 ^ - (1.0 / (1.0 - τ₁ ))) / 0.1
 						T2 = 2.0 * (1.0 - τ₂)
 						T3 = 1.0 / (1.0 - τ₃)
 
 					# Transforming macro
-						T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
+						T1Mac = 10.0 ^ (τ₁Max * τ₁Mac / (1.0 - τ₁Max * τ₁Mac))
 						T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
 						T3Mac = 1.0 / (1.0 - τ₃Mac)
 				
 					return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KSMODEL_TRADITIONAL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
 
 						
-				elseif option.ksModel.KₛModel⍰=="KsModel_Tσ" # Original + Tσ₁ <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+				elseif option.ksModel.KₛModel⍰=="KsModel_New" # Original + Tσ₁ <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 					# Computting T1 as a function of σ 
 					Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ; Inverse=false)
+					# Tσ₁ = τMODEL_σ2(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ)
 
 					# Transformation matrix
-						T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
+						T1 =  10.0 ^ (Tσ₁ / (Tσ₁ - 1.0))
 						T2 = 2.0 * (1.0 - τ₂)
 						T3 = 1.0 / (1.0 - τ₃)
 
 					# Transformation macro
-						T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
+						T1Mac = 10.0 ^ (τ₁Max * τ₁Mac / (1.0 - τ₁Max * τ₁Mac))
 						T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
 						T3Mac = 1.0 / (1.0 - τ₃Mac)
 			
 					return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KSMODEL_TRADITIONAL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
 
-
-				elseif option.ksModel.KₛModel⍰ == "KsModel_New" # Original + Tσ₁ + τ₄ <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-					# Computting T1 as a function of σ 
-					Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ; Inverse=false)
-
-					# Transformation matrix
-						T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
-						T2 = 2.0 * (1.0 - τ₂)
-						T3 = 1.0 / (1.0 - τ₃)
-						T4 = 1.0 / (1.0 - τ₄)        
-
-					# Transformation macro
-						T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
-						T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
-						T3Mac = 1.0 / (1.0 - τ₃Mac)
-			
-					return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KSMODEL_NEW(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-
-			
-				elseif option.ksModel.KₛModel⍰ == "KsModel_NewSimplified" # Original + Tσ₁ + τ₄ + Simplified <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-					# Computting T1 as a function of σ 
-					Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ)
-
-					# Transformation matrix
-						T1 =  (10.0 ^ - (1.0 / (1.0 - Tσ₁))) / 0.1
-						T2 = 2.0 * (1.0 - τ₂)
-						T3 = 1.0 / (1.0 - τ₃)
-
-					# Transformation macro
-						T1Mac = (10.0 ^ - (1.0 / (1.0 - τ₁Max * τ₁Mac))) / 0.1
-			
-				return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KSMODEL_NEWSIMPLIFIED(Se, T1, T2, T3, T1Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
-
 				else
 					error("option.ksModel.KₛModel⍰ = $(option.ksModel.KₛModel⍰) is not yet implemented try <KsModel_Traditional>; <KsModel_Tσ>; <KsModel_New>; <KsModel_NewSimplified> ")
+					
 				end  # if: Model=="Model?"
 		end  # function: θΨ_2_KSMODEL 
 
@@ -144,7 +112,7 @@ module θψ2KsModel
 	#		FUNCTION : KSMODEL_NEW
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function KSMODEL_NEW(Se, T1, T2, T3, T4, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac)
-
+			
 			Kunsat_Matrix = T1 *( ((θsMacMat - θr) ^ T3) * ((cst.Y / Ψm) / (exp( erfcinv(2.0 * Se) * σ * √2.0 )) ) ^ T2) ^ T4
 
 			Kunsat_Macro = T1Mac * ((θs - θsMacMat) ^ T3Mac) * ((cst.Y / ΨmMac) / ( exp( erfcinv(2.0 * Se) * σMac * √2.0))) ^ T2Mac 
@@ -157,7 +125,6 @@ module θψ2KsModel
 	#		FUNCTION : KSMODEL_NEWSIMPLIFIED
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function KSMODEL_NEWSIMPLIFIED(Se, T1, T2, T3, T1Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac)
-
 			Kunsat_Matrix =  T1 *( ((θsMacMat - θr) ^ T3) * ((cst.Y / Ψm) / (exp( erfcinv(2.0 * Se) * σ * √2.0 )) )) ^ T2
 
 			Kunsat_Macro = T1Mac * ((θs - θsMacMat) ^ 2.0) * ((cst.Y / ΨmMac) / ( exp( erfcinv(2.0 * Se) * σMac * √2.0))) 
@@ -170,14 +137,13 @@ module θψ2KsModel
 	#		FUNCTION :  τMODEL_σSilt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function τMODEL_σSilt_σ(hydroParam, iZ, Pₘᵢₙ, Pₘₐₓ, σ; Amplitude=0.5, σSilt_η=0.538, Pσ=3, Distribution⍰="Normal", Normalise=true, Invert=false)
-
 			ση = τMODEL_σ(hydroParam, iZ, Pₘₐₓ, Pₘᵢₙ, σ)
 
 			τσ_Dist = τMODEL_σSilt(hydroParam, iZ, Pₘₐₓ, Pₘᵢₙ, ση; σSilt_η=σSilt_η, Pσ=Pσ, Distribution⍰="Normal", Normalise=Normalise, Invert=Invert)
 
 			τσ = τMODEL_σ(hydroParam, iZ, Pₘₐₓ, Pₘᵢₙ, σ)
 
-			return τ = min(τσ + Amplitude * (τσ_Dist / (σSilt_η + 1.0)) , 1.0) * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
+		return τ = min(τσ + Amplitude * (τσ_Dist / (σSilt_η + 1.0)) , 1.0) * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
 		end
 	#..................................................................
 
@@ -200,7 +166,7 @@ module θψ2KsModel
 			end
 
 			τσ_Dist = distribution.DISTRIBUTION(ση, σSilt_η, σ_Dist; Distribution⍰=Distribution⍰, Normalise=Normalise, Invert=Invert)[1]
-			return τ = τσ_Dist  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
+		return τ = τσ_Dist  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
 		end
 	#..................................................................
 
@@ -214,22 +180,18 @@ module θψ2KsModel
 				return τ = (1.0 - ση) ^ 0.5  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
 			else
 				return τ = ση ^ 0.5  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
-			end
-			
+			end	
 		end
 	#..................................................................
 
 
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION :τMODEL_σ2
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function τMODEL_σ2(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, σ; τ₅=0.5)
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION :τMODEL_σ2
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function τMODEL_σ2(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, σ; τ₅=0.5, σboundWater = 2.0)
 			ση = σ_2_ση(hydroParam, iZ, σ)
 
-			ση  = max((ση / (1 - τ₅) - τ₅ / (1 - τ₅)), 0.0)
-
-			return τ = ση  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
-			
+		return τ = (Pₘₐₓ - Pₘᵢₙ) * max(ση / σboundWater, 1.0) ^ τ₅ + Pₘᵢₙ
 		end
 	#..................................................................
 
@@ -240,7 +202,7 @@ module θψ2KsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function τMODEL_θsθr(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, θs, θr, θsMacMat)
 			θη = (θs - θr)
-			return τ = (1.0 - θη)  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
+		return τ = (1.0 - θη)  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
 		end
 	#..................................................................
 

@@ -114,19 +114,18 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KSMODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KSMODEL(hydro,  KₛModel, N_iZ, Path)
-			Ks_Min = minimum([minimum(hydro.Ks[1:N_iZ]), minimum(KₛModel[1:N_iZ])])
-			Ks_Max = maximum([maximum(hydro.Ks[1:N_iZ]), maximum(KₛModel[1:N_iZ])])
+		function KSMODEL(hydro, KₛModel, Ksₒᵦₛ, NameSim::String, Path::String, θrₒᵦₛ, θsMacMatₒᵦₛ, σₒᵦₛ)
+			Ks_Min = minimum([minimum(Ksₒᵦₛ), minimum(KₛModel)])
+			Ks_Max = maximum([maximum(Ksₒᵦₛ), maximum(KₛModel)])
 
 			Ks_Max = 0.099371778 # mm/s
-
 			
 			CairoMakie.activate!()
 
 			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=20, xgridstyle=:dash, ygridstyle=:dash, xtickalign=1, ytickalign=1)
 					
 			#  == Plot_θ_Ψ  == 
-				Axis1 = Axis(Fig[1,1], title="KsModel", titlesize=25, xlabel="ln (1 + KsModel_Obs) [mm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [mm hour⁻¹ ]", xlabelsize=25,  ylabelsize=25, xticksize=20,  yticksize=20)
+				Axis1 = Axis(Fig[1,1], title="KsModel_" * NameSim, titlesize=25, xlabel="ln (1 + KsModel_Obs) [mm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [mm hour⁻¹ ]", xlabelsize=25,  ylabelsize=25, xticksize=20,  yticksize=20)
 
 				CairoMakie.xlims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
 				CairoMakie.ylims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
@@ -135,11 +134,11 @@ module plot
 				Axis1.xticks = (log1p.(KsTicks), string.( floor.(KsTicks, digits=1)))
 				Axis1.yticks = (log1p.(KsTicks), string.( floor.(KsTicks, digits=1)))
 
-				ΔΘsMacΘr = hydro.θsMacMat .- hydro.θr
+				ΔΘsMacΘr = θsMacMatₒᵦₛ .-  θrₒᵦₛ
 
-				Fig_Ks = CairoMakie.scatter!(Fig[1,1], log1p.(hydro.Ks[1:N_iZ] .* cst.MmS_2_MmH), log1p.(KₛModel[1:N_iZ] .* cst.MmS_2_MmH), color=hydro.σ[1:N_iZ], markersize=120*ΔΘsMacΘr, marker =:circle)
+				Fig_Ks = CairoMakie.scatter!(Fig[1,1], log1p.(Ksₒᵦₛ .* cst.MmS_2_MmH), log1p.(KₛModel .* cst.MmS_2_MmH), color=σₒᵦₛ, markersize=125.0*ΔΘsMacΘr, marker =:circle)
 
-				CairoMakie.Colorbar(Fig[1, 2], limits=(minimum(hydro.σ_Min[1:N_iZ]), maximum(hydro.σ_Max[1:N_iZ])), colormap = CairoMakie.cgrad(:viridis, 5, categorical = true), size = 25,  label="σ[-]", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
+				CairoMakie.Colorbar(Fig[1, 2], limits=(minimum(hydro.σ_Min), maximum(hydro.σ_Max)), colormap = CairoMakie.cgrad(:viridis, 5, categorical = true), size = 25,  label="σ[-]", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
 
 				Line = range(log1p(Ks_Min.* cst.MmS_2_MmH), stop=log1p(Ks_Max.* cst.MmS_2_MmH), length=10) 
 
@@ -152,7 +151,9 @@ module plot
 			Fig[1, 1] = Axis1
    		# Fig[1, 2] = Leg1
 
-			save(Path, Fig)
+			Pathₛ = Path * "_" * NameSim * ".svg" 
+
+			save(Pathₛ, Fig)
 			display(Fig)
 
 		return nothing
