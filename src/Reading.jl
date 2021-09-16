@@ -511,7 +511,7 @@ module reading
 			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,begin:end]
 			# Reading Model data
-				 KₛModel⍰, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, "LAYER")
+				 KₛModel⍰, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, "MODEL")
 
 			# Determening which parameters correspond to the selected model
 			iSelectModel = [] 
@@ -566,52 +566,52 @@ module reading
 			for ipParamName in Param_Name
 				if occursin("_1", ipParamName)
 					ipParamName = replace(ipParamName, "_1" => "" )
-					iLayer = 1
+					iGroup = 1
 					Param_Name[i] = ipParamName
 					Flag_Top = true
 					
 				elseif occursin("_2", ipParamName)
 					ipParamName = replace(ipParamName, "_2" => "" )
-					iLayer = 2
+					iGroup = 2
 					Param_Name[i] = ipParamName
 					Flag_Top = false
 				end
 
 				# Getting the Vector values of the τ parameters
 					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName))
-					ParamValue_Vector[iLayer] = Float64(ParamValue[i])
+					ParamValue_Vector[iGroup] = Float64(ParamValue[i])
 					# Storing the value
 					setfield!(ksmodelτ, Symbol(ipParamName), ParamValue_Vector)
 
 				# Putting the minimum value in the parameter
 					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName * "_Min"))
-					ParamValue_Vector[iLayer] = Float64(Param_Min[i])
+					ParamValue_Vector[iGroup] = Float64(Param_Min[i])
 					# Storing the value
 					setfield!(ksmodelτ, Symbol(ipParamName * "_Min"), ParamValue_Vector)
 
 				# Putting the maximum value in the parameter
 					ParamValue_Vector = getfield(ksmodelτ, Symbol(ipParamName * "_Max"))
-					ParamValue_Vector[iLayer] = Float64(Param_Max[i])
+					ParamValue_Vector[iGroup] = Float64(Param_Max[i])
 					# Storing the value
 					setfield!(ksmodelτ, Symbol(ipParamName * "_Max"), ParamValue_Vector)
 
 				# ParamValue to optimize.  
 				if Opt[i] == 1
-					NparamOpt[iLayer] += 1
+					NparamOpt[iGroup] += 1
 
 					if Flag_Top
-                  ParamOpt[iLayer, NparamOpt[iLayer]]     = Param_Name[i]
-                  ParamOpt_Min[iLayer, NparamOpt[iLayer]] = Param_Min[i]
-                  ParamOpt_Max[iLayer, NparamOpt[iLayer]] = Param_Max[i]
+                  ParamOpt[iGroup, NparamOpt[iGroup]]     = Param_Name[i]
+                  ParamOpt_Min[iGroup, NparamOpt[iGroup]] = Param_Min[i]
+                  ParamOpt_Max[iGroup, NparamOpt[iGroup]] = Param_Max[i]
 					else
-                  ParamOpt[iLayer, NparamOpt[iLayer]]     = Param_Name[i]
-                  ParamOpt_Min[iLayer, NparamOpt[iLayer]] = Param_Min[i]
-                  ParamOpt_Max[iLayer, NparamOpt[iLayer]] = Param_Max[i]
+                  ParamOpt[iGroup, NparamOpt[iGroup]]     = Param_Name[i]
+                  ParamOpt_Min[iGroup, NparamOpt[iGroup]] = Param_Min[i]
+                  ParamOpt_Max[iGroup, NparamOpt[iGroup]] = Param_Max[i]
 					end
 
 					# Checking error
-						if ParamOpt_Min[iLayer, NparamOpt[iLayer]] > ParamOpt_Max[iLayer, NparamOpt[iLayer]]
-							error("SoilWater LabOpt ERROR: $(ParamOpt[iLayer, NparamOpt[iLayer]]) $(ParamOpt_Min[iLayer, NparamOpt[iLayer]] ) < $(ParamValue[i]) < $( ParamOpt_Max[iLayer, NparamOpt[iLayer]]) !")
+						if ParamOpt_Min[iGroup, NparamOpt[iGroup]] > ParamOpt_Max[iGroup, NparamOpt[iGroup]]
+							error("SoilWater LabOpt ERROR: $(ParamOpt[iGroup, NparamOpt[iGroup]]) $(ParamOpt_Min[iGroup, NparamOpt[iGroup]] ) < $(ParamValue[i]) < $( ParamOpt_Max[iGroup, NparamOpt[iGroup]]) !")
 						end
 				end # if Flag_Opt
 			i += 1

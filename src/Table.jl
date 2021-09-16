@@ -204,7 +204,7 @@ module table
 				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(2, ksmodelτ)
 
 				X, Y = size(Matrix)
-				Matrix = Matrix[1,:]
+				# Matrix = Matrix[1,:]
 				
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header

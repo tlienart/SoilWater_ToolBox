@@ -223,8 +223,8 @@ module paths
 			path.tableSoilwater.Table_HydroInfilt    = Path_Soilwater_Table * path.option.ModelName * "_" *string(opt.infilt.Model⍰) * "_" *  path.option.ModelName  *  "_" * path.tableSoilwater.Table_HydroInfilt
 			path.tableSoilwater.Table_Infilt         = Path_Soilwater_Table * path.option.ModelName * "_" *string(opt.infilt.Model⍰) *  "_" *  path.option.ModelName  *  "_" *  path.tableSoilwater.Table_Infilt
 			path.tableSoilwater.Table_KsModel_Ks        = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" *  path.option.Select  * "_" * path.tableSoilwater.Table_KsModel_Ks
-			path.tableSoilwater.Table_KsModel        = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" *  path.option.Select  * "_" * path.tableSoilwater.Table_KsModel
-			path.tableSoilwater.Table_KsModel_τ        = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" *  path.option.Select  * "_" * path.tableSoilwater.Table_KsModel_τ
+			path.tableSoilwater.Table_KsModel        = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" *  opt.ksModel.KₛModel⍰ * "_" * path.tableSoilwater.Table_KsModel
+			path.tableSoilwater.Table_KsModel_τ        = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" *  opt.ksModel.KₛModel⍰  * "_" * path.tableSoilwater.Table_KsModel_τ
 			path.tableSoilwater.Table_KΨ             = Path_Soilwater_Table * "_"  *  path.option.ModelName * "_" * path.tableSoilwater.Table_KΨ
 			path.tableSoilwater.Table_Psd            = Path_Soilwater_Table *  "_" * path.option.ModelName * "_" *string(opt.psd.Model⍰) *  "_" * path.option.ModelName * "_" * path.tableSoilwater.Table_Psd
 			path.tableSoilwater.Table_Psd_θΨ_θ       = Path_Soilwater_Table *  "_" * path.option.ModelName * "_" *string(opt.psd.HydroModel⍰) *  "_" * path.option.ModelName * "_" *  path.tableSoilwater.Table_Psd_θΨ_θ
@@ -256,7 +256,7 @@ module paths
 
 			Plot_KsModel₀ = Path_Soilwater_Plot * "/KsModel/"
 				mkpath(Plot_KsModel₀)
-				path.plotSoilwater.Plot_KsModel = Plot_KsModel₀ * SiteName_Soilwater * "_"  * path.option.ModelName  * "_" *  path.option.Select  * "_" * path.plotSoilwater.Plot_KsModel
+				path.plotSoilwater.Plot_KsModel = Plot_KsModel₀ * SiteName_Soilwater * "_"  * path.option.ModelName  * "_" * opt.ksModel.KₛModel⍰  * "_" * path.plotSoilwater.Plot_KsModel
 
 
 			Plot_σΨm = Path_Soilwater_Plot * "/LabSigmaHm/" 

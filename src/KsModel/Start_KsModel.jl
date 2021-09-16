@@ -43,7 +43,7 @@ module startKsModel
 			else
 				GroupBool_Select = fill(true, N_iZ)
 
-				iGroup_Opt =fill(1, N_iZ)
+				iGroup_Opt = 1
 
 				KₛModel = θψ2KsModel.KSMODEL(GroupBool_Select, hydro, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, N_iZ::Int64, optim, optimKsmodel, option, param; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 

@@ -72,9 +72,24 @@ module θψ2KsModel
 
 						
 				elseif option.ksModel.KₛModel⍰=="KsModel_New" # Original + Tσ₁ <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-					# Computting T1 as a function of σ 
-					Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ; Inverse=false)
-					# Tσ₁ = τMODEL_σ2(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ)
+					# Computting T1 as a function of σ
+					Tσ₁ = τMODEL_σ(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ; Inverse=false, τ₄=τ₄)
+
+					# Transformation matrix
+						T1 =  10.0 ^ (Tσ₁ / (Tσ₁ - 1.0))
+						T2 = 2.0 * (1.0 - τ₂)
+						T3 = 1.0 / (1.0 - τ₃)
+
+					# Transformation macro
+						T1Mac = 10.0 ^ (τ₁Max * τ₁Mac / (1.0 - τ₁Max * τ₁Mac))
+						T2Mac = 2.0 * (1.0 - τ₂ * τ₂Mac)
+						T3Mac = 1.0 / (1.0 - τ₃Mac)
+			
+					return KₛModel = cst.KunsatModel * QuadGK.quadgk(Se -> KSMODEL_TRADITIONAL(Se, T1, T2, T3, T1Mac, T2Mac, T3Mac, θs, θsMacMat, θr, σ, Ψm, σMac, ΨmMac), 0.0, Se_Max; rtol=Rtol)[1]
+
+				elseif option.ksModel.KₛModel⍰=="KsModel_New2" # Original + Tσ₁ <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+					# Computting T1 as a function of σ
+					Tσ₁ = τMODEL_σ2(hydroParam, iZ, τ₁Max * τ₁ηMin, τ₁Max, σ; τ₄=τ₄, σboundWater=τ₅)
 
 					# Transformation matrix
 						T1 =  10.0 ^ (Tσ₁ / (Tσ₁ - 1.0))
@@ -174,12 +189,12 @@ module θψ2KsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : τMODEL_σ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function τMODEL_σ(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, σ; Inverse=false)
+		function τMODEL_σ(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, σ; Inverse=false, τ₄=0.5)
 			ση = σ_2_ση(hydroParam, iZ, σ)
 			if Inverse
-				return τ = (1.0 - ση) ^ 0.5  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
+				return τ = (1.0 - ση) ^ τ₄  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
 			else
-				return τ = ση ^ 0.5  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
+				return τ = ση ^ τ₄  * (Pₘₐₓ - Pₘᵢₙ) + Pₘᵢₙ
 			end	
 		end
 	#..................................................................
@@ -188,10 +203,10 @@ module θψ2KsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :τMODEL_σ2
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function τMODEL_σ2(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, σ; τ₅=0.5, σboundWater = 2.0)
+		function τMODEL_σ2(hydroParam, iZ,  Pₘᵢₙ, Pₘₐₓ, σ; τ₄=0.5, σboundWater = 0.5)
 			ση = σ_2_ση(hydroParam, iZ, σ)
 
-		return τ = (Pₘₐₓ - Pₘᵢₙ) * max(ση / σboundWater, 1.0) ^ τ₅ + Pₘᵢₙ
+		return τ = (Pₘₐₓ - Pₘᵢₙ) * min((ση / σboundWater) ^ τ₄, 1.0) + Pₘᵢₙ
 		end
 	#..................................................................
 

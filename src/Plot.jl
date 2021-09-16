@@ -125,10 +125,10 @@ module plot
 			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=20, xgridstyle=:dash, ygridstyle=:dash, xtickalign=1, ytickalign=1)
 					
 			#  == Plot_θ_Ψ  == 
-				Axis1 = Axis(Fig[1,1], title="KsModel_" * NameSim, titlesize=25, xlabel="ln (1 + KsModel_Obs) [mm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [mm hour⁻¹ ]", xlabelsize=25,  ylabelsize=25, xticksize=20,  yticksize=20)
+				Axis1 = Axis(Fig[1,1], title="KsModel_" * NameSim, titlesize=25, xlabel="ln (1 + Ks_Obs) [mm hour⁻¹ ]", ylabel="ln (1 + KsModel_Sim) [mm hour⁻¹ ]", xlabelsize=25,  ylabelsize=25, xticksize=20,  yticksize=20)
 
-				CairoMakie.xlims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
-				CairoMakie.ylims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
+				xlims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
+				ylims!(Axis1, log1p.(0.0), log1p.(Ks_Max * cst.MmS_2_MmH))
 
 				KsTicks = expm1.(range(log1p(0.0), stop=log1p(Ks_Max * cst.MmS_2_MmH), length=10)) 
 				Axis1.xticks = (log1p.(KsTicks), string.( floor.(KsTicks, digits=1)))
@@ -136,17 +136,17 @@ module plot
 
 				ΔΘsMacΘr = θsMacMatₒᵦₛ .-  θrₒᵦₛ
 
-				Fig_Ks = CairoMakie.scatter!(Fig[1,1], log1p.(Ksₒᵦₛ .* cst.MmS_2_MmH), log1p.(KₛModel .* cst.MmS_2_MmH), color=σₒᵦₛ, markersize=125.0*ΔΘsMacΘr, marker =:circle)
+				Fig_Ks = scatter!(Fig[1,1], log1p.(Ksₒᵦₛ .* cst.MmS_2_MmH), log1p.(KₛModel .* cst.MmS_2_MmH), color=σₒᵦₛ, markersize=125.0*ΔΘsMacΘr, marker =:circle)
 
-				CairoMakie.Colorbar(Fig[1, 2], limits=(minimum(hydro.σ_Min), maximum(hydro.σ_Max)), colormap = CairoMakie.cgrad(:viridis, 5, categorical = true), size = 25,  label="σ[-]", vertical = true, flipaxis = false, highclip = :cyan, lowclip = :red)
+				Colorbar(Fig[1, 2], limits=(minimum(σₒᵦₛ), maximum(σₒᵦₛ)), colormap =:viridis, label="σ[-]", vertical = true)
 
 				Line = range(log1p(Ks_Min.* cst.MmS_2_MmH), stop=log1p(Ks_Max.* cst.MmS_2_MmH), length=10) 
 
-				Fig_Ks = CairoMakie.lines!(Fig[1,1], Line, Line, color=:blue)
+				Fig_Ks = lines!(Fig[1,1], Line, Line, color=:blue)
 
 				# Leg1 = Colorbar(Fig, Fig_Ks, label = "Theta", ticklabelsize = 14, labelpadding = 5, width = 10)
 				
-				CairoMakie.trim!(Fig.layout)
+				trim!(Fig.layout)
 
 			Fig[1, 1] = Axis1
    		# Fig[1, 2] = Leg1
