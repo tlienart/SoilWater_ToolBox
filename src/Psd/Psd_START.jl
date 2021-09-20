@@ -1,3 +1,9 @@
+include("PsdStruct.jl")
+include("PsdInitialize.jl")
+include("PsdFunc.jl")
+include("PsdOpt.jl")
+
+
 module psdStart
 	import ..stats, ..psdInitialize, ..psdOpt, ..psdFunc
 

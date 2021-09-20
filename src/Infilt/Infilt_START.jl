@@ -1,6 +1,14 @@
 # =============================================================
 #		MODULE: infiltration
 # =============================================================
+
+include("BestFunc.jl")
+include("OfBest.jl")
+include("QuasiExact.jl")
+include("TimeTransSteady.jl")
+include("InfiltStruct.jl")
+include("InfiltInitialize.jl")
+
 module infiltStart
 	import ..sorptivity, ..wrc, ..kunsat, ..infiltInitialize, ..bestFunc, ..stats, ..tool, ..quasiExact, ..ofBest, ..hydroRelation
 	import BlackBoxOptim, Statistics

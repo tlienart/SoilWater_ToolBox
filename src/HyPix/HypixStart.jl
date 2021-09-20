@@ -1,6 +1,29 @@
 # =============================================================
 #		MODULE: hydro
-# =============================================================
+	# =============================================================
+	include("Interpolate.jl")
+	include("Opt/ThetaObs.jl")
+	include("θini.jl")
+	include("Opt/OfHypix.jl")
+	include("Interception.jl")
+	include("Flux.jl")
+	include("Ponding.jl")
+	include("Residual.jl")
+	include("ΔΔtchange.jl")
+	include("TimeStep.jl")
+	include("Richard.jl")
+	include("WaterBalance.jl")
+	include("Evaporation.jl")
+	include("RootWaterUptake.jl")
+	include("CheckError.jl")
+	include("Pet.jl")
+	include("Other/θaver.jl")
+	include("Memory.jl")
+	include("Climate.jl")
+	# include("PlotHypix.jl")
+	include("HypixModel.jl")
+	include("Opt/HypixOpt.jl")
+
 
 module hypixStart
 

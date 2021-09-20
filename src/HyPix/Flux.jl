@@ -38,7 +38,7 @@ module flux
 					return Q = K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Pressure" # <>=<>=<>=<>=<>
-					return Q = K_Aver * (((ψ_ - param.hyPix.Ψ_Bot) / discret.ΔZ_⬓[N_iZ]) + param.hyPix.Cosα)
+					return Q = K_Aver * (((ψ_ - param.hyPix.Ψ_Botom) / discret.ΔZ_⬓[N_iZ]) + param.hyPix.Cosα)
 				end
 			end # Case
 

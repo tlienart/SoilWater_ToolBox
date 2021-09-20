@@ -125,7 +125,7 @@ module params
 		ΔZdeep_max
 		Cosα
 		ΔHpondMax
-		Ψ_Bot
+		Ψ_Botom
 		ΔT_Min
 		ΔT_Max
 		N_Iter

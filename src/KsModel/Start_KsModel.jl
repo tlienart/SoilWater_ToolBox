@@ -1,6 +1,10 @@
 # =============================================================
 #		module: startKsModel
 # =============================================================
+
+include("θψ_2_KsModel.jl")
+include("Opt_KsModel.jl")
+
 module startKsModel
 	import ..θψ2KsModel, ..optKsModel, ..stats, ..plot
 	export START_KSMODEL

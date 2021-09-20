@@ -100,7 +100,8 @@ module options
 		LookupTable_Lai::Bool
 		LookUpTable_CropCoeficient::Bool
 		HydroModel⍰::String
-		BottomBoundary⍰
+		TopBoundary⍰::String
+		BottomBoundary⍰::String
 		∂R∂Ψ_Numerical::Bool
 		AdaptiveTimeStep⍰::String
 		NormMin⍰::String
