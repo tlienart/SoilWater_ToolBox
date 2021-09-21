@@ -107,8 +107,8 @@ module params
 		θΨ_Table
 	end
 	@option mutable struct HYPIXS
-		iOpt_Start
-		iOpt_End
+		iOpt_Start::Int64
+		iOpt_End::Int64
 		Year_Start::Int64
 		Month_Start::Int64
 		Day_Start::Int64
@@ -121,18 +121,23 @@ module params
 		Hour_End::Int64
 		Minute_End::Int64
 		Second_End::Int64
-		ΔZrz_Max
-		ΔZdeep_max
-		Cosα
-		ΔHpondMax
-		Ψ_Botom
-		ΔT_Min
-		ΔT_Max
-		N_Iter
-		ΔT_Rerun
-		Δθ_Max
-		NewtonStepWeaken
-		WaterBalanceResidual_Max
+		ΔZrz_Max::Float64
+		ΔZdeep_max::Float64
+		Cosα::Float64
+		ΔHpondMax::Float64
+		Ψ_MinMin::Float64
+		Ψ_MaxMax::Float64
+		Ψ_Top::Float64
+		Ψ_Botom::Float64
+		ΔT_Min::Float64
+		ΔT_Max::Float64
+		N_Iter::Int64
+		ΔT_Rerun::Float64
+		Δθ_Max::Float64
+		NewtonStep_Min::Float64
+		NewtonStep_Mean::Float64
+		NewtonStep_Max::Float64
+		WaterBalanceResidual_Max::Float64
 		obsTheta::OBSΘ
 		ploting::PLOT
 	end

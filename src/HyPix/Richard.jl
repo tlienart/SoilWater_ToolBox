@@ -31,7 +31,7 @@ module richard
 		
 				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
 
-				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iT, iTer, N_iZ, param, Residual, ΔΨmax, Ψ, Ψ_Max, Ψ_Min)
+				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, iTer, N_iZ, option, param, Residual, ΔΨmax, θ, Ψ)
 
 				# Averaging the Residuals, depending on method
 					Residual_Max = RESIDUAL_MAX(discret, iT, N_iZ, option, Residual, ΔT)
@@ -118,7 +118,6 @@ module richard
 	#     Averaging the Residuals, depending on method
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RESIDUAL_MAX(discret, iT::Int64, N_iZ::Int64, option, Residual, ΔT)
-
 				Residual_Norm = 0.0
 				Residual_Max  = 0.0
 
@@ -143,12 +142,11 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SOLVING_TRIAGONAL_MATRIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iT::Int64, iTer::Int64, N_iZ::Int64, param, Residual, ΔΨmax, Ψ, Ψ_Max, Ψ_Min)
-	
+		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, N_iZ::Int64, option, param, Residual, ΔΨmax, θ, Ψ)
+
 			Matrix_Trid = Tridiagonal(∂R∂Ψ△[2:N_iZ], ∂R∂Ψ[1:N_iZ], ∂R∂Ψ▽[1:N_iZ-1])
 
-			# Transforming from row to column
-			Residual = reshape(Residual, N_iZ, 1)
+			Residual = reshape(Residual, N_iZ, 1) # Transforming from row to column
 
 			NewtonStep = Matrix_Trid \ -Residual
 
@@ -158,36 +156,30 @@ module richard
 				
 				# Updating Ψ
 					if isnan(NewtonStep[iZ])
-
+						@warn isnan(NewtonStep[iZ])
 						Ψ[iT,iZ] = Ψ₀
+					
 					else
 						Ψ[iT,iZ] += NewtonStep[iZ]
 
 						# Making sure it is within the feasible band 
-							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], eps()), 10.0^7)
-							# Ψ_Max[iZ]
+							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], param.hyPix.Ψ_MinMin), param.hyPix.Ψ_MaxMax)
 
-							Ψ[iT,iZ] = param.hyPix.NewtonStepWeaken * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStepWeaken) * Ψ₀
+						if option.hyPix.DynamicNewtonRaphsonStep
+							θ₀ = θ[iT, iZ]
+
+							θ, Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔΨmax, θ, θ₀, Ψ)
+						
+							Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
+
+						else
+							Ψ[iT,iZ] = param.hyPix.NewtonStep_Mean * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStep_Mean) * Ψ₀
+						end # if option.hyPix.DynamicNewtonRaphsonStep
+
+						if option.hyPix.ReduceOvershooting && iTer ≤ 3
+							Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔΨmax, Ψ, Ψ₀)
+						end
 					end
-
-				# # Under ralation of Ψ Averaging to help with convergence
-				# 	Ψ[iT,iZ] = param.hyPix.NewtonStepWeaken * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStepWeaken) * Ψ₀
-
-				# if isnan(Ψ[iT,iZ])		
-				# 	println(iT," , " ,Ψ[iT,:])
-				# 	println("")
-				# 	@show NewtonStep
-				# 	println("")
-				# 	@show Residual
-				# 	println(" ")
-				# 	@show ∂R∂Ψ
-				# 	println(" ")
-				# 	@show ∂R∂Ψ△
-				# 	println(" ")
-				# 	@show ∂R∂Ψ▽
-				# 	println(" ")
-				# 	error("NaN = true")
-				# end
 			end # for iZ=1:N_iZ
 			
 		return Ψ
@@ -196,24 +188,48 @@ module richard
 
 		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : Ψ_Constrain_K1
-	# 		Making sure that the steps of NR are not too big and within the limits of Δθ_Max
+	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
+	# 		Making sure that the steps of NR are not too big and within the limits of ΔΨmax
+	# 		Does not work
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Ψ_Constrain_K1(iT, iZ, ΔΨmax, Ψ)
-			if Ψ[iT,iZ] ≤ Ψ[iT-1,iZ]		
-				Ψ▽ = exp(log(Ψ[iT-1,iZ]) - ΔΨmax[iZ])
-
-				Ψ[iT,iZ] = max(Ψ[iT,iZ], Ψ▽)
-
+		function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔΨmax, Ψ, Ψold)
+			if Ψ[iT,iZ] ≤ Ψold	
+				Ψ[iT,iZ] = max(Ψ[iT,iZ],  Ψold - ΔΨmax[iZ])
 			else
-				Ψ△ = exp(log(Ψ[iT-1,iZ]) + ΔΨmax[iZ])
-				
-				Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψ△)
-			end
-
+				Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψold + ΔΨmax[iZ])
+			end	
 		return Ψ
-		end  # function: Ψ_Constrain_K1
+		end  # function: Ψ_REDUCE_OVERSHOOTING
+	#---------------------------------------------------------------
+
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : NEWTO_NRAPHSON_STEP
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, option, param, ΔΨmax, θ, θ₀, Ψ)
+
+			θ[iT, iZ] = wrc.Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
+
+			Δθ = abs(θ[iT, iZ] - θ₀)
+
+			Δθₘₐₓ =  timeStep.ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
+			
+			Ω = param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ , 1.0)
+		return θ, Ω
+		end  # function: NEWTO_NRAPHSON_STEP
+	# ------------------------------------------------------------------
 		
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : OVERSHOTTING_WET_DRY
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function OVERSHOTTING_WET_DRY(hydro, option, iZ, iT)
+			
+		return
+		end  # function: OVERSHOTTING_WET_DRY
+	# ------------------------------------------------------------------
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RERUN_HYPIX

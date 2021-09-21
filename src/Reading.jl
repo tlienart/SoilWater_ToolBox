@@ -788,11 +788,11 @@ module reading
 						# Putting soil param in hydroHorizon
 
 						# θsMacMat value depends on θs
-						if  Symbol(Name_Unique[i]) == "θsMacMat_ƞ "
-							for iZ =1:length(Param_Vect)
-								hydroHorizon.θsMacMat[iZ] =  hydroHorizon.θs[iZ] * Param_Vect[iZ]
-							end
-						end
+							if Symbol(Name_Unique[i]) == :θsMacMat_ƞ
+								for iZ =1:length(Param_Vect)
+									hydroHorizon.θsMacMat[iZ] =  hydroHorizon.θs[iZ] * Param_Vect[iZ]
+								end
+							end 
 						
 						setfield!(hydroHorizon, Symbol(Name_Unique[i]), Param_Vect)
 
