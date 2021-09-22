@@ -81,7 +81,7 @@ module table
 						for iZ=1:N_iZ
 							for iΨ =1:N_Ψ
 								Ψ₂ = Ψ_Table[iΨ]
-								θ₂[iZ, iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
+								θ₂[iZ, iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
 							end # iΨ
 						end # iZ
 
@@ -102,7 +102,7 @@ module table
 						for iΨ =1:N_Ψ
 							Id₂[iCount] = IdSelect[iZ]
 							Ψ₂[iCount] = Ψ_Table[iΨ]
-							θ₂[iCount] = wrc. Ψ_2_θDual(optionₘ,Ψ₂[iCount], iZ, hydro)
+							θ₂[iCount] = wrc.Ψ_2_θDual(optionₘ,Ψ₂[iCount], iZ, hydro)
 	
 							iCount+=1
 						end # iΨ
@@ -289,7 +289,7 @@ module table
 					for iZ=1:N_iZ
 						for iΨ =1:N_Ψ
 							Ψ = param.psd.Ψ_Table[iΨ]
-							θ[iZ, iΨ] = wrc. Ψ_2_θDual(option.psd, Ψ, iZ, hydroPsd)
+							θ[iZ, iΨ] = wrc.Ψ_2_θDual(option.psd, Ψ, iZ, hydroPsd)
 						end # iΨ
 					end # iZ
 

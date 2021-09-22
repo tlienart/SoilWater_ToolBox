@@ -238,7 +238,7 @@ module psdOpt
 							θΨ = zeros(Float64, N_Psd[iZ])
 							for iRpart = 1:N_Psd[iZ]
 								# Observed data
-								θΨ[iRpart] = wrc. Ψ_2_θDual(option.psd,Ψ_Rpart[iZ, iRpart], iZ, hydro)
+								θΨ[iRpart] = wrc.Ψ_2_θDual(option.psd,Ψ_Rpart[iZ, iRpart], iZ, hydro)
 							end
 
 							Of += stats.NSE_MINIMIZE(θΨ[1:N_Psd[iZ]], θ_Rpart[iZ,1:N_Psd[iZ]]; Power=2)
@@ -280,7 +280,7 @@ module psdOpt
 					θΨ = zeros(Float64, N_Psd)
 					for iRpart = 1:N_Psd
 						# Observed data
-						θΨ[iRpart] = wrc. Ψ_2_θDual(option.psd,Ψ_Rpart[iRpart], iZ, hydro)
+						θΨ[iRpart] = wrc.Ψ_2_θDual(option.psd,Ψ_Rpart[iRpart], iZ, hydro)
 					end
 
 					Of = stats.NSE_MINIMIZE(θΨ[1:N_Psd], θ_Rpart[1:N_Psd]; Power=2)

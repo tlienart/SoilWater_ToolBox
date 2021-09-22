@@ -2,7 +2,6 @@
 #		MODULE: residual
 # =============================================================
 module residual
-
 	import ..flux, ..wrc, ..ponding, ..kunsat
 	import ForwardDiff: derivative
 	export RESIDUAL_DIFF, RESIDUAL, ∂RESIDUAL∂Ψ, ∂R∂Ψ_FORWARDDIFF, ∂R∂Ψ▽_FORWARDDIFF, ∂R∂Ψ△_FORWARDDIFF
@@ -18,7 +17,7 @@ module residual
 			# if iZ == N_iZ
 			# 	Q[iT,iZ+1] = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT, min(iZ+1,N_iZ)], Ψ[iT,iZ])
 			
-			# 	θ[iT,iZ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iT,iZ], iZ, hydro)
+			# 	θ[iT,iZ] = wrc.Ψ_2_θDual(optionₘ,Ψ[iT,iZ], iZ, hydro)
 
 			# 	Qmax = ( - ΔSink[iT,iZ] - discret.ΔZ[iZ] * ((hydro.θs[iZ] - θ[iT-1,iZ]) - hydro.So[iZ] * (eps()- Ψ[iT-1,iZ]) * (θ[iT,iZ] / hydro.θs[iZ])))/ ΔT[iT ]+ Q[iT,iZ]
 
@@ -27,12 +26,12 @@ module residual
 			# else
 				Q[iT,iZ+1] = flux.Q!(option, optionₘ, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT, min(iZ+1,N_iZ)], Ψ[iT,iZ])
 
-				θ[iT,iZ] = wrc. Ψ_2_θDual(optionₘ,Ψ[iT,iZ], iZ, hydro)
+				θ[iT,iZ] = wrc.Ψ_2_θDual(optionₘ, Ψ[iT,iZ], iZ, hydro)
 		#   end
 			
 			Residual[iZ] = discret.ΔZ[iZ] * ((θ[iT,iZ] - θ[iT-1,iZ]) - hydro.So[iZ] * (Ψ[iT,iZ]- Ψ[iT-1,iZ]) * (θ[iT,iZ] / hydro.θs[iZ])) - ΔT[iT] * (Q[iT,iZ] - Q[iT,iZ+1]) + ΔSink[iT,iZ]
 
-			return Q, Residual, θ
+		return Q, Residual, θ
 		end  # function: RESIDUAL_DIFF
 
 
@@ -176,7 +175,7 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64,  N_iZ::Int64, option, optionₘ, param, ΔT, θ, Ψ)
 
-			# K_Aver[iZ+1] = flux.K_AVER!(optionₘ, discret, hydro, iZ+1, N_iZ, Ψ[iT, min(iZ+1,N_iZ)],  Ψ[iT, iZ])
+			# K_Aver[iZ+1] = flux.K_AVER!(optionₘ, discret, hydro, iZ+1, N_iZ, Ψ[iT, min(iZ+1,N_iZ)],  Ψ[iT,iZ])
 
 			Sw = hydro.So[iZ] / hydro.θs[iZ]
 

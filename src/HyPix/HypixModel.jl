@@ -77,9 +77,9 @@ module hypixModel
          Count_ReRun            = 0::Int64
 			 for iZ = 1:N_iZ
             θ[iT,iZ]   = max( min(hydro.θs[iZ], θ_Ini[iZ]), hydro.θr[iZ]) # Just in case
-				Ψ[iT,iZ]   = wrc.θ_2_ΨDual(option.hydro, θ_Ini[iZ], iZ, hydro)
-				Ψbest[iZ] = Ψ[iT,iZ] 
-				Q[iT,N_iZ] = 0.0
+            Ψ[iT,iZ]   = wrc.θ_2_ΨDual(option.hydro, θ_Ini[iZ], iZ, hydro)
+            Ψbest[iZ]  = Ψ[iT,iZ]
+            Q[iT,N_iZ] = 0.0
 			end
 
 			Q[iT,N_iZ+1] = 0.0
@@ -140,7 +140,7 @@ module hypixModel
 
 		N_iT = iT # Maximum of time steps
 
-		return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ
+	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ
 	end  # function: HYPIX
 	
 end  # module hypix

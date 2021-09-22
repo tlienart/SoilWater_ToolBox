@@ -64,9 +64,9 @@ module timeStep
 
 			Ψ△  = Ψ[iT,iZ] + ΔΨmax[iZ]
 			
-			θ△ = wrc. Ψ_2_θDual(option.hyPix, Ψ▽, iZ, hydro)
+			θ△ = wrc.Ψ_2_θDual(option.hyPix, Ψ▽, iZ, hydro)
 		
-			θ▽ = wrc. Ψ_2_θDual(option.hyPix, Ψ△, iZ, hydro)
+			θ▽ = wrc.Ψ_2_θDual(option.hyPix, Ψ△, iZ, hydro)
 		
 		return Δθ_Max =  (θ△ - θ▽) * 0.5	
 		end  # function:  ΔθMAX
@@ -94,14 +94,6 @@ module timeStep
 					# Assuring that the maximum change of ΔΨmax ≥ Ln ψ
 					if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ" # <>=<>=<>=<>=<>
 					
-						# Ψ▽ = max((Ψ[iT,iZ]) - ΔΨmax[iZ], 0.0)
-
-						# Ψ△  = Ψ[iT,iZ] + ΔΨmax[iZ]
-						
-						# θ△ = wrc. Ψ_2_θDual(optionₘ, Ψ▽, iZ, hydro)
-
-						# θ▽ = wrc. Ψ_2_θDual(optionₘ, Ψ△, iZ, hydro)
-
 						Δθ₂_Max = ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
 					end # option.hyPix.AdaptiveTimeStep⍰ ==:ΔΨ	
 

@@ -68,25 +68,25 @@ module plotSmap
                # Simulated 
                   for iΨ = 1:N_Se
                      option.hydro.HydroModel⍰ = "Vangenuchten"
-                      θ_Sim[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydro)
+                      θ_Sim[iΨ] = wrc.Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydro)
                       Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydro)
 
                      if Flag_OtherData1
                         # ClappHornberger model Smap_Hydro
                         option.hydro.HydroModel⍰ = "ClappHornberger"
-                           θ_OtherData[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData)
+                           θ_OtherData[iΨ] = wrc.Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData)
                            option.hydro.HydroModel⍰ = "ClappHornberger"
                            Kunsat_OtherData[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydroData)
 
                         # ClappHornberger Loam
                         option.hydro.HydroModel⍰ = "ClappHornberger"
-                           θ_OtherData2[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData2)
+                           θ_OtherData2[iΨ] = wrc.Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData2)
                             option.hydro.HydroModel⍰ = "ClappHornberger"
                            Kunsat_OtherData2[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydroData2)
           
                         # VanGenuchten_Jules
                         option.hydro.HydroModel⍰ = "VangenuchtenJules"
-                         θ_OtherData3[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData3)
+                         θ_OtherData3[iΨ] = wrc.Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydroData3)
                          option.hydro.HydroModel⍰ = "VangenuchtenJules"
                         Kunsat_OtherData3[iΨ] =  kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydroData3)
 
@@ -100,7 +100,7 @@ module plotSmap
                          θobs = θobs₀[iZ,:][1] 
                      else
                          option.hydro.HydroModel⍰ = "VangenuchtenJules"
-                         θ_Sim[iΨ] = wrc. Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydro)
+                         θ_Sim[iΨ] = wrc.Ψ_2_θDual(option.hydro,Ψ_Sim[iΨ], iZ, hydro)
 
                          option.hydro.HydroModel⍰ = "VangenuchtenJules"
                         Kunsat_Sim[iΨ] = kunsat.Ψ_2_KUNSAT(option.hydro, Ψ_Sim[iΨ], iZ, hydro)

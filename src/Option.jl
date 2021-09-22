@@ -103,8 +103,9 @@ module options
 		TopBoundary⍰::String
 		BottomBoundary⍰::String
 		∂R∂Ψ_Numerical::Bool
-		ReduceOvershooting::Bool
+		IterReduceOverShoting::Bool
 		DynamicNewtonRaphsonStep::Bool
+		ZhaWetingDrySoil::Bool
 		AdaptiveTimeStep⍰::String
 		NormMin⍰::String
 		Flag_ReRun::Bool

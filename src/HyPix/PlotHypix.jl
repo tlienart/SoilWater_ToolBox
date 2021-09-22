@@ -36,7 +36,7 @@ module plotHypix
 			
 	# 		for iΨ = 1:N_Se
 	# 			if Ψ_Max_Horizon[iZ] ≥ Ψplot[iΨ] ≥ Ψ_Min_Horizon[iZ]
-	# 				θplot[iΨ]    = wrc. Ψ_2_θDual(optionₘ,Ψplot[iΨ], iZ, hydroHorizon)
+	# 				θplot[iΨ]    = wrc.Ψ_2_θDual(optionₘ,Ψplot[iΨ], iZ, hydroHorizon)
 					
 	# 				Kplot[iΨ]    = kunsat.Ψ_2_KUNSAT(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 					

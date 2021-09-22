@@ -13,7 +13,7 @@ module ofHydrolab
 
 				for iΨ = 1:N_θΨobs[iZ]
 					θ_Obs[iΨ] = θ_θΨobs[iZ,iΨ]
-					θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ,  Ψ_θΨobs[iZ,iΨ], iZ, hydro)
+					θ_Sim[iΨ] = wrc.Ψ_2_θDual(optionₘ,  Ψ_θΨobs[iZ,iΨ], iZ, hydro)
 				end # for iΨ = 1:N_θΨobs[iZ]
 
 				Of_θΨ = stats.NSE_MINIMIZE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])
@@ -58,7 +58,7 @@ module ofHydrolab
 
 			for iΨ = 1:N_θΨobs[iZ]
 				θ_Obs[iΨ] = θ_θΨobs[iZ,iΨ]
-				θ_Sim[iΨ] = wrc. Ψ_2_θDual(optionₘ, Ψ_θΨobs[iZ,iΨ], iZ, hydro)
+				θ_Sim[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ_θΨobs[iZ,iΨ], iZ, hydro)
 			end # for iΨ = 1:N_θΨobs[iZ]
 
 			Rmse_θΨ = stats.RMSE(θ_Obs[1:N_θΨobs[iZ]], θ_Sim[1:N_θΨobs[iZ]])

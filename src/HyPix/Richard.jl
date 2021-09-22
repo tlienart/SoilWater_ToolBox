@@ -36,7 +36,7 @@ module richard
 				# Averaging the Residuals, depending on method
 					Residual_Max = RESIDUAL_MAX(discret, iT, N_iZ, option, Residual, ΔT)
 
-				# Determine if itteration made improvement
+				# Determine if iteration made improvement
 					if Residual_Max < Residual_Max_Best	
 						for iZ=1:N_iZ
 							Ψbest[iZ] = Ψ[iT,iZ]
@@ -94,11 +94,11 @@ module richard
 				Q, Residual, θ = residual.RESIDUAL(option, optionₘ, discret, hydro, iT, iZ, N_iZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
 
 				if option.hyPix.∂R∂Ψ_Numerical				
-					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT, iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 
-					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT, iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 		
-					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT, iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 				else		
 					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, N_iZ, option, optionₘ, param, ΔT, θ, Ψ)
 
@@ -110,8 +110,9 @@ module richard
 			# println("∂R∂Ψ▽=", ∂R∂Ψ▽[N_iZ] .- ∂R∂Ψ▽2[N_iZ], "\n")
 			# println("\n")
 
-			return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ
+		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ
 		end # function RICHARD
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RESIDUAL_MAX
@@ -153,6 +154,7 @@ module richard
 			for iZ=1:N_iZ
 				# Iteration k-1
 					Ψ₀ = Ψ[iT,iZ]
+					θ₀ = θ[iT,iZ]
 				
 				# Updating Ψ
 					if isnan(NewtonStep[iZ])
@@ -162,13 +164,20 @@ module richard
 					else
 						Ψ[iT,iZ] += NewtonStep[iZ]
 
+						if option.hyPix.IterReduceOverShoting && iTer ≤ 3
+							Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔΨmax, Ψ, Ψ₀)
+						end
+
+						# Correction of θ entering a dry soil 
+						if option.hyPix.ZhaWetingDrySoil
+							Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, option, θ, θ₀, Ψ, Ψ₀)
+						end
+
 						# Making sure it is within the feasible band 
 							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], param.hyPix.Ψ_MinMin), param.hyPix.Ψ_MaxMax)
 
 						if option.hyPix.DynamicNewtonRaphsonStep
-							θ₀ = θ[iT, iZ]
-
-							θ, Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔΨmax, θ, θ₀, Ψ)
+							Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔΨmax, θ₀, Ψ)
 						
 							Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 
@@ -176,17 +185,15 @@ module richard
 							Ψ[iT,iZ] = param.hyPix.NewtonStep_Mean * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStep_Mean) * Ψ₀
 						end # if option.hyPix.DynamicNewtonRaphsonStep
 
-						if option.hyPix.ReduceOvershooting && iTer ≤ 3
-							Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔΨmax, Ψ, Ψ₀)
-						end
 					end
 			end # for iZ=1:N_iZ
 			
 		return Ψ
 		end  # function: SOLVING_TRIAGONAL_MATRIX
+	# ------------------------------------------------------------------
 
 
-		
+	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
 	# 		Making sure that the steps of NR are not too big and within the limits of ΔΨmax
@@ -203,20 +210,18 @@ module richard
 	#---------------------------------------------------------------
 
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NEWTO_NRAPHSON_STEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, option, param, ΔΨmax, θ, θ₀, Ψ)
+		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, option, param, ΔΨmax, θ₀, Ψ)
 
-			θ[iT, iZ] = wrc.Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
+			θ₁ = wrc.Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
 
-			Δθ = abs(θ[iT, iZ] - θ₀)
+			Δθ = abs(θ₁ - θ₀)
 
-			Δθₘₐₓ =  timeStep.ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
+			Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
 			
-			Ω = param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ , 1.0)
-		return θ, Ω
+		return Ω = param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ , 1.0)
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
 		
@@ -224,10 +229,23 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OVERSHOTTING_WET_DRY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OVERSHOTTING_WET_DRY(hydro, option, iZ, iT)
-			
-		return
-		end  # function: OVERSHOTTING_WET_DRY
+	"""Zha, Y., Yang, J., Yin, L., Zhang, Y., Zeng, W., Shi, L., 2017. A modified Picard iteration scheme for overcoming numerical difficulties of simulating infiltration into dry soil. Journal of Hydrology 551, 56–69. https://doi.org/10.1016/j.jhydrol.2017.05.053 """
+			function ZHA_WETING_DRYSOIL(hydro, iT, iZ, option, θ, θ₀, Ψ, Ψ₀)
+				Ψwet = -0.2627 * hydro.σ[iZ] ^ 2.0 - 0.3425 * hydro.σ[iZ] + 3.0008
+				Ψwet = min( max(Ψwet, 0.0), 260.0 )
+
+				Ψdry = exp( 6.1843 *  hydro.σ[iZ] ^ 0.2835 )
+				Ψdry = min( max(Ψdry, 21_00.0), 35_000.0 )
+
+				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
+				if  Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet
+					θ[iT,iZ] = θ₀ + (Ψ[iT,iZ] - Ψ₀) * wrc.∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro)
+
+					θ[iT,iZ] = max(min(θ[iT,iZ], hydro.θs[iZ]),  hydro.θr[iZ])
+					Ψ[iT,iZ] = wrc.θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
+				end  # Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet	
+			return Ψ
+			end  # function:ZHA_WETING_DRYSOIL
 	# ------------------------------------------------------------------
 
 
@@ -268,7 +286,8 @@ module richard
 				Count_ReRun = 0
 			end  # if: param.hyPix.ΔT_Rerun
 
-			return Count_ReRun, Flag_ReRun, ΔT
+		return Count_ReRun, Flag_ReRun, ΔT
 		end  # function: RERUN_HYPIX
+		# ------------------------------------------------------------------
 
 end # module: richard	
