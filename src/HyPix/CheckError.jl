@@ -26,7 +26,7 @@ module checkError
 				error("\n Hypix error: HydroModel⍰ option = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [Vangenuchten] or [Kosugi]")
 			end
 
-			if option.hyPix.BottomBoundary⍰ ≠ "Free" && option.hyPix.BottomBoundary⍰ ≠ "Pressure"
+			if option.hyPix.BottomBoundary⍰ ≠ "Free" && option.hyPix.BottomBoundary⍰ ≠ "Ψ"
 				error("\n Hypix error: BottomBoundary⍰ option = $BottomBoundary⍰ not yet supported. BottomBoundary⍰ must = either [Free] or [Pressure]")
 			end
 

@@ -20,7 +20,7 @@
 	include("Other/θaver.jl")
 	include("Memory.jl")
 	include("Climate.jl")
-	# include("PlotHypix.jl")
+	include("PlotHypix.jl")
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
 

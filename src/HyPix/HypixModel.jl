@@ -3,7 +3,8 @@
 # =============================================================
 module hypixModel
 
-	import ..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..wrc, ..Δtchange, ..ΨminΨmax
+	import..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..Δtchange, ..ΨminΨmax
+	import ..wrc: θ_2_ΨDual
 
 	export HYPIX
 
@@ -77,7 +78,7 @@ module hypixModel
          Count_ReRun            = 0::Int64
 			 for iZ = 1:N_iZ
             θ[iT,iZ]   = max( min(hydro.θs[iZ], θ_Ini[iZ]), hydro.θr[iZ]) # Just in case
-            Ψ[iT,iZ]   = wrc.θ_2_ΨDual(option.hydro, θ_Ini[iZ], iZ, hydro)
+            Ψ[iT,iZ]   = θ_2_ΨDual(option.hydro, θ_Ini[iZ], iZ, hydro)
             Ψbest[iZ]  = Ψ[iT,iZ]
             Q[iT,N_iZ] = 0.0
 			end

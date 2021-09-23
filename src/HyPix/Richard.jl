@@ -2,7 +2,8 @@
 #		MODULE: residual
 # =============================================================
 module richard
-	import ..timeStep, ..flux, ..kunsat, ..ponding, ..residual, ..wrc
+	import ..timeStep, ..flux, ..kunsat, ..ponding, ..residual
+	import ..wrc: Ψ_2_θDual, ∂θ∂Ψ, θ_2_ΨDual
 	using LinearAlgebra
 
 	export RICHARD_ITERATION
@@ -10,7 +11,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD_ITERATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, Iter_CountTotal::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
+		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, Iter_CountTotal::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
 
 			# INITIALIZING
 				for iZ=1:N_iZ
@@ -215,7 +216,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, option, param, ΔΨmax, θ₀, Ψ)
 
-			θ₁ = wrc.Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
+			θ₁ = Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
 
 			Δθ = abs(θ₁ - θ₀)
 
@@ -239,10 +240,10 @@ module richard
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
 				if  Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet
-					θ[iT,iZ] = θ₀ + (Ψ[iT,iZ] - Ψ₀) * wrc.∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro)
+					θ[iT,iZ] = θ₀ + (Ψ[iT,iZ] - Ψ₀) * ∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro)
 
 					θ[iT,iZ] = max(min(θ[iT,iZ], hydro.θs[iZ]),  hydro.θr[iZ])
-					Ψ[iT,iZ] = wrc.θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
+					Ψ[iT,iZ] = θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
 				end  # Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet	
 			return Ψ
 			end  # function:ZHA_WETING_DRYSOIL
@@ -252,25 +253,19 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RERUN_HYPIX
 	# 		WITH UPDATED Ψ
+	#     Rerun if updated ΔT is smaller compared to previously Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, option, optionₘ, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
-			# Rerun if updated ΔT is smaller compared to previously Ψ
+
 
 			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3	
-
 				for iZ= 1:N_iZ
 					Q[iT,iZ] = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])
 				end # for: iZ= 1:N_iZ+1
 
 				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, option.hyPix, param, Q, ΔΨmax, ΔSink, θ, Ψ)
 
-				# Rerun if the new time step is smaller that the older time step
-				# if Flag_NoConverge # <>=<>=<>=<>=<>
-				# 	ΔT[iT] = ΔT_New
-				# 	Flag_ReRun = true
-				# 	Count_ReRun += 1
-
-				if ΔT[iT] / ΔT_New > param.hyPix.ΔT_Rerun # <>=<>=<>=<>=<>
+				if ΔT[iT] / ΔT_New ≥ param.hyPix.ΔT_Rerun # <>=<>=<>=<>=<>
 					ΔT[iT] = ΔT_New
 					Flag_ReRun = true
 					Count_ReRun += 1
