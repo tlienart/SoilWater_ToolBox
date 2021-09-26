@@ -358,9 +358,9 @@ module SoilWater_ToolBox
 		# _______________________ START: table _______________________ 
 
 		if option.run.ChangeHydroModel
-			table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.tableSoilwater.TableComplete_KΨ)
+			table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, N_iZ, path.inputSoilwater.Kunsat)
 			
-			table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
+			table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, N_iZ, path.inputSoilwater.Ψθ , param.hydro.TableComplete_θΨ; Orientation="Vertical")
 		end
 
 		if option.run.HydroLabθΨ⍰ ≠ "No" && option.run.HydroLabθΨ⍰ ≠ "File" # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>

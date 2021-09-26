@@ -11,7 +11,7 @@ module timeStep
 
 			# The iT is of the previous simulation
 			if !Flag_ReRun # <>=<>=<>=<>=<>	
-				ΔT₂, Δθ_Max = ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, option.hydro, param, Q, ΔΨmax, ΔSink, θ, Ψ)
+				ΔT₂, Δθ_Max = ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, param, Q, ΔΨmax, ΔSink, θ, Ψ)
 				iT += 1 # Going to the next simulation
 				ΔT[iT] = ΔT₂
 			end
@@ -77,7 +77,7 @@ module timeStep
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ADAPTIVE_TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ADAPTIVE_TIMESTEP(discret, hydro, iT::Int64, N_iZ::Int64, option, optionₘ, param, Q, ΔΨmax, ΔSink, θ, Ψ)
+		function ADAPTIVE_TIMESTEP(discret, hydro, iT::Int64, N_iZ::Int64, option, param, Q, ΔΨmax, ΔSink, θ, Ψ)
 
 			# Searching for the minimum value of ΔT of the simulation
 				if option.hyPix.NormMin⍰ == "Norm"

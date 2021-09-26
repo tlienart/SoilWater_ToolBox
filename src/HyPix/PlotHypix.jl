@@ -159,7 +159,7 @@ module plotHypix
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				#		FUNCTION : PLOT_SORPTIVITY
 				# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function PLOT_SORPTIVITY(hydro, iOpt, option, optionₘ, pathHyPix)
+				function PLOT_SORPTIVITY(hydro, iOpt, option, pathHyPix)
 					println("  ==  START: PLOT_SORPTIVITY_SeIni  ==")
 
 					# Setting the range of values for Se
@@ -171,7 +171,7 @@ module plotHypix
 					for iSeIni=1:N_SeIni
 						θ_Ini[iSeIni] = wrc.Se_2_θ(Se_Ini[iSeIni], 1, hydro)
 
-						Sorptivity_Mod[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], 1, hydro, option, optionₘ) 
+						Sorptivity_Mod[iSeIni] = sorptivity.SORPTIVITY(θ_Ini[iSeIni], 1, hydro, option) 
 					end
 					
 					# PLOTTING ====================	

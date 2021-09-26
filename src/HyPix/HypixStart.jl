@@ -304,7 +304,7 @@ module hypixStart
 					plotHypix.plots.RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iOpt, path.hyPix)
 				end
 				if  option.hyPix.Plot_Sorptivity
-					plotHypix.plots.PLOT_SORPTIVITY(hydro, iOpt, option, optionₘ, path.hyPix)
+					plotHypix.plots.PLOT_SORPTIVITY(hydro, iOpt, option, path.hyPix)
 				end
 			println("		=== === END: Plotting === === \n")
 			end # if option.hyPix.Plotting

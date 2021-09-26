@@ -2,7 +2,7 @@
 #		MODULE: residual
 # =============================================================
 module richard
-	import ..timeStep, ..flux, ..kunsat, ..ponding, ..residual
+	import ..timeStep, ..flux, ..ponding, ..residual
 	import ..wrc: Ψ_2_θDual, ∂θ∂Ψ, θ_2_ΨDual
 	using LinearAlgebra
 
@@ -11,7 +11,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD_ITERATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, Iter_CountTotal::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
+		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, Iter_CountTotal::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 			# INITIALIZING
 				for iZ=1:N_iZ
@@ -19,7 +19,7 @@ module richard
 				end
 		
 				# Residual_Max_Best it should be improved compared to Ψ[iT,iZ] = Ψ[iT-1,iZ]
-				~, ~, ~, ~, Residual, ~, ~ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
+				~, ~, ~, ~, Residual, ~, ~ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 				# Averaging the Residuals, depending on method
 					Residual_Max_Best = RESIDUAL_MAX(discret, iT, N_iZ, option, Residual, ΔT)
@@ -30,7 +30,7 @@ module richard
 				iTer += 1
 				Iter_CountTotal += 1 # Counting the iterations
 		
-				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
+				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, iTer, N_iZ, option, param, Residual, ΔΨmax, θ, Ψ)
 
@@ -73,35 +73,36 @@ module richard
 			end
 
 			# Determine if the simulation is going to rerun with a different time step
-				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, N_iZ, option, optionₘ, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
+				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, N_iZ, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 		return Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, Iter_CountTotal, Q, ΔHpond, ΔT, θ, Ψ
 		end  # function: RICHARD_SOLVING
+	#-----------------------------------------------------------------
 
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option, optionₘ)
+		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
-			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, param, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, optionₘ)
+			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, param, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, option)
 
 			# ∂R∂Ψ2 = fill(0.0, N_iZ)
 			# ∂R∂Ψ▽2 = fill(0.0, N_iZ)
 			# ∂R∂Ψ△2 =  fill(0.0, N_iZ)
 
 			for iZ=1:N_iZ		
-				Q, Residual, θ = residual.RESIDUAL(option, optionₘ, discret, hydro, iT, iZ, N_iZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
+				Q, Residual, θ = residual.RESIDUAL(option, discret, hydro, iT, iZ, N_iZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
 
 				if option.hyPix.∂R∂Ψ_Numerical				
-					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 
-					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 		
-					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 				else		
-					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, N_iZ, option, optionₘ, param, ΔT, θ, Ψ)
+					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, N_iZ, option, param, ΔT, θ, Ψ)
 
 				end # if option.hyPix.∂R∂Ψ_Numerical
 
@@ -113,6 +114,7 @@ module richard
 
 		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ
 		end # function RICHARD
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,6 +140,7 @@ module richard
 			
 		return Residual_Max
 		end  # function: RESIDUAL_MAX
+	#-----------------------------------------------------------------
 
 
 
@@ -193,7 +196,6 @@ module richard
 		end  # function: SOLVING_TRIAGONAL_MATRIX
 	# ------------------------------------------------------------------
 
-
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
@@ -232,11 +234,9 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""Zha, Y., Yang, J., Yin, L., Zhang, Y., Zeng, W., Shi, L., 2017. A modified Picard iteration scheme for overcoming numerical difficulties of simulating infiltration into dry soil. Journal of Hydrology 551, 56–69. https://doi.org/10.1016/j.jhydrol.2017.05.053 """
 			function ZHA_WETING_DRYSOIL(hydro, iT, iZ, option, θ, θ₀, Ψ, Ψ₀)
-				Ψwet = -0.2627 * hydro.σ[iZ] ^ 2.0 - 0.3425 * hydro.σ[iZ] + 3.0008
-				Ψwet = min( max(Ψwet, 0.0), 260.0 )
+				Ψwet = max( 3.5391*hydro.σ[iZ]^3 - 20.676*hydro.σ[iZ]^2 + 24.835*hydro.σ[iZ] + 15.976, 0.0 )
 
-				Ψdry = exp( 6.1843 *  hydro.σ[iZ] ^ 0.2835 )
-				Ψdry = min( max(Ψdry, 21_00.0), 35_000.0 )
+				Ψdry = exp( 1.6216*log(hydro.σ[iZ]) + 8.7268 )
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
 				if  Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet
@@ -255,15 +255,15 @@ module richard
 	# 		WITH UPDATED Ψ
 	#     Rerun if updated ΔT is smaller compared to previously Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, option, optionₘ, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
+		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 
 			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3	
 				for iZ= 1:N_iZ
-					Q[iT,iZ] = flux.Q!(option, optionₘ, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])
+					Q[iT,iZ] = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])
 				end # for: iZ= 1:N_iZ+1
 
-				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, option.hyPix, param, Q, ΔΨmax, ΔSink, θ, Ψ)
+				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, param, Q, ΔΨmax, ΔSink, θ, Ψ)
 
 				if ΔT[iT] / ΔT_New ≥ param.hyPix.ΔT_Rerun # <>=<>=<>=<>=<>
 					ΔT[iT] = ΔT_New
@@ -283,6 +283,6 @@ module richard
 
 		return Count_ReRun, Flag_ReRun, ΔT
 		end  # function: RERUN_HYPIX
-		# ------------------------------------------------------------------
+	# ------------------------------------------------------------------
 
 end # module: richard	
