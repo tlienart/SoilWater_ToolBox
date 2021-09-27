@@ -11,10 +11,25 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD_ITERATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, Iter_CountTotal::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
+		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
+
+			if option.hyPix.TopBoundary⍰ == "Ψ"
+				Q[iT,2] = flux.Q!(option, discret, hydro, 2, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT-1,2], param.hyPix.Ψ_Top)
+	
+				θ[iT,1] = Ψ_2_θDual(option.hyPix, param.hyPix.Ψ_Top, 1, hydro)
+	
+				Q[iT,1] = max((discret.ΔZ[1] * ((θ[iT,1] - θ[iT-1,1]) - hydro.So[1] * (param.hyPix.Ψ_Top - Ψ[iT-1,1]) * (θ[iT,1] / hydro.θs[1])) + ΔSink[iT,1]) / ΔT[iT] + Q[iT,2], 0.0)
+
+				ΔPr[iT] = Q[iT,1]
+
+				println("ΔPr =", ΔPr[iT]," ",Ψ[iT-1, 1], " , " , Q[iT,2])
+			end
 
 			# INITIALIZING
 				for iZ=1:N_iZ
+					if option.hyPix.TopBoundary⍰ == "Ψ"
+						Ψbest[1] =  param.hyPix.Ψ_Top
+					end
 					Ψ[iT,iZ] = Ψbest[iZ]
 				end
 		
@@ -28,7 +43,7 @@ module richard
 			iTer = 0::Int64
 			while iTer ≤ param.hyPix.N_Iter	
 				iTer += 1
-				Iter_CountTotal += 1 # Counting the iterations
+				IterCount += 1 # Counting the iterations
 		
 				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
@@ -75,7 +90,7 @@ module richard
 			# Determine if the simulation is going to rerun with a different time step
 				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, N_iZ, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-		return Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, Iter_CountTotal, Q, ΔHpond, ΔT, θ, Ψ
+		return Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ
 		end  # function: RICHARD_SOLVING
 	#-----------------------------------------------------------------
 
@@ -87,6 +102,8 @@ module richard
 		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, param, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, option)
+
+	#----------------------------------------------------------------
 
 			# ∂R∂Ψ2 = fill(0.0, N_iZ)
 			# ∂R∂Ψ▽2 = fill(0.0, N_iZ)
@@ -178,7 +195,7 @@ module richard
 						end
 
 						# Making sure it is within the feasible band 
-							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], param.hyPix.Ψ_MinMin), param.hyPix.Ψ_MaxMax)
+							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], eps(10.0)), param.hyPix.Ψ_MaxMax)
 
 						if option.hyPix.DynamicNewtonRaphsonStep
 							Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔΨmax, θ₀, Ψ)
@@ -190,8 +207,8 @@ module richard
 						end # if option.hyPix.DynamicNewtonRaphsonStep
 
 					end
-			end # for iZ=1:N_iZ
-			
+			end # for iZ=1:N_iZ	
+
 		return Ψ
 		end  # function: SOLVING_TRIAGONAL_MATRIX
 	# ------------------------------------------------------------------
@@ -257,7 +274,6 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-
 			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3	
 				for iZ= 1:N_iZ
 					Q[iT,iZ] = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])
@@ -285,4 +301,5 @@ module richard
 		end  # function: RERUN_HYPIX
 	# ------------------------------------------------------------------
 
-end # module: richard	
+end # module: richard
+#......................................................................	

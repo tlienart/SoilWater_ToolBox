@@ -24,12 +24,10 @@
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
 
-
 module hypixStart
-
-	import ..climate, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
-	
-	import Statistics, Dates, DelimitedFiles
+	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
+	import Statistics
+	import Dates: now, value
 	export HYPIX_START
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,13 +40,14 @@ module hypixStart
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		# If no optimize
-		if !(option.hyPix.Optimisation)
-			param.hyPix.iOpt_Start = 1
-			param.hyPix.iOpt_End = 1
-		end
-
+			if !(option.hyPix.Optimisation)
+				param.hyPix.iOpt_Start = 1
+				param.hyPix.iOpt_End = 1
+			end
+		
+		# LOOPING FOR EVERY SOIL	
 		for iSim = 1:length(Soilname)
-		for iOpt = param.hyPix.iOpt_Start : param.hyPix.iOpt_End
+		for iOpt = param.hyPix.iOpt_Start:param.hyPix.iOpt_End
 			println("=== START RUNNING Hypix_1D ==== \n")
 			println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 			println("		=== === === START: Looping with time $iOpt steps \n")
@@ -62,7 +61,7 @@ module hypixStart
 				iOpt_Count = iOpt - param.hyPix.iOpt_Start + 1
 
 			# ACTUAL TIME
-				Time_Start = Dates.now()
+				Time_Start = now()
 
 			# DISCRETISATION ~~~~~
 				# Read discretisaation
@@ -100,6 +99,7 @@ module hypixStart
 					global ∑ΔQ_Bot                    = fill(0.0::Float64, N_∑T_Plot)
 					global ∑∑ΔSink                    = fill(0.0::Float64, N_∑T_Plot)
 				end
+				
 				∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, N_Memory, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest = memory.MEMORY(clim, iOpt_Count, N_∑T_Climate, N_iZ, obsTheta, param)
 
 			# INITIALIZING THE STRUCTURE
@@ -147,14 +147,11 @@ module hypixStart
 			end
 			
 			# if Flag_Opt then it will rerun with the optimal parameters
-			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, Iter_CountTotal, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
-
-			
+			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
 			# WATER BALANCE
 				# Computed after the warmup period
 				∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage = waterBalance.WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot, N_iT, N_iZ, Q, ΔSink, ΔT, θ, Ψ)
-
 
 			# SUMMARY HOW GOOD THE SIMULATION
 				# Computed climate day after the warmup period
@@ -172,13 +169,13 @@ module hypixStart
 				end
 
 				# Timing 
-					Time_End = Dates.now()
-					ΔRunTimeHypix[iOpt_Count] = Dates.value(Time_End - Time_Start) / 1000
+					Time_End = now()
+					ΔRunTimeHypix[iOpt_Count] = value(Time_End - Time_Start) / 1000
 
 				# Convergence rate
 					iNonConverge_iOpt[iOpt_Count]          = iNonConverge
 
-					Efficiency[iOpt_Count]                 = ceil(Int, 86400 * Iter_CountTotal / ∑T[N_iT])
+					Efficiency[iOpt_Count]                 = ceil(Int, cst.Day_2_Second * IterCount / ∑T[N_iT])
 					
 					ΔT_Average[iOpt_Count]                 = ceil(Int, Statistics.mean(ΔT[i∑T_CalibrStart:N_iT]))
 					
