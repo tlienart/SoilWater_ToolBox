@@ -13,18 +13,6 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max::Float64, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
-			if option.hyPix.TopBoundary⍰ == "Ψ"
-				Q[iT,2] = flux.Q!(option, discret, hydro, 2, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT-1,2], param.hyPix.Ψ_Top)
-	
-				θ[iT,1] = Ψ_2_θDual(option.hyPix, param.hyPix.Ψ_Top, 1, hydro)
-	
-				Q[iT,1] = max((discret.ΔZ[1] * ((θ[iT,1] - θ[iT-1,1]) - hydro.So[1] * (param.hyPix.Ψ_Top - Ψ[iT-1,1]) * (θ[iT,1] / hydro.θs[1])) + ΔSink[iT,1]) / ΔT[iT] + Q[iT,2], 0.0)
-
-				ΔPr[iT] = Q[iT,1]
-
-				println("ΔPr =", ΔPr[iT]," ",Ψ[iT-1, 1], " , " , Q[iT,2])
-			end
-
 			# INITIALIZING
 				for iZ=1:N_iZ
 					if option.hyPix.TopBoundary⍰ == "Ψ"
@@ -251,9 +239,9 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	"""Zha, Y., Yang, J., Yin, L., Zhang, Y., Zeng, W., Shi, L., 2017. A modified Picard iteration scheme for overcoming numerical difficulties of simulating infiltration into dry soil. Journal of Hydrology 551, 56–69. https://doi.org/10.1016/j.jhydrol.2017.05.053 """
 			function ZHA_WETING_DRYSOIL(hydro, iT, iZ, option, θ, θ₀, Ψ, Ψ₀)
-				Ψwet = max( 3.5391*hydro.σ[iZ]^3 - 20.676*hydro.σ[iZ]^2 + 24.835*hydro.σ[iZ] + 15.976, 0.0 )
+				Ψwet = max( 3.5391 * hydro.σ[iZ]^3 - 20.676 * hydro.σ[iZ]^2 + 24.835 * hydro.σ[iZ] + 15.976, 0.0 )
 
-				Ψdry = exp( 1.6216*log(hydro.σ[iZ]) + 8.7268 )
+				Ψdry = exp( 1.6216 * log(hydro.σ[iZ]) + 8.7268 )
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
 				if  Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet
@@ -274,9 +262,9 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, N_iZ::Int64, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3	
-				for iZ= 1:N_iZ
-					Q[iT,iZ] = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])
+			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 2	
+				for iZ = 1:N_iZ
+					Q[iT,iZ] = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, Ψ[iT,iZ], Ψ[iT, max(iZ-1,1)])
 				end # for: iZ= 1:N_iZ+1
 
 				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, N_iZ, option, param, Q, ΔΨmax, ΔSink, θ, Ψ)
@@ -285,6 +273,10 @@ module richard
 					ΔT[iT] = ΔT_New
 					Flag_ReRun = true
 					Count_ReRun += 1
+
+				elseif option.hyPix.TopBoundary⍰ == "Ψ"
+					Flag_ReRun = true
+					Count_ReRun += 2
 				
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false

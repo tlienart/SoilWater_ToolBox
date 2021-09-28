@@ -3,7 +3,8 @@
 # =============================================================
 module hypixModel
 
-	import..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..Δtchange, ..ΨminΨmax
+	import..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..Δtchange, ..ΨminΨmax, ..boundary
+	import ..wrc
 	import ..wrc: θ_2_ΨDual
 
 	export HYPIX
@@ -98,6 +99,11 @@ module hypixModel
 
 			# DERIVING FORCING DATA ΔPr & ΔPet:
 				∑Pr[iT], ΔPr[iT], iT_Pr = interpolate.∑_2_Δ(∑Pr[iT-1], ∑Pr_Climate, ∑T, ∑T_Climate, iT_Pr, clim.N_Climate, Flag_ReRun, iT)
+
+			# SPECIAL BOUNDARY CONDITIONS
+				if option.hyPix.TopBoundary⍰ == "Ψ"
+					ΔPr = boundary.BOUNDARY_TOP_Ψ(discret, Flag_ReRun, hydro, iT, N_iZ, option, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+				end
 
 			# POTENTIAL EVAPOTRANSPIRATION
 				if option.hyPix.RootWaterUptake || option.hyPix.Evaporation
