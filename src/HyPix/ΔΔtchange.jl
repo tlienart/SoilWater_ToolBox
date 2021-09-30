@@ -28,70 +28,73 @@ module Δtchange
 			end
 
 		# PREPARING DATA FOR PLOTS
-			Date_Start = clim.Date[2]
-
-			# param = reading.hyPix.DATES(param, pathHyPix)
+			Date_Start = clim.Date[1]
 					
-			Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
+			Date_Start_Calibr = obsTheta.Date[1] 
+			
+			# DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
 				
-			Date_End_Calibr = DateTime(param.hyPix.obsTheta.Year_End, param.hyPix.obsTheta.Month_End, param.hyPix.obsTheta.Day_End, param.hyPix.obsTheta.Hour_End, param.hyPix.obsTheta.Minute_End, param.hyPix.obsTheta.Second_End)
+			Date_End_Calibr = obsTheta.Date[end] 
+			# DateTime(param.hyPix.obsTheta.Year_End, param.hyPix.obsTheta.Month_End, param.hyPix.obsTheta.Day_End, param.hyPix.obsTheta.Hour_End, param.hyPix.obsTheta.Minute_End, param.hyPix.obsTheta.Second_End)
 
 			ΔT_Sim = value(Date_End_Calibr - Date_Start_Calibr) / 1000
 
-			∑T_Plot = collect(range(0.0, step=cst.Day_2_Second, stop=ΔT_Sim)) 
+			∑T_Reduced = collect(range(0.0, step=param.hyPix.ΔT_Output, stop=ΔT_Sim)) 
 			
 			# Take account that we are starting at Date_Start_Calibr
 			ΔT_Start_Calibr = value(Date_Start_Calibr - Date_Start) / 1000
 
-			@. ∑T_Plot = ∑T_Plot + ΔT_Start_Calibr
+			@. ∑T_Reduced = ∑T_Reduced + ΔT_Start_Calibr
 
-			N_∑T_Plot = length(∑T_Plot)
+			N_∑Treduced = length(∑T_Reduced)
 
 		# PREPARING DATES WITH INTERVAL:
-			∑T_Date_Plot = range(Date_Start_Calibr, step=Second(cst.Day_2_Second), Date_End_Calibr)	
+			∑T_Date_Plot = range(Date_Start_Calibr, step=Second(param.hyPix.ΔT_Output), Date_End_Calibr)
 
 		# INTERPOLATING DATA
-			θ_Plot = fill(0.0::Float64, N_∑T_Plot, N_iZ)	
-			θ_Plot = interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, N_iZ, θ_Plot, θ)
+			θ_Plot = fill(0.0::Float64, N_∑Treduced, N_iZ)	
+			θ_Plot = interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, N_iT, N_iZ, θ_Plot, θ)
 
-			θobs_Plot = fill(0.0::Float64, N_∑T_Plot, N_iZ)	
-			θobs_Plot = interpolate.INTERPOLATE_2D_LOOP(obsTheta.∑T[1:obsTheta.N_iT], ∑T_Plot, N_∑T_Plot, obsTheta.N_iT, obsTheta.Ndepth, θobs_Plot, obsTheta.θobs[1:obsTheta.N_iT,1:obsTheta.Ndepth])
+			θobs_Plot = fill(0.0::Float64, N_∑Treduced, N_iZ)
+			θobs_Plot = interpolate.INTERPOLATE_2D_LOOP(obsTheta.∑T[1:obsTheta.N_iT], ∑T_Reduced, obsTheta.N_iT, obsTheta.Ndepth, θobs_Plot, obsTheta.θobs[1:obsTheta.N_iT,1:obsTheta.Ndepth])
 
-			Ψ_Plot = fill(0.0::Float64, N_∑T_Plot, N_iZ)
-			Ψ_Plot =  interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, N_iZ, Ψ_Plot, Ψ) .* cst.Mm_2_Cm
+			Ψ_Plot = fill(0.0::Float64, N_∑Treduced, N_iZ)
+			Ψ_Plot =  interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, N_iT, N_iZ, Ψ_Plot, Ψ) .* cst.Mm_2_Cm
 
-			∑Flux_Plot = fill(0.0::Float64, N_∑T_Plot, N_iZ+1)
-			∑Flux_Plot = interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, N_iZ+1, ∑Flux_Plot, ∑ΔQ)
+			∑Flux_Plot = fill(0.0::Float64, N_∑Treduced, N_iZ+1)
+			∑Flux_Plot = interpolate.INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, N_iT, N_iZ+1, ∑Flux_Plot, ∑ΔQ)
 
-			ΔT_Plot = fill(0.0::Float64, N_∑T_Plot)
-			ΔT_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ΔT_Plot, ΔT)
+		# .<>.<>.<>
 
-			∑Evaporation_Plot = fill(0.0::Float64, N_∑T_Plot)
-			∑Evaporation_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ∑Evaporation_Plot, ∑Evaporation)
+			ΔT_Plot = fill(0.0::Float64, N_∑Treduced)
+			ΔT_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ΔT_Plot, ΔT)
 
-			∑Pet_Plot = fill(0.0::Float64, N_∑T_Plot)
-			∑Pet_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ∑Pet_Plot, ∑Pet)
+			∑Evaporation_Plot = fill(0.0::Float64, N_∑Treduced)
+			∑Evaporation_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ∑Evaporation_Plot, ∑Evaporation)
 
-			∑Pr_Plot = fill(0.0::Float64, N_∑T_Plot)
-			∑Pr_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ∑Pr_Plot, ∑Pr)
+			∑Pet_Plot = fill(0.0::Float64, N_∑Treduced)
+			∑Pet_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ∑Pet_Plot, ∑Pet)
 
-			∑WaterBalance_η_Plot = fill(0.0::Float64, N_∑T_Plot)
-			∑WaterBalance_η_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ∑WaterBalance_η_Plot, ∑WaterBalance_η)
+			∑Pr_Plot = fill(0.0::Float64, N_∑Treduced)
+			∑Pr_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ∑Pr_Plot, ∑Pr)
 
-			∑∑Sink = fill(0.0::Float64, N_∑T_Plot)
-			∑∑Sink = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ∑∑Sink, ∑ΔSink)
+			∑WaterBalance_η_Plot = fill(0.0::Float64, N_∑Treduced)
+			∑WaterBalance_η_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ∑WaterBalance_η_Plot, ∑WaterBalance_η)
 
-			∑PrGross_Plot = fill(0.0::Float64, N_∑T_Plot)	
-			∑PrGross_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T_Climate[1:clim.N_Climate], ∑T_Plot, N_∑T_Plot, clim.N_Climate, ∑PrGross_Plot, ∑Pr_Gross)
+			∑∑Sink = fill(0.0::Float64, N_∑Treduced)
+			∑∑Sink = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ∑∑Sink, ∑ΔSink)
+
+			∑PrGross_Plot = fill(0.0::Float64, N_∑Treduced)	
+			∑PrGross_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T_Climate[1:clim.N_Climate], ∑T_Reduced, N_∑Treduced, clim.N_Climate, ∑PrGross_Plot, ∑Pr_Gross)
 
 			# From ∑ to Δ
-            ΔEvaporation_Plot = fill(0.0::Float64, N_∑T_Plot)
-            ΔFlux_Plot        = fill(0.0::Float64, N_∑T_Plot, N_iZ+1)
-            ΔPet_Plot         = fill(0.0::Float64, N_∑T_Plot)
-				ΔPr_Plot          = fill(0.0::Float64, N_∑T_Plot)
-				ΔPrGross_Plot     = fill(0.0::Float64, N_∑T_Plot)
-            ΔSink_Plot        = fill(0.0::Float64, N_∑T_Plot)
-				Date_Plot         = fill(now()::DateTime, N_∑T_Plot)
+            ΔEvaporation_Plot = fill(0.0::Float64, N_∑Treduced)
+            ΔFlux_Plot        = fill(0.0::Float64, N_∑Treduced, N_iZ+1)
+            ΔPet_Plot         = fill(0.0::Float64, N_∑Treduced)
+				ΔPr_Plot          = fill(0.0::Float64, N_∑Treduced)
+				ΔPrGross_Plot     = fill(0.0::Float64, N_∑Treduced)
+            ΔSink_Plot        = fill(0.0::Float64, N_∑Treduced)
+				Date_Plot         = fill(now()::DateTime, N_∑Treduced)
 
 			# Root Water Uptake daily 
 				# Initial condition
@@ -103,11 +106,11 @@ module Δtchange
 				ΔPrGross_Plot[1]=0.0
             ΔSink_Plot[1]               = 0.0
 
-				∑T_Plot[1] = ∑T_Plot[1] * cst.Second_2_Hour
-				for iT=2:N_∑T_Plot
-					∑T_Plot[iT] = ∑T_Plot[iT] .* cst.Second_2_Hour
+				∑T_Reduced[1] = ∑T_Reduced[1] * cst.Second_2_Hour
+				for iT=2:N_∑Treduced
+					∑T_Reduced[iT] = ∑T_Reduced[iT] .* cst.Second_2_Hour
 
-					Date_Plot[iT] = Date_Plot[iT-1] + Second(Int(ceil((∑T_Plot[iT]-∑T_Plot[iT-1]) * cst.Hour_2_Second)))
+					Date_Plot[iT] = Date_Plot[iT-1] + Second(Int(ceil((∑T_Reduced[iT]-∑T_Reduced[iT-1]) * cst.Hour_2_Second)))
 
 					for iZ=1:N_iZ+1
 						ΔFlux_Plot[iT,iZ] = ∑Flux_Plot[iT,iZ] - ∑Flux_Plot[iT-1,iZ]
@@ -128,15 +131,15 @@ module Δtchange
 			# PONDING: Finding when Ponding occures (non zero). Note that not corrected for Δt
 				iΔPond_NonZero = findall(!iszero, ΔHpond[1:N_iT])
 
-				ΔPond_Plot = fill(0.0, N_∑T_Plot)
-				ΔPond_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Plot, N_∑T_Plot, N_iT, ΔPond_Plot, ΔHpond)
+				ΔPond_Plot = fill(0.0, N_∑Treduced)
+				ΔPond_Plot = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, ΔPond_Plot, ΔHpond)
 				if !(isempty(iΔPond_NonZero))
 					Flag_Plot_Pond = true
 				else
 					Flag_Plot_Pond = false
 				end
 		
-	return ∑T_Plot, ∑T_Date_Plot, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑T_Plot, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot
+	return ∑T_Reduced, ∑T_Date_Plot, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑Treduced, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot
 	end # function: CHANGE_OUTPUT_ΔT
 	
 end  # module: tincrease

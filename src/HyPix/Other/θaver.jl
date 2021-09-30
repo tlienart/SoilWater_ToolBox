@@ -8,15 +8,15 @@ module θaver
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : θ_AVERAGE
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function θAVER(discret; Z=Z, θ_Plot=θ_Plot, N_iZ=N_iZ, N_∑T_Plot=N_∑T_Plot, Zaver=400.0)
+      function θAVER(discret; Z=Z, θ_Plot=θ_Plot, N_iZ=N_iZ, N_∑Treduced=N_∑Treduced, Zaver=250.0)
          # Make sure that Zaver is whitin physical bounds
             Zaver = min(Zaver, Z[N_iZ])
 
          # Memory
-            θsim_Aver = fill(0.0::Float64, N_∑T_Plot)
+            θsim_Aver = fill(0.0::Float64, N_∑Treduced)
 
          # For every time step
-         for iT = 1:N_∑T_Plot
+         for iT = 1:N_∑Treduced
             iZ_Max = 1
             for iZ = 1:N_iZ
                if Z[iZ] ≤ Zaver
@@ -25,8 +25,8 @@ module θaver
                   iZ_Max = iZ
                   break
                end
+               iZ_Max = iZ
             end # iZ=1:N_iZ
-
             if Z[iZ_Max-1] + eps(100.0) < Zaver
                θsim_Aver[iT] += θ_Plot[iT, iZ_Max] * (Zaver - Z[iZ_Max-1])
             end

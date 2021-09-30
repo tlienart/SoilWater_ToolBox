@@ -121,8 +121,9 @@ module params
 		Hour_End::Int64
 		Minute_End::Int64
 		Second_End::Int64
-		ΔZrz_Max::Float64
-		ΔZdeep_max::Float64
+		ZfineCoarse::Float64
+		ΔZfine::Float64
+		ΔZcoarse::Float64
 		Cosα::Float64
 		ΔHpondMax::Float64
 		Ψ_MinMin::Float64
@@ -138,6 +139,7 @@ module params
 		NewtonStep_Mean::Float64
 		NewtonStep_Max::Float64
 		WaterBalanceResidual_Max::Float64
+		ΔT_Output::Float64
 		obsTheta::OBSΘ
 		ploting::PLOT
 	end

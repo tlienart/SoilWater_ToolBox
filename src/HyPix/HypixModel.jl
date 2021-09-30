@@ -4,15 +4,14 @@
 module hypixModel
 
 	import..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..Δtchange, ..ΨminΨmax, ..boundary
-	import ..wrc
-	import ..wrc: θ_2_ΨDual
+	import ..wrc: θ_2_ΨDual, Ψ_2_θDual
 
 	export HYPIX
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -60,11 +59,9 @@ module hypixModel
 		# FIRST TIME STEP
          Flag_NoConverge        = false::Bool
          Flag_ReRun             = false::Bool
-         IterCount        = 0::Int64
+         IterCount              = 0::Int64
          iNonConverge           = 0::Int64
          iT                     = 1::Int64
-         iT_CropCoeficient      = 2::Int64
-         iT_Lai                 = 2::Int64
          iT_Pet                 = 2::Int64
          iT_Pr                  = 2::Int64
          ΔEvaporation[1]        = 0.0::Float64
@@ -77,11 +74,31 @@ module hypixModel
          ∑Pr[1]                 = 0.0::Float64
          ∑T[1]                  = 0.0::Float64
          Count_ReRun            = 0::Int64
-			 for iZ = 1:N_iZ
-            θ[iT,iZ]   = max( min(hydro.θs[iZ], θ_Ini[iZ]), hydro.θr[iZ]) # Just in case
-            Ψ[iT,iZ]   = θ_2_ΨDual(option.hydro, θ_Ini[iZ], iZ, hydro)
-            Ψbest[iZ]  = Ψ[iT,iZ]
-            Q[iT,N_iZ] = 0.0
+			
+		# Boundary conditions
+			if Flag_θΨini == :θini
+				Ψini =  fill(0.0::Float64, N_iZ)
+				
+				for iZ = 1:N_iZ
+					θ[iT,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ]) # Just in case
+					Ψ[iT,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
+					Ψini[iZ] = Ψ[iT,iZ]
+
+					Ψbest[iZ]  = Ψini[iZ]
+					Q[iT,N_iZ] = 0.0
+				end
+
+			elseif Flag_θΨini == :Ψini
+				θini = fill(0.0::Float64, N_iZ)
+
+				for iZ = 1:N_iZ
+					Ψ[iT,iZ] = Ψini[iZ]
+					θ[iT,iZ]  = Ψ_2_θDual(option.hydro, Ψini[iZ], iZ, hydro)
+					θini[iZ] = θ[iT,iZ]
+
+					Ψbest[iZ]  = Ψ[iT,iZ]
+					Q[iT,N_iZ] = 0.0
+				end
 			end
 
 			Q[iT,N_iZ+1] = 0.0

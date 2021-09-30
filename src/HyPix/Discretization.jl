@@ -2,7 +2,7 @@
 #		module: discret
 # =============================================================
 module discretization
-	export DISCRETIZATION
+	export DISCRETIZATION, DISCRETIZATION_AUTO
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :  DISCRETIZATION
@@ -57,14 +57,21 @@ module discretization
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : DISCRETISATION_AUTO
+	#		FUNCTION : DISCRETIZATION_AUTO
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	""" 
-					DISCRETISATION_AUTO(N_Layer, Zlayer Zroot)
+					DISCRETIZATION_AUTO(N_Layer, Zlayer Zroot)
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
-		function DISCRETISATION_AUTO(param; N_Layer, Zlayer, Zroot)
+		function DISCRETIZATION_AUTO(param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
+
+			# Determine if we selected to input θini or Ψini
+				if Flag_θΨini ==:Ψini
+					θΨini = Ψini
+				elseif Flag_θΨini ==:θini
+					θΨini = θini
+				end
 
 			ΔZlayer = fill(0.0::Float64, N_Layer)
 
@@ -75,14 +82,15 @@ module discretization
 				end # for
 
 			# Computing the number of discretization
-            ΔZcell    = []
-            Layer     = []
-				for iLayer =1:N_Layer
+            ΔZcell     = []
+            Layer      = []
+            θΨini_Cell = []
 
-					if  Zlayer[iLayer] < Zroot
-						ΔZ_Max = param.hyPix.ΔZrz_Max
+				for iLayer = 1:N_Layer
+					if  Zlayer[iLayer] < param.hyPix.ZfineCoarse
+						ΔZ_Max = param.hyPix.ΔZfine
 					else
-						ΔZ_Max = param.hyPix.ΔZdeep_max
+						ΔZ_Max = param.hyPix.ΔZcoarse
 					end
 
 					Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell
@@ -91,6 +99,7 @@ module discretization
 					for iDiscret=1:Nsplit
 						append!(ΔZcell, ΔZcell₀)
                   append!(Layer, iLayer)
+						append!(θΨini_Cell, θΨini[iLayer])
 					end
 				end # ilayer
 				N = length(ΔZcell)
@@ -103,15 +112,15 @@ module discretization
 					Z[iZ] = Z[iZ-1] + ΔZcell[iZ]
 				end
 			
-		return Layer, Z
-		end  # function: DISCRETISATION_AUTO
+		return Layer, Z, θΨini_Cell
+		end  # function: DISCRETIZATION_AUTO
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : DISCRETISATION_AUTO_θini
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	""" 
-					DISCRETISATION_AUTO(N_Layer, Zlayer)
+					DISCRETIZATION_AUTO(N_Layer, Zlayer)
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
@@ -132,9 +141,9 @@ module discretization
 				for iLayer =1:N_Layer
 
 					if  Zlayer[iLayer] < Zroot
-						ΔZ_Max = param.hyPix.ΔZrz_Max
+						ΔZ_Max = param.hyPix.ΔZfine
 					else
-						ΔZ_Max = param.hyPix.ΔZdeep_max
+						ΔZ_Max = param.hyPix.ΔZcoarse
 					end
 
 					Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell
@@ -157,7 +166,7 @@ module discretization
 				end
 			
 		return Layer, Z, θᵢₙᵢ_Cell
-		end  # function: DISCRETISATION_AUTO
+		end  # function: DISCRETIZATION_AUTO
 	
 end  # module: discret
 # ............................................................

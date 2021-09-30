@@ -85,6 +85,7 @@ module paths
 		Climate::String
 		Dates::String
 		Discretization::String
+		DiscretizationAuto::String
 		HyPix_HydroParam::String
 		HyPixParamOpt::String
 
@@ -299,6 +300,7 @@ module paths
 			path.hyPix.Climate          = Path_Hypix₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * path.hyPix.Climate
 			path.hyPix.Dates            = Path_Hypix₂ * path.hyPix.Dates
 			path.hyPix.Discretization   = Path_Hypix₂ * path.hyPix.Discretization
+			path.hyPix.DiscretizationAuto   = Path_Hypix₂ * path.hyPix.DiscretizationAuto
 			path.hyPix.HyPix_HydroParam = Path_Hypix₂ * path.hyPix.HyPix_HydroParam
 			path.hyPix.HyPix_VegParam   = Path_Hypix₂ * path.hyPix.HyPix_VegParam
 			path.hyPix.HyPixParamOpt    = Path_Hypix₂ * path.hyPix.HyPixParamOpt

@@ -19,14 +19,14 @@ module infiltInitialize
 						# 	hydroInfilt.θr[iZ] = param.hydro.θr
 						# end # option.run.IntergranularMixingPsd
 
-					# θr < θ_Ini
-						infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])
+					# θr < θini
+						infiltParam.θini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θini[iZ])
 
 					# θs computation
 						hydroInfilt.θs[iZ] = param.hydro.Coeff_Φ_2_θs * hydroInfilt.Φ[iZ]
 
-					# Checking for θ_Ini
-						infiltParam.θ_Ini[iZ] = min(infiltParam.θ_Ini[iZ], hydroInfilt.θs[iZ] - 0.0015) 
+					# Checking for θini
+						infiltParam.θini[iZ] = min(infiltParam.θini[iZ], hydroInfilt.θs[iZ] - 0.0015) 
 				end  # for iZ=1:N_iZ
 
 			# TIME FLUX CORRECTION

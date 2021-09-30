@@ -39,7 +39,6 @@ module climate
 
 			N_∑T_Climate = Int(∑T_Climate[clim.N_Climate])
 
-
 		return ∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp
 		end # function CLIMATE
 

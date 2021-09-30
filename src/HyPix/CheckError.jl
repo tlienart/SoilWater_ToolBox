@@ -9,7 +9,7 @@ module checkError
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CHECK_ERROR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CHECK_ERROR(clim, hydroHorizon, N_iHorizon, N_iRoot, N_iZ, param, veg, Z)
+	function CHECK_ERROR(clim, hydroHorizon, N_Layer, N_iRoot, N_iZ, param, veg, Z)
 
 		# DETERMENING IF PATH IS OPEN
 			CHECK_IFOPEN(pathHyPix.Table_Discretisation)
@@ -40,11 +40,11 @@ module checkError
 
 		# CHECKING HYDRO PARAMETERS
 			if option.hyPix.HydroModel⍰ == "Kosugi"
-				for iHorizon in 1:N_iHorizon
+				for iHorizon in 1:N_Layer
 					if hydroHorizon.θs[iHorizon] <  hydroHorizon.θsMacMat[iHorizon]
 						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(pathHyPix.Hydraulic)")
 					end
-				end # for iHorizon in 1:N_iHorizon
+				end # for iHorizon in 1:N_Layer
 			end # option.hyPix.HydroModel⍰
 		
 		# CHECKING THE ROOT DENSITY PARAMETERS

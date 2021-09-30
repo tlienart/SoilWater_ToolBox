@@ -10,14 +10,14 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SORPTIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, optionₘ; Rtol= 10^-8.0, SorptivityModelScaled = true) #Rtol=10^-3.0
+		function SORPTIVITY(θini, iZ, hydroInfilt, option, optionₘ; Rtol= 10^-8.0, SorptivityModelScaled = true) #Rtol=10^-3.0
 
 			# INITIALIZING
 				Ψ_Sat = 0.0
 
-				Se_Ini = wrc.θ_2_Se(θ_Ini, iZ, hydroInfilt)
+				Se_Ini = wrc.θ_2_Se(θini, iZ, hydroInfilt)
 
-				Ψ_Ini = wrc.θ_2_ΨDual(optionₘ, θ_Ini, iZ, hydroInfilt)
+				Ψini = wrc.θ_2_ΨDual(optionₘ, θini, iZ, hydroInfilt)
 
 				SeIni_⬙ = (1.0 + Se_Ini) / 2.0
 
@@ -27,21 +27,21 @@ module sorptivity
 
 			if option.infilt.SorptivitySplitModel⍰ == "Split"  # <>=<>=<>=<>=<>
 				# Sorptivity based on θ
-					function SORPTIVITY_θ²(hydroInfilt, iZ, θ, θ_Ini, optionₘ)
+					function SORPTIVITY_θ²(hydroInfilt, iZ, θ, θini, optionₘ)
 						Se = wrc.θ_2_Se(θ, iZ, hydroInfilt)
 
-					return Sorptivity_θ = DIFFUSIVITY_θ(θ, iZ, hydroInfilt, optionₘ) * (hydroInfilt.θs[iZ] + θ - 2.0 * θ_Ini)
+					return Sorptivity_θ = DIFFUSIVITY_θ(θ, iZ, hydroInfilt, optionₘ) * (hydroInfilt.θs[iZ] + θ - 2.0 * θini)
 					end # SORPTIVITY_θ² ~~~~~~~~~~~~~~~~~
 
-					Sorptivity_θ² = QuadGK.quadgk(θ -> SORPTIVITY_θ²(hydroInfilt, iZ, θ, θ_Ini, optionₘ), θ_Ini, θ⬙, rtol=Rtol)[1]
+					Sorptivity_θ² = QuadGK.quadgk(θ -> SORPTIVITY_θ²(hydroInfilt, iZ, θ, θini, optionₘ), θini, θ⬙, rtol=Rtol)[1]
 
 				# Sorptivity based on Ψ
-					function SORPTIVITY_Ψ²(hydroInfilt, iZ, θ_Ini, Ψ)
+					function SORPTIVITY_Ψ²(hydroInfilt, iZ, θini, Ψ)
 						θ = wrc.Ψ_2_θDual(optionₘ,Ψ, iZ, hydroInfilt)
-					return Sorptivity_Ψ = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ, iZ, hydroInfilt) * (hydroInfilt.θs[iZ] + θ - 2.0 * θ_Ini)
+					return Sorptivity_Ψ = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ, iZ, hydroInfilt) * (hydroInfilt.θs[iZ] + θ - 2.0 * θini)
 					end # SORPTIVITY_Ψ² ~~~~~~~~~~~~~~~~~
 
-					Sorptivity_Ψ² = QuadGK.quadgk(Ψ -> SORPTIVITY_Ψ²(hydroInfilt, iZ, θ_Ini, Ψ), Ψ_Sat, Ψ⬙, rtol=Rtol)[1]
+					Sorptivity_Ψ² = QuadGK.quadgk(Ψ -> SORPTIVITY_Ψ²(hydroInfilt, iZ, θini, Ψ), Ψ_Sat, Ψ⬙, rtol=Rtol)[1]
 
 			return Sorptivity = √(max(Sorptivity_θ², eps()) + max(Sorptivity_Ψ², eps()))
 			elseif option.infilt.SorptivitySplitModel⍰ == "Split_η" # <>=<>=<>=<>=<>

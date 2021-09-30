@@ -99,6 +99,7 @@ module options
 		RootWaterUptakeComp::Bool
 		LookupTable_Lai::Bool
 		LookUpTable_CropCoeficient::Bool
+		Discretisation_File_Auto⍰::String
 		HydroModel⍰::String
 		TopBoundary⍰::String
 		BottomBoundary⍰::String

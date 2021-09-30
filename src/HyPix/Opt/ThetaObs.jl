@@ -12,7 +12,7 @@ module thetaObs
 
 			# CHECKING DATA CONSISTENCY
 				if obsTheta.Date[1] < clim.Date[2]
-					error("\n Hypix error: Starting date of obsTheta  $(obsTheta.Date[1]) < starting date of climate data $(clim.Date[1])")
+					error("\n Hypix error: Starting date of obsTheta  $(obsTheta.Date[1]) < starting date of climate data $(clim.Date[1]) by 2 iT")
 				end # Error checking
 
 				# Checking the celLs

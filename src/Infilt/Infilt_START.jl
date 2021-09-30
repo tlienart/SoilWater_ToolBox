@@ -31,7 +31,7 @@ module infiltStart
 					hydroInfilt = deepcopy(hydro)
 				 
 				# Not to have errors
-					infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])
+					infiltParam.θini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θini[iZ])
 
 				if option.infilt.Model⍰ == "Best_Univ"
 					∑Infilt_3D, T_TransStead =  bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T)
@@ -47,7 +47,7 @@ module infiltStart
 					hydroInfilt = deepcopy(hydro)
 				
 				# Not to have errors
-				infiltParam.θ_Ini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θ_Ini[iZ])
+				infiltParam.θini[iZ] = max(hydroInfilt.θr[iZ] + eps(), infiltParam.θini[iZ])
 				
 				SearchRange =[(log10(hydroInfilt.Ks_Min), log10(hydroInfilt.Ks_Max))]
 
@@ -85,7 +85,7 @@ module infiltStart
 
 
 			# OUTPUTS RUNNING THE OPTIMAL INFILTRATION
-				infiltOutput.Sorptivity[iZ] = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt) 
+				infiltOutput.Sorptivity[iZ] = sorptivity.SORPTIVITY(infiltParam.θini[iZ], iZ, hydroInfilt, option, option.infilt) 
 
 				if option.infilt.Model⍰ == "Best_Univ"
 					∑Infilt_3D, T_TransStead = bestFunc.BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T)

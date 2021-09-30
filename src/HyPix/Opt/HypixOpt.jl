@@ -8,15 +8,15 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIXOPT_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 		SearchRange = SEARCHRANGE(optim, option)
 
-		Optimization = BlackBoxOptim.bboptimize(X -> OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent, MaxFuncEvals=param.hyPix.obsTheta.NmaxFuncEvals)
+		Optimization = BlackBoxOptim.bboptimize(X -> OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest); SearchRange=SearchRange, NumDimensions=optim.NparamOpt, TraceMode=:silent, MaxFuncEvals=param.hyPix.obsTheta.NmaxFuncEvals)
 
 		X = BlackBoxOptim.best_candidate(Optimization)
 
-		hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, param, X, veg)
+		hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_Layer, N_iZ, optim, option, param, X, veg)
 
 		
 
@@ -53,14 +53,14 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OF_HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_iHorizon, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+		function OF_HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydroHorizon, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, X, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 			# New optimized param which are put into the matching veg or hydro parameters
-				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, param, X, veg)
+				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_Layer, N_iZ, optim, option, param, X, veg)
 				
 		
 			# Running Hypix model	
-				∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ  = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θ_Ini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
+				∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ  = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 			# Weighted Objective Function
 				Wof = ofHypix.θof.WOF_θ(∑T[1:N_iT], N_iT, N_iZ, obsTheta, param, ΔHpond[1:N_iT], θ[1:N_iT,1:N_iZ], θSim)
@@ -103,7 +103,7 @@ module hypixOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PARAM_2_hydro_veg
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_iHorizon, N_iZ, optim, option, param, X, veg)
+		function PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_Layer, N_iZ, optim, option, param, X, veg)
 
 			println("\n		==== OPT PARAM ====")
 			for iParam = 1:optim.NparamOpt
@@ -181,7 +181,7 @@ module hypixOpt
 		
 
 			# Converting θsMacMat_ƞ -> θsMacMat
-				for iZ=1:N_iHorizon
+				for iZ=1:N_Layer
 					hydroHorizon.θsMacMat[iZ] = hydroHorizon.θsMacMat_ƞ[iZ] * hydroHorizon.θs[iZ]
 				end 
 

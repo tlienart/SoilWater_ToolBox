@@ -8,16 +8,16 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : BEST
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T; θ_Ini=infiltParam.θ_Ini[iZ])
+		function BEST_UNIVERSAL_START(∑Infilt_3D, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T; θini=infiltParam.θini[iZ])
 
 			# Initializing
-				Se_Ini = wrc.θ_2_Se(θ_Ini, iZ, hydroInfilt)
+				Se_Ini = wrc.θ_2_Se(θini, iZ, hydroInfilt)
 
 				Kr_θini = (kunsat.Se_2_KUNSAT(option.infilt, Se_Ini, iZ, hydroInfilt)) / hydroInfilt.Ks[iZ]
 
-				Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, option.infilt)
+				Sorptivity = sorptivity.SORPTIVITY(θini, iZ, hydroInfilt, option, option.infilt)
 
-				A = bestFunc.A(θ_Ini, hydroInfilt.θs[iZ], iZ, infiltParam)
+				A = bestFunc.A(θini, hydroInfilt.θs[iZ], iZ, infiltParam)
 
 				B = bestFunc.B(iZ, Kr_θini, infiltParam)
 
@@ -103,11 +103,11 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CONVERT_3D_2_1D
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; θ_Ini= infiltParam.θ_Ini[iZ])
+		function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; θini= infiltParam.θini[iZ])
 				
-			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, option.infilt)
+			Sorptivity = sorptivity.SORPTIVITY(θini, iZ, hydroInfilt, option, option.infilt)
 
-			A = bestFunc.A(θ_Ini, hydroInfilt.θs[iZ], iZ, infiltParam)
+			A = bestFunc.A(θini, hydroInfilt.θs[iZ], iZ, infiltParam)
 
 			for iT=1:N_Infilt[iZ]
 				∑Infilt_1D[iZ,iT] = ∑Infilt_3D[iZ,iT] - A  * T[iZ,iT] * Sorptivity ^ 2.0
@@ -120,11 +120,11 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CONVERT_1D_2_3D
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function CONVERT_1D_2_3D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T; θ_Ini= infiltParam.θ_Ini[iZ])
+		function CONVERT_1D_2_3D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, T; θini= infiltParam.θini[iZ])
 
-			Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, option.infilt)
+			Sorptivity = sorptivity.SORPTIVITY(θini, iZ, hydroInfilt, option, option.infilt)
 
-			A = bestFunc.A(θ_Ini, hydroInfilt.θs[iZ], iZ, infiltParam)
+			A = bestFunc.A(θini, hydroInfilt.θs[iZ], iZ, infiltParam)
 
 			for iT=1:N_Infilt[iZ]
 				∑Infilt_3D[iZ,iT] = ∑Infilt_1D[iZ,iT] + A * (Sorptivity ^ 2.0) * T[iZ,iT]
@@ -145,8 +145,8 @@ module bestFunc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : A
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function A(θ_Ini, θs, iZ, infiltParam)
-			return  infiltParam.γ[iZ] / ( infiltParam.RingRadius[iZ] * (θs - θ_Ini)) # Units [mm-1]
+		function A(θini, θs, iZ, infiltParam)
+			return  infiltParam.γ[iZ] / ( infiltParam.RingRadius[iZ] * (θs - θini)) # Units [mm-1]
 		end  # function: A
 	
 

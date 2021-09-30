@@ -86,7 +86,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		Base.@kwdef mutable struct INFILT
 			RingRadius
-			θ_Ini
+			θini
 			γ
 			β
 		end # struct INFILT
@@ -122,13 +122,13 @@ module reading
 
 			RingRadius , ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RingRadius[mm]", N_iZ; N_Point_Max=1)
 
-			θ_Ini , ~       = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Theta_Ini[-]", N_iZ; N_Point_Max=1)
+			θini , ~       = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Theta_Ini[-]", N_iZ; N_Point_Max=1)
 
 			γ , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Lambda[-]", N_iZ; N_Point_Max=1)
 
 			β , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Beta[-]", N_iZ; N_Point_Max=1)
 
-			infiltParam = INFILT(RingRadius, θ_Ini, γ, β)
+			infiltParam = INFILT(RingRadius, θini, γ, β)
 		return Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam
 		end  # function: INFILTRATION
 
@@ -162,8 +162,9 @@ module reading
 					table.convert.CONVERT_θΨ_2D_2_1D(IdSelect, N_iZ, N_θΨobs, path.convertSoilwater.Table_Convert_θΨ_2D_2_1D, θ_θΨobs, Ψ_θΨobs)
 				end # length(Header) == 3
 
-		return θ_θΨobs, Ψ_θΨobs, N_θΨobs
-		end  # function: θΨ
+			return θ_θΨobs, Ψ_θΨobs, N_θΨobs
+			end  # function: θΨ
+		#----------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -195,6 +196,7 @@ module reading
 				end
 			return K_KΨobs, Ψ_KΨobs, N_KΨobs 
 			end  # function: θΨ
+		#----------------------------------------------------------------------
 
 		
 	
@@ -220,28 +222,30 @@ module reading
 			Rpart = @. Diameter_Psd / 2.0
 		return Rpart, ∑Psd, N_Psd
 		end  # function: PSD
+	#----------------------------------------------------------------------
 
 
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION :SOIL_INOFRMATION
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PEDOLOGICAL(IdSelect, N_iZ, Path)
-				println("    ~  $(Path) ~")
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION :SOIL_INOFRMATION
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function PEDOLOGICAL(IdSelect, N_iZ, Path)
+			println("    ~  $(Path) ~")
 
-				# Read data
-					Data = DelimitedFiles.readdlm(Path, ',')
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first READ_ROW_SELECT
-					Data = Data[2:end,begin:end]
-				# Sort data
-					Data = sortslices(Data, dims=1)
-				
-				IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ, N_Point_Max=1)
-				
-				RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ, N_Point_Max=1)
-			return IsTopsoil, RockClass
-			end # function: SOIL_INOFRMATION
+			# Read data
+				Data = DelimitedFiles.readdlm(Path, ',')
+			# Read header
+				Header = Data[1,1:end]
+			# Remove first READ_ROW_SELECT
+				Data = Data[2:end,begin:end]
+			# Sort data
+				Data = sortslices(Data, dims=1)
+			
+			IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ, N_Point_Max=1)
+			
+			RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ, N_Point_Max=1)
+		return IsTopsoil, RockClass
+		end # function: SOIL_INOFRMATION
+	#----------------------------------------------------------------------
 
 
 
@@ -265,7 +269,7 @@ module reading
 			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", N_iZ, N_Point_Max=1)
 		return RockFragment, Φ
 		end # function: BulkDensity
-
+	#----------------------------------------------------------------------
 
 		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -300,7 +304,7 @@ module reading
 				end		
 		return N_θΨobs, θ_θΨobs, Ψ_θΨobs
 		end  # function: θψ_ADDPOINTS+
-
+	#----------------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,6 +346,7 @@ module reading
 
 		return structures, N_iZ
 		end  # function: READ_STRUCT
+	#----------------------------------------------------------------------
 
 
 
@@ -643,7 +648,7 @@ module reading
 		import  ...tool, ...horizonLayer
 		import Dates: value, DateTime, hour, minute, month, now
 		import DelimitedFiles
-		export CLIMATE, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_LAI, LOOKUPTABLE_CROPCOEFICIENT
+		export CLIMATE, DATES, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_CROPCOEFICIENT, LOOKUPTABLE_LAI
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : DATES
@@ -656,38 +661,97 @@ module reading
 				# Remove first READ_ROW_SELECT
 					Data = Data[2:end,begin:end]
 
-				# Dates of climate data
-					Year_Start₀ , ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Sim_Start")
-						param.hyPix.Year_Start = Year_Start₀[1]
-					Month_Start₀, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Sim_Start")
-							param.hyPix.Month_Start = Month_Start₀[1]
-					Day_Start₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_Start")
-						param.hyPix.Day_Start = Day_Start₀[1]
+				# Dates of observed climate data
+					Year_StartObs₀ , ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Obs_Start")
+						param.hyPix.Year_Start = Int64(Year_StartObs₀[1])
 
-					Year_End₀, ~    = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Sim_End")
-						param.hyPix.Year_End = Year_End₀[1]
-					Month_End₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Sim_End")
-						param.hyPix.Month_End = Month_End₀[1]
-					Day_End₀, ~     = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_End")
-						param.hyPix.Day_End = Day_End₀[1]
+					Month_StartObs₀, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Obs_Start")
+						param.hyPix.Month_Start = Int64(Month_StartObs₀[1])
 					
-				# Dates of observed data
-					param.hyPix.obsTheta.Year_Start  = param.hyPix.Year_Start
-					param.hyPix.obsTheta.Month_Start = param.hyPix.Month_Start
-					param.hyPix.obsTheta.Day_Start   = param.hyPix.Day_Start
+					Day_StartObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Obs_Start")
+						param.hyPix.Day_Start = Int64(Day_StartObs₀[1])
+					
+					Hour_StartObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour_Obs_Start")
+						param.hyPix.Hour_Start = Int64(Hour_StartObs₀[1])
+					
+					Minute_StartObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute_Obs_Start")
+						param.hyPix.Minute_Start = Int64(Minute_StartObs₀[1])
+					
+					Second_StartObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second_Obs_Start")
+						param.hyPix.Second_Start = Int64(Second_StartObs₀[1])
 
-					param.hyPix.obsTheta.Year_End    = param.hyPix.Year_End
-					param.hyPix.obsTheta.Month_End   = param.hyPix.Month_End
-					param.hyPix.obsTheta.Day_End     = param.hyPix.Day_End
+
+					Year_EndObs₀ , ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Obs_End")
+						param.hyPix.Year_End = Int64(Year_EndObs₀[1])
+					
+					Month_EndObs₀, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Obs_End")
+							param.hyPix.Month_End = Int64(Month_EndObs₀[1])
+					
+					Day_EndObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Obs_End")
+						param.hyPix.Day_End = Int64(Day_EndObs₀[1])
+
+					Hour_EndObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour_Obs_End")
+						param.hyPix.Hour_End = Int64(Hour_EndObs₀[1])
+					
+					Minute_EndObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute_Obs_End")
+						param.hyPix.Minute_End = Int64(Minute_EndObs₀[1])
+					
+					Second_EndObs₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second_Obs_End")
+						param.hyPix.Second_End = Int64(Second_EndObs₀[1])
+
+				# Dates of sim data
+					Year_StartSim₀ , ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year_Sim_Start")
+						param.hyPix.obsTheta.Year_Start = Int64(Year_StartSim₀[1])
+
+					Month_StartSim₀, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month_Sim_Start")
+							param.hyPix.obsTheta.Month_Start = Int64(Month_StartSim₀[1])
+
+					Day_StartSim₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day_Sim_Start")
+						param.hyPix.obsTheta.Day_Start = Int64(Day_StartSim₀[1])
+
+					Hour_StartSim₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour_Sim_Start")
+						param.hyPix.obsTheta.Hour_Start = Int64(Hour_StartSim₀[1])
+
+					Minute_StartSim₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute_Sim_Start")
+						param.hyPix.obsTheta.Minute_Start = Int64(Minute_StartSim₀[1])
+
+					Second_StartSim₀, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second_Sim_Start")
+						param.hyPix.obsTheta.Second_Start = Int64(Second_StartSim₀[1])
+
+				# Dates of observed data
+               param.hyPix.obsTheta.Year_End   = param.hyPix.Year_End
+               param.hyPix.obsTheta.Month_End  = param.hyPix.Month_End
+               param.hyPix.obsTheta.Day_End    = param.hyPix.Day_End
+               param.hyPix.obsTheta.Hour_End   = param.hyPix.Hour_End
+               param.hyPix.obsTheta.Minute_End = param.hyPix.Minute_End
+               param.hyPix.obsTheta.Second_End = param.hyPix.Second_End
+
 
 				# Dates of plots
-					param.hyPix.ploting.Year_Start  = param.hyPix.Year_Start
-					param.hyPix.ploting.Month_Start = param.hyPix.Month_Start
-					param.hyPix.ploting.Day_Start   = param.hyPix.Day_Start
+               param.hyPix.ploting.Year_Start   = param.hyPix.obsTheta.Year_Start
+               param.hyPix.ploting.Month_Start  = param.hyPix.obsTheta.Month_Start
+               param.hyPix.ploting.Day_Start    = param.hyPix.obsTheta.Day_Start
+               param.hyPix.ploting.Month_Start  = param.hyPix.obsTheta.Month_Start
+               param.hyPix.ploting.Second_Start = param.hyPix.obsTheta.Second_Start
 
-					param.hyPix.ploting.Year_End    = param.hyPix.Year_End
-					param.hyPix.ploting.Month_End   = param.hyPix.Month_End
-					param.hyPix.ploting.Day_End     = param.hyPix.Day_End
+               param.hyPix.ploting.Year_End   = param.hyPix.Year_End
+               param.hyPix.ploting.Month_End  = param.hyPix.Month_End
+               param.hyPix.ploting.Day_End    = param.hyPix.Day_End
+               param.hyPix.ploting.Hour_End   = param.hyPix.Hour_End
+               param.hyPix.ploting.Minute_End = param.hyPix.Minute_End
+               param.hyPix.ploting.Second_End = param.hyPix.Second_End
+
+				# Checking for error
+					Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
+
+					
+					Date_SimStart = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
+						
+					Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
+
+					if !(Date_End > Date_SimStart && Date_SimStart > Date_Start)
+						error("HyPix: Date_Start=$Date_Start >  Date_SimStart= $Date_SimStart > Date_End=$Date_End")
+					end
 
 			return param
 			end  # function: DATES
@@ -696,21 +760,36 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : DISCRETIZATION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function DISCRETIZATION(pathHyPix)
+			function DISCRETIZATION(PathDiscretization)
 				# Read data
-					Data = DelimitedFiles.readdlm(pathHyPix.Discretization, ',')
+					Data = DelimitedFiles.readdlm(PathDiscretization, ',')
 				# Read header
 					Header = Data[1,1:end]
 				# Remove first READ_ROW_SELECT
 					Data = Data[2:end,begin:end]
 
 				Z, N_iZ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Z")
-				θ_Ini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "θini")
 				Layer, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Layer")
+				N_Layer = maximum(Layer)
 
-				N_iHorizon = maximum(Layer)
-			return Layer, N_iHorizon, N_iZ, Z, θ_Ini
+				# Depending on the initial boundary condition 
+					if "θini" ∈ Header
+						θini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "θini")
+						Ψini=[]
+						Flag_θΨini = :θini 
+
+					elseif "Ψini" ∈ Header
+						Ψini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Ψini")
+						θini =[]
+						Flag_θΨini = :Ψini
+
+					else
+						error("In $PathDiscretization cannot find <θini> or <Ψini> in $Header")
+					end
+
+			return Flag_θΨini, Layer, N_Layer, N_iZ, Z, θini, Ψini
 			end # function DISCRETIZATION
+		#-------------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -933,13 +1012,6 @@ module reading
 						Temp = fill(24.0::Float64, N_Climate)
 					end
 
-				# READING DATES FROM FILE
-					try
-						param = DATES(param, pathHyPix)
-					catch
-						@info "		*** Dates read from param and not from file ***"
-					end
-
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 					Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
 					
@@ -974,8 +1046,8 @@ module reading
 					end # iT=1:N_Climate
 
 					# Need to include one date iT-1 at the beginning to compute ΔT
-						iTrue_First = findfirst(True[1:N_Climate])
-						True[iTrue_First-1] = true
+						# iTrue_First = findfirst(True[1:N_Climate])
+						# True[iTrue_First-1] = true
 
 					# New reduced number of simulations
 						Date = Date[True[1:N_Climate]]
@@ -997,6 +1069,7 @@ module reading
 
 			return clim
 			end # function: CLIMATE
+		#---------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1005,7 +1078,7 @@ module reading
 			Base.@kwdef mutable struct θOBSERVATION
 				Date    :: Vector{DateTime}
 				Z  	  :: Vector{Float64}
-				ithetaObs   :: Vector{Int64}
+				ithetaObs :: Vector{Int64}
 				N_iT    :: Int64 # Number of time steps
 				Ndepth  :: Int64 # Numver of soil profile with observed θ
 				θobs 	  :: Array{Float64,2}
@@ -1061,14 +1134,6 @@ module reading
 						end # occursin("Z=", iHeader)
 					end #  iHeader
 
-
-					# READING DATES FROM FILE
-						try
-							param = DATES(param, pathHyPix)
-						catch
-							@info "		*** Dates read from param and not from file ***"
-						end
-
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 					Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
 					
@@ -1093,29 +1158,28 @@ module reading
 					end # iT=1:N_Climate
 
 					# New reduced number of simulations selected with dates
-					Date = Date[True[1:N_iT]]
-					θobs = θobs[True[1:N_iT],1:Ndepth]
-
-					N_iT = iCount # New number of data
-
-				# REDUCING THE AMOUNT OF DATA TO HOURLY
-					ΔTimeStep = value(Date[5]-Date[4])/ 1000
-					if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
-						True = falses(N_iT)
-						iCount = 0 
-						for iT=1:N_iT
-							if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
-								True[iT] = true
-								iCount += 1
-							end # if
-						end # for
-					
-						# New reduced number of simulations selected with dates
 						Date = Date[True[1:N_iT]]
 						θobs = θobs[True[1:N_iT],1:Ndepth]
 
-						N_iT = iCount # New reduced amount of data
-					end # θobs_Hourly)
+						N_iT = iCount # New number of data
+
+				# REDUCING THE AMOUNT OF DATA TO HOURLY
+					# ΔTimeStep = value(Date[5]-Date[4]) / 1000
+					# if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
+					# 	True = falses(N_iT)
+					# 	iCount = 0 
+					# 	for iT=1:N_iT
+					# 		if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
+					# 			True[iT] = true
+					# 			iCount += 1
+					# 		end # if
+					# 	end # for
+					
+					# 	# New reduced number of simulations selected with dates
+					# 	Date = Date[True[1:N_iT]]
+					# 	θobs = θobs[True[1:N_iT],1:Ndepth]
+					# 	N_iT = iCount # New reduced amount of data
+					# end # θobs_Hourly)
 
 				# This will be computed at PrioProcess
 					∑T        = fill(0.0::Float64, N_iT)

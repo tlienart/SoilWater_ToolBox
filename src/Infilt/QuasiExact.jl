@@ -16,11 +16,11 @@ module quasiExact
 	#		FUNCTION : INFILTRATION3D_2_1D
 	# 		= TRANSFORMS INFILTRATION_3D TO INFILTRATION_1D =
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; θ_Ini= infiltParam.θ_Ini[iZ])
+	function CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T; θini= infiltParam.θini[iZ])
 
-		Δθ = hydroInfilt.θs[iZ] - θ_Ini
+		Δθ = hydroInfilt.θs[iZ] - θini
 
-		Sorptivity = sorptivity.SORPTIVITY(θ_Ini, iZ, hydroInfilt, option, option.infilt)
+		Sorptivity = sorptivity.SORPTIVITY(θini, iZ, hydroInfilt, option, option.infilt)
 
 		for iT = 1:N_Infilt[iZ]
 			∑Infilt_1D[iZ,iT] = ∑Infilt_3D[iZ,iT] - (T[iZ,iT] * infiltParam.γ[iZ] * Sorptivity ^ 2.0) / (infiltParam.RingRadius[iZ] * Δθ)
@@ -62,15 +62,15 @@ module quasiExact
 
 			Infilt_η = fill(0.0::Float64, N_Infilt[iZ])
 
-			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt)
+			Sorptivity = sorptivity.SORPTIVITY(infiltParam.θini[iZ], iZ, hydroInfilt, option, option.infilt)
 
-			Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
+			Se_Ini = wrc.θ_2_Se(infiltParam.θini[iZ], iZ, hydroInfilt)
 
 			K_θini = kunsat.Se_2_KUNSAT(option.infilt, Se_Ini, iZ, hydroInfilt)
 
 			ΔK = hydroInfilt.Ks[iZ] - K_θini
 
-			Δθ = hydroInfilt.θs[iZ] - infiltParam.θ_Ini[iZ]
+			Δθ = hydroInfilt.θs[iZ] - infiltParam.θini[iZ]
 		
 			# At t=1
 				∑Infilt_3D[1] = 0.0
@@ -124,7 +124,7 @@ module quasiExact
 
 	function OF_QUASIEXACT(∑Infilt_Obs, hydroInfilt, infiltOutput, infiltParam, iZ, N_Infilt, option, T; W=0.8)
 
-		Se_Ini = wrc.θ_2_Se(infiltParam.θ_Ini[iZ], iZ, hydroInfilt)
+		Se_Ini = wrc.θ_2_Se(infiltParam.θini[iZ], iZ, hydroInfilt)
 		
 		K_θini = kunsat.Se_2_KUNSAT(option.infilt, Se_Ini, iZ, hydroInfilt)
 
@@ -132,9 +132,9 @@ module quasiExact
 		
 		ΔK = hydroInfilt.Ks[iZ] - K_θini
 		
-		Δθ = hydroInfilt.θs[iZ] - infiltParam.θ_Ini[iZ]
+		Δθ = hydroInfilt.θs[iZ] - infiltParam.θini[iZ]
 		
-		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θ_Ini[iZ], iZ, hydroInfilt, option, option.infilt)
+		Sorptivity = sorptivity.SORPTIVITY(infiltParam.θini[iZ], iZ, hydroInfilt, option, option.infilt)
 
 		Left_Term = zeros(Float64, N_Infilt[iZ])
 

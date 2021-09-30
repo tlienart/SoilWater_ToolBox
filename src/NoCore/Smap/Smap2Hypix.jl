@@ -68,7 +68,7 @@ module smap2hypix
             TABLE_DISCRETIZATION(Path_Output₂, Smap_Depth_Soil, iLayers)
                   
             # Automatic Disscretizing of SoilProfiles per soil =====
-               SoilProfile, Z = discretization.DISCRETISATION_AUTO(param, N_Layer=length(Smap_Depth_Soil), Zlayer=Smap_Depth_Soil, Zroot=800.0)
+               SoilProfile, Z = discretization.DISCRETIZATION_AUTO(param, N_Layer=length(Smap_Depth_Soil), Zlayer=Smap_Depth_Soil, Zroot=800.0)
 
                Path_Output₃ = Path_Output * "/Discretization_2" * "_" * string(Soilname₀) * ".csv"
                TABLE_DISCRETIZATION(Path_Output₃, SoilProfile, Z)
