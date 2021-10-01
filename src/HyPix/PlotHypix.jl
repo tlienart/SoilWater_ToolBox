@@ -142,6 +142,123 @@ module plotHypix
 	# 		PGFPlots.save(Path, Plot_All)	
 	# 	end  # function ROOTDENSITY
 
+	# =============================================================
+	#		module: name
+	# =============================================================
+		module makkie
+			using CairoMakie
+			using Dates
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : TIMESERIES
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function TIMESERIES(∑T_Date_Plot, ∑T_Reduced, obsTheta, discret, Flag_Plot_Pond, iOpt, N_∑Treduced, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPrGross_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+
+				# PATH
+					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
+					rm(Path, force=true, recursive=true)
+
+				# TICKS
+					# Date_Start_Calibr = obsTheta.Date[1]
+					Date_Start_Calibr = obsTheta.Date[1]  # since we need to compute the culmulativeof the 1rst day
+					
+					Date_End_Calibr = obsTheta.Date[end] 
+					
+					DateTick = Date_Start_Calibr:Day(61):Date_End_Calibr
+					
+					DateTick2= Dates.format.(DateTick, "d u Y")
+				
+				# PLOTTING
+					Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98),  font="Sans", titlesize=40, fontsize=16, xlabelsize=24, ylabelsize=24, resolution = (3000, 2500))
+				# Plot Climate	
+				iSubplot = 0
+				if option.hyPix.Plot_Climate
+					iSubplot += 1
+					Axis1 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix,  ylabel= L"Simulation [mm]", rightspinevisible = false)
+							
+
+					# Axis1.xticks = (DateTick, string.(DateTick2))
+					# Axis.xticklabelrotation = π/4
+					
+					
+					Plot_Climate = barplot!(Axis1,  ∑T_Reduced[1:N_∑Treduced], ΔPrGross_Plot[1:N_∑Treduced], strokecolor=:cyan, strokewidth=1.5, color=:cyan, label=L"$ \ PrThrough$")
+					
+					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:N_∑Treduced], ΔPr_Plot[1:N_∑Treduced], strokecolor=:blue, strokewidth=1, color=:blue, label= L"$\Delta \ Pr$")
+					
+					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:N_∑Treduced], ΔPond_Plot[1:N_∑Treduced], strokecolor=:grey, strokewidth=1, colour=:grey, label=L"$\Delta Hpond$")
+
+					# ===
+					Axis2  = Axis(Fig[iSubplot, 1], yticklabelcolor = :darkgreen, yaxisposition = :right, rightspinecolor = :green, ytickcolor = :darkgreen)
+
+					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], ΔPet_Plot[1:N_∑Treduced], linewidth=2, colour=:darkgreen, label=L"$\Delta Pet$")
+
+					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], ΔSink_Plot[1:N_∑Treduced], linewidth=2, colour=:red, label=L"$\Delta Sink$")
+
+					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], ΔEvaporation_Plot[1:N_∑Treduced], linewidth=2, colour=:purple4, label=L"$\Delta Evap$")
+
+					# Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], (ΔSink_Plot[1:N_∑Treduced].-ΔEvaporation_Plot[1:N_∑Treduced]), colour=:blue, label=L"$\Delta Rwu$")
+					
+
+					# ==
+					iSubplot += 1
+					Fig[iSubplot, 1] = Legend(Fig, Axis1, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:left, valigns=:bottom)
+
+					Fig[iSubplot, 1] = Legend(Fig, Axis2, "PET", framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:right, valigns=:bottom)
+					trim!(Fig.layout)
+
+
+					iSubplot += 1
+					Axis3  = Axis(Fig[iSubplot, 1], ylabel= L"Recharge [mm day ^{-1}]")
+					Plot_Climate = barplot!(Axis3, ∑T_Reduced[1:N_∑Treduced], -ΔFlux_Plot[1:N_∑Treduced, N_iZ+1], strokecolor=:red, strokewidth=1, color=:red, label=L"$\Delta Q$")
+
+					iSubplot += 1
+					Fig[iSubplot, 1] = Legend(Fig, Axis3, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:left, valigns=:bottom)
+					trim!(Fig.layout)
+
+				end # if: option.hyPix.Plot_Climate
+
+
+				# PLOT Θ
+				if option.hyPix.Plot_θ
+					
+					Style_Hypix = [:red, :darkviolet, :orange, :teal, :blue]
+					
+					iSubplot += 1
+					Axis4 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix, xlabel="Date", ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$")
+
+					# Observation θplot obs
+					for iZobs = 1:obsTheta.Ndepth
+						# lABEL
+							Label_Obs = "Obs=" * string(Int(floor(obsTheta.Z[iZobs]))) * "mm"
+
+							Label_Sim = "Sim=" * string(Int(floor((discret.Znode[obsTheta.ithetaObs[iZobs]])))) * "mm"
+
+							println(θobs_Plot[1:N_∑Treduced, iZobs], "\n")
+
+							Plot_θ = lines!(Axis4, ∑T_Reduced[1:N_∑Treduced], θobs_Plot[1:N_∑Treduced, iZobs], colour=Style_Hypix[iZobs], linewidth=5, label=Label_Obs)
+
+							Plot_θ = linesegments!(Axis4, ∑T_Reduced[1:N_∑Treduced], θ_Plot[1:N_∑Treduced, obsTheta.ithetaObs[iZobs]], linewidth=5, colour=Style_Hypix[iZobs], label=Label_Sim)
+
+							println(θ_Plot[1:N_∑Treduced, obsTheta.ithetaObs[iZobs]], "\n")
+					end # loop
+
+					iSubplot += 1
+					Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:center, valigns=:bottom)
+					trim!(Fig.layout)
+
+
+						# Plot = plot(Plot, Plot_θ, Plot_Climate, xmin=∑T_Date_Plot[1], xmax=∑T_Date_Plot[N_∑Treduced], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
+
+				end # if: option.hyPix.Plot_θ
+				
+				save(Path, Fig)
+				println("			 ~ ", Path, "~")
+			
+			return nothing
+			end  # function: TIMESERIES
+			
+		end  # module: makkie
+		# ............................................................
 
 
 
@@ -190,35 +307,6 @@ module plotHypix
 				end  # function: PLOT_SORPTIVITY
 
 
-			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# # 		FUNCTION : INTERCEPTION
-			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 	function RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iOpt, pathHyPix)
-
-			# 		# TICKS
-			# 			DateTick=range(clim.Date[i∑T_CalibrStart_Day],step=Day(7),clim.Date[clim.N_Climate])
-						
-			# 			DateTick2= Dates.format.(DateTick, "d u Y")
-					
-			# 		# PLOT
-			# 			Plot1=Plots.plot(layout=1)
-
-			# 			Title =" $(pathHyPix.SiteName_Hypix)" 
-						
-			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr[i∑T_CalibrStart_Day:clim.N_Climate], color=:blue, colorbar=false,  line = :solid, label= L"$\Delta Pr  $")
-						
-			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, colorbar=false, label=L"$\Delta Pr_{through}$")
-
-			# 			Plots.plot!(Plot1, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], 10.0*clim.Pet[i∑T_CalibrStart_Day:clim.N_Climate], color=:green, colorbar=false, label= L"$10x\Delta Pet_{int}$")
-						
-			# 			Plots.plot!(Plot1, grid=false, framestyle=:origin, size=(1000, 600), legend=:topright, xrotation=rad2deg(pi/3), xticks=(DateTick, DateTick2), title=Title, xlabel=L"$Day$", ylabel=L"$Daily \ \Delta Pr  \ \slash \ \Delta Pr_{through} \ \slash \ \Delta Pet_{int} \ [mm] $")
-
-												
-			# 		Path = pathHyPix.Plot_RainfallInterception * "_" * string(iOpt) * ".svg"
-			# 		Plots.savefig(Plot1, Path)
-			# 		println("			 ~ ", Path, "~")
-			# 	end  # function: INTERCEPTION
-
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -255,7 +343,7 @@ module plotHypix
 					
 					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr[i∑T_CalibrStart_Day:clim.N_Climate], color=:blue, colorbar=false,  line =(:sticks, :solid, 5), label= L"$\Delta Pr  $")
 
-					Plot_Climate = Plots.plot!(Plot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, line =(:sticks, :solid, 4), colorbar=false, label=L"$\Delta Pr_{through}$")
+					Plot_Climate = Plots.plot!(Plot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr_Through[i∑T_CalibrStart_Day:clim.N_Climate], color=:cyan, line =(:sticks, :solid, 4), colorbar=false, label=L"$\Delta Pr_through$")
 	
 					Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", title=pathHyPix.IdName_Hypix, xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
 				end # if: option.hyPix.Plot_Climate

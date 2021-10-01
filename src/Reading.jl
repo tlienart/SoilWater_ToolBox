@@ -646,7 +646,7 @@ module reading
 	# =============================================================
 	module hyPix
 		import  ...tool, ...horizonLayer
-		import Dates: value, DateTime, hour, minute, month, now
+		import Dates: value, DateTime, hour, minute, month, now, Hour
 		import DelimitedFiles
 		export CLIMATE, DATES, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_CROPCOEFICIENT, LOOKUPTABLE_LAI
 
@@ -1163,23 +1163,26 @@ module reading
 
 						N_iT = iCount # New number of data
 
-				# REDUCING THE AMOUNT OF DATA TO HOURLY
-					# ΔTimeStep = value(Date[5]-Date[4]) / 1000
-					# if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
-					# 	True = falses(N_iT)
-					# 	iCount = 0 
-					# 	for iT=1:N_iT
-					# 		if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
-					# 			True[iT] = true
-					# 			iCount += 1
-					# 		end # if
-					# 	end # for
+				# REDUCING THE AMOUNT OF DATA TO HOURLY TODO
+
+				# ∑T_Reduced = collect(range(Date[1], step=Hour[1], stop=Date[end])) 
+
+					ΔTimeStep = param.hyPix.ΔT_Output
+					if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
+						True = falses(N_iT)
+						iCount = 0 
+						for iT=1:N_iT
+							if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
+								True[iT] = true
+								iCount += 1
+							end # if
+						end # for
 					
-					# 	# New reduced number of simulations selected with dates
-					# 	Date = Date[True[1:N_iT]]
-					# 	θobs = θobs[True[1:N_iT],1:Ndepth]
-					# 	N_iT = iCount # New reduced amount of data
-					# end # θobs_Hourly)
+						# New reduced number of simulations selected with dates
+						Date = Date[True[1:N_iT]]
+						θobs = θobs[True[1:N_iT],1:Ndepth]
+						N_iT = iCount # New reduced amount of data
+					end # θobs_Hourly
 
 				# This will be computed at PrioProcess
 					∑T        = fill(0.0::Float64, N_iT)

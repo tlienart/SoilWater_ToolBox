@@ -81,8 +81,7 @@ module interpolate
 						Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X₀[iT_X-1,iZ], ∑T[iT_X], X₀[iT_X,iZ])
 
 						X₀_Reduced[iT_Reduced,iZ] = Slope * ∑T_Reduced[iT_Reduced] + Intercept
-					end # for iZ = 1:N_iZ
-				
+					end # for iZ = 1:N_iZ	
 			end # for: iT_Reduced=1:obsTheta.N_iT
 				
 	return X₀_Reduced

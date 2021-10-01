@@ -211,7 +211,7 @@ module wrc
 				end # Of
 
 				if θs == θsMacMat
-					Se = min((θ₂ - θr) / (θs - θr), 1.0-eps(1000.0))
+					Se = min((θ₂ - θr) / (θs - θr), 1.0 - eps(1000.0))
 					return Ψ₁ = Ψm * exp(erfcinv(2.0 * Se) * σ * √2.0)
 				else 
 					Optimization = Optim.optimize(Ψ₁ -> Of(10.0 ^ Ψ₁, iZ, hydroParam), log10(0.001), log10(100000000.0), Optim.GoldenSection())

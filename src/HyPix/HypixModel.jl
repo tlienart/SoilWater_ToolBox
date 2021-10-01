@@ -3,7 +3,7 @@
 # =============================================================
 module hypixModel
 
-	import..climate, ..discretization, ..evaporation, ..flux, ..interception, ..interpolate, ..kunsat, ..memory, ..ofHypix, ..pet, ..plot, ..ponding, ..residual, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..tool, ..Δtchange, ..ΨminΨmax, ..boundary
+	import ..boundary, ..evaporation, ..interception, ..interpolate, ..pet, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..ΨminΨmax
 	import ..wrc: θ_2_ΨDual, Ψ_2_θDual
 
 	export HYPIX
@@ -48,13 +48,12 @@ module hypixModel
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
 			for iZ=1:N_iZ
-				Ψ_Max[iZ], Ψ_Min[iZ] = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ],  hydro.ΨmMac[iZ])
+				Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ],  hydro.ΨmMac[iZ])
+				Ψ_Min[iZ] = param.hyPix.Ψ_MinMin
 			end  # for iZ=1:N_iZ
 
 		# ADAPTIVETIMESTEP
-			if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ"
-				ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option, param, ΔΨmax)
-			end #  option.hyPix.AdaptiveTimeStep⍰ == :ΔΨ
+			ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option, param, ΔΨmax)
 
 		# FIRST TIME STEP
          Flag_NoConverge        = false::Bool
@@ -136,7 +135,7 @@ module hypixModel
 				
 			# ROOT WATER UPTAKE MODEL
 				if option.hyPix.RootWaterUptake
-					ΔSink = rootWaterUptake.ROOT_WATER_UPTAKE( CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, option, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
+					ΔSink = rootWaterUptake.ROOT_WATER_UPTAKE(CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, option, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
 				end # option.hyPix.RootWaterUptake
 
 			# EVAPORATION FROM THE SURFACE WITH HIGHEST Se
@@ -154,10 +153,10 @@ module hypixModel
 				end # if: option
 
 			# SORPTIVITY TO COMPUTE INFILTRATION RATE				
-				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled = false)
+				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
 
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, Δθ_Max, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 		end # while loop
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+	

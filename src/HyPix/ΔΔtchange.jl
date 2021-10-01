@@ -39,7 +39,7 @@ module Δtchange
 
 			ΔT_Sim = value(Date_End_Calibr - Date_Start_Calibr) / 1000
 
-			∑T_Reduced = collect(range(0.0, step=param.hyPix.ΔT_Output, stop=ΔT_Sim)) 
+			∑T_Reduced = collect(range(0.0, step=60*60*24, stop=ΔT_Sim)) 
 			
 			# Take account that we are starting at Date_Start_Calibr
 			ΔT_Start_Calibr = value(Date_Start_Calibr - Date_Start) / 1000
@@ -139,7 +139,7 @@ module Δtchange
 					Flag_Plot_Pond = false
 				end
 		
-	return ∑T_Reduced, ∑T_Date_Plot, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑Treduced, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot
+	return ∑T_Date_Plot, ∑T_Reduced, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑Treduced, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔPrGross_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot
 	end # function: CHANGE_OUTPUT_ΔT
 	
 end  # module: tincrease

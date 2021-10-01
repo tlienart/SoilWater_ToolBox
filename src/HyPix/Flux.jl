@@ -30,7 +30,7 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Q
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, N_iZ::Int64, param, ΔHpond, ΔPr, ΔT, ψ_, ψ▲)
+		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, N_iZ::Int64, param, ΔHpond, ΔPr, ΔT, θ, ψ_, ψ▲)
 
 			if iZ == 1  # <>=<>=<>=<>=<>
 				return Q = (ΔPr[iT] + ΔHpond[iT-1] - ΔHpond[iT]) / ΔT[iT]
@@ -44,12 +44,18 @@ module flux
 				K_Aver = K_AVER!(option, param, discret, hydro, N_iZ+1, N_iZ, ψ_, ψ▲)
 
 				if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
-					return Q = K_Aver * param.hyPix.Cosα
+					Q = K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-					Q = K_Aver * ((( ψ_ - param.hyPix.Ψ_Botom) / discret.ΔZ[N_iZ]) + param.hyPix.Cosα)
+					Q = K_Aver * ( ((param.hyPix.Ψ_Botom - discret.ΔZ_Aver[iZ] - ψ_) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα )
 
-					return Q = K_Aver * ( ((param.hyPix.Ψ_Botom - discret.ΔZ_Aver[iZ]/2.0 - ψ_) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα )
+				end
+
+			# Checking of maximum water abstraction of bottom cell
+				if Q ≥ 0.0
+					return  Q = min(Q, discret.ΔZ[N_iZ] * (θ[iT-1,N_iZ] - hydro.θr[N_iZ] + eps(100.0)))
+				else
+					return  Q = max(Q, -discret.ΔZ[N_iZ] * (hydro.θs[N_iZ] - θ[iT-1,N_iZ] + eps(100.0)))
 				end
 			end # Case
 
