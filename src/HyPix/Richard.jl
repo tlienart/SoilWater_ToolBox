@@ -14,12 +14,18 @@ module richard
 		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 			# INITIALIZING
-				for iZ=1:N_iZ
-					if option.hyPix.TopBoundary⍰ =="Ψ" && iZ==1
-						Ψbest[1] = param.hyPix.Ψ_Top
-					end
-					Ψ[iT,iZ] = Ψbest[iZ]
-				end
+				for iZ = 1:N_iZ
+					if iZ == 1
+						if option.hyPix.TopBoundary⍰ =="Ψ"
+							Ψbest[1] = param.hyPix.Ψ_Top
+						else
+							Ψ[iT,iZ] = Ψbest[iZ]
+						end
+					else
+						Ψ[iT,iZ] = Ψbest[iZ]
+					end  # if:
+				end # for iZ = 1:N_iZ
+
 		
 				# Residual_Max_Best it should be improved compared to Ψ[iT,iZ] = Ψ[iT-1,iZ]
 				~, ~, ~, ~, Residual, ~, ~ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, option)
@@ -55,7 +61,7 @@ module richard
 			end # while: iTer ======================
 
 			# Making sure we get the best if convergence fails
-			if iTer ≥ param.hyPix.N_Iter + 1
+			if iTer ≥ param.hyPix.N_Iter
 				Flag_NoConverge = true
 
 				iNonConverge += 1
@@ -85,7 +91,6 @@ module richard
 	#-----------------------------------------------------------------
 
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,31 +99,39 @@ module richard
 			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, param, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, option)
 
 	#----------------------------------------------------------------
+	∂R∂Ψ2 = 0.0
+					∂R∂Ψ▽2 =0.0
 
-			# ∂R∂Ψ2 = fill(0.0, N_iZ)
-			# ∂R∂Ψ▽2 = fill(0.0, N_iZ)
-			# ∂R∂Ψ△2 =  fill(0.0, N_iZ)
+			∂R∂Ψ2 = fill(0.0, N_iZ)
+			∂R∂Ψ▽2 = fill(0.0, N_iZ)
+			∂R∂Ψ△2 =  fill(0.0, N_iZ)
 
 			for iZ=1:N_iZ		
 				Q, Residual, θ = residual.RESIDUAL(option, discret, hydro, iT, iZ, N_iZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
 
 				if option.hyPix.∂R∂Ψ_Numerical
+					∂R∂Ψ2[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 
-					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
-
-					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ▽2[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 		
-					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ△2[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 				else
-
 					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, N_iZ, option, param, ΔT, θ, Ψ)
-
 				end # if option.hyPix.∂R∂Ψ_Numerical
 			end #for iZ= 1:N_iZ
 
-			# println("∂R∂Ψ=" , ∂R∂Ψ[N_iZ]," , ", ∂R∂Ψ2[N_iZ],"\n")
-			# println("∂R∂Ψ▽=", ∂R∂Ψ▽[N_iZ] .- ∂R∂Ψ▽2[N_iZ], "\n")
-			# println("\n")
+			# println("One:=================")
+			# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:N_iZ],"\n") # No good at cell N
+			# println("∂R∂Ψ_Num=" , ∂R∂Ψ2[1:N_iZ],"\n")
+
+
+			# println("Two: =================")
+			# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:N_iZ],"\n")
+			# println("∂R∂Ψ▽_Der=" , ∂R∂Ψ▽2[1:N_iZ],"\n") # No good
+
+			# println("Tree: =================")
+			# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:N_iZ],"\n") # Good
+			# println("∂R∂Ψ△_Der=" , ∂R∂Ψ△2[1:N_iZ],"\n")
 
 		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, ΔHpond, θ
 		end # function RICHARD
@@ -130,26 +143,24 @@ module richard
 	#     Averaging the Residuals, depending on method
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RESIDUAL_MAX(discret, iT::Int64, N_iZ::Int64, option, Residual, ΔT)
-				Residual_Norm = 0.0
-				Residual_Max  = 0.0
+			Residual_Norm = 0.0
+			Residual_Max  = 0.0
 
-				# Does not take into consideration the last cell which has a perfect mass balance
-				for iZ=1:N_iZ
-					if option.hyPix.NormMin⍰ == "Norm"
-						Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2
-					else
-						Residual_Max = max( Residual_Max, abs(Residual[iZ]) / (ΔT[iT] * discret.ΔZ[iZ]) ) 
-					end
-				end # for: iZ=N_iZ
-
+			# Does not take into consideration the last cell which has a perfect mass balance
+			for iZ = 1:N_iZ-1
 				if option.hyPix.NormMin⍰ == "Norm"
-					Residual_Max = √(Residual_Norm / N_iZ)
+					Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2
+				else
+					Residual_Max = max( Residual_Max, abs(Residual[iZ]) / (ΔT[iT] * discret.ΔZ[iZ]) ) 
 				end
-			
+			end # for: iZ=N_iZ
+
+			if option.hyPix.NormMin⍰ == "Norm"
+				Residual_Max = √(Residual_Norm / Float64(N_iZ - 1.0))
+			end	
 		return Residual_Max
 		end  # function: RESIDUAL_MAX
 	#-----------------------------------------------------------------
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,7 +188,7 @@ module richard
 						Ψ[iT,iZ] += NewtonStep[iZ]
 
 						# Making sure it is within the feasible band 
-							Ψ[iT,iZ] = min(max(Ψ[iT,iZ], eps(10.0)), param.hyPix.Ψ_MaxMax)
+							Ψ[iT,iZ] = min(max(Ψ[iT,iZ],  param.hyPix.Ψ_MinMin), param.hyPix.Ψ_MaxMax)
 
 						# Correction of θ entering a dry soil 
 						if option.hyPix.ZhaWetingDrySoil
@@ -224,7 +235,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NEWTO_NRAPHSON_STEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, option, param, ΔΨmax, θ₀, Ψ; Power=2.0)
+		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, option, param, ΔΨmax, θ₀, Ψ; Power=1.0)
 
 			θ₁ = Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
 
@@ -232,7 +243,7 @@ module richard
 
 			Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
 			
-		return Ω = param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ , 1.0) ^ Power
+		return Ω = param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ , 1.0) ^ param.hyPix.NewtonStep_Power
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
 		

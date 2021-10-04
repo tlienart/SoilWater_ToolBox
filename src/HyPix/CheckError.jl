@@ -58,9 +58,9 @@ module checkError
 			end
 
 		# CHECKING 
-			if maximum(param.hyPix.plot.Cells_Plot) ≥ N_iZ 
-				error("\n Hypix error:  param.hyPix.plot.Cells_Plot = $(param.hyPix.plot.Cells_Plot) must be ≤  N_iZ =  $N_iZ")
-			end
+			# if maximum(param.hyPix.plot.Cells_Plot) ≥ N_iZ 
+			# 	error("\n Hypix error:  param.hyPix.plot.Cells_Plot = $(param.hyPix.plot.Cells_Plot) must be ≤  N_iZ =  $N_iZ")
+			# end
 
 		return
 	end  # function CHECK_ERROR

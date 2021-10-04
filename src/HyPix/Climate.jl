@@ -14,18 +14,16 @@ module climate
 			∑T_Climate       = fill(0.0::Float64, clim.N_Climate)
 			Temp             = fill(0.0::Float64, clim.N_Climate)
 
-			# Computing Pr, PotEvap, Temp in the correct format
-	 		Start_Date = clim.Date[1]
 
 			 # Taking into acount that ΔT is the difference of time of T[iT]-T[iT-1]
-          ∑Pr_Climate[1]  = 0.0
-          ∑Pet_Climate[1] = 0.0
-          ∑T_Climate[1]   = 0.0
-			 Temp[1]         = 0.0
+				∑Pr_Climate[1]  = 0.0
+				∑Pet_Climate[1] = 0.0
+				∑T_Climate[1]   = 0.0
+				Temp[1]         = 0.0
 		 
 			 for iT = 2:clim.N_Climate
 				#Computing cumulative time 
-				∑T_Climate[iT] = value(clim.Date[iT] - Start_Date) / 1000
+				∑T_Climate[iT] = value(clim.Date[iT] - clim.Date[1]) / 1000
 
 				# Cumulative
 				if !(option.hyPix.RainfallInterception) && option.hyPix.TopBoundary⍰ ≠ "Ψ"

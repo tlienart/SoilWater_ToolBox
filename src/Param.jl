@@ -103,7 +103,6 @@ module params
 		Hour_End
 		Minute_End
 		Second_End
-		Cells_Plot
 		θΨ_Table
 	end
 	@option mutable struct HYPIXS
@@ -138,6 +137,7 @@ module params
 		NewtonStep_Min::Float64
 		NewtonStep_Mean::Float64
 		NewtonStep_Max::Float64
+		NewtonStep_Power::Float64
 		WaterBalanceResidual_Max::Float64
 		ΔT_Output::Float64
 		obsTheta::OBSΘ

@@ -248,7 +248,6 @@ module reading
 	#----------------------------------------------------------------------
 
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : bulk density
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -347,7 +346,6 @@ module reading
 		return structures, N_iZ
 		end  # function: READ_STRUCT
 	#----------------------------------------------------------------------
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -493,7 +491,6 @@ module reading
 
 	return hydro, optim
 	end  # function: GUI_HydroParam
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -743,8 +740,7 @@ module reading
 
 				# Checking for error
 					Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
-
-					
+		
 					Date_SimStart = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
 						
 					Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
@@ -752,7 +748,6 @@ module reading
 					if !(Date_End > Date_SimStart && Date_SimStart > Date_Start)
 						error("HyPix: Date_Start=$Date_Start >  Date_SimStart= $Date_SimStart > Date_End=$Date_End")
 					end
-
 			return param
 			end  # function: DATES
 
@@ -982,16 +977,16 @@ module reading
 			Option_ReadTemperature = false
 
 			function CLIMATE(option, param, pathHyPix)
-				if option.hyPix.ClimateDataTimestep⍰ == "Daily"
+				# if option.hyPix.ClimateDataTimestep⍰ == "Daily"
 					Pr_Name          = "Rain(mm)"
 					Pet_Name         = "PET(mm)"
 					Temperature_Name = "Tmax(C)" # Maximum temperature which is not correct
 
-				elseif option.hyPix.ClimateDataTimestep⍰ == "Hourly"
-					Pr_Name          = "Pr_mm"
-					Pet_Name         = "Pet_mm"
-					Temperature_Name = "Temp_c"
-				end #  option.hyPix.ClimateDataTimestep⍰
+				# elseif option.hyPix.ClimateDataTimestep⍰ == "Hourly"
+				# 	Pr_Name          = "Pr_mm"
+				# 	Pet_Name         = "Pet_mm"
+				# 	Temperature_Name = "Temp_c"
+				# end #  option.hyPix.ClimateDataTimestep⍰
 
 				# READ DATA
 					Data = DelimitedFiles.readdlm(pathHyPix.Climate, ',')
@@ -1017,26 +1012,20 @@ module reading
 					
 					Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 
-				# CHECKING
+				# CHECKING & CORRECTING
 					# End Date feasible
 						Date_End_Maximum = DateTime(Year[N_Climate], Month[N_Climate], Day[N_Climate], Hour[N_Climate], Minute[N_Climate], Second[N_Climate]) 
 
-						if Date_End_Maximum < Date_End
-							Date_End = min(Date_End_Maximum, Date_End)
-							println("		~ HyPix WARNING: Date_End not feasible so modified to match the data ")
-						end #warning Date_End
+						Date_End = min(Date_End_Maximum, Date_End)
 
 					# Start Date feasible
 						Date_Start_Minimum = DateTime(Year[2], Month[2], Day[2], Hour[2], Minute[2], Second[2]) 
 
-						if Date_Start_Minimum > Date_Start
-							Date_Start = max(Date_Start_Minimum , Date_Start)
-							println("		~HyPix WARNING: Date_Start = $Date_Start not feasible so modified to match the data ")
-						end #warning DATE_START
+						Date_Start = max(Date_Start_Minimum , Date_Start)
 
 				# SELECTING DATES OF INTEREST
 					True = falses(N_Climate)
-					Date = fill(now()::DateTime,  N_Climate) 
+					Date = fill(Date_Start_Minimum::DateTime, N_Climate) 
 					for iT=1:N_Climate
 						Date[iT] = DateTime(Year[iT], Month[iT], Day[iT], Hour[iT], Minute[iT], Second[iT])
 
@@ -1046,15 +1035,16 @@ module reading
 					end # iT=1:N_Climate
 
 					# Need to include one date iT-1 at the beginning to compute ΔT
-						# iTrue_First = findfirst(True[1:N_Climate])
-						# True[iTrue_First-1] = true
+						iTrue_First = findfirst(True[1:N_Climate])
+						True[iTrue_First-1] = true
 
 					# New reduced number of simulations
 						Date = Date[True[1:N_Climate]]
 						Pr   = Pr[True[1:N_Climate]]
 						Pet  = Pet[True[1:N_Climate]]
 						Temp = Temp[True[1:N_Climate]]
-						
+
+					# Update N_Climate	
 						N_Climate = count(True[1:N_Climate]) # New number of data
 				
 				# To be used after interception model
@@ -1085,7 +1075,7 @@ module reading
 				∑T  	  :: Vector{Float64}
 			end # mutable struct
 
-			function TIME_SERIES(option, param, pathHyPix)
+			function TIME_SERIES(clim, option, param, pathHyPix)
 			# Read data
 				Data = DelimitedFiles.readdlm(pathHyPix.obsTheta, ',')
 			# Read header
@@ -1101,52 +1091,51 @@ module reading
 				Second, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
 
 				# READING THE DEPTH OF Θ MEASUREMENTS FROM HEADER: data having Z=
-					θobs, Header = DelimitedFiles.readdlm(pathHyPix.obsTheta, ','; header=true)
+					# Data, Header = DelimitedFiles.readdlm(pathHyPix.obsTheta, ','; header=true)
 
-					Array_iHeader = []
-					Ndepth = 0
-					iCount = 0
-					for iHeader in Header
-						iCount += 1
-						if occursin("Z=", iHeader) # Searching for 'Z=' in the header
-							Ndepth += 1
-							append!(Array_iHeader, iCount) 
-						end # occursin
-					end # iHeader
+						Array_iHeader = []
+						Ndepth = 0
+						iCount = 0
+						for iHeader in Header
+							iCount += 1
+							if occursin("Z=", iHeader) # Searching for 'Z=' in the header
+								Ndepth += 1
+								append!(Array_iHeader, iCount) 
+							end # occursin
+						end # iHeader
 
 					# Isolating data with Z= measurements
-					N_iT,~ = size(θobs)
-					θobs = θobs[1:N_iT, minimum(Array_iHeader): maximum(Array_iHeader)]
+						N_iT,~ = size(Data)
+						θobs = Data[1:N_iT, minimum(Array_iHeader): maximum(Array_iHeader)]
 
 					# The depths were we have θ measurements
-					Z = fill(0.0::Float64, Ndepth)
+						Z = fill(0.0::Float64, Ndepth)
 
-					i = 0
-					for iHeader in Header
-						if occursin("Z=", iHeader)
-							i += 1
-							# Cleaning the header to get the integer
-							iHeader = replace(iHeader, "Z=" => "")
-							iHeader = replace(iHeader, "mm" => "")
-							iHeader = replace(iHeader, " " => "")
-							iHeader=  parse(Float64, iHeader)
-							Z[i] = iHeader
-						end # occursin("Z=", iHeader)
-					end #  iHeader
+						i = 0
+						for iHeader in Header
+							if occursin("Z=", iHeader)
+								i += 1
+								# Cleaning the header to get the integer
+								iHeader = replace(iHeader, "Z=" => "")
+								iHeader = replace(iHeader, "mm" => "")
+								iHeader = replace(iHeader, " " => "")
+								iHeader=  parse(Float64, iHeader)
+								Z[i] = iHeader
+							end # occursin("Z=", iHeader)
+						end #  iHeader
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 					Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
 					
 					Date_End_Calibr = DateTime(param.hyPix.obsTheta.Year_End, param.hyPix.obsTheta.Month_End, param.hyPix.obsTheta.Day_End, param.hyPix.obsTheta.Hour_End, param.hyPix.obsTheta.Minute_End, param.hyPix.obsTheta.Second_End)
 
-				# ERROR CHECKING Assuring that Date_End ≤ Date_Clim_End
-					Date_Clim_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
-
-					Date_End_Calibr = min(Date_Clim_End, Date_End_Calibr)
+				# Compared to observed climate data
+               Date_Start_Calibr = max(Date_Start_Calibr, clim.Date[2])
+               Date_End_Calibr   = min(Date_End_Calibr, clim.Date[end])
 
 				# SELECTING THE DATA WITHING FEASIBLE RANGE
 					True = falses(N_iT) # Initiating with false
-					Date = fill(now()::DateTime,  N_iT)
+					Date = fill(Date_Start_Calibr::DateTime,  N_iT)
 					iCount = 0 
 					for iT=1:N_iT
 						Date[iT] = DateTime(Year[iT], Month[iT], Day[iT], Hour[iT], Minute[iT], Second[iT])
@@ -1154,47 +1143,45 @@ module reading
 						if (Date_Start_Calibr ≤ Date[iT] ≤ Date_End_Calibr)
 							iCount += 1
 							True[iT] = true
-						end  # if: 
-					end # iT=1:N_Climate
+						end  # if
+					end # for iT=1:N_iT
 
 					# New reduced number of simulations selected with dates
 						Date = Date[True[1:N_iT]]
-						θobs = θobs[True[1:N_iT],1:Ndepth]
+						θobs = θobs[True[1:N_iT], 1:Ndepth]
 
-						N_iT = iCount # New number of data
+						N_iT = count(True[1:N_iT]) # New number of data
 
 				# REDUCING THE AMOUNT OF DATA TO HOURLY TODO
 
 				# ∑T_Reduced = collect(range(Date[1], step=Hour[1], stop=Date[end])) 
-
-					ΔTimeStep = param.hyPix.ΔT_Output
-					if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
-						True = falses(N_iT)
-						iCount = 0 
-						for iT=1:N_iT
-							if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
-								True[iT] = true
-								iCount += 1
-							end # if
-						end # for
+					# ΔTimeStep = param.hyPix.ΔT_Output
+					# if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
+					# 	True = falses(N_iT)
+					# 	iCount = 0 
+					# 	for iT=1:N_iT
+					# 		if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
+					# 			True[iT] = true
+					# 			iCount += 1
+					# 		end # if
+					# 	end # for
 					
-						# New reduced number of simulations selected with dates
-						Date = Date[True[1:N_iT]]
-						θobs = θobs[True[1:N_iT],1:Ndepth]
-						N_iT = iCount # New reduced amount of data
-					end # θobs_Hourly
+					# 	# New reduced number of simulations selected with dates
+					# 	Date = Date[True[1:N_iT]]
+					# 	θobs = θobs[True[1:N_iT],1:Ndepth]
+					# 	N_iT = count(True[1:N_iT]) # New reduced amount of data
+					# end # θobs_Hourly
 
 				# This will be computed at PrioProcess
 					∑T        = fill(0.0::Float64, N_iT)
 					ithetaObs = fill(0::Int64, Ndepth)
 
-				# STRUCTURE
-					obsTheta = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
-
 				# SAVING SPACE 
 					Data = nothing
 					True = nothing
-			return obsTheta
+
+				# STRUCTURE
+					return obsTheta = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
 			end  # function: TIME_SERIES
 
 
@@ -1222,7 +1209,6 @@ module reading
 			return Laiᵀ_Norm
 			end  # function: LOOKUPTABLE_LAI
 
-
 			function LOOKUPTABLE_CROPCOEFICIENT(clim, option, pathHyPix, veg)
 				if option.hyPix.LookUpTable_CropCoeficient == true
 					LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_CropCoeficient, "CropCoeficient")
@@ -1239,7 +1225,6 @@ module reading
 					end
 					i+=1
 				end
-
 			return CropCoeficientᵀ_Norm
 			end  # function: LOOKUPTABLE_LAI
 

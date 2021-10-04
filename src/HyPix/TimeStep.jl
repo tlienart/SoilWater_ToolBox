@@ -90,7 +90,7 @@ module timeStep
 				Δθ₂_Max = param.hyPix.Δθ_Max
 
 			# Computing smallest Δθ_Max
-				for iZ = 1:N_iZ		
+				for iZ = 1:N_iZ-1		
 					# Assuring that the maximum change of ΔΨmax ≥ Ln ψ
 					if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ" # <>=<>=<>=<>=<>
 						Δθ₂_Max = ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
@@ -109,7 +109,7 @@ module timeStep
 				end # for: iZ=2:N_iZ
 
 			if option.hyPix.NormMin⍰ == "Norm"
-				ΔT₂_New = √(ΔT_New_Norm / N_iZ)
+				ΔT₂_New = √(ΔT_New_Norm / Float64(N_iZ - 1))
 			else
 				ΔT₂_New = ΔT_New_Norm
 			end

@@ -31,19 +31,19 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RESIDUAL_DIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, N_iZ::Int64, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)
 
-			if !Flag_NoConverge
+			# if !Flag_NoConverge
 				# Q[iT,iZ] format for ForwardDiff
 					Q₁ = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ_, Ψ▲)
 
 				# Q[iT,iZ+1] format for ForwardDiff
 					Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ▼, Ψ_)		
-			else 
-				# Q[iT,iZ] format for ForwardDiff
-					Q₁ = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, θ, Ψbest_, Ψbest▲)
+			# else 
+			# 	# Q[iT,iZ] format for ForwardDiff
+			# 		Q₁ = flux.Q!(option, discret, hydro, iZ, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, θ, Ψbest_, Ψbest▲)
 
-				# Q[iT,iZ+1] format for ForwardDiff
-					Q₂ = flux.Q!(option, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, θ, Ψbest▼, Ψbest_)
-			end
+			# 	# Q[iT,iZ+1] format for ForwardDiff
+			# 		Q₂ = flux.Q!(option, discret, hydro, iZ+1, iT, N_iZ, param, ΔHpond, ΔPr, ΔT, θ, Ψbest▼, Ψbest_)
+			# end
 
 			# θ[iT,iZ] format for ForwardDiff
 				θ₂ = wrc.Ψ_2_θDual(option.hyPix,Ψ_, iZ, hydro)

@@ -297,7 +297,7 @@ module paths
 		# HYPIX INPUT LEVEL 2 ===
 		Path_Hypix₂            = PathData_Hypix * "/" * IdName_Hypix * "/" * IdName_Hypix * "_"
 
-			path.hyPix.Climate          = Path_Hypix₂ * string(opt.hyPix.ClimateDataTimestep⍰) * "_" * path.hyPix.Climate
+			path.hyPix.Climate          = Path_Hypix₂ * path.hyPix.Climate
 			path.hyPix.Dates            = Path_Hypix₂ * path.hyPix.Dates
 			path.hyPix.Discretization   = Path_Hypix₂ * path.hyPix.Discretization
 			path.hyPix.DiscretizationAuto   = Path_Hypix₂ * path.hyPix.DiscretizationAuto

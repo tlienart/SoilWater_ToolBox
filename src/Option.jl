@@ -92,7 +92,6 @@ module options
 		Plot_θΨ::Bool                
 	end
 	@option mutable struct HYPIX
-		ClimateDataTimestep⍰::String
 		RainfallInterception::Bool
 		Evaporation::Bool
 		RootWaterUptake::Bool

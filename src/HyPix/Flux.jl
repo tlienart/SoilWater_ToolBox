@@ -15,10 +15,11 @@ module flux
 
 			elseif iZ == N_iZ + 1 # <>=<>=<>=<>=<>
 				if option.hyPix.BottomBoundary⍰ == "Free"
-					return K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ▲, N_iZ, hydro)
+					# return K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ▲, N_iZ, hydro)
+					return K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, N_iZ, hydro)
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<># <>=<>=<>=<>=<>
-					return K_Aver =  ( Ψ_2_KUNSAT(option.hyPix, param.hyPix.Ψ_Botom, N_iZ, hydro) + Ψ_2_KUNSAT(option.hyPix, ψ_, N_iZ, hydro) ) / 2.0
+					return K_Aver =  (Ψ_2_KUNSAT(option.hyPix, param.hyPix.Ψ_Botom, N_iZ, hydro) + Ψ_2_KUNSAT(option.hyPix, ψ_, N_iZ, hydro)) / 2.0
 
 				end
 			end
@@ -41,22 +42,21 @@ module flux
 				return Q = K_Aver * ( ((ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα )
 
 			elseif iZ == N_iZ + 1 # <>=<>=<>=<>=<>
-				K_Aver = K_AVER!(option, param, discret, hydro, N_iZ+1, N_iZ, ψ_, ψ▲)
+				K_Aver = K_AVER!(option, param, discret, hydro, iZ, N_iZ, ψ_, ψ▲)
 
 				if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
 					Q = K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-					Q = K_Aver * ( ((param.hyPix.Ψ_Botom - discret.ΔZ_Aver[iZ] - ψ_) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα )
-
+					Q = K_Aver * ( ((param.hyPix.Ψ_Botom - ψ_) / discret.ΔZ[N_iZ]) + param.hyPix.Cosα )
 				end
 
 			# Checking of maximum water abstraction of bottom cell
-				if Q ≥ 0.0
-					return  Q = min(Q, discret.ΔZ[N_iZ] * (θ[iT-1,N_iZ] - hydro.θr[N_iZ] + eps(100.0)))
-				else
-					return  Q = max(Q, -discret.ΔZ[N_iZ] * (hydro.θs[N_iZ] - θ[iT-1,N_iZ] + eps(100.0)))
-				end
+				# if Q ≥ 0.0
+				# 	return  Q = min(Q, discret.ΔZ[N_iZ] * (θ[iT-1,N_iZ] - hydro.θr[N_iZ] + eps(100.0)))
+				# else
+				# 	return  Q = max(Q, -discret.ΔZ[N_iZ] * (hydro.θs[N_iZ] - θ[iT-1,N_iZ] + eps(100.0)))
+				# end
 			end # Case
 
 		end  # function: Q!
@@ -111,16 +111,16 @@ module flux
 				if iZ ≤ N_iZ 	# <>=<>=<>=<>=<>
 					K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ, N_iZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return ∂Q▽∂Ψ = (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] *  ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ_Aver[iZ]	
+					return ∂Q▽∂Ψ = (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ_Aver[iZ]	
 				
 				else # <>=<>=<>=<>=<>
 					if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
 						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * param.hyPix.Cosα
 		
 					elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-						K_Aver = flux.K_AVER!(option, param, discret, hydro, iZ, N_iZ, Ψ[iT,N_iZ], Ψ[iT,N_iZ-1])
+						K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ, N_iZ, Ψ[iT,N_iZ], Ψ[iT,N_iZ])
 
-						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * ((param.hyPix.Ψ_Botom - Ψ[iT,N_iZ]) / discret.ΔZ[N_iZ] + param.hyPix.Cosα) - K_Aver / discret.ΔZ[N_iZ]	
+						return ∂Q▽∂Ψ = 0.5 * ∂K∂Ψ[N_iZ] * ((param.hyPix.Ψ_Botom - Ψ[iT,N_iZ]) / discret.ΔZ[N_iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ[N_iZ]
 					end	
 				end # if iZ
 			end  # function: ∂Q▽∂Ψ

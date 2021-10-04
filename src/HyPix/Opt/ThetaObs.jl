@@ -21,9 +21,8 @@ module thetaObs
 				end
 
 			# COMPUTING CUMULATIVE TIME
-				Start_Date = clim.Date[1] 
 				for iT=1:obsTheta.N_iT
-					obsTheta.∑T[iT] = value(obsTheta.Date[iT] - Start_Date) / 1000
+					obsTheta.∑T[iT] = value(obsTheta.Date[iT] - clim.Date[1] ) / 1000
 				end  # for it=1:obsTheta.N_iT
 
 				# TRANSFORM THE DEPTH OF MEASURED Θ -> CELL DEPTH
