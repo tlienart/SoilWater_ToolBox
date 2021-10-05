@@ -52,12 +52,12 @@ module interpolate
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INTERPOLATE_2D_LOOP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, N_iT, N_iZ, X₀_Reduced, X₀)
+		function INTERPOLATE_2D_LOOP(∑T, ∑T_Reduced, Nit, NiZ, X₀_Reduced, X₀)
 
-			N_∑Treduced = length(∑T_Reduced)
+			Nit_Reduced = length(∑T_Reduced)
 			iT_X = 2
 
-			for iT_Reduced = 1:N_∑Treduced
+			for iT_Reduced = 1:Nit_Reduced
 				FlagBreak = false
 
 				while !(FlagBreak)
@@ -65,7 +65,7 @@ module interpolate
 						error("HYPIX INTERPOLATE_2D_LOOP:  ∑T_Reduced[iT_Reduced] < ∑T[iT_X-1] iT_Reduced=$iT_Reduced iT_X=$iT_X")
 					end
 
-					if (∑T[iT_X-1] ≤ ∑T_Reduced[iT_Reduced] ≤ ∑T[iT_X]) || (iT_X == N_iT) 
+					if (∑T[iT_X-1] ≤ ∑T_Reduced[iT_Reduced] ≤ ∑T[iT_X]) || (iT_X == Nit) 
 						FlagBreak = true
 						break
 
@@ -77,12 +77,12 @@ module interpolate
 
 				# Building a regression line which passes from POINT1(∑T_Climate[iT_X], ∑Pr_Climate[iT_Pr]) and POINT2: (∑T_Climate[iT_Pr+1], ∑Pr_Climate[iT_Pr+1])
 				# if !Flag_TooEarly
-					for iZ = 1:N_iZ
+					for iZ = 1:NiZ
 						Slope, Intercept = interpolate.POINTS_2_SlopeIntercept(∑T[iT_X-1], X₀[iT_X-1,iZ], ∑T[iT_X], X₀[iT_X,iZ])
 
 						X₀_Reduced[iT_Reduced,iZ] = Slope * ∑T_Reduced[iT_Reduced] + Intercept
-					end # for iZ = 1:N_iZ	
-			end # for: iT_Reduced=1:obsTheta.N_iT
+					end # for iZ = 1:NiZ	
+			end # for: iT_Reduced=1:obsTheta.Nit
 				
 	return X₀_Reduced
 	end  # function: θINTERPOLATION
@@ -90,13 +90,13 @@ module interpolate
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INTERPOLATE_2D_LOOP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, N_∑Treduced, N_iT, X₀_Reduced, X₀)
+		function INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, X₀_Reduced, X₀)
 			iT_X = 2
-			for iT_Reduced=1:N_∑Treduced
+			for iT_Reduced=1:Nit_Reduced
 		
 				FlagBreak = false
 				while !(FlagBreak)
-					if (∑T[iT_X-1] - eps(10.0) ≤ ∑T_Reduced[iT_Reduced] ≤ ∑T[iT_X] + eps(10.0)) || (iT_X == N_iT) 
+					if (∑T[iT_X-1] - eps(10.0) ≤ ∑T_Reduced[iT_Reduced] ≤ ∑T[iT_X] + eps(10.0)) || (iT_X == Nit) 
 						FlagBreak = true
 						break
 					else 
@@ -110,7 +110,7 @@ module interpolate
 
 				X₀_Reduced[iT_Reduced] = Slope * ∑T_Reduced[iT_Reduced] + Intercept
 			
-			end # for: iT_Reduced=1:obsTheta.N_iT
+			end # for: iT_Reduced=1:obsTheta.Nit
 		
 		return X₀_Reduced
 	end  # function: θINTERPOLATION

@@ -82,10 +82,10 @@ module hypixStart
 			end # if option.hyPix.Discretisation_File_Auto⍰ == "Auto" 
 		
 			# Read discretisation
-				Flag_θΨini, Layer, N_Layer, N_iZ, Z, θini, Ψini = reading.hyPix.DISCRETIZATION(path.hyPix.Discretization)
+				Flag_θΨini, Layer, N_Layer, NiZ, Z, θini, Ψini = reading.hyPix.DISCRETIZATION(path.hyPix.Discretization)
 
 			# Process discretisation of the soil profile ~~~~~
-				discret = discretization.DISCRETIZATION(N_iZ, Z)
+				discret = discretization.DISCRETIZATION(NiZ, Z)
 
 			# CLIMATE DATA  ~~~~~
 				# Read climate
@@ -104,42 +104,42 @@ module hypixStart
 
 			# MEMORY
 				if iOpt_Count == 1
-					N_∑Treduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
+					Nit_Reduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
 
-					Efficiency                 = fill(0.0::Float64, N_∑Treduced)
-					Global_WaterBalance        = fill(0.0::Float64, N_∑Treduced)
-					Global_WaterBalance_NormPr = fill(0.0::Float64, N_∑Treduced)
-					RmseBest                   = fill(0.0::Float64, N_∑Treduced)
-					SwcRoots                   = fill(0.0::Float64, N_∑Treduced)
-					WofBest                    = fill(0.0::Float64, N_∑Treduced)
-					ΔRunTimeHypix              = fill(0.0::Float64, N_∑Treduced)
-					ΔT_Average                 = fill(0.0::Float64, N_∑Treduced)
-					∑ΔQ_Bot                    = fill(0.0::Float64, N_∑Treduced)
-					∑∑ΔSink                    = fill(0.0::Float64, N_∑Treduced)
+					Efficiency                 = fill(0.0::Float64, Nit_Reduced)
+					Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
+					Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
+					RmseBest                   = fill(0.0::Float64, Nit_Reduced)
+					SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
+					WofBest                    = fill(0.0::Float64, Nit_Reduced)
+					ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
+					ΔT_Average                 = fill(0.0::Float64, Nit_Reduced)
+					∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
+					∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
 				end
 				
-				∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest = memory.MEMORY(clim, iOpt_Count, N_∑T_Climate, N_iZ, obsTheta, param)
+				∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest = memory.MEMORY(clim, iOpt_Count, N_∑T_Climate, NiZ, obsTheta, param)
 
 			# INITIALIZING THE STRUCTURE
 				# Initializing hydroHorizon structure
 					hydroHorizon = hydroStruct.HYDROSTRUCT(option.hyPix, N_Layer)
 
 				# Initializing hydraulic param into structure 
-					hydro = hydroStruct.HYDROSTRUCT(option.hyPix, N_iZ)
+					hydro = hydroStruct.HYDROSTRUCT(option.hyPix, NiZ)
 
 				# Initialiozing vegetation parameters into veg structure
 					veg = vegStruct.VEGSTRUCT()
 
 				# Optimisation
 					hydroHorizon_best = hydroStruct.HYDROSTRUCT(option.hyPix, N_Layer)
-					hydro_best        = hydroStruct.HYDROSTRUCT(option.hyPix, N_iZ)
+					hydro_best        = hydroStruct.HYDROSTRUCT(option.hyPix, NiZ)
 					veg_best          = vegStruct.VEGSTRUCT()
 				
 			# ========================================================
 	 
 			# OBTAINING HYDRAULIC AND VEGETATION PARAMETERS
 			if option.hyPix.Optimisation
-				hydro, hydroHorizon, optim, veg = reading.hyPix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iOpt, N_iZ, option, param, path.hyPix.HyPixParamOpt, veg)
+				hydro, hydroHorizon, optim, veg = reading.hyPix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iOpt, NiZ, option, param, path.hyPix.HyPixParamOpt, veg)
 			else
 			# Reading veg parameters
 				veg, ~ = reading.READ_STRUCT(veg, path.hyPix.HyPix_VegParam)
@@ -147,7 +147,7 @@ module hypixStart
 			# Hydraulic parameters
 				hydroHorizon, ~ = reading.READ_STRUCT(hydroHorizon, path.hyPix.HyPix_HydroParam)
 
-				hydro        = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ, option)
+				hydro        = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, option)
 
 			# options of optim		
 				Flag_Opt = false
@@ -161,16 +161,16 @@ module hypixStart
             CropCoeficientᵀ_η = reading.hyPix.LOOKUPTABLE_CROPCOEFICIENT(clim, option, path.hyPix, veg)
 
 			if optim.Flag_Opt
-				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, N_iZ, obsTheta, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
+				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, NiZ, obsTheta, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 			end
 			
 			# if Flag_Opt then it will rerun with the optimal parameters
 			println(" =============== Start running HyPix ===========================")
-			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
+			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 			# WATER BALANCE
 				# Computed after the warmup period
-				∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage = waterBalance.WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot, N_iT, N_iZ, Q, ΔSink, ΔT, θ, Ψ)
+				∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage = waterBalance.WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot, Nit, NiZ, Q, ΔSink, ΔT, θ, Ψ)
 
 			# SUMMARY HOW GOOD THE SIMULATION
 				# Computed climate day after the warmup period
@@ -184,7 +184,7 @@ module hypixStart
 
 				# Soil water content for the rootzone at the end of simulation
 				@fastmath @inbounds @simd for iZ=1:N_iRoot
-					SwcRoots[iOpt_Count] += θ[N_iT,iZ] * discret.ΔZ[iZ]
+					SwcRoots[iOpt_Count] += θ[Nit,iZ] * discret.ΔZ[iZ]
 				end
 
 				# Timing 
@@ -194,57 +194,57 @@ module hypixStart
 				# Convergence rate
 					iNonConverge_iOpt[iOpt_Count]          = iNonConverge
 
-					Efficiency[iOpt_Count]                 = ceil(Int, cst.Day_2_Second * IterCount / ∑T[N_iT])
+					Efficiency[iOpt_Count]                 = ceil(Int, cst.Day_2_Second * IterCount / ∑T[Nit])
 					
-					ΔT_Average[iOpt_Count]                 = ceil(Int, mean(ΔT[i∑T_CalibrStart:N_iT]))
+					ΔT_Average[iOpt_Count]                 = ceil(Int, mean(ΔT[i∑T_CalibrStart:Nit]))
 					
 					Global_WaterBalance[iOpt_Count]        = ∑∑WaterBalance
 					
-					Global_WaterBalance_NormPr[iOpt_Count] = 100.0 * ∑WaterBalance_η[N_iT]
+					Global_WaterBalance_NormPr[iOpt_Count] = 100.0 * ∑WaterBalance_η[Nit]
 					
-					∑∑ΔSink[iOpt_Count]                    = ∑ΔSink[N_iT]
+					∑∑ΔSink[iOpt_Count]                    = ∑ΔSink[Nit]
 				
 				# Ground water recharge
 					∑ΔQ_Bot[iOpt_Count] = 0.0
-					@fastmath @inbounds @simd for iT=i∑T_CalibrStart:N_iT
-						∑ΔQ_Bot[iOpt_Count] += ΔT[iT] * Q[iT, N_iZ+1]
+					@fastmath @inbounds @simd for iT=i∑T_CalibrStart:Nit
+						∑ΔQ_Bot[iOpt_Count] += ΔT[iT] * Q[iT, NiZ+1]
 					end
            
 				println("		=== ===START: summary  $iOpt steps ...")
 
 					println("			∑Pr 			= ", ceil(Int, ∑Pr_Clim), "  [mm]")
-					println("			∑Pr_Soil 		= ", ceil(Int, ∑Pr[N_iT] - ∑Pr[i∑T_CalibrStart]),  "  [mm]")
-					println("			∑Pr_Intercepted/∑Pr 	= ", ceil(Int, 100. * (∑Pr_Clim - (∑Pr[N_iT]-∑Pr[i∑T_CalibrStart])) / (∑Pr_Clim + eps(10.0))),  "  [%]")
+					println("			∑Pr_Soil 		= ", ceil(Int, ∑Pr[Nit] - ∑Pr[i∑T_CalibrStart]),  "  [mm]")
+					println("			∑Pr_Intercepted/∑Pr 	= ", ceil(Int, 100. * (∑Pr_Clim - (∑Pr[Nit]-∑Pr[i∑T_CalibrStart])) / (∑Pr_Clim + eps(10.0))),  "  [%]")
 					println("			∑Pet_Net 		= ", ceil(Int, ∑Pet_Net), "  [mm]")
-					println("			∑Pet 			= ", ceil(Int, ∑Pet[N_iT]- ∑Pet[i∑T_CalibrStart]), "  [mm]")
-					println("			∑ΔSink/∑Pet_Net 	= ", ceil(Int, 100.0 * ∑ΔSink[N_iT] /(∑Pet_Net + eps(10.0))), "  [%] \n")
+					println("			∑Pet 			= ", ceil(Int, ∑Pet[Nit]- ∑Pet[i∑T_CalibrStart]), "  [mm]")
+					println("			∑ΔSink/∑Pet_Net 	= ", ceil(Int, 100.0 * ∑ΔSink[Nit] /(∑Pet_Net + eps(10.0))), "  [%] \n")
 					
 					println("			∑SoilWaterContentRootEnd = ", ceil(Int, SwcRoots[iOpt_Count]), "  [mm]")
 					println("			∑ΔSink 			= ", -ceil(Int, ∑∑ΔSink[iOpt_Count]), "  [mm]")
 					println("			∑Infilt_Bot 		= ", -ceil( Int, ∑ΔQ_Bot[iOpt_Count] ), "  [mm]")
-					println("			ΔHpond at end 		= ", ceil(Int, ΔHpond[N_iT]), "  [mm] \n")
+					println("			ΔHpond at end 		= ", ceil(Int, ΔHpond[Nit]), "  [mm] \n")
 
 					println("			iNonConverge 			= ", iNonConverge_iOpt[iOpt_Count], "  [count]")
 					println("			Global_WaterBalance_NormPr 	= ", round(Global_WaterBalance_NormPr[iOpt_Count], digits=2), "  [%]")
 					println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=2), "  [mm]")
 					println("			Average ΔT 			= ",  ΔT_Average[iOpt_Count] , "  [seconds]")
-					println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:N_iT]), digits=0) , "  [seconds]")
-					println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:N_iT]), digits=0) , "  [seconds]")
+					println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
+					println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 					println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")			
 					println("			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1], \n")
 
-
-					∑T_Date_Plot, ∑T_Reduced, ∑WaterBalance_η_Plot, Date_Plot, Flag_Plot_Pond, N_∑Treduced, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔPrGross_Plot, ΔSink_Plot, ΔT_Plot, θ_Plot, θobs_Plot, Ψ_Plot = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:N_iT], ∑Pr[1:N_iT], ∑T[1:N_iT], ∑WaterBalance_η[1:N_iT], ∑ΔSink[1:N_iT], obsTheta, clim, N_iT, N_iZ, param, Q[1:N_iT,1:N_iZ+1], ΔEvaporation[1:N_iT], ΔHpond[1:N_iT], ΔT[1:N_iT], θ[1:N_iT,1:N_iZ], Ψ[1:N_iT,1:N_iZ], ∑T_Climate)
+					∑T_Date_Reduced, ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, param, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], ΔHpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
 
 			# Computing average simulated θ to comapre it with average observed θ
 			if option.hyPix.θobs_Average && option.hyPix.θobs	
-				θsim_Aver = θaver.θAVER(discret; Z=Z, θ_Plot=θ_Plot, N_iZ=N_iZ, N_∑Treduced=N_∑Treduced, Zaver=min(400.0, Z[N_iZ]))
+				θsim_Aver = θaver.θAVER(discret; Z=Z, θ_Reduced=θ_Reduced, NiZ=NiZ, Nit_Reduced=Nit_Reduced, Zaver=min(400.0, Z[NiZ]))
 
-				RmseBest[iOpt_Count] = stats.NSE(θobs_Plot[1:N_∑Treduced], θsim_Aver[1:N_∑Treduced])
+				RmseBest[iOpt_Count] = stats.NSE(θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced])
 
 			elseif !(option.hyPix.θobs_Average) && option.hyPix.θobs
-				RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, N_iT, N_iZ, θ, θSim)
+				RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
 				θsim_Aver = []
+				
 			end
 
 			if option.hyPix.θobs
@@ -265,22 +265,22 @@ module hypixStart
 				table.hyPix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average, Soilname, path.hyPix)		
 
 				if option.hyPix.Table_Discretization
-					table.hyPix.DISCRETIZATION(discret, N_iZ, Z[1:N_iZ], path.hyPix)
+					table.hyPix.DISCRETIZATION(discret, NiZ, Z[1:NiZ], path.hyPix)
 				end
 				if  option.hyPix.Table_TimeSeries
-					table.hyPix.TIME_SERIES(∑T[1:N_iT], ΔT[1:N_iT], ∑Pr[1:N_iT], ΔPr[1:N_iT], ΔHpond[1:N_iT], ΔT[1:N_iT].*Q[1:N_iT,1], ∑WaterBalance_η[1:N_iT], iOpt, path.hyPix)
+					table.hyPix.TIME_SERIES(∑T[1:Nit], ΔT[1:Nit], ∑Pr[1:Nit], ΔPr[1:Nit], ΔHpond[1:Nit], ΔT[1:Nit].*Q[1:Nit,1], ∑WaterBalance_η[1:Nit], iOpt, path.hyPix)
 				end
 				if option.hyPix.Table_TimeSeriesDaily
-					table.hyPix.TIME_SERIES_DAILY(∑T_Reduced[1:N_∑Treduced], ∑WaterBalance_η_Plot[1:N_∑Treduced], Date_Plot[1:N_∑Treduced], iOpt, N_∑Treduced, ΔEvaporation_Plot[1:N_∑Treduced], ΔFlux_Plot[1:N_∑Treduced, N_iZ+1], ΔPet_Plot[1:N_∑Treduced], ΔPond_Plot[1:N_∑Treduced], ΔPr_Plot[1:N_∑Treduced], ΔSink_Plot[1:N_∑Treduced], path.hyPix)
+					table.hyPix.TIME_SERIES_DAILY(∑T_Reduced[1:Nit_Reduced], ∑WaterBalanceη_Reduced[1:Nit_Reduced], Date_Reduced[1:Nit_Reduced], iOpt, Nit_Reduced, ΔEvaporation_Reduced[1:Nit_Reduced], ΔQ_Reduced[1:Nit_Reduced, NiZ+1], ΔPet_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], ΔSink_Reduced[1:Nit_Reduced], path.hyPix)
 				end
 				if option.hyPix.Table_θ
-					table.hyPix.θ(∑T[1:N_iT], θ[1:N_iT,1:N_iZ], discret.Znode[1:N_iZ], iOpt, path.hyPix)
+					table.hyPix.θ(∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced,1:NiZ], discret.Znode[1:NiZ], iOpt, path.hyPix)
 				end
 				if option.hyPix.Table_Ψ
-					table.hyPix.Ψ(∑T[1:N_iT], Ψ[1:N_iT,1:N_iZ], discret.Znode[1:N_iZ], iOpt, path.hyPix)
+					table.hyPix.Ψ(∑T_Reduced[1:Nit_Reduced], Ψ_Reduced[1:Nit_Reduced,1:NiZ], discret.Znode[1:NiZ], iOpt, path.hyPix)
 				end
 				if option.hyPix.Table_Q
-					table.hyPix.Q(∑T[1:N_iT], Q[1:N_iT,1:N_iZ+1], Z[N_iZ], discret.Znode[1:N_iZ], iOpt, path.hyPix)
+					table.hyPix.Q(Date_Reduced[1:Nit_Reduced], ΔQ_Reduced[1:Nit_Reduced,1:NiZ+1], Z[NiZ], discret.Znode[1:NiZ], iOpt, path.hyPix)
 				end
 				if option.hyPix.Tabule_θΨ
 					table.hyPix.θΨ(hydroHorizon, iOpt, N_Layer, option.hyPix, param, path.hyPix)
@@ -290,7 +290,7 @@ module hypixStart
 					table.hyPix.DAILY_CLIMATE(∑T_Climate, clim, iOpt, path.hyPix)
 				end
 				if option.hyPix.θobs_Average && option.hyPix.θobs
-					table.hyPix.θAVERAGE(Date_Plot[1:N_∑Treduced], iOpt, θobs_Plot[1:N_∑Treduced], θsim_Aver[1:N_∑Treduced], path.hyPix)
+					table.hyPix.θAVERAGE(Date_Reduced[1:Nit_Reduced], iOpt, θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced], path.hyPix)
 				end
 			println("		=== === END: Table === === \n")
 			end  # if option.hyPix.Table
@@ -307,7 +307,7 @@ module hypixStart
 				# end # option.hyPix.Plot_Other
 				
 				if option.hyPix.Plot_Hypix
-					plotHypix.makkie.TIMESERIES(∑T_Date_Plot, ∑T_Reduced, obsTheta, discret, Flag_Plot_Pond, iOpt, N_∑Treduced, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPrGross_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, path.hyPix)
+					plotHypix.makkie.TIMESERIES(∑T_Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, path.hyPix)
 				end
 
 				if option.hyPix.Plot_θΨK

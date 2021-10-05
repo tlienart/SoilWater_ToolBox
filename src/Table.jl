@@ -9,22 +9,22 @@ module table
 	#		FUNCTION : TABLE_EXTRAPOINTS_K
 	# 		Tabular values of the PSD model
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TABLE_ID(N_iZ::Int64, path, Path::String)
+		function TABLE_ID(NiZ::Int64, path, Path::String)
 			println("    ~  $(Path) ~")
 
-			IdSelect = collect(1:1:N_iZ)
+			IdSelect = collect(1:1:NiZ)
 
-			Select = fill(1::Int64, N_iZ)
+			Select = fill(1::Int64, NiZ)
 
 			FieldName_String = ["Id", path.option.Select]
 
-			# Output = Tables.table( [IdSelect[1:N_iZ] Select[1:N_iZ]] )
+			# Output = Tables.table( [IdSelect[1:NiZ] Select[1:NiZ]] )
 			
 			# CSV.write(Path, Output, header=FieldName_String, delim=',')
 
 			open(Path, "w") do io
 				DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-				DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Select[1:N_iZ]], ",")
+				DelimitedFiles.writedlm(io, [string.(IdSelect[1:NiZ]) Select[1:NiZ]], ",")
 			end
 		return nothing
 		end  # function:  TABLE_ID
@@ -41,12 +41,12 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK(hydro, hydroOther, IdSelect, KₛModel, N_iZ::Int64, Path)
+			function θΨK(hydro, hydroOther, IdSelect, KₛModel, NiZ::Int64, Path)
 				println("    ~  $(Path) ~")
 
-				Matrix₁, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydro)
+				Matrix₁, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(NiZ, hydro)
 
-				Matrix₂, FieldName_String2 = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroOther)
+				Matrix₂, FieldName_String2 = tool.readWrite.STRUCT_2_FIELDNAME(NiZ, hydroOther)
 
 				Header = vcat("Id", FieldName_String, FieldName_String2, "KsModel")
 
@@ -62,7 +62,7 @@ module table
 		#		FUNCTION : TABLE_θΨK
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_θΨ(optionₘ, hydro, IdSelect, N_iZ::Int64, Path, Ψ_Table; Orientation="Horizontal")
+			function TABLE_EXTRAPOINTS_θΨ(optionₘ, hydro, IdSelect, NiZ::Int64, Path, Ψ_Table; Orientation="Horizontal")
 				println("    ~  $(Path) ~")
 
 				N_Ψ = Int64(length(Ψ_Table))
@@ -76,9 +76,9 @@ module table
 						pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 							
 					# Computing θ at required θ
-						θ₂ = fill(0.0::Float64, (N_iZ, N_Ψ))
+						θ₂ = fill(0.0::Float64, (NiZ, N_Ψ))
 
-						for iZ=1:N_iZ
+						for iZ=1:NiZ
 							for iΨ =1:N_Ψ
 								Ψ₂ = Ψ_Table[iΨ]
 								θ₂[iZ, iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
@@ -92,13 +92,13 @@ module table
 
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
 					FieldName_String = ["Id","H[mm]","Theta[0-1]"]
-					N = N_Ψ * N_iZ
+					N = N_Ψ * NiZ
 					Id₂ = fill(0::Int64, N)
 					Ψ₂  = fill(0.0::Float64, N)
 					θ₂  = fill(0.0::Float64, N)
 					iCount = 1
 
-					for iZ=1:N_iZ
+					for iZ=1:NiZ
 						for iΨ =1:N_Ψ
 							Id₂[iCount] = IdSelect[iZ]
 							Ψ₂[iCount] = Ψ_Table[iΨ]
@@ -123,7 +123,7 @@ module table
 		#		FUNCTION : TABLE_EXTRAPOINTS_K
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, IdSelect, K_Table, N_iZ::Int64, Path::String)
+			function TABLE_EXTRAPOINTS_Kθ(optionₘ, hydroParam, IdSelect, K_Table, NiZ::Int64, Path::String)
 				println("    ~  $(Path) ~")
 
 				N_K = Int64(length(K_Table))
@@ -132,13 +132,13 @@ module table
 				FieldName_String =["Id", "H[mm]" ,"Kunsat[mm_s]"]
 							
 			# Computing K at required Ψ
-				N = N_K *N_iZ
+				N = N_K *NiZ
 				Id₂     = fill(0::Int64, N)
 				Ψ₂      = fill(0.0::Float64, N)
 				Kunsat₂ = fill(0.0::Float64, N)
 				iCount  = 1
 				hydroParam₂ = deepcopy(hydroParam)
-				for iZ=1:N_iZ
+				for iZ=1:NiZ
 					for iK =1:N_K
 						Id₂[iCount] = IdSelect[iZ]
 						Ψ₂[iCount] = K_Table[iK]
@@ -229,10 +229,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD(IdSelect, N_iZ::Int64, paramPsd, Path)
+			function PSD(IdSelect, NiZ::Int64, paramPsd, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ,  paramPsd)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(NiZ,  paramPsd)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
@@ -247,10 +247,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK_PSD
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, N_iZ::Int64, Path)
+			function θΨK_PSD(hydroPsd, IdSelect, KunsatModel_Psd, NiZ::Int64, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroPsd)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(NiZ, hydroPsd)
 
 				Matrix = hcat(Matrix, KunsatModel_Psd)
 
@@ -271,7 +271,7 @@ module table
 		#		FUNCTION : PSD_θΨ_θ
 		# 		Tabular values of the PSD model
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PSD_θΨ_θ(IdSelect, hydroPsd, N_iZ::Int64, option, param, Path::String)
+			function PSD_θΨ_θ(IdSelect, hydroPsd, NiZ::Int64, option, param, Path::String)
 				println("    ~  $Path ~")
 
 				N_Ψ = Int64(length(param.psd.Ψ_Table))
@@ -285,8 +285,8 @@ module table
 					pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 				
 				# Computing θ at required θ
-					θ = fill(0.0::Float64, (N_iZ, N_Ψ))
-					for iZ=1:N_iZ
+					θ = fill(0.0::Float64, (NiZ, N_Ψ))
+					for iZ=1:NiZ
 						for iΨ =1:N_Ψ
 							Ψ = param.psd.Ψ_Table[iΨ]
 							θ[iZ, iΨ] = wrc.Ψ_2_θDual(option.psd, Ψ, iZ, hydroPsd)
@@ -323,10 +323,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDRO_INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYDRO_INFILT(hydroInfilt, IdSelect, N_iZ::Int64, Path)
+			function HYDRO_INFILT(hydroInfilt, IdSelect, NiZ::Int64, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroInfilt)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(NiZ, hydroInfilt)
 
 				# Matrix = hcat(Matrix, KunsatModel_Infilt)
 				
@@ -345,10 +345,10 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : infilt
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function INFILT(IdSelect, N_iZ, infiltOutput, Path)
+			function INFILT(IdSelect, NiZ, infiltOutput, Path)
 				println("    ~  $Path ~")
 
-				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ::Int64, infiltOutput)
+				Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(NiZ::Int64, infiltOutput)
 				
 				pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
@@ -403,14 +403,14 @@ module table
 		# ===================================================
 		#          Discretization
 		# ===================================================
-			function DISCRETIZATION(discret, N_iZ, Z, pathHyPix)
+			function DISCRETIZATION(discret, NiZ, Z, pathHyPix)
 				println("			~  $(pathHyPix.Table_Discretisation) ~")
 
 				Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
 
 				open(pathHyPix.Table_Discretisation, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [Z[1:N_iZ] discret.ΔZ[1:N_iZ] discret.ΔZ_⬓[1:N_iZ] discret.Znode[1:N_iZ] discret.ΔZ_Aver[1:N_iZ] discret.ΔZ_W[1:N_iZ] discret.Z_CellUp[1:N_iZ]], ",")
+					DelimitedFiles.writedlm(io, [Z[1:NiZ] discret.ΔZ[1:NiZ] discret.ΔZ_⬓[1:NiZ] discret.Znode[1:NiZ] discret.ΔZ_Aver[1:NiZ] discret.ΔZ_W[1:NiZ] discret.Z_CellUp[1:NiZ]], ",")
 				end
 			return nothing
 			end # Table DISCRETIZATION
@@ -475,33 +475,33 @@ module table
 		# ===================================================
 		#          TimeStep daily
 		# ===================================================
-			function TIME_SERIES_DAILY(∑T_Reduced, ∑WaterBalance_η_Plot, Date_Plot, iSim, N_∑Treduced, ΔEvaporation_Plot, ΔRecharge_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, pathHyPix)
+			function TIME_SERIES_DAILY(∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, iSim, Nit_Reduced, ΔEvaporation_Reduced, ΔRecharge_Plot, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, pathHyPix)
 				Header =  ["iD" "Year" "Month" "Day" "Hour" "Minute" "Second" "∑T[Hour]" "ΔPr_Through[mm/day]" "ΔPet[mm/day]" "ΔSink[mm/day]" "ΔEvaporation[mm/day]" "Hpond[mm]" "Recharge[mm/day]" "∑WaterBalance_η_Profile[mm/day]"]
 
 				Path = pathHyPix.Table_TimeSerie_Daily * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
-				Id = 1:1:N_∑Treduced
+				Id = 1:1:Nit_Reduced
 
-            Year₁   = fill(0::Int64, N_∑Treduced)
-            Month₁  = fill(0::Int64, N_∑Treduced)
-            Day₁    = fill(0::Int64, N_∑Treduced)
-            Hour₁   = fill(0::Int64, N_∑Treduced)
-            Minute₁ = fill(0::Int64, N_∑Treduced)
-            Second₁ = fill(0::Int64, N_∑Treduced)
+            Year₁   = fill(0::Int64, Nit_Reduced)
+            Month₁  = fill(0::Int64, Nit_Reduced)
+            Day₁    = fill(0::Int64, Nit_Reduced)
+            Hour₁   = fill(0::Int64, Nit_Reduced)
+            Minute₁ = fill(0::Int64, Nit_Reduced)
+            Second₁ = fill(0::Int64, Nit_Reduced)
 
-				for iT=1:N_∑Treduced
-               Year₁[iT]   = year(Date_Plot[iT])
-               Month₁[iT]  = month(Date_Plot[iT])
-               Day₁[iT]    = day(Date_Plot[iT])
-               Hour₁[iT]   = hour(Date_Plot[iT])
-               Minute₁[iT] = minute(Date_Plot[iT])
-               Second₁[iT] = second(Date_Plot[iT])
+				for iT=1:Nit_Reduced
+               Year₁[iT]   = year(Date_Reduced[iT])
+               Month₁[iT]  = month(Date_Reduced[iT])
+               Day₁[iT]    = day(Date_Reduced[iT])
+               Hour₁[iT]   = hour(Date_Reduced[iT])
+               Minute₁[iT] = minute(Date_Reduced[iT])
+               Second₁[iT] = second(Date_Reduced[iT])
 				end
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [Id Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ∑T_Reduced ΔPr_Plot ΔPet_Plot ΔSink_Plot ΔEvaporation_Plot ΔPond_Plot ΔRecharge_Plot ∑WaterBalance_η_Plot], ",")
+					DelimitedFiles.writedlm(io, [Id Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ∑T_Reduced ΔPr_Reduced ΔPet_Reduced ΔSink_Reduced ΔEvaporation_Reduced ΔPond_Reduced ΔRecharge_Plot ∑WaterBalanceη_Reduced], ",")
 				end
 			return nothing
 			end # Table  TIME_SERIES_DAILY
@@ -510,14 +510,14 @@ module table
 		# ===================================================
 		#          θ
 		# ===================================================
-			function θ(∑T, θ, Znode, iSim, pathHyPix)
+			function θ(∑T_Reduced, θ_Reduced, Znode, iSim, pathHyPix)
 				Path = pathHyPix.Table_θ * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
 				# Adding an other column
-				prepend!(Znode, -999)
+					prepend!(Znode, -999)
 
-				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T θ], ",")
+				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T_Reduced θ_Reduced], ",")
 			return nothing
 			end  # Table θ
 		#------------------------------------------------------
@@ -525,7 +525,7 @@ module table
 		# ===================================================
 		#          Q
 		# ===================================================
-			function Q(∑T, Q, Z_Bottom, Znode, iSim, pathHyPix)	
+			function Q(∑T_Reduced, ΔQ_Reduced, Z_Bottom, Znode, iSim, pathHyPix)	
 				Path = pathHyPix.Table_Q * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 				
@@ -533,7 +533,7 @@ module table
 				prepend!(Znode, -999)
 				append!(Znode, Z_Bottom)
 
-				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T Q], ",")
+				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T_Reduced ΔQ_Reduced], ",")
 			return nothing
 			end  # function Q
 		#------------------------------------------------------
@@ -541,17 +541,18 @@ module table
 		# ===================================================
 		#          Ψ
 		# ===================================================
-			function Ψ(∑T, Ψ, Znode, iSim, pathHyPix)
+			function Ψ(∑T_Reduced, Ψ_Reduced, Znode, iSim, pathHyPix)
 				Path = pathHyPix.Table_Ψ * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
 				# Adding an other column
 				prepend!(Znode, -999)
 
-				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T Ψ], ",")
+				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T_Reduced Ψ_Reduced], ",")
 			return nothing
 			end  # function Ψ
 		#------------------------------------------------------
+
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨ
@@ -595,6 +596,7 @@ module table
 			end  # function:  θΨK_PSD
 		#------------------------------------------------------
 
+		
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KΨ
 		# 		Tabular values of the hydroParam model
@@ -635,6 +637,7 @@ module table
 			return nothing	
 			end  # function:  θΨK_PSD
 		#------------------------------------------------------
+
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PERFORMACE
@@ -678,7 +681,7 @@ module table
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : θAVERAGE
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function θAVERAGE(Date_Plot, iSim, θobs_Plot, θsim_Aver, pathHyPix)
+				function θAVERAGE(Date_Reduced, iSim, θobs_Reduced, θsim_Aver, pathHyPix)
 					Path = pathHyPix.Table_θaverage * ".csv"
 					println("			~  $(Path) ~")
 
@@ -686,13 +689,13 @@ module table
 
 					Id = 1:1:length(θsim_Aver)
 
-					Year = year.(Date_Plot)
-					Month = month.(Date_Plot)
-					Day = day.(Date_Plot)
+					Year = year.(Date_Reduced)
+					Month = month.(Date_Reduced)
+					Day = day.(Date_Reduced)
 
 					open(Path, "w") do io
 						DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-						DelimitedFiles.writedlm(io, [Id Year Month Day θobs_Plot θsim_Aver] , ",")
+						DelimitedFiles.writedlm(io, [Id Year Month Day θobs_Reduced θsim_Aver] , ",")
 					end # open
 				return nothing			
 				end # function: θAVERAGE
@@ -709,20 +712,20 @@ module table
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : CONVERT_θΨ_2D_2_1D
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function CONVERT_θΨ_2D_2_1D(IdSelect, N_iZ, N_θΨobs, Path, θ_θΨobs, Ψ_θΨobs)
+				function CONVERT_θΨ_2D_2_1D(IdSelect, NiZ, N_θΨobs, Path, θ_θΨobs, Ψ_θΨobs)
 					println("			~  $(Path) ~")
 
 					Header = ["Id","H[mm]","Theta[0-1]"]
 
 					Ψ_1D=[]; θ_1D=[]; Id_Repeat=[]
 
-					for iZ = 1:N_iZ
+					for iZ = 1:NiZ
 						for iΨ = 1:N_θΨobs[iZ]
 							append!(Id_Repeat, IdSelect[iZ])
 							append!(Ψ_1D, Ψ_θΨobs[iZ, iΨ])
 							append!(θ_1D, θ_θΨobs[iZ, iΨ])
 						end # for: iΨ = 1:Ψ_θΨobs
-					end # for: iZ = 1:N_iZ
+					end # for: iZ = 1:NiZ
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
@@ -736,20 +739,20 @@ module table
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : CONVERT_KΨ_2D_2_1D
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function CONVERT_KΨ_2D_2_1D(IdSelect, N_iZ, N_KΨobs, Path, K_KΨobs, Ψ_KΨobs)
+				function CONVERT_KΨ_2D_2_1D(IdSelect, NiZ, N_KΨobs, Path, K_KΨobs, Ψ_KΨobs)
 					println("			~  $(Path) ~")
 
 					Header = ["Id","H[mm]","Kunsat[mm_s]"]
 
 					Ψ_1D=[]; θ_1D=[]; Id_Repeat=[]
 
-					for iZ = 1:N_iZ
+					for iZ = 1:NiZ
 						for iΨ = 1:N_KΨobs[iZ]
 							append!(Id_Repeat, IdSelect[iZ])
 							append!(Ψ_1D, Ψ_KΨobs[iZ, iΨ])
 							append!(θ_1D, K_KΨobs[iZ, iΨ])
 						end # for: iΨ = 1:Ψ_θΨobs
-					end # for: iZ = 1:N_iZ
+					end # for: iZ = 1:NiZ
 
 				open(Path, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header

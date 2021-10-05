@@ -36,9 +36,9 @@ module rootWaterUptake
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : COMPUTTING N OF ROOTING DEPTH
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function N_IROOT(N_iZ::Int64, veg, Z)::Int64
+			function N_IROOT(NiZ::Int64, veg, Z)::Int64
 				iZ = 1
-				while iZ ≤ N_iZ && veg.Zroot ≥ Z[iZ]
+				while iZ ≤ NiZ && veg.Zroot ≥ Z[iZ]
 					iZ +=1
 				end
 				return N_iRoot = iZ - 1

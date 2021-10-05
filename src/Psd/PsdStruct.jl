@@ -36,26 +36,26 @@ module psdStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYDROSTRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
-	function PSDSTRUCT(N_iZ, option, param)
+	function PSDSTRUCT(NiZ, option, param)
 		FieldName = Array{Symbol}(undef, 1) # Need to put
 
-        θr_Psd      = zeros(Float64, N_iZ)
-        Psd_2_θr_α1 = zeros(Float64, N_iZ)
-        Psd_2_θr_α2 = zeros(Float64, N_iZ)
-        Err_θr_Psd  = zeros(Float64, N_iZ)
-        Nse         = zeros(Float64, N_iZ)
+        θr_Psd      = zeros(Float64, NiZ)
+        Psd_2_θr_α1 = zeros(Float64, NiZ)
+        Psd_2_θr_α2 = zeros(Float64, NiZ)
+        Err_θr_Psd  = zeros(Float64, NiZ)
+        Nse         = zeros(Float64, NiZ)
 
 		if option.psd.Model⍰ == "IMP"
-			ξ1             = zeros(Float64, N_iZ)
-			ξ2             = zeros(Float64, N_iZ)
-			∑Psd_2_ξ2_β1   = zeros(Float64, N_iZ)
-			∑Psd_2_ξ2_β2   = zeros(Float64, N_iZ)
-			Subclay        = zeros(Float64, N_iZ)
-			∑Psd_2_ξ2_Size = zeros(Int, N_iZ)
+			ξ1             = zeros(Float64, NiZ)
+			ξ2             = zeros(Float64, NiZ)
+			∑Psd_2_ξ2_β1   = zeros(Float64, NiZ)
+			∑Psd_2_ξ2_β2   = zeros(Float64, NiZ)
+			Subclay        = zeros(Float64, NiZ)
+			∑Psd_2_ξ2_Size = zeros(Int, NiZ)
 
 
 		# Initializing
-			for iZ=1:N_iZ
+			for iZ=1:NiZ
 				ξ1[iZ]             = param.psd.imp.ξ1
 				ξ2[iZ]             = 0.0
 				∑Psd_2_ξ2_β1[iZ]   = param.psd.imp.∑Psd_2_ξ2_β1
@@ -69,10 +69,10 @@ module psdStruct
 			# return paramPsd = tool.readWrite.FIELDNAME_2_STRUCT_VECT(IMP, paramPsd) # Saving the FieldNames
 	
 		elseif option.psd.Model⍰ == "Chang2019Model"
-			ξ1		= zeros(Float64, N_iZ)
-			θr_Psd  = zeros(Float64, N_iZ)
+			ξ1		= zeros(Float64, NiZ)
+			θr_Psd  = zeros(Float64, NiZ)
 
-			for iZ=1:N_iZ
+			for iZ=1:NiZ
 				ξ1[iZ] = param.psd.chang.ξ1
 			end
 

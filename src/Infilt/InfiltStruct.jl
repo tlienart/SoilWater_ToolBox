@@ -20,14 +20,14 @@ module infiltStruct
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : INFILTSTRUCT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function INFILTSTRUCT(N_iZ)
+		function INFILTSTRUCT(NiZ)
          FieldName           = Array{Symbol}(undef, 1) # Need to put
-         Sorptivity          = zeros(Float64, N_iZ)
-         iT_TransSteady_Data = zeros(Int64, N_iZ)
-         T_TransSteady_Data  = zeros(Float64, N_iZ)
-         Nse_Trans           = zeros(Float64, N_iZ)
-         Nse_Steady          = zeros(Float64, N_iZ)
-         Nse                 = zeros(Float64, N_iZ)
+         Sorptivity          = zeros(Float64, NiZ)
+         iT_TransSteady_Data = zeros(Int64, NiZ)
+         T_TransSteady_Data  = zeros(Float64, NiZ)
+         Nse_Trans           = zeros(Float64, NiZ)
+         Nse_Steady          = zeros(Float64, NiZ)
+         Nse                 = zeros(Float64, NiZ)
 			
 			return infiltOutput = INFILT(Sorptivity, iT_TransSteady_Data, T_TransSteady_Data, Nse_Trans, Nse_Steady, Nse)
 

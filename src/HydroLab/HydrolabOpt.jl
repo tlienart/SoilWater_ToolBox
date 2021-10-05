@@ -9,8 +9,8 @@ module hydrolabOpt
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIXOPT_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROLABOPT_START(;N_iZ, ∑Psd, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs=[0], Ψ_KΨobs=[0], N_KΨobs=1, hydro, hydroOther, option, optionₘ, optim, param, θϵ=0.005)
-		for iZ = 1:N_iZ
+	function HYDROLABOPT_START(;NiZ, ∑Psd, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs=[0], Ψ_KΨobs=[0], N_KΨobs=1, hydro, hydroOther, option, optionₘ, optim, param, θϵ=0.005)
+		for iZ = 1:NiZ
 			# CORRECTION OF THE FEASIBLE RANGE ~~~
 				θobs_Min = minimum(θ_θΨobs[iZ, 1:N_θΨobs[iZ]])  	# Smallest measure θ
 
@@ -126,16 +126,16 @@ module hydrolabOpt
 					Of, Of_θΨ, Of_Kunsat = ofHydrolab.OF_WRC_KUNSAT(optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
 
 					hydroOther.Rmse[iZ], hydroOther.Rmse_KΨ[iZ], hydroOther.Rmse_θΨ[iZ] = ofHydrolab.OF_RMSE(option, optionₘ, iZ, θ_θΨobs, Ψ_θΨobs, N_θΨobs, K_KΨobs, Ψ_KΨobs, N_KΨobs, hydro, optim) 
-		end # for iZ = 1:N_iZ
+		end # for iZ = 1:NiZ
 
-		hydroOther.Nse_θΨ, ~, ~ = stats.NSE_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
+		hydroOther.Nse_θΨ, ~, ~ = stats.NSE_θΨ(hydro, N_θΨobs, NiZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
 
-		hydroOther.NseWilmot_θΨ, ~, ~ = stats.NSE_WILMOT_θΨ(hydro, N_θΨobs, N_iZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
+		hydroOther.NseWilmot_θΨ, ~, ~ = stats.NSE_WILMOT_θΨ(hydro, N_θΨobs, NiZ,  optionₘ, θ_θΨobs, Ψ_θΨobs)
 	
 		if "Ks" ∈ optim.ParamOpt
-			hydroOther.Nse_KΨ, ~, ~ = stats.NSE_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
+			hydroOther.Nse_KΨ, ~, ~ = stats.NSE_KΨ(hydro, N_KΨobs, NiZ, optionₘ, K_KΨobs, Ψ_KΨobs)
 
-			hydroOther.NseWilmot_KΨ, ~, ~ = stats.NSE_WILMOT_KΨ(hydro, N_KΨobs, N_iZ, optionₘ, K_KΨobs, Ψ_KΨobs)
+			hydroOther.NseWilmot_KΨ, ~, ~ = stats.NSE_WILMOT_KΨ(hydro, N_KΨobs, NiZ, optionₘ, K_KΨobs, Ψ_KΨobs)
 
 			hydroOther.Nse = (hydroOther.Nse_KΨ .+ hydroOther.Nse_θΨ) ./ 2.0
 		else
@@ -143,15 +143,15 @@ module hydrolabOpt
 		end
 
 		# OVERALL STATISTICS OF THE OPTIMIZATION
-			Nse_θΨ_Aver = Statistics.mean(hydroOther.Nse_θΨ[1:N_iZ])
-			Nse_KΨ_Aver = Statistics.mean(max.(hydroOther.Nse_KΨ[1:N_iZ], 0.0))
+			Nse_θΨ_Aver = Statistics.mean(hydroOther.Nse_θΨ[1:NiZ])
+			Nse_KΨ_Aver = Statistics.mean(max.(hydroOther.Nse_KΨ[1:NiZ], 0.0))
 
-			NseWilmot_θΨ_Aver = Statistics.mean(hydroOther.NseWilmot_θΨ[1:N_iZ])
-			NseWilmot_KΨ_Aver = Statistics.mean(max.(hydroOther.NseWilmot_KΨ[1:N_iZ], 0.0))
+			NseWilmot_θΨ_Aver = Statistics.mean(hydroOther.NseWilmot_θΨ[1:NiZ])
+			NseWilmot_KΨ_Aver = Statistics.mean(max.(hydroOther.NseWilmot_KΨ[1:NiZ], 0.0))
 
-			Rmse_Aver    = Statistics.mean(hydroOther.Rmse[1:N_iZ])
-			Rmse_θΨ_Aver = Statistics.mean(hydroOther.Rmse_θΨ[1:N_iZ])
-			Rmse_KΨ_Aver = Statistics.mean(hydroOther.Rmse_KΨ[1:N_iZ])
+			Rmse_Aver    = Statistics.mean(hydroOther.Rmse[1:NiZ])
+			Rmse_θΨ_Aver = Statistics.mean(hydroOther.Rmse_θΨ[1:NiZ])
+			Rmse_KΨ_Aver = Statistics.mean(hydroOther.Rmse_KΨ[1:NiZ])
 				
 			if "Ks" ∈ optim.ParamOpt
 				Nse_Aver = (Nse_θΨ_Aver + Nse_KΨ_Aver) / 2.0

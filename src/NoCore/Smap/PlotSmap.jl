@@ -13,7 +13,7 @@ module plotSmap
          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          #		FUNCTION : HYDROPARAM
          # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function HYDROPARAM(hydro, IdSelect, K_KΨobs, KₛModel, N_iZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+         function HYDROPARAM(hydro, IdSelect, K_KΨobs, KₛModel, NiZ, N_KΨobs, N_θΨobs, option, path, Smap_Depth, Soilname, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
             println("  ==  START: Plotting HydroParam  ==")
       
             Flag_OtherData1 = true
@@ -37,7 +37,7 @@ module plotSmap
 
                option.hydro.HydroModel⍰ = "ClappHornberger"
                   # Structure of the hydroparameters
-                     hydroData = hydroStruct.HYDROSTRUCT(N_iZ)  
+                     hydroData = hydroStruct.HYDROSTRUCT(NiZ)  
                   # Populate the values of the parameters
                   option.hydro.HydroModel⍰ = "ClappHornberger"
                      hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
@@ -45,14 +45,14 @@ module plotSmap
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_Loam.csv"
                   option.hydro.HydroModel⍰ = "ClappHornberger"
                   # Structure of the hydroparameters
-                     hydroData2 = hydroStruct.HYDROSTRUCT(N_iZ)
+                     hydroData2 = hydroStruct.HYDROSTRUCT(NiZ)
                   # Populate the values of the parameters
                      hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
 
                  Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
                   option.hydro.HydroModel⍰ = "VangenuchtenJules"
                   # Structure of the hydroparameters
-                     hydroData3 = hydroStruct.HYDROSTRUCT(N_iZ)
+                     hydroData3 = hydroStruct.HYDROSTRUCT(NiZ)
                   # Populate the values of the parameters
                      hydroData3, ~ = reading.READ_STRUCT(hydroData3, Path) 
 

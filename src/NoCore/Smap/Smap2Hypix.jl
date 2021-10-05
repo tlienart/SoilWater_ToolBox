@@ -8,15 +8,15 @@ module smap2hypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : SMAP_2_HYDRO
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function SMAP_2_HYPIX(N_iZ, optionₘ, param, path, Smap_Depth, Smap_MaxRootingDepth, Soilname)
+      function SMAP_2_HYPIX(NiZ, optionₘ, param, path, Smap_Depth, Smap_MaxRootingDepth, Soilname)
          # Reducing Ks
             Ks_FactorReduce = 0.1
 
          # Hydraulic structures
-            hydroSmap = hydroStruct.HYDROSTRUCT(optionₘ, N_iZ) # Making a structure
+            hydroSmap = hydroStruct.HYDROSTRUCT(optionₘ, NiZ) # Making a structure
 
          # Index of each soil profile in the spreadsheet
-            iSoilProfile_End, iSoilProfile_Start, N_SoilProfile, Soilname_SoilProfile = SMAP_SOILPROFILE(N_iZ, Soilname)
+            iSoilProfile_End, iSoilProfile_Start, N_SoilProfile, Soilname_SoilProfile = SMAP_SOILPROFILE(NiZ, Soilname)
 
          # Input path of the hydraulic parameters
             Path_Input =  path.tableSoilwater.Path_Soilwater_Table *  "_" * "Kosugi" *  "_" * "Table_SmapThetaHK.csv"
@@ -46,7 +46,7 @@ module smap2hypix
                # Abstracting data
                Path_Vegetaion ="D:\\DATAraw\\JULESdata\\Vegetation\\Vegetation.csv"
                
-               vegSmap, N_iZ = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
+               vegSmap, NiZ = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
 
                vegSmap.Zroot = min(vegSmap.Zroot, Smap_MaxRootingDepth[1])
 
@@ -80,7 +80,7 @@ module smap2hypix
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #		FUNCTION : SMAP_SOIL_iSoilProfile
       # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function SMAP_SOILPROFILE(N_iZ, Soilname)
+         function SMAP_SOILPROFILE(NiZ, Soilname)
             iSoilProfile_End = []
             iSoilProfile_Start = [1]
             Soilname_Initial = Soilname[1]
@@ -96,7 +96,7 @@ module smap2hypix
 
                   Soilname_Initial = Soilname[i] # New soil
                   N_SoilProfile += 1
-               elseif  i == N_iZ
+               elseif  i == NiZ
                   append!(iSoilProfile_End, i)  
                end  # if: name
                i += 1
@@ -115,24 +115,24 @@ module smap2hypix
             println(Path_SmapHydro)
                Data = DelimitedFiles.readdlm(Path_SmapHydro, ',')
 
-               N_iZ = size(Data)[1] - 1
+               NiZ = size(Data)[1] - 1
 
          println(iSiteName," ====" ,θᵢₙᵢ)
 
          # COMPUTING θini
-            θ₁ = fill(0.0::Float64, N_iZ)
+            θ₁ = fill(0.0::Float64, NiZ)
 
             θ₁[1] = max( min(θᵢₙᵢ, hydroSmap.θs[1]), hydroSmap.θr[1])
 
             Se = wrc.θ_2_Se(θ₁[1], 1, hydroSmap)
 
             # Assuming that all SoilProfiles have the same Se
-            for iZ=2:N_iZ
+            for iZ=2:NiZ
                θ₁[iZ] = wrc.Se_2_θ(Se, iZ, hydroSmap)
             end
 
-         # Computing 1..N_iZ for output file
-            iZ = collect(1:1:N_iZ)
+         # Computing 1..NiZ for output file
+            iZ = collect(1:1:NiZ)
 
          # Writing to file
             Header = ["iZ";"θini"; "SoilProfile"]

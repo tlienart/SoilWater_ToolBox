@@ -12,10 +12,10 @@ module startKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function START_KSMODEL(hydro, option, param, path, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], ipLayer=1, N_Group=2)
+		function START_KSMODEL(hydro, option, param, path, KₛModel, KₛModel⍰, ksmodelτ, NiZ, optim, optimKsmodel; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[], ipLayer=1, N_Group=2)
 
 			# GROUPING CLASSES
-				GroupBool, ipGroup, N_Group = GROUPING_KSMODEL(hydro, N_Group, N_iZ, option, param)
+				GroupBool, ipGroup, N_Group = GROUPING_KSMODEL(hydro, N_Group, NiZ, option, param)
 
 			# OPTIMISE KₛModel
 			# If there are τ parameters to be optimised
@@ -27,9 +27,9 @@ module startKsModel
 					# Is there parameters to be optimised in this group
 					if optimKsmodel.NparamOpt[iGroup_Opt] ≥ 1
 
-						GroupBool_Select = GroupBool[1:N_iZ, iGroup_Opt]
+						GroupBool_Select = GroupBool[1:NiZ, iGroup_Opt]
 
-						KₛModel = optKsModel.START_OPT_KSMODEL(GroupBool_Select, hydro, iGroup_Opt, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, N_iZ, optim, optimKsmodel, option, param)
+						KₛModel = optKsModel.START_OPT_KSMODEL(GroupBool_Select, hydro, iGroup_Opt, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, NiZ, optim, optimKsmodel, option, param)
 
 						ksmodelτ = STATISTICS_KSMODEL(hydro, iGroup_Opt, GroupBool_Select, KₛModel, ksmodelτ, optimKsmodel)
 
@@ -45,11 +45,11 @@ module startKsModel
 
 			# RUN KₛModel
 			else
-				GroupBool_Select = fill(true, N_iZ)
+				GroupBool_Select = fill(true, NiZ)
 
 				iGroup_Opt = 1
 
-				KₛModel = θψ2KsModel.KSMODEL(GroupBool_Select, hydro, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, N_iZ::Int64, optim, optimKsmodel, option, param; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
+				KₛModel = θψ2KsModel.KSMODEL(GroupBool_Select, hydro, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, NiZ::Int64, optim, optimKsmodel, option, param; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 				~ = STATISTICS_KSMODEL(hydro, iGroup_Opt, GroupBool_Select, KₛModel, ksmodelτ, optimKsmodel)
 	
@@ -58,10 +58,10 @@ module startKsModel
 			if option.other.Ploting
 				println("\n       === ALL SIMULATIONS === \n")
 				NameSim = "All_"
-				plot.ksmodel.KSMODEL(hydro, KₛModel[1:N_iZ], hydro.Ks[1:N_iZ], NameSim, path.plotSoilwater.Plot_KsModel, hydro.θr[1:N_iZ], hydro.θsMacMat[1:N_iZ], hydro.σ[1:N_iZ])	
+				plot.ksmodel.KSMODEL(hydro, KₛModel[1:NiZ], hydro.Ks[1:NiZ], NameSim, path.plotSoilwater.Plot_KsModel, hydro.θr[1:NiZ], hydro.θsMacMat[1:NiZ], hydro.σ[1:NiZ])	
 			end
 			
-			for iZ=1:N_iZ
+			for iZ=1:NiZ
 				if "Ks" ∉ optim.ParamOpt
 					hydro.Ks[iZ] = KₛModel[iZ]
 				end #  hydro.Ks[iZ] < eps(100.0)
@@ -75,14 +75,14 @@ module startKsModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : GROUPING_KSMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function GROUPING_KSMODEL(hydro, N_Group, N_iZ, option, param)
+		function GROUPING_KSMODEL(hydro, N_Group, NiZ, option, param)
 			
-         ipGroup   = fill(1::Int64, N_iZ)
-         GroupBool = fill(true, N_iZ, N_Group)
+         ipGroup   = fill(1::Int64, NiZ)
+         GroupBool = fill(true, NiZ, N_Group)
 
 			# Selecting groups if required
 			if option.ksModel.Group
-				for iZ=1:N_iZ
+				for iZ=1:NiZ
 					if hydro.σ[iZ] ≤ param.ksModel.σₛₚₗᵢₜ
 						ipGroup[iZ] = 1
 						GroupBool[iZ, 1] = true
@@ -92,7 +92,7 @@ module startKsModel
 						GroupBool[iZ, 1] = false
 						GroupBool[iZ, 2] = true
 					end  # if: hydro.  
-				end # for iZ=1:N_iZ
+				end # for iZ=1:NiZ
 				N_Group = 2
 			else
 				N_Group = 1

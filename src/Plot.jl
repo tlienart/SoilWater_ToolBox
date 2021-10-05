@@ -14,7 +14,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYDROPARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYDROPARAM(hydro, hydroOther, IdSelect, K_KΨobs, N_iZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
+			function HYDROPARAM(hydro, hydroOther, IdSelect, K_KΨobs, NiZ, N_KΨobs, N_θΨobs, optim, option, param, path, θ_θΨobs, Ψ_KΨobs, Ψ_θΨobs; N_Se=1000)
 
 				println("  ==  START: Plotting HydroParam  ==")
 
@@ -164,13 +164,13 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KsModel_3D
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function KsModel_3D(hydro, N_iZ, path)
+		function KsModel_3D(hydro, NiZ, path)
 
 			GLMakie.activate!()
 
 			Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98), resolution = (2500, 1000),  font="Sans", fontsize=35)
 
-			Ks_3D = surface(Fig[1,1], hydro.θs[1:N_iZ] .- hydro.θr[1:N_iZ], hydro.σ[1:N_iZ], hydro.Ks[1:N_iZ]; shading=false, colormap = :deep, axis = (show_axis = false,))
+			Ks_3D = surface(Fig[1,1], hydro.θs[1:NiZ] .- hydro.θr[1:NiZ], hydro.σ[1:NiZ], hydro.Ks[1:NiZ]; shading=false, colormap = :deep, axis = (show_axis = false,))
 
 			Path = path.plotSoilwater.Plot_θΨK * "//KsModel//" 
 			mkpath(Path)
@@ -197,16 +197,16 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_θr
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PLOT_θr(∑Psd, hydro, hydroPsd, N_iZ, param, Path)
+			function PLOT_θr(∑Psd, hydro, hydroPsd, NiZ, param, Path)
 				println("  ==  START: Plotting PLOT_θr  ==")
 
 				# Sorting ascending order with clay fraction
-					Array      = zeros(Float64, 3, length(∑Psd[1:N_iZ, param.psd.Psd_2_θr_Size]))
-					Array      = zeros(Float64, (3, N_iZ))
+					Array      = zeros(Float64, 3, length(∑Psd[1:NiZ, param.psd.Psd_2_θr_Size]))
+					Array      = zeros(Float64, (3, NiZ))
 				
-					Array[1,:] = ∑Psd[1:N_iZ, param.psd.Psd_2_θr_Size] # Clay fraction
-					Array[2,:] = hydroPsd.θr[1:N_iZ]
-					Array[3,:] = hydro.θr[1:N_iZ]
+					Array[1,:] = ∑Psd[1:NiZ, param.psd.Psd_2_θr_Size] # Clay fraction
+					Array[2,:] = hydroPsd.θr[1:NiZ]
+					Array[3,:] = hydro.θr[1:NiZ]
 					Array      = sortslices(Array, dims=2)
 					Clay       = Array[1,:] # Clay fraction
 					θr_Psd     = Array[2,:]
@@ -217,7 +217,7 @@ module plot
 
 					θr_Max = maximum(hydroPsd.θr_Max) + 0.05
 					Clay_Min = 0.1
-					Clay_Max = maximum(∑Psd[1:N_iZ, param.psd.Psd_2_θr_Size]) + 0.05
+					Clay_Max = maximum(∑Psd[1:NiZ, param.psd.Psd_2_θr_Size]) + 0.05
 				
 				# PLOT 1 <>=<>=<>=<>=<>=<>
 					# pgfplotsx()
@@ -265,7 +265,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_IMP_MODEL
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PLOT_IMP_MODEL(∑Psd, hydro, IdSelect, N_iZ, N_Psd, option, param, Path, Psd, Rpart)
+			function PLOT_IMP_MODEL(∑Psd, hydro, IdSelect, NiZ, N_Psd, option, param, Path, Psd, Rpart)
 				println("  ==  START: PLOT_IMP_MODEL  ==")	
 
 				for iZ = param.globalparam.N_iZ_Plot_Start: param.globalparam.N_iZ_Plot_End
@@ -336,7 +336,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_IMP_ΘΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PLOT_PSD_θΨ(hydro, hydroPsd, IdSelect, N_iZ, N_Psd, N_θΨobs, option, param, Path, θ_Rpart, θ_θΨobs, Ψ_Rpart, Ψ_θΨobs; N_Se= 100)
+			function PLOT_PSD_θΨ(hydro, hydroPsd, IdSelect, NiZ, N_Psd, N_θΨobs, option, param, Path, θ_Rpart, θ_θΨobs, Ψ_Rpart, Ψ_θΨobs; N_Se= 100)
 			
 				println("  ==  START: Plotting PLOT_PSD_θΨ  ==")
 
@@ -414,7 +414,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PLOT_∑INFILT(∑Infilt_1D, ∑Infilt_3D, ∑Infilt_Obs, IdSelect, infiltOutput, N_Infilt, N_iZ, option, param, Path, Tinfilt)
+			function PLOT_∑INFILT(∑Infilt_1D, ∑Infilt_3D, ∑Infilt_Obs, IdSelect, infiltOutput, N_Infilt, NiZ, option, param, Path, Tinfilt)
 			println("  ==  START: PLOT_∑INFILT  == \n")
 			
 				for iZ = param.globalparam.N_iZ_Plot_Start:param.globalparam.N_iZ_Plot_End
@@ -453,7 +453,7 @@ module plot
 
 					Plots.savefig(Plot_∑infilt_Obs, Path₂)
 					println("    ~  $(Path₂) ~")
-				end # for iZ=1:N_iZ
+				end # for iZ=1:NiZ
 			println("  ==  END: PLOT_∑INFILT  == \n")
 			return nothing
 			end # PLOT_∑INFILT
@@ -462,7 +462,7 @@ module plot
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PLOT_∑INFILT_θΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, N_iZ, optim, option, param, Path; hydro=[], N_Se=100)
+			function PLOT_∑INFILT_θΨ(hydroInfilt, IdSelect, NiZ, optim, option, param, Path; hydro=[], N_Se=100)
 			println("  ==  START: PLOT_∑INFILT_θΨ  ==")
 
 				θ_Infilt      = fill(0.0::Float64, (N_Se))

@@ -46,19 +46,19 @@ module reading
 					end
 				end # for iZ=2:N_iZ_All
 		
-			N_iZ = sum(Id_True)
+			NiZ = sum(Id_True)
 
 			IdSelect = Id[IdSelect_True]
 			Soilname = Soilname[IdSelect_True]
 	
-		return IdSelect, IdSelect_True, Soilname, N_iZ
+		return IdSelect, IdSelect_True, Soilname, NiZ
 		end  # function: ID
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : bulk density
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function BULKDENSITY(IdSelect, N_iZ, Path)
+		function BULKDENSITY(IdSelect, NiZ, Path)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -70,13 +70,13 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1)
 
-			ρᵦ_Soil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "BulkDensitySoil[g_cm-3]",  N_iZ, N_Point_Max=1)
+			ρᵦ_Soil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "BulkDensitySoil[g_cm-3]",  NiZ, N_Point_Max=1)
 
-			ρₚ_Fine, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "ParticleDensity_Fine[g_cm-3]",  N_iZ, N_Point_Max=1)
+			ρₚ_Fine, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "ParticleDensity_Fine[g_cm-3]",  NiZ, N_Point_Max=1)
 
-			ρₚ_Rock, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Density_Rock[g_cm-3]", N_iZ, N_Point_Max=1)
+			ρₚ_Rock, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Density_Rock[g_cm-3]", NiZ, N_Point_Max=1)
 			
-			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", N_iZ, N_Point_Max=1)
+			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", NiZ, N_Point_Max=1)
 		return RockFragment, ρₚ_Fine, ρₚ_Rock, ρᵦ_Soil
 		end # function: BulkDensity
 
@@ -91,7 +91,7 @@ module reading
 			β
 		end # struct INFILT
 
-		function INFILTRATION(IdSelect, N_iZ, PathInfilt, PathInfiltParam)
+		function INFILTRATION(IdSelect, NiZ, PathInfilt, PathInfiltParam)
 			println("    ~  $(PathInfilt) ~")
 
 			# Read data
@@ -104,9 +104,9 @@ module reading
 				Data = sortslices(Data, dims=1)
 
 			# Reading select data
-				Tinfilt, N_Infilt = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Tinfilt[s]", N_iZ)
+				Tinfilt, N_Infilt = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Tinfilt[s]", NiZ)
 				
-				∑Infilt_Obs , ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Infiltration[mm]", N_iZ)
+				∑Infilt_Obs , ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Infiltration[mm]", NiZ)
 				
 			#-----------------------------------------------------------------------
 			println("    ~  $(PathInfiltParam) ~")
@@ -120,13 +120,13 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
 
-			RingRadius , ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RingRadius[mm]", N_iZ; N_Point_Max=1)
+			RingRadius , ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RingRadius[mm]", NiZ; N_Point_Max=1)
 
-			θini , ~       = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Theta_Ini[-]", N_iZ; N_Point_Max=1)
+			θini , ~       = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Theta_Ini[-]", NiZ; N_Point_Max=1)
 
-			γ , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Lambda[-]", N_iZ; N_Point_Max=1)
+			γ , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Lambda[-]", NiZ; N_Point_Max=1)
 
-			β , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Beta[-]", N_iZ; N_Point_Max=1)
+			β , ~           = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Beta[-]", NiZ; N_Point_Max=1)
 
 			infiltParam = INFILT(RingRadius, θini, γ, β)
 		return Tinfilt, ∑Infilt_Obs, N_Infilt, infiltParam
@@ -136,7 +136,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θΨ(IdSelect, N_iZ, path)
+			function θΨ(IdSelect, NiZ, path)
 				println("    ~  $(path.inputSoilwater.Ψθ) ~")
 
 				# Read data
@@ -151,15 +151,15 @@ module reading
 				# Determeining if data has only 3 columns: Id, H and Theta
 				if length(Header) ≤ 4
 					# Get the data of interest
-						Ψ_θΨobs, N_θΨobs  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_iZ)
+						Ψ_θΨobs, N_θΨobs  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", NiZ)
 				
-						θ_θΨobs, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta[0-1]", N_iZ)
+						θ_θΨobs, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Theta[0-1]", NiZ)
 				
 				# Data is in square [X=iZ, Y =iΨ]
 				else
-					N_θΨobs, θ_θΨobs, Ψ_θΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
+					N_θΨobs, θ_θΨobs, Ψ_θΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, NiZ)
 
-					table.convert.CONVERT_θΨ_2D_2_1D(IdSelect, N_iZ, N_θΨobs, path.convertSoilwater.Table_Convert_θΨ_2D_2_1D, θ_θΨobs, Ψ_θΨobs)
+					table.convert.CONVERT_θΨ_2D_2_1D(IdSelect, NiZ, N_θΨobs, path.convertSoilwater.Table_Convert_θΨ_2D_2_1D, θ_θΨobs, Ψ_θΨobs)
 				end # length(Header) == 3
 
 			return θ_θΨobs, Ψ_θΨobs, N_θΨobs
@@ -170,7 +170,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : KUNSATΨ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function KUNSATΨ(IdSelect, N_iZ, path, Path)
+			function KUNSATΨ(IdSelect, NiZ, path, Path)
 				println("    ~  $(Path) ~")
 
 				# Read data
@@ -185,14 +185,14 @@ module reading
 
 				# Determeining if data has only 3 columns: Id, H and Theta
 				if length(Header) == 3
-					Ψ_KΨobs, N_KΨobs = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", N_iZ)
+					Ψ_KΨobs, N_KΨobs = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", NiZ)
 						
-					K_KΨobs, ~    = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Kunsat[mm_s]", N_iZ)
+					K_KΨobs, ~    = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"Kunsat[mm_s]", NiZ)
 				# Data is in square [X=iZ, Y =iΨ]
 				else
-					N_KΨobs, K_KΨobs, Ψ_KΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
+					N_KΨobs, K_KΨobs, Ψ_KΨobs = tool.readWrite.READ_θΨK_2D(Data, Header, IdSelect, NiZ)
 
-					table.convert.CONVERT_KΨ_2D_2_1D(IdSelect, N_iZ, N_KΨobs, path.convertSoilwater.Table_Convert_KΨ_2D_2_1D, K_KΨobs, Ψ_KΨobs)
+					table.convert.CONVERT_KΨ_2D_2_1D(IdSelect, NiZ, N_KΨobs, path.convertSoilwater.Table_Convert_KΨ_2D_2_1D, K_KΨobs, Ψ_KΨobs)
 				end
 			return K_KΨobs, Ψ_KΨobs, N_KΨobs 
 			end  # function: θΨ
@@ -203,7 +203,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PSD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PSD(IdSelect, N_iZ, Path) # TODO make sure that the particles are ordered from smalest to largest
+		function PSD(IdSelect, NiZ, Path) # TODO make sure that the particles are ordered from smalest to largest
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -215,9 +215,9 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1)
 
-			Diameter_Psd, N_Psd = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Diameter[mm]", N_iZ)
+			Diameter_Psd, N_Psd = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Diameter[mm]", NiZ)
 
-			∑Psd , ~            = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Psd", N_iZ)
+			∑Psd , ~            = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Cumul_Psd", NiZ)
 
 			Rpart = @. Diameter_Psd / 2.0
 		return Rpart, ∑Psd, N_Psd
@@ -228,7 +228,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :SOIL_INOFRMATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PEDOLOGICAL(IdSelect, N_iZ, Path)
+		function PEDOLOGICAL(IdSelect, NiZ, Path)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -240,9 +240,9 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1)
 			
-			IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", N_iZ, N_Point_Max=1)
+			IsTopsoil, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "IsTopsoil", NiZ, N_Point_Max=1)
 			
-			RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", N_iZ, N_Point_Max=1)
+			RockClass, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockClass", NiZ, N_Point_Max=1)
 		return IsTopsoil, RockClass
 		end # function: SOIL_INOFRMATION
 	#----------------------------------------------------------------------
@@ -251,7 +251,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : bulk density
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Φ(IdSelect, N_iZ, Path)
+		function Φ(IdSelect, NiZ, Path)
 			println("    ~  $(Path) ~")
 
 			# Read data
@@ -263,9 +263,9 @@ module reading
 			# Sort data
 				Data = sortslices(Data, dims=1)
 
-			Φ, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "TotalPorosity[0-1]", N_iZ, N_Point_Max=1)
+			Φ, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "TotalPorosity[0-1]", NiZ, N_Point_Max=1)
 			
-			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", N_iZ, N_Point_Max=1)
+			RockFragment, ~   = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header,"RockFragment[0-1]", NiZ, N_Point_Max=1)
 		return RockFragment, Φ
 		end # function: BulkDensity
 	#----------------------------------------------------------------------
@@ -274,7 +274,7 @@ module reading
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θψ_ADDPOINTS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function θψ_ADDPOINTS(N_iZ, N_θΨobs::Int64, param, Path::String, θ_θΨobs, Ψ_θΨobs)
+		function θψ_ADDPOINTS(NiZ, N_θΨobs::Int64, param, Path::String, θ_θΨobs, Ψ_θΨobs)
 			# Read data
 				Data = DelimitedFiles.readdlm(Path, ',')
 			# Read header
@@ -291,14 +291,14 @@ module reading
 
 					θobs, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, FieldName_String[iΨ])
 
-					θ_θΨobs =  [θobs[1:N_iZ] θ_θΨobs[1:N_iZ,:] ]
+					θ_θΨobs =  [θobs[1:NiZ] θ_θΨobs[1:NiZ,:] ]
 
-					Ψ_Table = fill(Float64(param.hydro.Ψ_Table[iΨ]), N_iZ)
+					Ψ_Table = fill(Float64(param.hydro.Ψ_Table[iΨ]), NiZ)
 				
-					Ψ_θΨobs = [Ψ_Table[1:N_iZ] Ψ_θΨobs[1:N_iZ,:] ]
+					Ψ_θΨobs = [Ψ_Table[1:NiZ] Ψ_θΨobs[1:NiZ,:] ]
 				end #for iΨ =1:N_Ψ
 
-				for iZ=1:N_iZ
+				for iZ=1:NiZ
 					N_θΨobs[iZ] += 2
 				end		
 		return N_θΨobs, θ_θΨobs, Ψ_θΨobs
@@ -319,21 +319,21 @@ module reading
 			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,1:end]
 			# Select data of interest
-				N_iZ = size(Data)[1] # Initial
-				iEnd= min(N_iZ, iEnd)
+				NiZ = size(Data)[1] # Initial
+				iEnd= min(NiZ, iEnd)
 				Data = Data[iStart:iEnd,1:end]
-				N_iZ = iEnd - iStart + 1 # Final
+				NiZ = iEnd - iStart + 1 # Final
 
 			# Reading the Model data
 			for iFieldname in propertynames(structures)
 
 				# Putting the values of Output_Vector into structures
-				Output_Vector = fill(0.0::Float64, N_iZ)					
+				Output_Vector = fill(0.0::Float64, NiZ)					
 				try
 					Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
 				catch
 					# @warn "SoilWater-ToolBox: cannong find $iFieldname"
-					Output_Vector = fill(0.0::Float64, N_iZ)
+					Output_Vector = fill(0.0::Float64, NiZ)
 				end
 
 				try
@@ -343,7 +343,7 @@ module reading
 				end
 			end
 
-		return structures, N_iZ
+		return structures, NiZ
 		end  # function: READ_STRUCT
 	#----------------------------------------------------------------------
 
@@ -363,7 +363,7 @@ module reading
 			ParamOpt_LogTransform :: Vector{Bool}
 		end
 
-		function HYDRO_PARAM(optionₘ, hydro, N_iZ, Path)
+		function HYDRO_PARAM(optionₘ, hydro, NiZ, Path)
 		# Read data
 			Data = DelimitedFiles.readdlm(Path, ',')
 		# Read header
@@ -428,23 +428,23 @@ module reading
 		i = 1
 		# For every hydraulic parameter
 		for inParamValue in Param_Name
-			# Putting the value of the parameters in hydro. Repeating the value of the parameter for all soils data: N_iZ
-			ParamValue_Vector = fill(Float64(ParamValue[i]), N_iZ)
+			# Putting the value of the parameters in hydro. Repeating the value of the parameter for all soils data: NiZ
+			ParamValue_Vector = fill(Float64(ParamValue[i]), NiZ)
 			setfield!(hydro, Symbol(inParamValue), ParamValue_Vector)
 
 			# θsMacMat value depends on θs
 			if  Symbol(inParamValue) == :θsMacMat_ƞ
-				for iZ = 1:N_iZ 
+				for iZ = 1:NiZ 
 					hydro.θsMacMat[iZ] =  hydro.θs[iZ] * hydro.θsMacMat_ƞ[iZ]
 				end
 			end # Symbol(inParamValue) == :θsMacMat_ƞ
 
 			# Putting the minimum value in the parameter
-				ParamValue_Vector = fill(Float64(Param_Min[i]), N_iZ)
+				ParamValue_Vector = fill(Float64(Param_Min[i]), NiZ)
 				setfield!(hydro, Symbol(inParamValue * "_Min"), ParamValue_Vector)
 
 			# Putting the maximum value in the parameter
-				ParamValue_Vector = fill(Float64(Param_Max[i]), N_iZ)
+				ParamValue_Vector = fill(Float64(Param_Max[i]), NiZ)
 				setfield!(hydro, Symbol(inParamValue * "_Max"), ParamValue_Vector)
 	
 			# ParamValue to optimize. The complication is that there are different layers of hydraulic parameters which can be optimized.  
@@ -763,7 +763,7 @@ module reading
 				# Remove first READ_ROW_SELECT
 					Data = Data[2:end,begin:end]
 
-				Z, N_iZ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Z")
+				Z, NiZ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Z")
 				Layer, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Layer")
 				N_Layer = maximum(Layer)
 
@@ -782,7 +782,7 @@ module reading
 						error("In $PathDiscretization cannot find <θini> or <Ψini> in $Header")
 					end
 
-			return Flag_θΨini, Layer, N_Layer, N_iZ, Z, θini, Ψini
+			return Flag_θΨini, Layer, N_Layer, NiZ, Z, θini, Ψini
 			end # function DISCRETIZATION
 		#-------------------------------------------------------------------------
 
@@ -790,7 +790,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYPIX_PARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, N_iZ::Int64, option, param, Path::String, veg)
+			function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, NiZ::Int64, option, param, Path::String, veg)
 				# Read data
 					Data = DelimitedFiles.readdlm(Path, ',')
 				# Read header
@@ -923,7 +923,7 @@ module reading
 
 				if !(Flag_MultiStepOpt)
 					# Hydraulic parameters per horizon to layers
-					hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ, option)
+					hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, option)
 				end
 
 				NparamOpt = length(ParamOpt)
@@ -1069,7 +1069,7 @@ module reading
 				Date    :: Vector{DateTime}
 				Z  	  :: Vector{Float64}
 				ithetaObs :: Vector{Int64}
-				N_iT    :: Int64 # Number of time steps
+				Nit    :: Int64 # Number of time steps
 				Ndepth  :: Int64 # Numver of soil profile with observed θ
 				θobs 	  :: Array{Float64,2}
 				∑T  	  :: Vector{Float64}
@@ -1083,7 +1083,7 @@ module reading
 			# Remove first READ_ROW_SELECT
 				Data = Data[2:end,begin:end]
 
-				Year, N_iT   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year")
+				Year, Nit   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year")
 				Month, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month")
 				Day, ~     = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day")
 				Hour, ~    = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
@@ -1105,8 +1105,8 @@ module reading
 						end # iHeader
 
 					# Isolating data with Z= measurements
-						N_iT,~ = size(Data)
-						θobs = Data[1:N_iT, minimum(Array_iHeader): maximum(Array_iHeader)]
+						Nit,~ = size(Data)
+						θobs = Data[1:Nit, minimum(Array_iHeader): maximum(Array_iHeader)]
 
 					# The depths were we have θ measurements
 						Z = fill(0.0::Float64, Ndepth)
@@ -1134,32 +1134,32 @@ module reading
                Date_End_Calibr   = min(Date_End_Calibr, clim.Date[end])
 
 				# SELECTING THE DATA WITHING FEASIBLE RANGE
-					True = falses(N_iT) # Initiating with false
-					Date = fill(Date_Start_Calibr::DateTime,  N_iT)
+					True = falses(Nit) # Initiating with false
+					Date = fill(Date_Start_Calibr::DateTime,  Nit)
 					iCount = 0 
-					for iT=1:N_iT
+					for iT=1:Nit
 						Date[iT] = DateTime(Year[iT], Month[iT], Day[iT], Hour[iT], Minute[iT], Second[iT])
 
 						if (Date_Start_Calibr ≤ Date[iT] ≤ Date_End_Calibr)
 							iCount += 1
 							True[iT] = true
 						end  # if
-					end # for iT=1:N_iT
+					end # for iT=1:Nit
 
 					# New reduced number of simulations selected with dates
-						Date = Date[True[1:N_iT]]
-						θobs = θobs[True[1:N_iT], 1:Ndepth]
+						Date = Date[True[1:Nit]]
+						θobs = θobs[True[1:Nit], 1:Ndepth]
 
-						N_iT = count(True[1:N_iT]) # New number of data
+						Nit = count(True[1:Nit]) # New number of data
 
 				# REDUCING THE AMOUNT OF DATA TO HOURLY TODO
 
 				# ∑T_Reduced = collect(range(Date[1], step=Hour[1], stop=Date[end])) 
 					# ΔTimeStep = param.hyPix.ΔT_Output
 					# if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
-					# 	True = falses(N_iT)
+					# 	True = falses(Nit)
 					# 	iCount = 0 
-					# 	for iT=1:N_iT
+					# 	for iT=1:Nit
 					# 		if hour(Date[iT]) == 0 && minute(Date[iT]) == 0
 					# 			True[iT] = true
 					# 			iCount += 1
@@ -1167,13 +1167,13 @@ module reading
 					# 	end # for
 					
 					# 	# New reduced number of simulations selected with dates
-					# 	Date = Date[True[1:N_iT]]
-					# 	θobs = θobs[True[1:N_iT],1:Ndepth]
-					# 	N_iT = count(True[1:N_iT]) # New reduced amount of data
+					# 	Date = Date[True[1:Nit]]
+					# 	θobs = θobs[True[1:Nit],1:Ndepth]
+					# 	Nit = count(True[1:Nit]) # New reduced amount of data
 					# end # θobs_Hourly
 
 				# This will be computed at PrioProcess
-					∑T        = fill(0.0::Float64, N_iT)
+					∑T        = fill(0.0::Float64, Nit)
 					ithetaObs = fill(0::Int64, Ndepth)
 
 				# SAVING SPACE 
@@ -1181,7 +1181,7 @@ module reading
 					True = nothing
 
 				# STRUCTURE
-					return obsTheta = θOBSERVATION(Date, Z, ithetaObs, N_iT, Ndepth, θobs, ∑T)
+					return obsTheta = θOBSERVATION(Date, Z, ithetaObs, Nit, Ndepth, θobs, ∑T)
 			end  # function: TIME_SERIES
 
 
@@ -1249,7 +1249,7 @@ module reading
 					Data = sortslices(Data, dims=1)
 
 				# Read data of interest
-					Id₂, N_iZ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
+					Id₂, NiZ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
 
 					Soilname₂, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
 
@@ -1257,7 +1257,7 @@ module reading
 					θData = []
 					for iHeader in Header
 						if occursin("wrc", iHeader)
-							θ₀, N_iZ = tool.readWrite.READ_HEADER_FAST(Data, Header, iHeader)
+							θ₀, NiZ = tool.readWrite.READ_HEADER_FAST(Data, Header, iHeader)
 
 							iHeader = replace(iHeader, "wrc" => "")
 							iHeader = replace(iHeader, "kpa" => "")
@@ -1269,18 +1269,18 @@ module reading
 							append!(Ψdata, iHeader_Float)
 
 							try
-								θData = hcat(θData[1:N_iZ, :], θ₀[1:N_iZ])
+								θData = hcat(θData[1:NiZ, :], θ₀[1:NiZ])
 							catch
-								θData = θ₀[1:N_iZ]
+								θData = θ₀[1:NiZ]
 							end
 						end # occursin("wrc", iHeader)
 					end # for iHeader in Header
 
-					θ_θΨobs₂ = zeros(Float64, N_iZ, length(Ψdata))
-					Ψ_θΨobs₂ = zeros(Float64, N_iZ, length(Ψdata))
-					N_θΨobs₂ = zeros(Int64, N_iZ)
+					θ_θΨobs₂ = zeros(Float64, NiZ, length(Ψdata))
+					Ψ_θΨobs₂ = zeros(Float64, NiZ, length(Ψdata))
+					N_θΨobs₂ = zeros(Int64, NiZ)
 	
-					for iZ=1:N_iZ
+					for iZ=1:NiZ
 						iΨ_Count = 1
 						for iΨ=1:length(Ψdata)
 							if !isnan(θData[iZ, iΨ])

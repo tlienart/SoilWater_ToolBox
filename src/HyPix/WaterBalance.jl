@@ -5,9 +5,9 @@ module waterBalance
 
 	export WATERBALANCE
 
-	function WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot::Int64, N_iT::Int64, N_iZ::Int64, Q, ΔSink, ΔT, θ, Ψ)
-      ∑WaterBalance_η = fill(0.0::Float64, N_iT)
-      ∑ΔSink          = fill(0.0::Float64, N_iT)
+	function WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot::Int64, Nit::Int64, NiZ::Int64, Q, ΔSink, ΔT, θ, Ψ)
+      ∑WaterBalance_η = fill(0.0::Float64, Nit)
+      ∑ΔSink          = fill(0.0::Float64, Nit)
       ∑ΔQtop          = 0.0 ::Float64
       ∑ΔQbottom       = 0.0 ::Float64
       ∑∑WaterBalance  = 0.0 ::Float64
@@ -20,32 +20,32 @@ module waterBalance
 				i∑T_CalibrStart += 1
 			end
 		
-		for iT=i∑T_CalibrStart:N_iT
+		for iT=i∑T_CalibrStart:Nit
 			# Computing ΔStorage
 				ΔStorage = 0.0
 
-				@fastmath @inbounds for iZ = 1:N_iZ
+				@fastmath @inbounds for iZ = 1:NiZ
 					ΔStorage += discret.ΔZ[iZ] * ( (θ[iT,iZ] - θ[i∑T_CalibrStart-1,iZ]) )
 					
 					ΔStorageSo += discret.ΔZ[iZ] * hydro.So[iZ] * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) * (θ[iT,iZ] / hydro.θs[iZ])
-				end # for iT=1:N_iZ
+				end # for iT=1:NiZ
 
 			# Sink term
 				∑ΔSink[iT] = ∑ΔSink[iT-1]
 				@fastmath @inbounds @simd for iZ = 1:N_iRoot
 					∑ΔSink[iT] += ΔSink[iT,iZ]
-				end # for: iZ = 1:N_iZ
+				end # for: iZ = 1:NiZ
 
 			# Cumulative water entering top cell
 				∑ΔQtop += ΔT[iT] * Q[iT,1]
 
 			# Cumulative water leaving bottom cell
-				∑ΔQbottom += ΔT[iT] * Q[iT,N_iZ+1]
+				∑ΔQbottom += ΔT[iT] * Q[iT,NiZ+1]
 
 			∑∑WaterBalance = ΔStorage - (∑ΔQtop - ∑ΔQbottom) + ∑ΔSink[iT] - ΔStorageSo
 
 			∑WaterBalance_η[iT] = ∑∑WaterBalance / ∑ΔQtop
-		end  # for iT=1:N_iT
+		end  # for iT=1:Nit
 
 	return ∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage
 	end  # function: WATERBALANCE

@@ -9,7 +9,7 @@ module checkError
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CHECK_ERROR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CHECK_ERROR(clim, hydroHorizon, N_Layer, N_iRoot, N_iZ, param, veg, Z)
+	function CHECK_ERROR(clim, hydroHorizon, N_Layer, N_iRoot, NiZ, param, veg, Z)
 
 		# DETERMENING IF PATH IS OPEN
 			CHECK_IFOPEN(pathHyPix.Table_Discretisation)
@@ -58,8 +58,8 @@ module checkError
 			end
 
 		# CHECKING 
-			# if maximum(param.hyPix.plot.Cells_Plot) ≥ N_iZ 
-			# 	error("\n Hypix error:  param.hyPix.plot.Cells_Plot = $(param.hyPix.plot.Cells_Plot) must be ≤  N_iZ =  $N_iZ")
+			# if maximum(param.hyPix.plot.Cells_Plot) ≥ NiZ 
+			# 	error("\n Hypix error:  param.hyPix.plot.Cells_Plot = $(param.hyPix.plot.Cells_Plot) must be ≤  NiZ =  $NiZ")
 			# end
 
 		return

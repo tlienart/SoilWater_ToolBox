@@ -11,7 +11,7 @@ module hypixModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, N_iZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -34,7 +34,7 @@ module hypixModel
 		
 		# ROOTS
 		if option.hyPix.RootWaterUptake
-			N_iRoot = rootWaterUptake.rootDistribution.N_IROOT(N_iZ, veg, Z)# Last cell of rootzone
+			N_iRoot = rootWaterUptake.rootDistribution.N_IROOT(NiZ, veg, Z)# Last cell of rootzone
 
 			ΔRootDensity = rootWaterUptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
 		else
@@ -43,17 +43,17 @@ module hypixModel
 		end # option.hyPix.RootWaterUptake
 
 		# if option.hyPix.Evaporation 
-		# 	N_iEvapo = evaporation.N_IEVAPO(N_iZ, veg, Z) # Smap_Depth where evaporation can occure
+		# 	N_iEvapo = evaporation.N_IEVAPO(NiZ, veg, Z) # Smap_Depth where evaporation can occure
 		# end # option.hyPix.Evaporation
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
-			for iZ=1:N_iZ
+			for iZ=1:NiZ
 				Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ],  hydro.ΨmMac[iZ])
 				Ψ_Min[iZ] = param.hyPix.Ψ_MinMin
-			end  # for iZ=1:N_iZ
+			end  # for iZ=1:NiZ
 
 		# ADAPTIVETIMESTEP
-			ΔΨmax = timeStep.ΔΨMAX(hydro, N_iZ, option, param, ΔΨmax)
+			ΔΨmax = timeStep.ΔΨMAX(hydro, NiZ, option, param, ΔΨmax)
 
 		# FIRST TIME STEP
          Flag_NoConverge        = false::Bool
@@ -67,7 +67,7 @@ module hypixModel
          ΔHpond[1]              = 0.0::Float64
          ΔPet[1]                = 0.0::Float64
          ΔPr[1]                 = 0.0::Float64
-         ΔSink[1,1:N_iZ]       .= 0.0::Float64
+         ΔSink[1,1:NiZ]       .= 0.0::Float64
          ΔT[1]                  = 0.0::Float64
          ∑Pet[1]                = 0.0::Float64
          ∑Pr[1]                 = 0.0::Float64
@@ -76,9 +76,9 @@ module hypixModel
 			
 		# Boundary conditions
 			if Flag_θΨini == :θini
-				Ψini =  fill(0.0::Float64, N_iZ)
+				Ψini =  fill(0.0::Float64, NiZ)
 				
-				for iZ = 1:N_iZ
+				for iZ = 1:NiZ
 					θ[iT,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ]) # Just in case
 					Ψ[iT,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
 
@@ -87,45 +87,45 @@ module hypixModel
 						θ[iT,1]  = Ψ_2_θDual(option.hydro, Ψ[iT,1], iZ, hydro)
 					end
 	
-					if  iZ == N_iZ && option.hyPix.BottomBoundary⍰ == "Ψ"
-						Ψ[iT,N_iZ] = param.hyPix.Ψ_Botom
-						θ[iT,N_iZ]  = Ψ_2_θDual(option.hydro, Ψ[iT,N_iZ], N_iZ, hydro)
+					if  iZ == NiZ && option.hyPix.BottomBoundary⍰ == "Ψ"
+						Ψ[iT,NiZ] = param.hyPix.Ψ_Botom
+						θ[iT,NiZ]  = Ψ_2_θDual(option.hydro, Ψ[iT,NiZ], NiZ, hydro)
 					end
 
 					Ψini[iZ] = Ψ[iT,iZ]
 
 					Ψbest[iZ]  = Ψini[iZ]
-					Q[iT,N_iZ] = 0.0
+					Q[iT,NiZ] = 0.0
 				end
 
 			elseif Flag_θΨini == :Ψini
-				θini = fill(0.0::Float64, N_iZ)
+				θini = fill(0.0::Float64, NiZ)
 
 				if option.hyPix.TopBoundary⍰ == "Ψ"
 					Ψini[1] = param.hyPix.Ψ_Top
 				end
 
 				if option.hyPix.BottomBoundary⍰ == "Ψ"
-					Ψini[N_iZ] = param.hyPix.Ψ_Botom
+					Ψini[NiZ] = param.hyPix.Ψ_Botom
 				end
 
-				for iZ = 1:N_iZ
+				for iZ = 1:NiZ
 					Ψ[iT,iZ] = Ψini[iZ]
 					θ[iT,iZ]  = Ψ_2_θDual(option.hydro, Ψini[iZ], iZ, hydro)
 					θini[iZ] = θ[iT,iZ]
 
 					Ψbest[iZ]  = Ψ[iT,iZ]
-					Q[iT,N_iZ] = 0.0
+					Q[iT,NiZ] = 0.0
 				end
 			end
 
-			Q[iT,N_iZ+1] = 0.0
+			Q[iT,NiZ+1] = 0.0
 
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+
 		while true # this controles the time loop
 
 			# INCREASING OR DECREASING THE TIME STEP
-				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), N_iZ, option, param, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
+				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), NiZ, option, param, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
 
 				if FlagContinueLoop == false
 					iT = iT - 1
@@ -171,19 +171,19 @@ module hypixModel
 
 			# SPECIAL BOUNDARY CONDITIONS
 				if option.hyPix.TopBoundary⍰ == "Ψ"
-					ΔPr = boundary.BOUNDARY_TOP_Ψ(discret, Flag_ReRun, hydro, iT, N_iZ, option, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+					ΔPr = boundary.BOUNDARY_TOP_Ψ(discret, Flag_ReRun, hydro, iT, NiZ, option, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 					∑Pr[iT] = ∑Pr[iT-1] + ΔPr[iT]
 				end
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 				
 		end # while loop
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+	
 
-		N_iT = iT # Maximum of time steps
+		Nit = iT # Maximum of time steps
 
-	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, N_iT, N_iZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ
+	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ
 	end  # function: HYPIX
 	
 end  # module hypix

@@ -16,18 +16,18 @@ module thetaObs
 				end # Error checking
 
 				# Checking the celLs
-				if obsTheta.Z[obsTheta.Ndepth] > Z[discret.N_iZ]
-					error("\n Hypix error: depth of measured θ deeper than the max depth of discretisation: obsTheta.Z[obsTheta.Ndepth] > discret.Z[discret.N_iZ]") 
+				if obsTheta.Z[obsTheta.Ndepth] > Z[discret.NiZ]
+					error("\n Hypix error: depth of measured θ deeper than the max depth of discretisation: obsTheta.Z[obsTheta.Ndepth] > discret.Z[discret.NiZ]") 
 				end
 
 			# COMPUTING CUMULATIVE TIME
-				for iT=1:obsTheta.N_iT
+				for iT=1:obsTheta.Nit
 					obsTheta.∑T[iT] = value(obsTheta.Date[iT] - clim.Date[1] ) / 1000
-				end  # for it=1:obsTheta.N_iT
+				end  # for it=1:obsTheta.Nit
 
 				# TRANSFORM THE DEPTH OF MEASURED Θ -> CELL DEPTH
 				for iDepth = 1:obsTheta.Ndepth
-					for iZ = 1:discret.N_iZ
+					for iZ = 1:discret.NiZ
 						if iZ == 1
 							if 0.0 ≤ obsTheta.Z[iDepth] ≤ Z[1]
 								obsTheta.ithetaObs[iDepth] = 1
@@ -39,7 +39,7 @@ module thetaObs
 								break  
 							end  # if: discret.Z_CellUp
 						end # if iZ == 1
-					end # iZ = 2:discret.N_iZ						
+					end # iZ = 2:discret.NiZ						
 				end  # for iDepth = 1:obsTheta.Ndepth
 		
 		return obsTheta

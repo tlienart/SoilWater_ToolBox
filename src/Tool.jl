@@ -82,12 +82,12 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_ROW_SELECT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_ROW_SELECT(IdSelect::Vector{Int64}, Data, Header, Name::String, N_iZ::Int64; N_Point_Max=1000)
+			function READ_ROW_SELECT(IdSelect::Vector{Int64}, Data, Header, Name::String, NiZ::Int64; N_Point_Max=1000)
 
 				Data_Output, N_X = READ_HEADER_FAST(Data, Header, Name)
 
-				# if N_iZ ≠ N_X
-				# 	error("READ_ROW_SELECT  N_iZ ≠ N_X")
+				# if NiZ ≠ N_X
+				# 	error("READ_ROW_SELECT  NiZ ≠ N_X")
 				# end
 
 			# ===========================================
@@ -106,23 +106,23 @@ module tool
 
 				if Flag_IsEmpty
 					Flag_String = false
-					Data_Select = zeros(Union{Float64,Missing}, (N_iZ, N_Point_Max))
+					Data_Select = zeros(Union{Float64,Missing}, (NiZ, N_Point_Max))
 
 				elseif typeof(Data_Output[1]) == SubString{String}
-					Data_Select = fill("A"::String, (N_iZ, N_Point_Max))
+					Data_Select = fill("A"::String, (NiZ, N_Point_Max))
 					Flag_String = true
 
 				else
 					Flag_String = false
-					Data_Select = fill(0.0::Float64, (N_iZ, N_Point_Max))
+					Data_Select = fill(0.0::Float64, (NiZ, N_Point_Max))
 				end
 
 				# For all soils in the file
 				iSelect = 1; iPoint = 1
-            N_Point = fill(0::Int64, N_iZ)
+            N_Point = fill(0::Int64, NiZ)
 				
 				for i = 1:N_X
-					if Id_Data[i] > IdSelect[iSelect] && iSelect ≠ N_iZ
+					if Id_Data[i] > IdSelect[iSelect] && iSelect ≠ NiZ
 						error("READ_ROW_SELECT problem with no matching id:  i= $i IdSelect[iSelect] = $( IdSelect[iSelect])< Id_Data[i] = $(Id_Data[i])")
 					end
 
@@ -137,7 +137,7 @@ module tool
 						end
 						N_Point[iSelect] += 1
 		
-						if (i ≤ N_X - 1) && (iSelect ≤ N_iZ -1) && (Id_Data[i+1] > Id_Data[i]) 
+						if (i ≤ N_X - 1) && (iSelect ≤ NiZ -1) && (Id_Data[i+1] > Id_Data[i]) 
 							iSelect += 1
 							iPoint = 1
 						else
@@ -146,13 +146,13 @@ module tool
 					end # if: i ≤ N_X -1
 				end
 
-				if iSelect ≠ N_iZ
-					error("READ_ROW_SELECT error: iSelect=$iSelect ≠ N_iZ=$N_iZ")
+				if iSelect ≠ NiZ
+					error("READ_ROW_SELECT error: iSelect=$iSelect ≠ NiZ=$NiZ")
 				end
 
 					# Since there are many Data_Output with the same Id only update IdSelect if we are changing soils and IdSelect[iSelect] == Id_Data[i]
 					# if i ≤ N_X - 1
-					# 	if (Id_Data[i+1] > Id_Data[i]) && (IdSelect[iSelect] == Id_Data[i]) && (iSelect ≤ N_iZ -1)
+					# 	if (Id_Data[i+1] > Id_Data[i]) && (IdSelect[iSelect] == Id_Data[i]) && (iSelect ≤ NiZ -1)
 					# 		iSelect += 1
 					# 		iPoint = 1
 					# 	end # if:
@@ -166,17 +166,17 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_θΨK_2D
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_θΨK_2D(Data, Header, IdSelect, N_iZ)
+			function READ_θΨK_2D(Data, Header, IdSelect, NiZ)
 				Ψheader = fill(0.0, length(Header)-1)
-				Xdata = zeros(Union{Float64,Missing}, (N_iZ, length(Header)-1))
+				Xdata = zeros(Union{Float64,Missing}, (NiZ, length(Header)-1))
 
 				iΨ=1
 				for iHeader_Ψ in Header
 					if iHeader_Ψ  ≠ "\ufeffId" && iHeader_Ψ  ≠ "Id"
-						Xdata_Column, ~ = readWrite.READ_ROW_SELECT(IdSelect, Data, Header, string(iHeader_Ψ), N_iZ; N_Point_Max=1)
+						Xdata_Column, ~ = readWrite.READ_ROW_SELECT(IdSelect, Data, Header, string(iHeader_Ψ), NiZ; N_Point_Max=1)
 
 						# Reading Xdata for every column
-							Xdata[1:N_iZ, iΨ] = Xdata_Column[1:N_iZ]
+							Xdata[1:NiZ, iΨ] = Xdata_Column[1:NiZ]
 
 						# Converting the value of header into number by removing all characters Ψ (e.g. H_100_mm) -> 100
 							iFindall = findall("_", iHeader_Ψ)
@@ -187,11 +187,11 @@ module tool
 					end # if iHeader_Ψ  ≠ "\ufeffId" && iHeader_Ψ  ≠ "Id"
 				end # for iHeader_Ψ in Header
 
-				Ψdata_NoMissing = fill(0.0::Float64, (N_iZ, length(Header)-1))
-				Xdata_NoMissing = fill(0.0::Float64, (N_iZ, length(Header)-1))
-				NΨobs = fill(0::Int64, N_iZ)
+				Ψdata_NoMissing = fill(0.0::Float64, (NiZ, length(Header)-1))
+				Xdata_NoMissing = fill(0.0::Float64, (NiZ, length(Header)-1))
+				NΨobs = fill(0::Int64, NiZ)
 
-				for iZ=1:N_iZ
+				for iZ=1:NiZ
 					Header_Ψ₂ = deepcopy(Ψheader)
 					
 					# Finding Missing data
@@ -210,7 +210,7 @@ module tool
 
 						Ψdata_NoMissing[iZ,1:NΨobs[iZ]] = Header_Ψ₂[1:NΨobs[iZ]]
 
-				end # for iZ=1:N_iZ	
+				end # for iZ=1:NiZ	
 			return NΨobs, Xdata_NoMissing, Ψdata_NoMissing
 			end  # function: Read_2	
 
@@ -237,19 +237,19 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : STRUCT_2_FIELDNAMES
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function STRUCT_2_FIELDNAME(N_iZ, Structure)
+			function STRUCT_2_FIELDNAME(NiZ, Structure)
 				FieldName_Array = propertynames(Structure)
 
 				N_FieldName = length(FieldName_Array)
 
 				# Matrix
-					Matrix = fill(0.0::Float64, (N_iZ, N_FieldName))
+					Matrix = fill(0.0::Float64, (NiZ, N_FieldName))
 
 					i = 1
 					for FieldName in FieldName_Array
 						Struct_Array = getfield(Structure, FieldName)
 		
-						Matrix[1:N_iZ,i] .= Struct_Array
+						Matrix[1:NiZ,i] .= Struct_Array
 						i += 1
 					end
 				

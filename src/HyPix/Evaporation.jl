@@ -8,9 +8,9 @@ module evaporation
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :  COMPUTTING N OF EVAPORATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function N_IEVAPO(N_iZ::Int64, veg, Z)::Int64
+		function N_IEVAPO(NiZ::Int64, veg, Z)::Int64
 			iZ = 1
-			while iZ ≤ N_iZ && veg.Zevapo ≥ Z[iZ]
+			while iZ ≤ NiZ && veg.Zevapo ≥ Z[iZ]
 				iZ += 1
 			end
 			return N_iEvapo = iZ - 1

@@ -8,12 +8,12 @@ module tableSmap
    	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : θΨK
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         function θΨK(hydro, hydroOther, IdSelect, KₛModel, N_iZ, Path, Smap_Depth, Soilname)
+         function θΨK(hydro, hydroOther, IdSelect, KₛModel, NiZ, Path, Smap_Depth, Soilname)
             println("    ~  $(Path) ~")
 
-            Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydro)
+            Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(NiZ, hydro)
 
-            Matrix2, FieldName_String2 = tool.readWrite.STRUCT_2_FIELDNAME(N_iZ, hydroOther)
+            Matrix2, FieldName_String2 = tool.readWrite.STRUCT_2_FIELDNAME(NiZ, hydroOther)
 
             # Concatenating matrices
                Matrix = hcat(Matrix, Matrix2)
@@ -26,7 +26,7 @@ module tableSmap
 
                 open(Path, "w") do io
                   DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-                  DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Soilname[1:N_iZ] Smap_Depth[1:N_iZ] Matrix], ",")
+                  DelimitedFiles.writedlm(io, [string.(IdSelect[1:NiZ]) Soilname[1:NiZ] Smap_Depth[1:NiZ] Matrix], ",")
                end
          return nothing
          end  # function:  θΨK
@@ -42,7 +42,7 @@ module tableSmap
    JulesModel_VangenuchtenJules = ["ThetaS_VgJules[mm3 mm-3]";"ThetaR_VgJules[mm3 mm-3]";"n_VgJules[-]";"Hvg_VgJules[mm]"; "Ks_VgJules[mm s-1]";"3300mm";"10000mm"]
 
    """
-      function SMAP(hydro, IdSelect, IsTopsoil, N_iZ, optionₘ, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname)
+      function SMAP(hydro, IdSelect, IsTopsoil, NiZ, optionₘ, param, path, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname)
 
          println("    ~  $(path.tableSmap.Table_Smap) ~")
 
@@ -72,9 +72,9 @@ module tableSmap
                Data_θΨ = Tables.matrix(CSV.File(Path_θΨ, select=Select_θΨ))
 
                try
-                  Data = hcat(Data[1:N_iZ, :], Data_θΨ[1:N_iZ, :])
+                  Data = hcat(Data[1:NiZ, :], Data_θΨ[1:NiZ, :])
                catch
-                  Data = Data_θΨ[1:N_iZ, :]
+                  Data = Data_θΨ[1:NiZ, :]
                end
                
                if HeaderSmap
@@ -102,9 +102,9 @@ module tableSmap
                Data_θΨ = Tables.matrix(CSV.File(Path_θΨ, select=Select_θΨ))
 
                try
-                  Data = hcat(Data[1:N_iZ, :], Data_θΨ[1:N_iZ, :])
+                  Data = hcat(Data[1:NiZ, :], Data_θΨ[1:NiZ, :])
                catch
-                  Data = Data_θΨ[1:N_iZ, :]
+                  Data = Data_θΨ[1:NiZ, :]
                end
 
                if HeaderSmap
@@ -132,9 +132,9 @@ module tableSmap
                Data_θΨ = Tables.matrix(CSV.File(Path_θΨ, select=Select_θΨ))
                   
                try
-                  Data = hcat(Data[1:N_iZ, :], Data_θΨ[1:N_iZ, :])
+                  Data = hcat(Data[1:NiZ, :], Data_θΨ[1:NiZ, :])
                catch
-                  Data = Data_θΨ[1:N_iZ, :]
+                  Data = Data_θΨ[1:NiZ, :]
                end
          
                if HeaderSmap
@@ -162,9 +162,9 @@ module tableSmap
                Data_θΨ = Tables.matrix(CSV.File(Path_θΨ, select=Select_θΨ))
                   
                try
-                  Data = hcat(Data[1:N_iZ, :], Data_θΨ[1:N_iZ, :])
+                  Data = hcat(Data[1:NiZ, :], Data_θΨ[1:NiZ, :])
                catch
-                  Data = Data_θΨ[1:N_iZ, :]
+                  Data = Data_θΨ[1:NiZ, :]
                end
          
                if HeaderSmap
@@ -192,9 +192,9 @@ module tableSmap
                Data_θΨ = Tables.matrix(CSV.File(Path_θΨ, select=Select_θΨ))
                   
                try
-                  Data = hcat(Data[1:N_iZ, :], Data_θΨ[1:N_iZ, :])
+                  Data = hcat(Data[1:NiZ, :], Data_θΨ[1:NiZ, :])
                catch
-                  Data = Data_θΨ[1:N_iZ, :]
+                  Data = Data_θΨ[1:NiZ, :]
                end
          
                if HeaderSmap
@@ -215,9 +215,9 @@ module tableSmap
          HydroModel_θΨ = "Kosugi"
 
          N_Ψ = length(param.smap.Ψ_Table[:])
-         θ₂ = fill(0.0::Float64, (N_iZ, N_Ψ))
+         θ₂ = fill(0.0::Float64, (NiZ, N_Ψ))
 
-         for iZ=1:N_iZ
+         for iZ=1:NiZ
             for iΨ =1:N_Ψ
                Ψ₂ = param.smap.Ψ_Table[iΨ]
                θ₂[iZ, iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ₂, iZ, hydro)
@@ -227,7 +227,7 @@ module tableSmap
          if isfile(Path_θΨ)
             Select_θΨ = string.(Int64.(param.smap.Ψ_Table)) .* "mm"            
 
-            Data = hcat(Data[1:N_iZ, :], θ₂[1:N_iZ, :])
+            Data = hcat(Data[1:NiZ, :], θ₂[1:NiZ, :])
       
             Header_θΨ = Select_θΨ
 
@@ -239,7 +239,7 @@ module tableSmap
       # COMBINING OUTPUTS   
          open(path.tableSmap.Table_Smap, "w") do io
             DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [string.(IdSelect[1:N_iZ]) Soilname[1:N_iZ] Smap_Depth[1:N_iZ] IsTopsoil[1:N_iZ] RockFragment[1:N_iZ] Smap_RockDepth[1:N_iZ] Smap_MaxRootingDepth[1:N_iZ] Smap_PermeabilityClass[1:N_iZ] Smap_SmapFH[1:N_iZ] Data[1:N_iZ,:]], ",")
+            DelimitedFiles.writedlm(io, [string.(IdSelect[1:NiZ]) Soilname[1:NiZ] Smap_Depth[1:NiZ] IsTopsoil[1:NiZ] RockFragment[1:NiZ] Smap_RockDepth[1:NiZ] Smap_MaxRootingDepth[1:NiZ] Smap_PermeabilityClass[1:NiZ] Smap_SmapFH[1:NiZ] Data[1:NiZ,:]], ",")
          end	
       return nothing
       end  # function:  smap

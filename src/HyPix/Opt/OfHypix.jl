@@ -16,9 +16,9 @@ module ofHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : WOF_θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function WOF_θ(∑T, N_iT::Int, N_iZ::Int, obsTheta, param, ΔHpond, θ, θSim; θobs_Uncert=param.hyPix.obsTheta.θobs_Uncert)
+		function WOF_θ(∑T, Nit::Int, NiZ::Int, obsTheta, param, ΔHpond, θ, θSim; θobs_Uncert=param.hyPix.obsTheta.θobs_Uncert)
 
-			θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.N_iT], obsTheta.N_iT, N_iT, N_iZ, θSim, θ)
+			θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], obsTheta.Nit, Nit, NiZ, θSim, θ)
 			
 			Wof = 0.0
 			iCount = 0
@@ -27,7 +27,7 @@ module ofHypix
 
 				Wdepth = 2.0 * (Float64(obsTheta.Ndepth) + 1.0 - Float64(iZ) ) / (Float64(obsTheta.Ndepth) * (Float64(obsTheta.Ndepth) + 1.0))
 
-				for iT=1:obsTheta.N_iT
+				for iT=1:obsTheta.Nit
 				
 					if θSim[iT,iZ] > 0.0 # avoiding no data
 
@@ -58,7 +58,7 @@ module ofHypix
 			end # for iZ
 
 			 # Penalty if we have too much ponding
-			 Wof_Pond = max(ΔHpond[N_iZ] - param.hyPix.ΔHpondMax, 0.0) / 1000.0
+			 Wof_Pond = max(ΔHpond[NiZ] - param.hyPix.ΔHpondMax, 0.0) / 1000.0
 
 		return Wof = √(Wof / Float64(iCount)) + Wof_Pond
 		end # function WOF_θ
@@ -68,9 +68,9 @@ module ofHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : RMSE_θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function RMSE_θ(∑T, obsTheta, N_iT::Int, N_iZ::Int, θ, θSim)
+			function RMSE_θ(∑T, obsTheta, Nit::Int, NiZ::Int, θ, θSim)
 
-				θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.N_iT], N_iT, N_iZ, θSim, θ)
+				θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], Nit, NiZ, θSim, θ)
 				
 				Rmse = 0.0
 				iCount = 0
@@ -78,7 +78,7 @@ module ofHypix
 
 					Wdepth = 2.0 * (Float64(obsTheta.Ndepth) + 1.0 - Float64(iZ) ) / (Float64(obsTheta.Ndepth) * (Float64(obsTheta.Ndepth) + 1.0))
 
-					for iT=1:obsTheta.N_iT 	
+					for iT=1:obsTheta.Nit 	
 						if θSim[iT,iZ] > 0.0 # avoiding no data
 							Rmse +=  Wdepth * (obsTheta.θobs[iT,iZ] - θSim[iT, obsTheta.ithetaObs[iZ]]) ^ 2
 							iCount += 1

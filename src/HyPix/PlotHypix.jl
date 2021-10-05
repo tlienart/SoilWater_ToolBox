@@ -152,7 +152,7 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TIMESERIES(∑T_Date_Plot, ∑T_Reduced, obsTheta, discret, Flag_Plot_Pond, iOpt, N_∑Treduced, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPrGross_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+			function TIMESERIES(∑T_Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
@@ -181,22 +181,22 @@ module plotHypix
 					# Axis.xticklabelrotation = π/4
 					
 					
-					Plot_Climate = barplot!(Axis1,  ∑T_Reduced[1:N_∑Treduced], ΔPrGross_Plot[1:N_∑Treduced], strokecolor=:cyan, strokewidth=1.5, color=:cyan, label=L"$ \ PrThrough$")
+					Plot_Climate = barplot!(Axis1,  ∑T_Reduced[1:Nit_Reduced], ΔPrGross_Reduced[1:Nit_Reduced], strokecolor=:cyan, strokewidth=1.5, color=:cyan, label=L"$ \ PrThrough$")
 					
-					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:N_∑Treduced], ΔPr_Plot[1:N_∑Treduced], strokecolor=:blue, strokewidth=1, color=:blue, label= L"$\Delta \ Pr$")
+					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], strokecolor=:blue, strokewidth=1, color=:blue, label= L"$\Delta \ Pr$")
 					
-					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:N_∑Treduced], ΔPond_Plot[1:N_∑Treduced], strokecolor=:grey, strokewidth=1, colour=:grey, label=L"$\Delta Hpond$")
+					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], strokecolor=:grey, strokewidth=1, colour=:grey, label=L"$\Delta Hpond$")
 
 					# ===
 					Axis2  = Axis(Fig[iSubplot, 1], yticklabelcolor = :darkgreen, yaxisposition = :right, rightspinecolor = :green, ytickcolor = :darkgreen)
 
-					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], ΔPet_Plot[1:N_∑Treduced], linewidth=2, colour=:darkgreen, label=L"$\Delta Pet$")
+					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔPet_Reduced[1:Nit_Reduced], linewidth=2, colour=:darkgreen, label=L"$\Delta Pet$")
 
-					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], ΔSink_Plot[1:N_∑Treduced], linewidth=2, colour=:red, label=L"$\Delta Sink$")
+					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔSink_Reduced[1:Nit_Reduced], linewidth=2, colour=:red, label=L"$\Delta Sink$")
 
-					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], ΔEvaporation_Plot[1:N_∑Treduced], linewidth=2, colour=:purple4, label=L"$\Delta Evap$")
+					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔEvaporation_Reduced[1:Nit_Reduced], linewidth=2, colour=:purple4, label=L"$\Delta Evap$")
 
-					# Plot_Climate = lines!(Axis2, ∑T_Reduced[1:N_∑Treduced], (ΔSink_Plot[1:N_∑Treduced].-ΔEvaporation_Plot[1:N_∑Treduced]), colour=:blue, label=L"$\Delta Rwu$")
+					# Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], (ΔSink_Reduced[1:Nit_Reduced].-ΔEvaporation_Reduced[1:Nit_Reduced]), colour=:blue, label=L"$\Delta Rwu$")
 					
 					# ==
 					iSubplot += 1
@@ -208,7 +208,7 @@ module plotHypix
 
 					iSubplot += 1
 					Axis3  = Axis(Fig[iSubplot, 1], ylabel= L"Recharge [mm day ^{-1}]")
-					Plot_Climate = barplot!(Axis3, ∑T_Reduced[1:N_∑Treduced], -ΔFlux_Plot[1:N_∑Treduced, N_iZ+1], strokecolor=:red, strokewidth=1, color=:red, label=L"$\Delta Q$")
+					Plot_Climate = barplot!(Axis3, ∑T_Reduced[1:Nit_Reduced], -ΔQ_Reduced[1:Nit_Reduced, NiZ+1], strokecolor=:red, strokewidth=1, color=:red, label=L"$\Delta Q$")
 
 					iSubplot += 1
 					Fig[iSubplot, 1] = Legend(Fig, Axis3, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:left, valigns=:bottom)
@@ -230,10 +230,10 @@ module plotHypix
 
 							Label_Sim = "Sim=" * string(Int(floor((discret.Znode[obsTheta.ithetaObs[iZobs]])))) * "mm"
 
-							Plot_θ = lines!(Axis4, ∑T_Reduced[1:N_∑Treduced], θobs_Plot[1:N_∑Treduced, iZobs], linewidth=5, colour=Style_Hypix[iZobs], label=Label_Obs)
+							Plot_θ = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], linewidth=5, colour=Style_Hypix[iZobs], label=Label_Obs)
 
 
-							Plot_θ = lines!(Axis4, ∑T_Reduced[1:N_∑Treduced], θ_Plot[1:N_∑Treduced, obsTheta.ithetaObs[iZobs]], linewidth=3, colour=Style_Hypix[iZobs], label=Label_Sim)
+							Plot_θ = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=3, colour=Style_Hypix[iZobs], label=Label_Sim)
 					end # loop
 
 					iSubplot += 1
@@ -242,7 +242,7 @@ module plotHypix
 					trim!(Fig.layout)
 
 
-						# Plot = plot(Plot, Plot_θ, Plot_Climate, xmin=∑T_Date_Plot[1], xmax=∑T_Date_Plot[N_∑Treduced], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
+						# Plot = plot(Plot, Plot_θ, Plot_Climate, xmin=∑T_Date_Reduced[1], xmax=∑T_Date_Reduced[Nit_Reduced], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
 
 				end # if: option.hyPix.Plot_θ
 				
@@ -305,7 +305,7 @@ module plotHypix
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# #		FUNCTION : TIMESERIES
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 	function TIMESERIES(∑T_Date_Plot, ∑T_Reduced, obsTheta, discret, Flag_Plot_Pond, iOpt, N_∑Treduced, N_iZ, option, param, ΔEvaporation_Plot, ΔFlux_Plot, ΔPet_Plot, ΔPond_Plot, ΔPr_Plot, ΔSink_Plot, θ_Plot, θobs_Plot, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+			# 	function TIMESERIES(∑T_Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 			# 	# PATH
 			# 		Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
@@ -332,9 +332,9 @@ module plotHypix
 			# 	if option.hyPix.Plot_Climate
 			# 		iSubplot += 1		
 
-			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], -ΔFlux_Plot[1:N_∑Treduced, N_iZ+1], label=L"$\Delta Q$", line=(:solid, 1), linecolour=:red, fillcolor=:darkred, fill=(0,:darkred))
+			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], -ΔQ_Reduced[1:Nit_Reduced, NiZ+1], label=L"$\Delta Q$", line=(:solid, 1), linecolour=:red, fillcolor=:darkred, fill=(0,:darkred))
 					
-			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], ΔPond_Plot[1:N_∑Treduced], label=L"$\Delta H_{Pond}$", linecolour=:grey, fill = (0, :grey))
+			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], label=L"$\Delta H_{Pond}$", linecolour=:grey, fill = (0, :grey))
 					
 			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, clim.Date[i∑T_CalibrStart_Day:clim.N_Climate], clim.Pr[i∑T_CalibrStart_Day:clim.N_Climate], color=:blue, colorbar=false,  line =(:sticks, :solid, 5), label= L"$\Delta Pr  $")
 
@@ -346,13 +346,13 @@ module plotHypix
 			# 	# PLOT EVAPOYTRANSPIRATION
 			# 		iSubplot += 1	
 
-			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[2:N_∑Treduced], ΔPet_Plot[2:N_∑Treduced], linecolour=:darkgreen, label=L"$\Delta Pet$", line=(2.5,:solid))
+			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[2:Nit_Reduced], ΔPet_Reduced[2:Nit_Reduced], linecolour=:darkgreen, label=L"$\Delta Pet$", line=(2.5,:solid))
 
-			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[2:N_∑Treduced], ΔSink_Plot[2:N_∑Treduced], linecolour=:red, line=(2.0,:solid), label=L"$\Delta Sink$")
+			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[2:Nit_Reduced], ΔSink_Reduced[2:Nit_Reduced], linecolour=:red, line=(2.0,:solid), label=L"$\Delta Sink$")
 
-			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[2:N_∑Treduced], (ΔSink_Plot[2:N_∑Treduced].-ΔEvaporation_Plot[2:N_∑Treduced]), label=L"$\Delta Rwu$", linecolour=:blue, line=(2.0,:solid))
+			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[2:Nit_Reduced], (ΔSink_Reduced[2:Nit_Reduced].-ΔEvaporation_Reduced[2:Nit_Reduced]), label=L"$\Delta Rwu$", linecolour=:blue, line=(2.0,:solid))
 					
-			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[2:N_∑Treduced], ΔEvaporation_Plot[2:N_∑Treduced], label=L"$\Delta Evap$", linecolour=:purple4, line=(2.0,:solid))
+			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[2:Nit_Reduced], ΔEvaporation_Reduced[2:Nit_Reduced], label=L"$\Delta Evap$", linecolour=:purple4, line=(2.0,:solid))
 
 			# 		Plot_Climate = Plots.plot!(Plot, subplot=iSubplot, ylabel=L"$Daily \ Simulation \ [mm]$", xtickfont = (0.01, :white), xrotation=rad2deg(pi/2))
 
@@ -370,29 +370,29 @@ module plotHypix
 			# 				Label_Sim = "Sim=" * string( Int(floor((discret.Znode[obsTheta.ithetaObs[ithetaObs]])))) * "mm"
 
 			# 			# Plotting
-			# 				# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θobs_Plot[1:N_∑Treduced, iZobs].+param.hypixStart.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+			# 				# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs].+param.hypixStart.calibr.θobs_Uncert, line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
 		
-			# 				# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], max.(θobs_Plot[1:N_∑Treduced, iZobs].-param.hypixStart.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
+			# 				# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], max.(θobs_Reduced[1:Nit_Reduced, iZobs].-param.hypixStart.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Hypix[iZobs], label=false)
 							
 			# 				if option.hyPix.θobs_Average
-			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θobs_Plot[1:N_∑Treduced, ithetaObs], line=(2.5,:solid), linecolour=Style_Hypix[ithetaObs], label="Obs θaver [0-40cm]")
+			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, ithetaObs], line=(2.5,:solid), linecolour=Style_Hypix[ithetaObs], label="Obs θaver [0-40cm]")
 
-			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θsim_Aver[1:N_∑Treduced], label="Sim θaver [0-40cm]", line=(2.5,:solid), linecolour=:blue)
+			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced], label="Sim θaver [0-40cm]", line=(2.5,:solid), linecolour=:blue)
 
-			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θ_Plot[1:N_∑Treduced,4], label="Sim θ=10cm", line=(2.5,:dashdot), linecolour=:darkblue)
+			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced,4], label="Sim θ=10cm", line=(2.5,:dashdot), linecolour=:darkblue)
 
-			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θ_Plot[1:N_∑Treduced,14], label="Sim θ=35cm", line=(2.5,:dashdot), linecolour=:darkblue)
+			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced,14], label="Sim θ=35cm", line=(2.5,:dashdot), linecolour=:darkblue)
 			# 			else
-			# 				Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θobs_Plot[1:N_∑Treduced, iZobs], line=(2.5,:solid), linecolour=Style_Hypix[iZobs], label=Label_Obs)
+			# 				Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], line=(2.5,:solid), linecolour=Style_Hypix[iZobs], label=Label_Obs)
 
-			# 				Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Plot[1:N_∑Treduced], θ_Plot[1:N_∑Treduced, calibr.iZobs[iZobs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[iZobs])
+			# 				Plot_θ = Plots.plot!(Plot, subplot=iSubplot, ∑T_Date_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, calibr.iZobs[iZobs]], label=Label_Sim, line=(2.5,:dashdot), linecolour=Style_Hypix[iZobs])
 			# 			end  # if: option.hyPix.
 
 			# 		end # loop
 
 			# 		Plot_θ = Plots.plot!(subplot=iSubplot, ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$")
 
-			# 		Plot = Plots.plot(Plot, Plot_θ, Plot_Climate, xmin=∑T_Date_Plot[1], xmax=∑T_Date_Plot[N_∑Treduced], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
+			# 		Plot = Plots.plot(Plot, Plot_θ, Plot_Climate, xmin=∑T_Date_Reduced[1], xmax=∑T_Date_Reduced[Nit_Reduced], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
 
 			# 	end # if: option.hyPix.Plot_θ
 				

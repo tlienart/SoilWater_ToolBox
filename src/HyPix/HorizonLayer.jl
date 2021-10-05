@@ -9,9 +9,9 @@ module horizonLayer
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :   HORIZON_2_LAYER
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, N_iZ::Int64, option)
+	function HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ::Int64, option)
 
-		hydro = hydroStruct.HYDROSTRUCT(option.hyPix, N_iZ)
+		hydro = hydroStruct.HYDROSTRUCT(option.hyPix, NiZ)
 
 		# Field names of the structure
 			FieldName_Array = propertynames(hydroHorizon)
@@ -20,8 +20,8 @@ module horizonLayer
 			for FieldName in FieldName_Array
 				Value_Array = getfield(hydroHorizon, FieldName)
 				
-				Vector = fill(0.0::Float64, N_iZ)
-				for iZ = 1:N_iZ
+				Vector = fill(0.0::Float64, NiZ)
+				for iZ = 1:NiZ
 					Vector[iZ] = getfield(hydroHorizon, FieldName)[Layer[iZ]]
 				end
 				setfield!(hydro, Symbol(FieldName), Vector)

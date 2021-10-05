@@ -8,7 +8,7 @@ module discretization
 	#		FUNCTION :  DISCRETIZATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct DISCRET
-			N_iZ
+			NiZ
 			Z_CellUp
 			Znode
 			ΔZ
@@ -17,13 +17,13 @@ module discretization
 			ΔZ_W
 		end
 		
-		function DISCRETIZATION(N_iZ::Int64, Z)
-			Z_CellUp = fill(0.0::Float64, N_iZ)
-			Znode    = fill(0.0::Float64, N_iZ)
-			ΔZ       = fill(0.0::Float64, N_iZ)
-			ΔZ_⬓     = fill(0.0::Float64, N_iZ)
-			ΔZ_Aver  = fill(0.0::Float64, N_iZ+1)
-			ΔZ_W     = fill(0.0::Float64, N_iZ+1)
+		function DISCRETIZATION(NiZ::Int64, Z)
+			Z_CellUp = fill(0.0::Float64, NiZ)
+			Znode    = fill(0.0::Float64, NiZ)
+			ΔZ       = fill(0.0::Float64, NiZ+1)
+			ΔZ_⬓     = fill(0.0::Float64, NiZ)
+			ΔZ_Aver  = fill(0.0::Float64, NiZ+1)
+			ΔZ_W     = fill(0.0::Float64, NiZ+1)
 			
 			# Cell 1
 				ΔZ[1]       = Z[1]
@@ -34,7 +34,7 @@ module discretization
 				ΔZ_W[1]     = 1.0
 
 			# All Cells
-			for iZ = 2:N_iZ
+			for iZ = 2:NiZ
 				ΔZ[iZ]       = Z[iZ] - Z[iZ-1]
 
 				ΔZ_⬓[iZ]    = ΔZ[iZ] * 0.5
@@ -48,11 +48,13 @@ module discretization
 				Z_CellUp[iZ] = Z[iZ] - ΔZ[iZ]
 			end # for
 
-			ΔZ_Aver[N_iZ+1] = ΔZ[N_iZ] * 0.5
+			ΔZ_Aver[NiZ+1] = ΔZ[NiZ]
 
-			ΔZ_W[N_iZ+1] = 0.0
+			ΔZ_W[NiZ+1] = 0.5
 
-		return discret = DISCRET(N_iZ, Z_CellUp, Znode, ΔZ, ΔZ_⬓, ΔZ_Aver, ΔZ_W)
+			ΔZ[NiZ+1]  = ΔZ[NiZ]
+
+		return discret = DISCRET(NiZ, Z_CellUp, Znode, ΔZ, ΔZ_⬓, ΔZ_Aver, ΔZ_W)
 		end # function DISCRETIZATION
 
 

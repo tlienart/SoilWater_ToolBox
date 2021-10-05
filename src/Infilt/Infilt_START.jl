@@ -17,12 +17,12 @@ module infiltStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : START_INFILT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function START_INFILTRATION(;∑Infilt_Obs, ∑Psd, hydro=[], hydroInfilt, infiltParam, N_Infilt, N_iZ, option, param, Tinfilt)
+	function START_INFILTRATION(;∑Infilt_Obs, ∑Psd, hydro=[], hydroInfilt, infiltParam, N_Infilt, NiZ, option, param, Tinfilt)
 
 		# INITIALIZE
-			T, infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltInitialize.INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, N_iZ, param, Tinfilt)
+			T, infiltOutput, hydroInfilt, ∑Infilt_3D, ∑Infilt_1D = infiltInitialize.INFILT_INITIALIZE(∑Infilt_Obs, ∑Psd, hydroInfilt, infiltParam, N_Infilt, NiZ, param, Tinfilt)
 
-		for iZ=1:N_iZ
+		for iZ=1:NiZ
 			println( "iZ= $iZ")
 
 			# No optimization required running from hydro derived from laboratory
@@ -105,13 +105,13 @@ module infiltStart
 
 				infiltOutput.Nse[iZ] = 0.5 * infiltOutput.Nse_Trans[iZ] + 0.5 * infiltOutput.Nse_Steady[iZ]
 
-		end # for iZ=1:N_iZ
+		end # for iZ=1:NiZ
 
 
 		# AVERAGE STATISTICS
-         Nse_Trans  = Statistics.mean(infiltOutput.Nse_Trans[1:N_iZ])
-         Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:N_iZ])
-         Nse        = Statistics.mean(infiltOutput.Nse[1:N_iZ])
+         Nse_Trans  = Statistics.mean(infiltOutput.Nse_Trans[1:NiZ])
+         Nse_Steady = Statistics.mean(infiltOutput.Nse_Steady[1:NiZ])
+         Nse        = Statistics.mean(infiltOutput.Nse[1:NiZ])
 
 			println("    ~ $(option.infilt.SorptivityModel⍰) ~")
 			println("    ~ Nse= $Nse Nse_Trans= $Nse_Trans,  Nse_Steady= $Nse_Steady ~")
@@ -119,11 +119,11 @@ module infiltStart
 
 		# CONVERTING INFILTRATION DIMENSIONS
 			if option.infilt.Model⍰ == "Best_Univ"
-				for iZ=1:N_iZ
+				for iZ=1:NiZ
 					∑Infilt_1D = bestFunc.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T)
 				end
 			elseif option.infilt.Model⍰ == "QuasiExact"
-				for iZ=1:N_iZ
+				for iZ=1:NiZ
 					∑Infilt_1D = quasiExact.CONVERT_3D_2_1D(∑Infilt_3D, ∑Infilt_1D, hydroInfilt, infiltParam, iZ, N_Infilt, option, T)
 				end	
 			end #  option.infilt

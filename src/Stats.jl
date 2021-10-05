@@ -119,10 +119,10 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NSE_θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NSE_θΨ(hydro, N_Data, N_iZ, optionₘ, θobs, Ψobs)
-			Nse = zeros(Float64, N_iZ)
+		function NSE_θΨ(hydro, N_Data, NiZ, optionₘ, θobs, Ψobs)
+			Nse = zeros(Float64, NiZ)
 
-			for iZ = 1:N_iZ	
+			for iZ = 1:NiZ	
 				θΨsim = zeros(Float64, N_Data[iZ])
 				for iΨ = 1:N_Data[iZ]
 					θΨsim[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
@@ -131,8 +131,8 @@ module stats
 			end
 
 			# Cumulating the objective function to get the overview
-			Nse_Mean = round(Statistics.mean(max.(Nse[1:N_iZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
-			Nse_Std  = round(Statistics.std(max.(Nse[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
+			Nse_Mean = round(Statistics.mean(max.(Nse[1:NiZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
+			Nse_Std  = round(Statistics.std(max.(Nse[1:NiZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return Nse, Nse_Mean, Nse_Std
 		end # function NSE_θΨ
@@ -141,11 +141,11 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NSE_WILMOT_θΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NSE_WILMOT_θΨ(hydro, N_Data, N_iZ, optionₘ, θobs, Ψobs)
+		function NSE_WILMOT_θΨ(hydro, N_Data, NiZ, optionₘ, θobs, Ψobs)
 
-			NseWilmot_θΨ = zeros(Float64, N_iZ)
+			NseWilmot_θΨ = zeros(Float64, NiZ)
 
-			for iZ = 1:N_iZ	
+			for iZ = 1:NiZ	
 				θΨsim = zeros(Float64, N_Data[iZ])
 				for iΨ = 1:N_Data[iZ]
 					θΨsim[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
@@ -154,8 +154,8 @@ module stats
 			end
 
 			# Cumulating the objective function to get the overview
-			NseWilmot_Mean = round(Statistics.mean(max.(NseWilmot_θΨ[1:N_iZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
-			NseWilmot_Std  = round(Statistics.std(max.(NseWilmot_θΨ[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
+			NseWilmot_Mean = round(Statistics.mean(max.(NseWilmot_θΨ[1:NiZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
+			NseWilmot_Std  = round(Statistics.std(max.(NseWilmot_θΨ[1:NiZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return NseWilmot_θΨ, NseWilmot_Mean, NseWilmot_Std
 		end # function NSE_WILMOT_θΨ
@@ -164,11 +164,11 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NSE_KΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NSE_KΨ(hydro, N_Data, N_iZ, optionₘ, Kobs, Ψobs)
+		function NSE_KΨ(hydro, N_Data, NiZ, optionₘ, Kobs, Ψobs)
 
-			Nse_KΨ = zeros(Float64, N_iZ)
+			Nse_KΨ = zeros(Float64, NiZ)
 
-			for iZ = 1:N_iZ	
+			for iZ = 1:NiZ	
 				KΨsim = zeros(Float64, N_Data[iZ])
 				for iΨ = 1:N_Data[iZ]
 					KΨsim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
@@ -177,8 +177,8 @@ module stats
 			end
 
 			# Cumulating the objective function to get the overview
-			Nse_Mean = round(Statistics.mean(max.(Nse_KΨ[1:N_iZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
-			Nse_Std  = round(Statistics.std(max.(Nse_KΨ[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
+			Nse_Mean = round(Statistics.mean(max.(Nse_KΨ[1:NiZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
+			Nse_Std  = round(Statistics.std(max.(Nse_KΨ[1:NiZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return Nse_KΨ, Nse_Mean, Nse_Std
 		end # function NSE_KΨ
@@ -187,11 +187,11 @@ module stats
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NSE_WILMOT_KΨ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function NSE_WILMOT_KΨ(hydro, N_Data, N_iZ, optionₘ, Kobs, Ψobs)
+		function NSE_WILMOT_KΨ(hydro, N_Data, NiZ, optionₘ, Kobs, Ψobs)
 
-			NseWilmot_KΨ = zeros(Float64, N_iZ)
+			NseWilmot_KΨ = zeros(Float64, NiZ)
 
-			for iZ = 1:N_iZ	
+			for iZ = 1:NiZ	
 				KΨsim = zeros(Float64, N_Data[iZ])
 				for iΨ = 1:N_Data[iZ]
 					KΨsim[iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψobs[iZ,iΨ], iZ, hydro)
@@ -200,8 +200,8 @@ module stats
 			end
 
 			# Cumulating the objective function to get the overview
-			Nse_Mean = round(Statistics.mean(max.(NseWilmot_KΨ[1:N_iZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
-			Nse_Std  = round(Statistics.std(max.(NseWilmot_KΨ[1:N_iZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
+			Nse_Mean = round(Statistics.mean(max.(NseWilmot_KΨ[1:NiZ] , 0.0)), digits=3)  # in case of negative value then it is set to 0
+			Nse_Std  = round(Statistics.std(max.(NseWilmot_KΨ[1:NiZ] , 0.0)), digits=3)   # in case of negative value then it is set to 0
 
 		return NseWilmot_KΨ, Nse_Mean, Nse_Std
 		end # function NSE_WILMOT_KΨ
