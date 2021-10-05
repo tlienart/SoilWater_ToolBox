@@ -48,7 +48,7 @@ module flux
 					Q = K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-					Q = K_Aver * ( ((param.hyPix.Ψ_Botom - ψ_) / discret.ΔZ[N_iZ]) + param.hyPix.Cosα )
+					Q = K_Aver * ( ((param.hyPix.Ψ_Botom - discret.ΔZ[N_iZ] - ψ_) / discret.ΔZ[N_iZ]) + param.hyPix.Cosα)
 				end
 
 			# Checking of maximum water abstraction of bottom cell
@@ -118,9 +118,9 @@ module flux
 						return ∂Q▽∂Ψ = ∂K∂Ψ[N_iZ] * param.hyPix.Cosα
 		
 					elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-						K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ, N_iZ, Ψ[iT,N_iZ], Ψ[iT,N_iZ])
+						K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, N_iZ+1, N_iZ, Ψ[iT,N_iZ], Ψ[iT,N_iZ])
 
-						return ∂Q▽∂Ψ = 0.5 * ∂K∂Ψ[N_iZ] * ((param.hyPix.Ψ_Botom - Ψ[iT,N_iZ]) / discret.ΔZ[N_iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ[N_iZ]
+						return ∂Q▽∂Ψ = 0.5 * ∂K∂Ψ[N_iZ] * ((param.hyPix.Ψ_Botom - discret.ΔZ[N_iZ] - Ψ[iT,N_iZ]) / discret.ΔZ[N_iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ[N_iZ]
 					end	
 				end # if iZ
 			end  # function: ∂Q▽∂Ψ

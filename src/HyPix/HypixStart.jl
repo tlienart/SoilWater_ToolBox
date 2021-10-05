@@ -101,11 +101,6 @@ module hypixStart
 				# Process observed θ
 					obsTheta = thetaObs.ΘOBS(obsTheta, clim, discret, Z)
 			end #  option.hyPix.θobs
-			
-			# BOUNDARY CORRECTION FOR CELL N+1
-				if option.hyPix.BottomBoundary⍰ =="Ψ"
-					param.hyPix.Ψ_Botom  = param.hyPix.Ψ_Botom - discret.ΔZ[N_iZ] / 2.0
-				end
 
 			# MEMORY
 				if iOpt_Count == 1

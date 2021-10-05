@@ -14,19 +14,10 @@ module richard
 		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, N_iZ::Int64, param, Q, Residual, Sorptivity::Float64, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
 
 			# INITIALIZING
-				for iZ = 1:N_iZ
-					if iZ == 1
-						if option.hyPix.TopBoundary⍰ =="Ψ"
-							Ψbest[1] = param.hyPix.Ψ_Top
-						else
-							Ψ[iT,iZ] = Ψbest[iZ]
-						end
-					else
-						Ψ[iT,iZ] = Ψbest[iZ]
-					end  # if:
+			@inbounds @simd for iZ = 1:N_iZ
+					Ψ[iT,iZ] = Ψbest[iZ]
 				end # for iZ = 1:N_iZ
 
-		
 				# Residual_Max_Best it should be improved compared to Ψ[iT,iZ] = Ψ[iT-1,iZ]
 				~, ~, ~, ~, Residual, ~, ~ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, option)
 
@@ -99,22 +90,19 @@ module richard
 			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, param, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, option)
 
 	#----------------------------------------------------------------
-	∂R∂Ψ2 = 0.0
-					∂R∂Ψ▽2 =0.0
-
-			∂R∂Ψ2 = fill(0.0, N_iZ)
-			∂R∂Ψ▽2 = fill(0.0, N_iZ)
-			∂R∂Ψ△2 =  fill(0.0, N_iZ)
+			# ∂R∂Ψ2 = fill(0.0, N_iZ)
+			# ∂R∂Ψ▽2 = fill(0.0, N_iZ)
+			# ∂R∂Ψ△2 =  fill(0.0, N_iZ)
 
 			for iZ=1:N_iZ		
-				Q, Residual, θ = residual.RESIDUAL(option, discret, hydro, iT, iZ, N_iZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min)
+				Q, Residual, θ = residual.RESIDUAL(option, discret, hydro, iT, iZ, N_iZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 				if option.hyPix.∂R∂Ψ_Numerical
-					∂R∂Ψ2[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 
-					∂R∂Ψ▽2[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 		
-					∂R∂Ψ△2[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
+					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, N_iZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,N_iZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,N_iZ)], Ψ_Max)
 				else
 					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, N_iZ, option, param, ΔT, θ, Ψ)
 				end # if option.hyPix.∂R∂Ψ_Numerical

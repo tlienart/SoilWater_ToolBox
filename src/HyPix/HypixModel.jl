@@ -81,6 +81,17 @@ module hypixModel
 				for iZ = 1:N_iZ
 					θ[iT,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ]) # Just in case
 					Ψ[iT,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
+
+					if iZ == 1 && option.hyPix.TopBoundary⍰ == "Ψ"
+						Ψ[iT,1] = param.hyPix.Ψ_Top
+						θ[iT,1]  = Ψ_2_θDual(option.hydro, Ψ[iT,1], iZ, hydro)
+					end
+	
+					if  iZ == N_iZ && option.hyPix.BottomBoundary⍰ == "Ψ"
+						Ψ[iT,N_iZ] = param.hyPix.Ψ_Botom
+						θ[iT,N_iZ]  = Ψ_2_θDual(option.hydro, Ψ[iT,N_iZ], N_iZ, hydro)
+					end
+
 					Ψini[iZ] = Ψ[iT,iZ]
 
 					Ψbest[iZ]  = Ψini[iZ]
@@ -89,6 +100,14 @@ module hypixModel
 
 			elseif Flag_θΨini == :Ψini
 				θini = fill(0.0::Float64, N_iZ)
+
+				if option.hyPix.TopBoundary⍰ == "Ψ"
+					Ψini[1] = param.hyPix.Ψ_Top
+				end
+
+				if option.hyPix.BottomBoundary⍰ == "Ψ"
+					Ψini[N_iZ] = param.hyPix.Ψ_Botom
+				end
 
 				for iZ = 1:N_iZ
 					Ψ[iT,iZ] = Ψini[iZ]
@@ -115,11 +134,6 @@ module hypixModel
 
 			# DERIVING FORCING DATA ΔPr & ΔPet:
 				∑Pr[iT], ΔPr[iT], iT_Pr = interpolate.∑_2_Δ(∑Pr[iT-1], ∑Pr_Climate, ∑T, ∑T_Climate, iT_Pr, clim.N_Climate, Flag_ReRun, iT)
-
-			# SPECIAL BOUNDARY CONDITIONS
-				if option.hyPix.TopBoundary⍰ == "Ψ"
-					ΔPr = boundary.BOUNDARY_TOP_Ψ(discret, Flag_ReRun, hydro, iT, N_iZ, option, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
-				end
 
 			# POTENTIAL EVAPOTRANSPIRATION
 				if option.hyPix.RootWaterUptake || option.hyPix.Evaporation
@@ -155,9 +169,15 @@ module hypixModel
 			# SORPTIVITY TO COMPUTE INFILTRATION RATE				
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
 
+			# SPECIAL BOUNDARY CONDITIONS
+				if option.hyPix.TopBoundary⍰ == "Ψ"
+					ΔPr = boundary.BOUNDARY_TOP_Ψ(discret, Flag_ReRun, hydro, iT, N_iZ, option, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+					∑Pr[iT] = ∑Pr[iT-1] + ΔPr[iT]
+				end
+		
 			# SOLVING THE EXPLICIT RICHARDS
 				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, N_iZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
-
+				
 		end # while loop
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+	
 
