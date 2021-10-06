@@ -127,7 +127,7 @@ module discretization
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
 		function DISCRETISATION_AUTO_θini(; N_Layer, Zlayer, Zroot, θᵢₙᵢ)
-			HydrostaticEquilibrium=true
+			HydrostaticEquilibrium=false
 
 			ΔZlayer = fill(0.0::Float64, N_Layer)
 
