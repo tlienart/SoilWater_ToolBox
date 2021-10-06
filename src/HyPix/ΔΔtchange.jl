@@ -28,7 +28,7 @@ module Δtchange
 			end
 
 		# PREPARING DATA FOR PLOTS
-			ΔT_Sim = value(obsTheta.Date[end] - obsTheta.Date[1]) / 1000
+			ΔT_Sim = value(obsTheta.Date[obsTheta.Nit] - obsTheta.Date[1]) / 1000
 
 			∑T_Reduced = collect(range(0.0, step=param.hyPix.ΔT_Output, stop=ΔT_Sim)) 
 			
@@ -40,7 +40,9 @@ module Δtchange
 			Nit_Reduced = length(∑T_Reduced)
 
 		# PREPARING DATES WITH INTERVAL:
-			∑T_Date_Reduced = range(obsTheta.Date[1], step=Second(param.hyPix.ΔT_Output), obsTheta.Date[end])
+			# COMPUTING CUMULATIVE TIME
+
+			Date_Reduced = collect(range(obsTheta.Date[1], step=Second(param.hyPix.ΔT_Output), stop=obsTheta.Date[obsTheta.Nit]))
 
 		# INTERPOLATING DATA
 			θ_Reduced = fill(0.0::Float64, Nit_Reduced, NiZ)	
@@ -87,13 +89,11 @@ module Δtchange
 				ΔPr_Reduced          = fill(0.0::Float64, Nit_Reduced)
 				ΔPrGross_Reduced     = fill(0.0::Float64, Nit_Reduced)
             ΔSink_Reduced        = fill(0.0::Float64, Nit_Reduced)
-				Date_Reduced         = fill(now()::DateTime, Nit_Reduced)
-
+				
 			# Root Water Uptake daily 
 				# Initial condition
-            Date_Reduced[1]                 = obsTheta.Date[1]
             ΔEvaporation_Reduced[1]         = 0.0
-            ΔQ_Reduced[1,1:NiZ+1]      .= 0.0
+            ΔQ_Reduced[1,1:NiZ+1]           .= 0.0
             ΔPet_Reduced[1]                 = 0.0
             ΔPr_Reduced[1]                  = 0.0
             ΔPrGross_Reduced[1]             = 0.0
@@ -101,9 +101,6 @@ module Δtchange
 
 			# ∑T_Reduced[1] = ∑T_Reduced[1]
 			for iT=2:Nit_Reduced
-				# ∑T_Reduced[iT] = ∑T_Reduced[iT]
-
-				# Date_Reduced[iT] = Date_Reduced[iT-1] + Second(Int(ceil((∑T_Reduced[iT]-∑T_Reduced[iT-1]) * cst.Hour_2_Second)))
 
 				for iZ=1:NiZ+1
 					ΔQ_Reduced[iT,iZ] = ∑ΔQ_Reduced[iT,iZ] - ∑ΔQ_Reduced[iT-1,iZ]
@@ -120,7 +117,7 @@ module Δtchange
             ΔEvaporation_Reduced[iT] = max(∑Evaporation_Reduced[iT] -  ∑Evaporation_Reduced[iT-1], 0.0)
 			end  # for iT=1:Nit
 		
-	return ∑T_Date_Reduced, ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced
+	return ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced
 	end # function: CHANGE_OUTPUT_ΔT
 	
 end  # module: tincrease

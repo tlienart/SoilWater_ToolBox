@@ -11,7 +11,7 @@ module memory
 
 		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 
-      N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min)
+      N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + 10
 		
       ΔEvaporation = fill(0.0::Float64, N_Memory)
       ΔHpond       = fill(0.0::Float64, N_Memory)

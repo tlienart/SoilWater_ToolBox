@@ -266,10 +266,16 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 2	
-				for iZ = 1:NiZ
-					Q[iT,iZ] = flux.Q!(option, discret, hydro, iZ, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,iZ], Ψ[iT, max(iZ-1,1)])
-				end # for: iZ= 1:NiZ+1
+			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 2
+				
+				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
+				for iZ=1:NiZ
+					Q[iT,iZ+1] = flux.Q!(option, discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
+				end
+
+				# for iZ = 1:NiZ
+				# 	Q[iT,iZ] = flux.Q!(option, discret, hydro, iZ, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,iZ], Ψ[iT, max(iZ-1,1)])
+				# end # for: iZ= 1:NiZ+1
 
 				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, NiZ, option, param, Q, ΔΨmax, ΔSink, θ, Ψ)
 
@@ -280,11 +286,12 @@ module richard
 
 				elseif option.hyPix.TopBoundary⍰ == "Ψ"
 					Flag_ReRun = true
-					Count_ReRun += 2
+					Count_ReRun += 1
 				
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false
 					Count_ReRun = 0
+
 				end
 			else
 				Flag_ReRun = false

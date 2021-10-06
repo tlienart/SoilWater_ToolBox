@@ -510,14 +510,32 @@ module table
 		# ===================================================
 		#          θ
 		# ===================================================
-			function θ(∑T_Reduced, θ_Reduced, Znode, iSim, pathHyPix)
+			function θ(Date_Reduced, θ_Reduced, Znode, iSim, pathHyPix)
 				Path = pathHyPix.Table_θ * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
-				# Adding an other column
-					prepend!(Znode, -999)
+				Nit_Reduced = length(Date_Reduced)
 
-				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T_Reduced θ_Reduced], ",")
+				Year₁   = fill(0::Int64, Nit_Reduced)
+				Month₁  = fill(0::Int64, Nit_Reduced)
+            Day₁    = fill(0::Int64, Nit_Reduced)
+            Hour₁   = fill(0::Int64, Nit_Reduced)
+            Minute₁ = fill(0::Int64, Nit_Reduced)
+            Second₁ = fill(0::Int64, Nit_Reduced)
+
+				for iT=1:Nit_Reduced
+               Year₁[iT]   = year(Date_Reduced[iT])
+               Month₁[iT]  = month(Date_Reduced[iT])
+               Day₁[iT]    = day(Date_Reduced[iT])
+               Hour₁[iT]   = hour(Date_Reduced[iT])
+               Minute₁[iT] = minute(Date_Reduced[iT])
+					Second₁[iT] = second(Date_Reduced[iT])
+				end
+
+				# Adding an other column
+					Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
+
+				DelimitedFiles.writedlm(Path, [Header transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ θ_Reduced], ",")
 			return nothing
 			end  # Table θ
 		#------------------------------------------------------
@@ -525,15 +543,34 @@ module table
 		# ===================================================
 		#          Q
 		# ===================================================
-			function Q(∑T_Reduced, ΔQ_Reduced, Z_Bottom, Znode, iSim, pathHyPix)	
+			function Q(Date_Reduced, ΔQ_Reduced, Z_Bottom, Znode, iSim, pathHyPix)	
 				Path = pathHyPix.Table_Q * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
+
+				Nit_Reduced = length(Date_Reduced)
+
+				Year₁   = fill(0::Int64, Nit_Reduced)
+				Month₁  = fill(0::Int64, Nit_Reduced)
+            Day₁    = fill(0::Int64, Nit_Reduced)
+            Hour₁   = fill(0::Int64, Nit_Reduced)
+            Minute₁ = fill(0::Int64, Nit_Reduced)
+            Second₁ = fill(0::Int64, Nit_Reduced)
+
+				for iT=1:Nit_Reduced
+               Year₁[iT]   = year(Date_Reduced[iT])
+               Month₁[iT]  = month(Date_Reduced[iT])
+               Day₁[iT]    = day(Date_Reduced[iT])
+               Hour₁[iT]   = hour(Date_Reduced[iT])
+               Minute₁[iT] = minute(Date_Reduced[iT])
+					Second₁[iT] = second(Date_Reduced[iT])
+				end
 				
 				# Adding an other column
-				prepend!(Znode, -999)
 				append!(Znode, Z_Bottom)
 
-				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T_Reduced ΔQ_Reduced], ",")
+				Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
+
+				DelimitedFiles.writedlm(Path, [Header transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ΔQ_Reduced], ",")
 			return nothing
 			end  # function Q
 		#------------------------------------------------------
@@ -541,14 +578,31 @@ module table
 		# ===================================================
 		#          Ψ
 		# ===================================================
-			function Ψ(∑T_Reduced, Ψ_Reduced, Znode, iSim, pathHyPix)
+			function Ψ(Date_Reduced, Ψ_Reduced, Znode, iSim, pathHyPix)
 				Path = pathHyPix.Table_Ψ * "_" * string(iSim) * ".csv"
 				println("			~  $(Path) ~")
 
-				# Adding an other column
-				prepend!(Znode, -999)
+				Nit_Reduced = length(Date_Reduced)
 
-				DelimitedFiles.writedlm(Path, [transpose(Znode); ∑T_Reduced Ψ_Reduced], ",")
+				Year₁   = fill(0::Int64, Nit_Reduced)
+				Month₁  = fill(0::Int64, Nit_Reduced)
+            Day₁    = fill(0::Int64, Nit_Reduced)
+            Hour₁   = fill(0::Int64, Nit_Reduced)
+            Minute₁ = fill(0::Int64, Nit_Reduced)
+            Second₁ = fill(0::Int64, Nit_Reduced)
+
+				for iT=1:Nit_Reduced
+               Year₁[iT]   = year(Date_Reduced[iT])
+               Month₁[iT]  = month(Date_Reduced[iT])
+               Day₁[iT]    = day(Date_Reduced[iT])
+               Hour₁[iT]   = hour(Date_Reduced[iT])
+               Minute₁[iT] = minute(Date_Reduced[iT])
+					Second₁[iT] = second(Date_Reduced[iT])
+				end
+
+				Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
+
+				DelimitedFiles.writedlm(Path, [Header transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ Ψ_Reduced], ",")
 			return nothing
 			end  # function Ψ
 		#------------------------------------------------------
