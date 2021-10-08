@@ -68,7 +68,7 @@ module discretization
 	"""
 		function DISCRETIZATION_AUTO(param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
 
-			HydrostaticEquilibrium = true
+			HydrostaticEquilibrium = false
 
 			# Determine if we selected to input θini or Ψini
 				if Flag_θΨini ==:Ψini

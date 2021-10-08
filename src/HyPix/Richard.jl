@@ -66,6 +66,16 @@ module richard
 
 			end #  iTer == param.hyPix.N_Iter
 
+			
+			if option.hyPix.Qbottom_Correction
+				Q[iT,NiZ+1] = ( - ΔSink[iT,NiZ] - discret.ΔZ[NiZ] * ((θ[iT,NiZ] - θ[iT-1,NiZ]) - hydro.So[NiZ] * (Ψ[iT,NiZ]- Ψ[iT-1,NiZ]) * (θ[iT,NiZ] / hydro.θs[NiZ]))) / ΔT[iT] + Q[iT,NiZ]
+
+				# Q[iT,NiZ+1] > 0
+				if option.hyPix.BottomBoundary⍰ == "Free" 
+					Q[iT,NiZ+1] = max(Q[iT,NiZ+1], 0.0)
+				end
+			end
+
 			# Determine if the simulation is going to rerun with a different time step
 				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, NiZ, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 

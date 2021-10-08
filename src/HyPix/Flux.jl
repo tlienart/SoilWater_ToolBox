@@ -18,7 +18,6 @@ module flux
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<># <>=<>=<>=<>=<>
 					return K_Aver = discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, param.hyPix.Ψ_Botom, NiZ, hydro) +  (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro)
-
 				end
 			end
 		end  # function: K_AVER!
