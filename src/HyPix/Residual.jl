@@ -34,8 +34,8 @@ module residual
 			# Q[iT,iZ] format for ForwardDiff
 				Q₁ = flux.Q!(option, discret, hydro, iZ, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ_, Ψ▲)
 
-				# Q[iT,iZ+1] format for ForwardDiff
-					Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ▼, Ψ_)		
+			# Q[iT,iZ+1] format for ForwardDiff
+				Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ▼, Ψ_)		
 			
 			# θ[iT,iZ] format for ForwardDiff
 				θ₂ = wrc.Ψ_2_θDual(option.hyPix,Ψ_, iZ, hydro)
@@ -180,7 +180,7 @@ module residual
 			if iZ ≥ 2
 				∂R∂Ψ△ = - ΔT[iT] * ∂Q∂Ψ△
 			else
-				∂R∂Ψ△ = NaN
+				∂R∂Ψ△ = 0.0
 			end
 
 			∂R∂Ψ = discret.ΔZ[iZ] * (∂θ∂Ψ * (1.0 - Sw * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) ) - Sw * θ[iT,iZ]) - ΔT[iT] * (∂Q∂Ψ - ∂Q▽∂Ψ)
@@ -188,7 +188,7 @@ module residual
 			if iZ ≤ NiZ-1
 				∂R∂Ψ▽ = ΔT[iT] * ∂Q▽∂Ψ▽
 			else
-				∂R∂Ψ▽ = NaN
+				∂R∂Ψ▽ = 0.0
 			end
 
 		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽

@@ -165,7 +165,7 @@ module hypixStart
 			end
 			
 			# if Flag_Opt then it will rerun with the optimal parameters
-			println(" =============== Start running HyPix ===========================")
+			println("\n =============== Start running HyPix =========================== \n")
 			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 			# WATER BALANCE

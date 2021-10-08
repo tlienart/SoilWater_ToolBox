@@ -68,6 +68,8 @@ module discretization
 	"""
 		function DISCRETIZATION_AUTO(param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
 
+			HydrostaticEquilibrium = true
+
 			# Determine if we selected to input θini or Ψini
 				if Flag_θΨini ==:Ψini
 					θΨini = Ψini
@@ -113,69 +115,76 @@ module discretization
 				for iZ=2:N
 					Z[iZ] = Z[iZ-1] + ΔZcell[iZ]
 				end
-			
+				
+			# if HydrostaticEquilibrium
+				if HydrostaticEquilibrium
+					@warn "			*** Hini at Hydrostatic Equilibrium ***"
+					for iZ = 1:N
+						θΨini_Cell[iZ] = Z[N] - Z[iZ]
+					end
+				end
 		return Layer, Z, θΨini_Cell
 		end  # function: DISCRETIZATION_AUTO
 
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : DISCRETISATION_AUTO_θini
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	""" 
-					DISCRETIZATION_AUTO(N_Layer, Zlayer)
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# #		FUNCTION : DISCRETISATION_AUTO_θini
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# """ 
+	# 				DISCRETIZATION_AUTO(N_Layer, Zlayer)
 
-	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
-	"""
-		function DISCRETISATION_AUTO_θini(; N_Layer, Zlayer, Zroot, θᵢₙᵢ)
-			HydrostaticEquilibrium=false
+	# Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
+	# """
+	# 	function DISCRETISATION_AUTO_θini(param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
+	# 		HydrostaticEquilibrium=false
 
-			ΔZlayer = fill(0.0::Float64, N_Layer)
+	# 		ΔZlayer = fill(0.0::Float64, N_Layer)
 
-			# Computing ΔZlayer
-				ΔZlayer[1]= Zlayer[1]
-				for iZ = 2:N_Layer
-					ΔZlayer[iZ] = Zlayer[iZ] - Zlayer[iZ-1]
-				end # for
+	# 		# Computing ΔZlayer
+	# 			ΔZlayer[1]= Zlayer[1]
+	# 			for iZ = 2:N_Layer
+	# 				ΔZlayer[iZ] = Zlayer[iZ] - Zlayer[iZ-1]
+	# 			end # for
 
-			# Computing the number of discretization
-            ΔZcell    = []
-            Layer     = []
-            θᵢₙᵢ_Cell = []
-				for iLayer =1:N_Layer
+	# 		# Computing the number of discretization
+   #          ΔZcell    = []
+   #          Layer     = []
+   #          θᵢₙᵢ_Cell = []
+	# 			for iLayer =1:N_Layer
 
-					if  Zlayer[iLayer] < Zroot
-						ΔZ_Max = param.hyPix.ΔZfine
-					else
-						ΔZ_Max = param.hyPix.ΔZcoarse
-					end
+	# 				if  Zlayer[iLayer] < Zroot
+	# 					ΔZ_Max = param.hyPix.ΔZfine
+	# 				else
+	# 					ΔZ_Max = param.hyPix.ΔZcoarse
+	# 				end
 
-					Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell
-					ΔZcell₀ = ΔZlayer[iLayer] / Float64(Nsplit)
+	# 				Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell
+	# 				ΔZcell₀ = ΔZlayer[iLayer] / Float64(Nsplit)
 
-					for iDiscret=1:Nsplit
-						append!(ΔZcell, ΔZcell₀)
-                  append!(Layer, iLayer)
-						append!(θᵢₙᵢ_Cell, θᵢₙᵢ[iLayer])
-					end
-				end # ilayer
-				N = length(ΔZcell)
+	# 				for iDiscret=1:Nsplit
+	# 					append!(ΔZcell, ΔZcell₀)
+   #                append!(Layer, iLayer)
+	# 					append!(θᵢₙᵢ_Cell, θᵢₙᵢ[iLayer])
+	# 				end
+	# 			end # ilayer
+	# 			N = length(ΔZcell)
 
-			# Computing the ∑ΔZcell
-				Z = fill(0.0::Float64, N)
+	# 		# Computing the ∑ΔZcell
+	# 			Z = fill(0.0::Float64, N)
 
-				Z[1] = ΔZcell[1]
-				for iZ=2:N
-					Z[iZ] = Z[iZ-1] + ΔZcell[iZ]
-				end
+	# 			Z[1] = ΔZcell[1]
+	# 			for iZ=2:N
+	# 				Z[iZ] = Z[iZ-1] + ΔZcell[iZ]
+	# 			end
 
-				if HydrostaticEquilibrium
-					for iZ = 1:N
-						θᵢₙᵢ_Cell = Z[N] - Z[iZ]
-					end
-				end
+	# 			if HydrostaticEquilibrium
+	# 				for iZ = 1:N
+	# 					θᵢₙᵢ_Cell = Z[N] - Z[iZ]
+	# 				end
+	# 			end
 	
-		return Layer, Z, θᵢₙᵢ_Cell
-		end  # function: DISCRETIZATION_AUTO
+	# 	return Layer, Z, θᵢₙᵢ_Cell
+	# 	end  # function: DISCRETIZATION_AUTO
 	
 end  # module: discret
 # ............................................................

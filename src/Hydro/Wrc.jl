@@ -238,9 +238,9 @@ module wrc
 			function ∂θ∂Ψ(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
 				# If Ψ₁ is positive than ∂θ∂Ψ_Mat should be positive
-				∂θ∂Ψ_Mat = - (θsMacMat - θr) * exp( -((log(Ψ₁ / Ψm)) ^ 2) / (2.0 * σ ^ 2)) / (Ψ₁ * σ * √(π * 2.0))
+				∂θ∂Ψ_Mat = - (θsMacMat - θr) * exp( -((log(Ψ₁ / Ψm)) ^ 2) / (2.0 * σ ^ 2)) / (Ψ₁ * σ * √(π * 2.0) + eps(100.0))
 
-				∂θ∂Ψ_Mac = - (θs - θsMacMat) * exp( -((log(Ψ₁ / ΨmMac)) ^ 2) / (2.0 * σMac^2)) / (Ψ₁ * σMac * √(π * 2.0))
+				∂θ∂Ψ_Mac = - (θs - θsMacMat) * exp( -((log(Ψ₁ / ΨmMac)) ^ 2) / (2.0 * σMac^2)) / (Ψ₁ * σMac * √(π * 2.0) + eps(100.0))
 
 			return ∂θ∂Ψ_Mat + ∂θ∂Ψ_Mac
 			end # function ∂θ∂Ψ
@@ -250,20 +250,20 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂θ∂Ψ Mode
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂θ∂Ψ_Mode(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
+			function ∂θ∂Ψ_Mode(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 				
 				Ψm_Mode = exp(log(Ψm)-σ^2)
 
 				∂θ∂Ψ_Mode = ∂θ∂Ψ(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=Ψm_Mode, σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ]) 
 
 			return Ψm_Mode, ∂θ∂Ψ_Mode
-			end # function ∂θ∂Ψ
+			end # function ∂θ∂Ψ_Mode
 		
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Ψ∂θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂θ∂Ψ2(Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
+			function ∂θ∂Ψ2(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 						
 				ψ = fill(0.0::Float64, 1)
 				∂Ψ∂θ_Numerical(ψ::Vector) = Ψ_2_θDual(optionₘ,abs(ψ[1]), iZ, hydroParam)

@@ -46,7 +46,7 @@ module richard
 					end # Residual_Max < Residual_Max_Best 	
 
 				# Did we achieve the goals
-				if Residual_Max < param.hyPix.WaterBalanceResidual_Max
+				if Residual_Max ≤ param.hyPix.WaterBalanceResidual_Max
 					break # Move out the loop
 				end  # if: Residual
 			end # while: iTer ======================
@@ -63,16 +63,8 @@ module richard
 				end
 			else
 				Flag_NoConverge = false
+
 			end #  iTer == param.hyPix.N_Iter
-
-			if option.hyPix.Qbottom_Correction
-				Q[iT,NiZ+1] = ( - ΔSink[iT,NiZ] - discret.ΔZ[NiZ] * ((θ[iT,NiZ] - θ[iT-1,NiZ]) - hydro.So[NiZ] * (Ψ[iT,NiZ]- Ψ[iT-1,NiZ]) * (θ[iT,NiZ] / hydro.θs[NiZ]))) / ΔT[iT] + Q[iT,NiZ]
-
-				# Q[iT,NiZ+1] > 0
-				if option.hyPix.BottomBoundary⍰ == "Free" 
-					Q[iT,NiZ+1] = max(Q[iT,NiZ+1], 0.0)
-				end
-			end
 
 			# Determine if the simulation is going to rerun with a different time step
 				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, NiZ, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
@@ -87,7 +79,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, param, Q, Residual, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, option)
 
-			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, param, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ, option)
+			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, option, param, Q, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 	#----------------------------------------------------------------
 			# ∂R∂Ψ2 = fill(0.0, NiZ)
@@ -171,6 +163,26 @@ module richard
 				# Updating Ψ
 					if isnan(NewtonStep[iZ])
 						@warn isnan(NewtonStep[iZ])
+									# println("One:=================")
+
+				# println("iZ = $iZ")
+
+				# println("RESIDUAL =================")
+				# println("rESIDUAL=" ,Residual,"\n") # No good at cell N
+
+				
+				# println("h: =================")
+				# println("Ψ_Deriv=" , Ψ[iT-1, 1:NiZ],"\n") # No good at cell N
+
+				# println("One: =================")
+				# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
+
+				# println("Two: =================")
+				# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
+
+				# println("Tree: =================")
+				# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
+
 						Ψ[iT,iZ] = Ψ₀
 					
 					else
@@ -188,9 +200,9 @@ module richard
 							Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔΨmax, θ₀, Ψ)
 						
 							Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
-
 						else
 							Ψ[iT,iZ] = param.hyPix.NewtonStep_Mean * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStep_Mean) * Ψ₀
+						
 						end # if option.hyPix.DynamicNewtonRaphsonStep
 
 						if option.hyPix.IterReduceOverShoting

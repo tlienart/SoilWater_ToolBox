@@ -7,10 +7,10 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function K_AVER!(option, param, discret, hydro, iZ::Int64, NiZ::Int64, ψ_, ψ▲)
 			if iZ == 1 # <>=<>=<>=<>=<>
-				return K_Aver = NaN
+				return K_Aver = 0.0
 
 			elseif 2 ≤ iZ ≤ NiZ # <>=<>=<>=<>=<>
-				return K_Aver = discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix,  ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro)
+				return K_Aver = discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro)
 
 			elseif iZ == NiZ + 1 # <>=<>=<>=<>=<>
 				if option.hyPix.BottomBoundary⍰ == "Free"
@@ -29,7 +29,6 @@ module flux
 	#		FUNCTION : Q
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, NiZ::Int64, param, ΔHpond, ΔPr, ΔT, θ, ψ_, ψ▲)
-
 			if iZ == 1  # <>=<>=<>=<>=<>
 				return Q = (ΔPr[iT] + ΔHpond[iT-1] - ΔHpond[iT]) / ΔT[iT]
 
@@ -42,18 +41,12 @@ module flux
 				K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
 
 				if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
-					Q = K_Aver * param.hyPix.Cosα
+					return Q = K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-					Q = K_Aver * ( ((param.hyPix.Ψ_Botom - discret.ΔZ[iZ] - ψ_) /  discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα)
+					return Q = K_Aver * ( ((param.hyPix.Ψ_Botom - discret.ΔZ[iZ] - ψ_) /  discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα)
 				end
 
-				# Checking of maximum water abstraction of bottom cell
-				if Q ≥ 0.0
-					return  Q = min(Q, discret.ΔZ[NiZ] * (θ[iT-1,NiZ] - hydro.θr[NiZ] - eps(100.0)))
-				else
-					return  Q = max(Q, -discret.ΔZ[NiZ] * (hydro.θs[NiZ] - θ[iT-1,NiZ] - eps(100.0)))
-				end
 			end # Case
 
 		end  # function: Q!
@@ -91,7 +84,7 @@ module flux
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, Ψ)
 				if iZ == 1 						# <>=<>=<>=<>=<>
-					return ∂Q∂Ψ△ = NaN
+					return ∂Q∂Ψ△ = 0.0
 
 				else #elseif 2 ≤ iZ ≤ NiZ 	# <>=<>=<>=<>=<>
 					K_Aver = flux.K_AVER!(option, param, discret, hydro, iZ, NiZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
@@ -136,7 +129,7 @@ module flux
 					return ∂Q▽∂Ψ▽ = discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
 				
 				else #elseif iZ == NiZ  			# <>=<>=<>=<>=<>
-					return ∂Q▽∂Ψ▽ = NaN
+					return ∂Q▽∂Ψ▽ = 0.0
 
 				end
 			end  # function: ∂Q▽∂Ψ▽

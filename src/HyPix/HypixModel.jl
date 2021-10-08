@@ -67,7 +67,7 @@ module hypixModel
          ΔHpond[1]              = 0.0::Float64
          ΔPet[1]                = 0.0::Float64
          ΔPr[1]                 = 0.0::Float64
-         ΔSink[1,1:NiZ]       .= 0.0::Float64
+         ΔSink[1,1:NiZ]        .= 0.0::Float64
          ΔT[1]                  = 0.0::Float64
          ∑Pet[1]                = 0.0::Float64
          ∑Pr[1]                 = 0.0::Float64
@@ -79,23 +79,23 @@ module hypixModel
 				Ψini =  fill(0.0::Float64, NiZ)
 				
 				for iZ = 1:NiZ
-					θ[iT,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ]) # Just in case
-					Ψ[iT,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
+					θ[1,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ]) # Just in case
+					Ψ[1,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
 
 					if iZ == 1 && option.hyPix.TopBoundary⍰ == "Ψ"
-						Ψ[iT,1] = param.hyPix.Ψ_Top
-						θ[iT,1]  = Ψ_2_θDual(option.hydro, Ψ[iT,1], iZ, hydro)
+						Ψ[1,1] = param.hyPix.Ψ_Top
+						θ[1,1]  = Ψ_2_θDual(option.hydro, Ψ[iT,1], iZ, hydro)
 					end
 	
-					if  iZ == NiZ && option.hyPix.BottomBoundary⍰ == "Ψ"
-						Ψ[iT,NiZ] = param.hyPix.Ψ_Botom
-						θ[iT,NiZ]  = Ψ_2_θDual(option.hydro, Ψ[iT,NiZ], NiZ, hydro)
+					if iZ == NiZ && option.hyPix.BottomBoundary⍰ == "Ψ"
+						Ψ[1,NiZ] = param.hyPix.Ψ_Botom
+						θ[1,NiZ]  = Ψ_2_θDual(option.hydro, Ψ[1,NiZ], NiZ, hydro)
 					end
 
-					Ψini[iZ] = Ψ[iT,iZ]
+					Ψini[iZ] = Ψ[1,iZ]
 
 					Ψbest[iZ]  = Ψini[iZ]
-					Q[iT,NiZ] = 0.0
+					Q[1,NiZ] = 0.0
 				end
 
 			elseif Flag_θΨini == :Ψini
@@ -110,16 +110,16 @@ module hypixModel
 				end
 
 				for iZ = 1:NiZ
-					Ψ[iT,iZ] = Ψini[iZ]
-					θ[iT,iZ]  = Ψ_2_θDual(option.hydro, Ψini[iZ], iZ, hydro)
-					θini[iZ] = θ[iT,iZ]
+					Ψ[1,iZ] = Ψini[iZ]
+					θ[1,iZ]  = Ψ_2_θDual(option.hydro, Ψini[iZ], iZ, hydro)
+					θini[iZ] = θ[1,iZ]
 
-					Ψbest[iZ]  = Ψ[iT,iZ]
-					Q[iT,NiZ] = 0.0
+					Ψbest[iZ]  = Ψ[1,iZ]
+					Q[1,NiZ] = 0.0
 				end
 			end
 
-			Q[iT,NiZ+1] = 0.0
+			Q[1,NiZ+1] = 0.0
 
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+
 		while true # this controles the time loop
@@ -180,7 +180,7 @@ module hypixModel
 		end # while loop
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+	
 
-		Nit = iT # Maximum of time steps
+		Nit = iT # Maximum time steps
 
 	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ
 	end  # function: HYPIX
