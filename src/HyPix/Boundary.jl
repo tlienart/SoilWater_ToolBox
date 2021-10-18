@@ -24,10 +24,13 @@ module boundary
 				
 				ΔPr[iT]  = (discret.ΔZ[1] * ((θ[iT,1] - θ[iT-1,1]) - hydro.So[1] * (param.hyPix.Ψ_Top- Ψ[iT-1,1]) * (θ[iT,1] / hydro.θs[1])) + ΔSink[iT,1]) / ΔT[iT] + Q[iT,2]
 
+				ΔPr[iT]  =  (param.hyPix.Ψ_Top - Ψ[iT-1,1])
+
 				ΔPr[iT] = max(ΔPr[iT], 0.0)
 			else
 				ΔPr[iT] == 0.0
 			end
+
 		return ΔPr
 		end  # function: BOUNDARY_TOP_\Psi
 	# ------------------------------------------------------------------

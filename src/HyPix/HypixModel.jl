@@ -168,15 +168,15 @@ module hypixModel
 
 			# SORPTIVITY TO COMPUTE INFILTRATION RATE				
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
-
-			# SPECIAL BOUNDARY CONDITIONS
-				if option.hyPix.TopBoundary⍰ == "Ψ"
-					ΔPr = boundary.BOUNDARY_TOP_Ψ(discret, Flag_ReRun, hydro, iT, NiZ, option, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
-					∑Pr[iT] = ∑Pr[iT-1] + ΔPr[iT]
-				end
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)				
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
+				
+			# SPECIAL BOUNDARY CONDITIONS
+				if option.hyPix.TopBoundary⍰ == "Ψ"
+					ΔPr[iT] = ΔT[iT] * Q[iT, 1]
+					∑Pr[iT] = ∑Pr[iT-1] + ΔPr[iT]
+				end
 		end # while loop
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+	
 

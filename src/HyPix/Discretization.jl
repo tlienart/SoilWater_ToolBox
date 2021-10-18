@@ -30,6 +30,7 @@ module discretization
 				ΔZ_⬓[1]     = ΔZ[1] * 0.5
 				Z_CellUp[1] = 0.0
 				Znode[1]    = ΔZ_⬓[1]
+				
 				ΔZ_Aver[1]  = ΔZ_⬓[1]
 				ΔZ_W[1]     = 1.0
 

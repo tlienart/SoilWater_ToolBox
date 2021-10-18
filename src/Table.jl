@@ -132,12 +132,14 @@ module table
 				FieldName_String =["Id", "H[mm]" ,"Kunsat[mm_s]"]
 							
 			# Computing K at required Ψ
-				N = N_K *NiZ
+				N = N_K * NiZ
 				Id₂     = fill(0::Int64, N)
 				Ψ₂      = fill(0.0::Float64, N)
 				Kunsat₂ = fill(0.0::Float64, N)
 				iCount  = 1
 				hydroParam₂ = deepcopy(hydroParam)
+
+				println("NiZ=$NiZ")
 				for iZ=1:NiZ
 					for iK =1:N_K
 						Id₂[iCount] = IdSelect[iZ]
