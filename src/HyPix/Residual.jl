@@ -9,7 +9,7 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# 		FUNCTION : RESIDUAL_DIFF DERIVATIVE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RESIDUAL(option, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+		function RESIDUAL(discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 			if iZ==1
 				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 			end
@@ -36,7 +36,6 @@ module residual
 
 			# Q[iT,iZ+1] format for ForwardDiff
 				Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ▼, Ψ_)		
-			
 			# θ[iT,iZ] format for ForwardDiff
 				θ₂ = wrc.Ψ_2_θDual(option.hyPix,Ψ_, iZ, hydro)
 

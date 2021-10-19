@@ -66,16 +66,6 @@ module richard
 
 			end #  iTer == param.hyPix.N_Iter
 
-			
-			if option.hyPix.Qbottom_Correction
-				Q[iT,NiZ+1] = ( - ΔSink[iT,NiZ] - discret.ΔZ[NiZ] * ((θ[iT,NiZ] - θ[iT-1,NiZ]) - hydro.So[NiZ] * (Ψ[iT,NiZ]- Ψ[iT-1,NiZ]) * (θ[iT,NiZ] / hydro.θs[NiZ]))) / ΔT[iT] + Q[iT,NiZ]
-
-				# Q[iT,NiZ+1] > 0
-				if option.hyPix.BottomBoundary⍰ == "Free" 
-					Q[iT,NiZ+1] = max(Q[iT,NiZ+1], 0.0)
-				end
-			end
-
 			# Determine if the simulation is going to rerun with a different time step
 				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, NiZ, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
@@ -92,12 +82,12 @@ module richard
 			ΔHpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, option, param, Q, Sorptivity, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 	#----------------------------------------------------------------
-			# ∂R∂Ψ2 = fill(0.0, NiZ)
-			# ∂R∂Ψ▽2 = fill(0.0, NiZ)
-			# ∂R∂Ψ△2 =  fill(0.0, NiZ)
+			∂R∂Ψ2 = fill(0.0, NiZ)
+			∂R∂Ψ▽2 = fill(0.0, NiZ)
+			∂R∂Ψ△2 =  fill(0.0, NiZ)
 
 			for iZ=1:NiZ		
-				Q, Residual, θ = residual.RESIDUAL(option, discret, hydro, iT, iZ, NiZ, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+				Q, Residual, θ = residual.RESIDUAL(discret, hydro, iT, iZ, NiZ, option, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 				if option.hyPix.∂R∂Ψ_Numerical
 					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,NiZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,NiZ)], Ψ_Max)
@@ -175,23 +165,23 @@ module richard
 						@warn isnan(NewtonStep[iZ])
 									# println("One:=================")
 
-				# println("iZ = $iZ")
+					# println("iZ = $iZ")
 
-				# println("RESIDUAL =================")
-				# println("rESIDUAL=" ,Residual,"\n") # No good at cell N
+					# println("h: =================")
+					# println("Ψ=" , Ψ[iT-1, 1:NiZ],"\n")
 
-				
-				# println("h: =================")
-				# println("Ψ_Deriv=" , Ψ[iT-1, 1:NiZ],"\n") # No good at cell N
+					# println("RESIDUAL =================")
+					# println("rESIDUAL=" ,Residual,"\n")
 
-				# println("One: =================")
-				# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
+					
+					# println("One: =================")
+					# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
 
-				# println("Two: =================")
-				# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
+					# println("Two: =================")
+					# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
 
-				# println("Tree: =================")
-				# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
+					# println("Tree: =================")
+					# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
 
 						Ψ[iT,iZ] = Ψ₀
 					
@@ -269,7 +259,7 @@ module richard
 				Ψdry = exp( 1.6216 * log(hydro.σ[iZ]) + 8.7268 )
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
-				if  Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet
+				if   Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry 
 					θ[iT,iZ] = θ₀ + (Ψ[iT,iZ] - Ψ₀) * ∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro)
 
 					θ[iT,iZ] = max(min(θ[iT,iZ], hydro.θs[iZ]),  hydro.θr[iZ])
@@ -288,7 +278,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, option, param, Q, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 2
+			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3
 				
 				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 				for iZ=1:NiZ
@@ -303,10 +293,6 @@ module richard
 
 				if ΔT[iT] / ΔT_New ≥ param.hyPix.ΔT_Rerun # <>=<>=<>=<>=<>
 					ΔT[iT] = ΔT_New
-					Flag_ReRun = true
-					Count_ReRun += 1
-
-				elseif option.hyPix.TopBoundary⍰ == "Ψ"
 					Flag_ReRun = true
 					Count_ReRun += 1
 				

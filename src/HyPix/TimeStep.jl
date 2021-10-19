@@ -90,29 +90,37 @@ module timeStep
 				Δθ₂_Max = param.hyPix.Δθ_Max
 
 			# Computing smallest Δθ_Max
-				for iZ = 1:NiZ-1		
-					# Assuring that the maximum change of ΔΨmax ≥ Ln ψ
-					if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ" # <>=<>=<>=<>=<>
-						Δθ₂_Max = ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)
-						
-					end # option.hyPix.AdaptiveTimeStep⍰ ==:ΔΨ	
+				Ngood = 0
+				for iZ = 1:NiZ-1
+					if abs(Q[iT,iZ] - Q[iT,iZ+1]) > 1.0E-8
 
-					ΔT₂_New = (discret.ΔZ[iZ] * Δθ₂_Max + ΔSink[iT,iZ]) / (abs(Q[iT,iZ] - Q[iT,iZ+1]) + eps())
+						# Assuring that the maximum change of ΔΨmax ≥ Ln ψ
+						if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ" # <>=<>=<>=<>=<>
+							Δθ₂_Max = ΔθMAX(hydro, iT, iZ, option, ΔΨmax, Ψ)			
+						end # option.hyPix.AdaptiveTimeStep⍰ ==:ΔΨ
+					
+						ΔT₂_New = (discret.ΔZ[iZ] * Δθ₂_Max + ΔSink[iT,iZ]) / (abs(Q[iT,iZ] - Q[iT,iZ+1]))
 
-					ΔT₂_New = min( max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
-	
-					if option.hyPix.NormMin⍰ == "Norm"
-						ΔT_New_Norm += ΔT₂_New ^ 2
-					else
-						ΔT_New_Norm = min(ΔT_New_Norm, ΔT₂_New)
+						ΔT₂_New = min( max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
+		
+						if option.hyPix.NormMin⍰ == "Norm"
+							ΔT_New_Norm += ΔT₂_New ^ 2
+							Ngood += 1
+						else
+							ΔT_New_Norm = min(ΔT_New_Norm, ΔT₂_New)
+						end
 					end
 				end # for: iZ=2:NiZ
 
 			if option.hyPix.NormMin⍰ == "Norm"
-				ΔT₂_New = √(ΔT_New_Norm / Float64(NiZ - 1))
+				if Ngood ≥ 1
+					ΔT₂_New = √(ΔT_New_Norm / Float64(Ngood))
+				else
+					ΔT₂_New = param.hyPix.ΔT_Max
+				end
 			else
 				ΔT₂_New = ΔT_New_Norm
-			end
+			end		
 
 		return ΔT₂_New, Δθ₂_Max
 		end # function ADAPTIVE_TIMESTEP
