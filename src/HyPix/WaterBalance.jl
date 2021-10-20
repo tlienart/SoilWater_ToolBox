@@ -12,8 +12,8 @@ module waterBalance
       ∑ΔQbottom       = 0.0 ::Float64
       ∑∑WaterBalance  = 0.0 ::Float64
 		ΔStorage        = 0.0 ::Float64
-		ΔStorageSo =  0.0 ::Float64
-      i∑T_CalibrStart    = 1::Int64
+		ΔStorageSo      = 0.0 ::Float64
+      i∑T_CalibrStart = 1::Int64
 
 		# Starting to compute the waterbalance after the warmup period
 			while ∑T[i∑T_CalibrStart] < obsTheta.∑T[1]

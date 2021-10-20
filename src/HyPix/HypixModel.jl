@@ -170,7 +170,7 @@ module hypixModel
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψ_Min, Ψbest, option)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, option)
 				
 			# SPECIAL BOUNDARY CONDITIONS
 				if option.hyPix.TopBoundary⍰ == "Ψ"

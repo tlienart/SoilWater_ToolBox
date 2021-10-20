@@ -72,7 +72,7 @@ module hypixStart
 				# Read SoilLayer, could be either θini, Ψini
 				Flag_θΨini, Layer, N_Layer, ~, Zlayer, θini, Ψini = reading.hyPix.DISCRETIZATION(path.hyPix.DiscretizationAuto)
 
-				# Performing auto discretisation			
+				# Performing y6auto discretisation			
 					Layer, Z, θΨini_Cell = discretization.DISCRETIZATION_AUTO(param; Flag_θΨini=Flag_θΨini, N_Layer=N_Layer, Zlayer=Zlayer, θini=θini, Ψini=Ψini)
 		
 					table.hyPix.DISCRETIZATION_AUTO(Flag_θΨini, Layer, path.hyPix, Z, θΨini_Cell)
@@ -218,14 +218,14 @@ module hypixStart
 					println("			∑Pet 			= ", ceil(Int, ∑Pet[Nit]- ∑Pet[i∑T_CalibrStart]), "  [mm]")
 					println("			∑ΔSink/∑Pet_Net 	= ", ceil(Int, 100.0 * ∑ΔSink[Nit] /(∑Pet_Net + eps(10.0))), "  [%] \n")
 					
-					println("			∑SoilWaterContentRootEnd = ", ceil(Int, SwcRoots[iOpt_Count]), "  [mm]")
+					println("			∑SoilWaterContentRootEnd = ", round(SwcRoots[iOpt_Count], digits=3), "  [mm]")
 					println("			∑ΔSink 			= ", -ceil(Int, ∑∑ΔSink[iOpt_Count]), "  [mm]")
 					println("			∑Infilt_Bot 		= ", -ceil( Int, ∑ΔQ_Bot[iOpt_Count] ), "  [mm]")
 					println("			ΔHpond at end 		= ", ceil(Int, ΔHpond[Nit]), "  [mm] \n")
 
 					println("			iNonConverge 			= ", iNonConverge_iOpt[iOpt_Count], "  [count]")
 					println("			Global_WaterBalance_NormPr 	= ", round(Global_WaterBalance_NormPr[iOpt_Count], digits=2), "  [%]")
-					println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=2), "  [mm]")
+					println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=3), "  [mm]")
 					println("			Average ΔT 			= ",  ΔT_Average[iOpt_Count] , "  [seconds]")
 					println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 					println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
