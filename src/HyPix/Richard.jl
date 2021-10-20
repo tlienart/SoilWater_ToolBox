@@ -15,7 +15,8 @@ module richard
 
 			# INITIALIZING
 			@inbounds @simd for iZ = 1:NiZ
-					Ψ[iT,iZ] = Ψ[iT-1,iZ] #Ψbest[iZ]
+					# Ψ[iT,iZ] = Ψ[iT-1,iZ] #Ψbest[iZ]
+					Ψ[iT,iZ] = Ψbest[iZ]
 				end # for iZ = 1:NiZ
 
 			iTer = 0::Int64

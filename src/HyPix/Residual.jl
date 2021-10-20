@@ -9,7 +9,7 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# 		FUNCTION : RESIDUAL_DIFF DERIVATIVE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RESIDUAL(discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+		function RESIDUAL(discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, Q::Matrix{Float64}, Residual::Vector{Float64}, ΔHpond::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
 			if iZ==1
 				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 			end
@@ -160,7 +160,7 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂RESIDUAL∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, ΔT, θ, Ψ)
+		function ∂RESIDUAL∂Ψ(∂K∂Ψ::Vector{Float64}, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
 
 			Sw = hydro.So[iZ] / hydro.θs[iZ]
 
@@ -168,7 +168,7 @@ module residual
 
 			∂θ∂Ψ = wrc.∂θ∂Ψ(option.hyPix, Ψ[iT,iZ], iZ, hydro)
 
-			∂Q∂Ψ = flux.∂q∂Ψ.∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ,  NiZ, option, param, Ψ)
+			∂Q∂Ψ = flux.∂q∂Ψ.∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, NiZ, option, param, Ψ)
 
 			∂Q∂Ψ△ = flux.∂q∂Ψ.∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT, iZ,  NiZ, option, param, Ψ)
 

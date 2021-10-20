@@ -3,7 +3,7 @@
 # =============================================================
 module hypixModel
 
-	import ..boundary, ..evaporation, ..interception, ..interpolate, ..pet, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..ΨminΨmax
+	import ..evaporation, ..interception, ..interpolate, ..pet, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..ΨminΨmax
 	import ..wrc: θ_2_ΨDual, Ψ_2_θDual
 
 	export HYPIX
