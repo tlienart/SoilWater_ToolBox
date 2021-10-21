@@ -79,7 +79,7 @@ module hypixModel
 				Ψini =  fill(0.0::Float64, NiZ)
 				
 				for iZ = 1:NiZ
-					θ[1,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ]) # Just in case
+					θ[1,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ] ) # Just in case
 					Ψ[1,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
 
 					if iZ == 1 && option.hyPix.TopBoundary⍰ == "Ψ"

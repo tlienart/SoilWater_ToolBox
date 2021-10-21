@@ -146,7 +146,7 @@ module hypixStart
 			# Hydraulic parameters
 				hydroHorizon, ~ = reading.READ_STRUCT(hydroHorizon, path.hyPix.HyPix_HydroParam)
 
-				hydro        = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, option)
+				hydro           = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, option)
 
 			# options of optim		
 				Flag_Opt = false

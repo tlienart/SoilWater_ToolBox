@@ -537,7 +537,7 @@ module table
 				# Adding an other column
 					Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
 
-				DelimitedFiles.writedlm(Path, [Header transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ θ_Reduced], ",")
+				DelimitedFiles.writedlm(Path, [Header -transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ θ_Reduced], ",")
 			return nothing
 			end  # Table θ
 		#------------------------------------------------------
@@ -604,7 +604,7 @@ module table
 
 				Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
 
-				DelimitedFiles.writedlm(Path, [Header transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ Ψ_Reduced], ",")
+				DelimitedFiles.writedlm(Path, [Header -transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ -Ψ_Reduced], ",")
 			return nothing
 			end  # function Ψ
 		#------------------------------------------------------

@@ -15,8 +15,7 @@ module richard
 
 			# INITIALIZING
 			@inbounds @simd for iZ = 1:NiZ
-					# Ψ[iT,iZ] = Ψ[iT-1,iZ] #Ψbest[iZ]
-					Ψ[iT,iZ] = Ψbest[iZ]
+					Ψ[iT,iZ] = Ψ[iT-1,iZ]
 				end # for iZ = 1:NiZ
 
 			iTer = 0::Int64
@@ -171,8 +170,9 @@ module richard
 				# Updating Ψ
 				if isnan(NewtonStep[iZ])
 					println("iZ = $iZ")
+					println("NewtonStep = $(NewtonStep[iZ]), \n")
 					println("h: =================")
-					println("Ψ=" , Ψ[iT-1, 1:NiZ],"\n")
+					println("Ψ=" , Ψ[iT, 1:NiZ],"\n")
 					println("RESIDUAL =================")
 					println("RESIDUAL=" ,Residual,"\n")				
 					println("One: =================")
