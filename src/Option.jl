@@ -99,6 +99,7 @@ module options
 		LookupTable_Lai::Bool
 		LookUpTable_CropCoeficient::Bool
 		Discretisation_File_Auto⍰::String
+		HydrostaticEquilibrium::Bool
 		HydroModel⍰::String
 		TopBoundary⍰::String
 		BottomBoundary⍰::String

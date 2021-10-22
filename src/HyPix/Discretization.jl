@@ -60,9 +60,7 @@ module discretization
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
-		function DISCRETIZATION_AUTO(param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
-
-			HydrostaticEquilibrium = true
+		function DISCRETIZATION_AUTO(option, param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
 
 			# Determine if we selected to input θini or Ψini
 				if Flag_θΨini ==:Ψini
@@ -111,7 +109,7 @@ module discretization
 				end
 				
 			# if HydrostaticEquilibrium
-				if HydrostaticEquilibrium
+				if option.hyPix.HydrostaticEquilibrium
 					@warn "			*** Hini at Hydrostatic Equilibrium ***"
 					for iZ = 1:N
 						θΨini_Cell[iZ] = Z[N] - Z[iZ]

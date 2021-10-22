@@ -73,7 +73,7 @@ module hypixStart
 				Flag_θΨini, Layer, N_Layer, ~, Zlayer, θini, Ψini = reading.hyPix.DISCRETIZATION(path.hyPix.DiscretizationAuto)
 
 				# Performing y6auto discretisation			
-					Layer, Z, θΨini_Cell = discretization.DISCRETIZATION_AUTO(param; Flag_θΨini=Flag_θΨini, N_Layer=N_Layer, Zlayer=Zlayer, θini=θini, Ψini=Ψini)
+					Layer, Z, θΨini_Cell = discretization.DISCRETIZATION_AUTO(option, param; Flag_θΨini=Flag_θΨini, N_Layer=N_Layer, Zlayer=Zlayer, θini=θini, Ψini=Ψini)
 		
 					table.hyPix.DISCRETIZATION_AUTO(Flag_θΨini, Layer, path.hyPix, Z, θΨini_Cell)
 
