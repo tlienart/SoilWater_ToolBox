@@ -107,7 +107,7 @@ module richard
 				end
 			end #for iZ= 1:NiZ
 
-			# FOR TESTING...
+			# # FOR TESTING...
 				# println("One:=================")
 				# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
 				# println("∂R∂Ψ_Num=" , ∂R∂Ψ2[1:NiZ],"\n")
@@ -137,7 +137,7 @@ module richard
 			# Does not take into consideration the last cell which has a perfect mass balance
 			for iZ = 1:NiZ-1
 				if option.hyPix.NormMin⍰ == "Norm"
-					Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2
+					Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2.0
 				else
 					Residual_Max = max( Residual_Max, abs(Residual[iZ]) / (ΔT[iT] * discret.ΔZ[iZ]) ) 
 				end
@@ -145,7 +145,8 @@ module richard
 
 			if option.hyPix.NormMin⍰ == "Norm"
 				Residual_Max = √(Residual_Norm / Float64(NiZ - 1.0))
-			end	
+			end
+					
 		return Residual_Max
 		end  # function: RESIDUAL_MAX
 	#-----------------------------------------------------------------
@@ -203,7 +204,6 @@ module richard
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 					else
 						Ψ[iT,iZ] = param.hyPix.NewtonStep_Mean * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStep_Mean) * Ψ₀
-					
 					end # if option.hyPix.DynamicNewtonRaphsonStep
 
 					if option.hyPix.IterReduceOverShoting

@@ -5,21 +5,22 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : K_AVER!
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function K_AVER!(option, param, discret, hydro, iZ::Int64, NiZ::Int64, ψ_::Float64, ψ▲::Float64)
+		function K_AVER!(option, param, discret, hydro, iZ::Int64, NiZ::Int64, ψ_, ψ▲)
 			if iZ == 1 # <>=<>=<>=<>=<>
-				if option.hyPix.TopBoundary⍰  == "Flux" 
+				if option.hyPix.TopBoundary⍰  == "Flux" # <> = <> = <> = <> = <>
 					return K_Aver = 0.0
 
-				elseif option.hyPix.TopBoundary⍰  == "Ψ"
+				elseif option.hyPix.TopBoundary⍰  == "Ψ" # <> = <> = <> = <> = <>
 					K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, 1, hydro)
 
-				else
+				else 	# <> = <> = <> = <> = <>
 					error("K_AVER! option.hyPix.TopBoundary⍰ not found")
 
 				end
 
 			elseif 2 ≤ iZ ≤ NiZ # <>=<>=<>=<>=<>
 				return K_Aver = discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro)
+
 			else
 				return K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro)
 
