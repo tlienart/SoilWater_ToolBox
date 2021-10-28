@@ -129,6 +129,7 @@ module params
 		Ψ_MaxMax::Float64
 		Ψ_Top::Float64
 		Ψ_Botom::Float64
+		Q_Botom::Float64
 		ΔT_Min::Float64
 		ΔT_Max::Float64
 		N_Iter::Int64

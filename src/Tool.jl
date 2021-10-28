@@ -237,19 +237,22 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : STRUCT_2_FIELDNAMES
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function STRUCT_2_FIELDNAME(NiZ, Structure)
+			function STRUCT_2_FIELDNAME(N::Int64, Structure)
 				FieldName_Array = propertynames(Structure)
 
 				N_FieldName = length(FieldName_Array)
 
 				# Matrix
-					Matrix = fill(0.0::Float64, (NiZ, N_FieldName))
+					Matrix = fill(0.0, (N, N_FieldName))
 
 					i = 1
 					for FieldName in FieldName_Array
 						Struct_Array = getfield(Structure, FieldName)
-		
-						Matrix[1:NiZ,i] .= Struct_Array
+						if isa(Struct_Array, Array)
+							Matrix[1:N,i] = Float64.(Struct_Array[1:N])
+						else
+							Matrix[1,i] = Float64.(Struct_Array)
+						end
 						i += 1
 					end
 				
