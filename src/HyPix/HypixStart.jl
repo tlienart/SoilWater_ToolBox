@@ -193,7 +193,7 @@ module hypixStart
 				# Convergence rate
 					iNonConverge_iOpt[iOpt_Count]          = iNonConverge
 
-					Efficiency[iOpt_Count]                 = ceil(Int, cst.Day_2_Second * IterCount / ∑T[Nit])
+					Efficiency[iOpt_Count]                 = ceil(Int, cst.Day_2_Second * IterCount / ∑T[Nit] )
 					
 					ΔT_Average[iOpt_Count]                 = ceil(Int, mean(ΔT[i∑T_CalibrStart:Nit]))
 					
@@ -205,8 +205,8 @@ module hypixStart
 				
 				# Ground water recharge
 					∑ΔQ_Bot[iOpt_Count] = 0.0
-					@fastmath @inbounds @simd for iT=i∑T_CalibrStart:Nit
-						∑ΔQ_Bot[iOpt_Count] += ΔT[iT] * Q[iT, NiZ+1]
+					for iT=i∑T_CalibrStart:Nit
+						∑ΔQ_Bot[iOpt_Count] = ∑ΔQ_Bot[iOpt_Count] + ΔT[iT] * Q[iT, NiZ+1]
 					end
            
 				println("		=== ===START: summary  $iOpt steps ...")
@@ -220,18 +220,18 @@ module hypixStart
 					
 					println("			∑SoilWaterContentRootEnd = ", round(SwcRoots[iOpt_Count], digits=3), "  [mm]")
 					println("			∑ΔSink 			= ", -ceil(Int, ∑∑ΔSink[iOpt_Count]), "  [mm]")
-					println("			∑Infilt_Bot 		= ", -ceil( Int, ∑ΔQ_Bot[iOpt_Count] ), "  [mm]")
+					println("			∑Infilt_Bot 		= ", -round(∑ΔQ_Bot[iOpt_Count],  digits=5), "  [mm]")
 					println("			ΔHpond at end 		= ", ceil(Int, ΔHpond[Nit]), "  [mm] \n")
 
 					println("			iNonConverge 			= ", iNonConverge_iOpt[iOpt_Count], "  [count]")
-					println("			Global_WaterBalance_NormPr 	= ", round(Global_WaterBalance_NormPr[iOpt_Count], digits=2), "  [%]")
-					println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=3), "  [mm]")
+					println("			Global_WaterBalance_NormPr 	= ", round(Global_WaterBalance_NormPr[iOpt_Count], digits=8), "  [%]")
+					println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=8), "  [mm]")
 					println("			Average ΔT 			= ",  ΔT_Average[iOpt_Count] , "  [seconds]")
 					println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 					println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 					println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")			
 					println("			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1]")
-					println("			Number_of_cells	=            ", NiZ, "  [-], \n")
+					println("			Number_of_cells 	   = ", NiZ, "  [-], \n")
 
 					∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, param, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], ΔHpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
 

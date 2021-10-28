@@ -33,7 +33,6 @@ module residual
 
 			# Q[iT,iZ] format for ForwardDiff
 				Q₁ = flux.Q!(option, discret, hydro, iZ, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ_, Ψ▲)
-
 			# Q[iT,iZ+1] format for ForwardDiff
 				Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ▼, Ψ_)		
 			# θ[iT,iZ] format for ForwardDiff
