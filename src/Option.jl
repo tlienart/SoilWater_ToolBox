@@ -96,6 +96,8 @@ module options
 		Evaporation::Bool
 		RootWaterUptake::Bool
 		RootWaterUptakeComp::Bool
+		Ponding::Bool
+		GravityCorection::Bool
 		LookupTable_Lai::Bool
 		LookUpTable_CropCoeficient::Bool
 		Discretisation_File_Auto⍰::String
