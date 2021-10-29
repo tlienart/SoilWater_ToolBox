@@ -129,10 +129,10 @@ module kunsat
 				Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
 
 				KsMat = Ks * (θsMacMat - θr) / (θs - θr)			
-				Kunsat_Mat =  KsMat * √Se * (0.5 * erfc(((log(Ψ₁ / Ψm)) / σ + σ) / √2.0)) ^ 2
+				Kunsat_Mat =  KsMat * √Se * (0.5 * erfc(((log(Ψ₁ / Ψm)) / σ + σ) / √2.0)) ^ 2.0
 
 				KsMac = Ks * (θs - θsMacMat) / (θs - θr)
-				Kunsat_Mac =  KsMac * √Se * (0.5 * erfc(((log(Ψ₁ / ΨmMac)) / σMac + σMac) / √2.0)) ^ 2
+				Kunsat_Mac =  KsMac * √Se * (0.5 * erfc(((log(Ψ₁ / ΨmMac)) / σMac + σMac) / √2.0)) ^ 2.0
 				
 				return Kunsat = Kunsat_Mat + Kunsat_Mac
 			end # function Ψ_2_KUNSAT
