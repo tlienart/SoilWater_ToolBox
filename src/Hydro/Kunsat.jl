@@ -129,10 +129,10 @@ module kunsat
 				Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
 
 				KsMat = Ks * (θsMacMat - θr) / (θs - θr)			
-				Kunsat_Mat =  KsMat * √Se * (0.5 * erfc(((log(Ψ₁ / Ψm)) / σ + σ) / √2.0)) ^ 2
+				Kunsat_Mat =  KsMat * √Se * (0.5 * erfc(((log(Ψ₁ / Ψm)) / σ + σ) / √2.0)) ^ 2.0
 
 				KsMac = Ks * (θs - θsMacMat) / (θs - θr)
-				Kunsat_Mac =  KsMac * √Se * (0.5 * erfc(((log(Ψ₁ / ΨmMac)) / σMac + σMac) / √2.0)) ^ 2
+				Kunsat_Mac =  KsMac * √Se * (0.5 * erfc(((log(Ψ₁ / ΨmMac)) / σMac + σMac) / √2.0)) ^ 2.0
 				
 				return Kunsat = Kunsat_Mat + Kunsat_Mac
 			end # function Ψ_2_KUNSAT
@@ -205,8 +205,8 @@ module kunsat
 					∂K∂Ψ = 0.0
 				end
 
-				# ∂K∂Ψ3 = ∂K∂Ψ2(optionₘ, Ψ₁, iZ, hydroParam)
-				# println(∂K∂Ψ," , " ,∂K∂Ψ3 / ∂K∂Ψ )
+				∂K∂Ψ3 = ∂K∂Ψ2(optionₘ, Ψ₁, iZ, hydroParam)
+				println(∂K∂Ψ," , " ,∂K∂Ψ3)
 			return ∂K∂Ψ 
 			end # function: ∂K∂Ψ
 
@@ -223,8 +223,9 @@ module kunsat
 				A = Ψ₁Ψm / (σ * √2.0)
 				
 				∂Kunsat_Mat∂Ψ = -(KsMat / (8.0 * (Ψ₁ + eps(10.0)) * √π * σ^2.0)) * (((erfc(A+σ / √2.0))^2.0) / √(erfc(A))) * exp(-A^2.0) - (KsMat / (2.0 * (Ψ₁ + eps(10.0)) * √π * σ^2.0)) * √(erfc(A)) * erfc(A + σ / √2.0) * ( √2.0 * σ * exp(-A^2.0) + 2.0 * exp(-(A+σ / √2.0)^2.0) ) 
+				
 
-				# ==
+				# ===
 				KsMac = Ks * (θs - θsMacMat) / (θs - θr)
 				
 				Ψ₁ΨmMac = log(Ψ₁ / ΨmMac)
@@ -232,7 +233,7 @@ module kunsat
 				B = Ψ₁ΨmMac / (σMac * √2.0)
 				
 				∂Kunsat_Mac∂Ψ = -(KsMac / (8.0 * (Ψ₁ + eps(10.0)) * √π * σMac^2.0)) * (((erfc(B+σMac / √2.0))^2.0) / √(erfc(B))) * exp(-B^2.0)- (KsMac / (2.0 * (Ψ₁ + eps(10.0)) * √π * σMac^2.0)) * √(erfc(B)) * erfc(B + σMac / √2.0) * ( √2.0 * σMac * exp(-B^2.0) + 2.0 * exp(-(B+σMac / √2.0)^2.0) )
-
+				
 			return ∂Kunsat_Mat∂Ψ + ∂Kunsat_Mac∂Ψ
 			end # function: ∂K∂Ψ
 		#-----------------------------------------------------------------
