@@ -177,15 +177,15 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function Ψ_2_θDual(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
-				θ_Mat = (θsMacMat - θr) * 0.5 * erfc((log( Ψ₁ / Ψm)) / (σ * √2.0)) + θr
+				θ_Mat = 0.5 * (θsMacMat - θr) * erfc((log( Ψ₁ / Ψm)) / (σ * √2.0)) + θr
 
 				if θs - θsMacMat > 0.001
-					θ_Mac = (θs - θsMacMat) * 0.5 * erfc((log(Ψ₁ / ΨmMac)) / (σMac * √2.0))
+					θ_Mac = 0.5 * (θs - θsMacMat) * erfc((log(Ψ₁ / ΨmMac)) / (σMac * √2.0))
 				else
 					θ_Mac = 0.0
 				end
 
-			return θ₂ = θ_Mac + θ_Mat
+			return θ_Mac + θ_Mat
 			end # function Ψ_2_θDual
 
 
@@ -196,7 +196,7 @@ module wrc
 
 				θ₂ = Ψ_2_θDual(optionₘ,Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
-			return Se = wrc.θ_2_Se(θ₂, iZ::Int64, hydroParam)
+			return wrc.θ_2_Se(θ₂, iZ::Int64, hydroParam)
 			end # function Ψ_2_SeDual
 	
 
@@ -218,7 +218,7 @@ module wrc
 					return Ψ₁ = 10.0 ^ Optim.minimizer(Optimization)[1]
 				end
 			end # θ_2_ΨDual
-				#-------------------------------------------------------------------
+		#-------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -260,18 +260,18 @@ module wrc
 			end # function ∂θ∂Ψ_Mode
 		
 
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : ∂Ψ∂θ
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ∂θ∂Ψ2(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
+		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# #		FUNCTION : ∂Ψ∂θ
+		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		# 	function ∂θ∂Ψ2(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 						
-				ψ = fill(0.0::Float64, 1)
-				∂Ψ∂θ_Numerical(ψ::Vector) = Ψ_2_θDual(optionₘ,abs(ψ[1]), iZ, hydroParam)
-				ψ[1] = Ψ₁
-				Func_∂Ψ∂θ_Numerical = ψ -> ForwardDiff.gradient(∂Ψ∂θ_Numerical, ψ)
+		# 		ψ = fill(0.0::Float64, 1)
+		# 		∂Ψ∂θ_Numerical(ψ::Vector) = Ψ_2_θDual(optionₘ,abs(ψ[1]), iZ, hydroParam)
+		# 		ψ[1] = Ψ₁
+		# 		Func_∂Ψ∂θ_Numerical = ψ -> ForwardDiff.gradient(∂Ψ∂θ_Numerical, ψ)
 
-			return Func_∂Ψ∂θ_Numerical(ψ)[1]
-			end # function ∂Ψ∂θ
+		# 	return Func_∂Ψ∂θ_Numerical(ψ)[1]
+		# 	end # function ∂Ψ∂θ
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
