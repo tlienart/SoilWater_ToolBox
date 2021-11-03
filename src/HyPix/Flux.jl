@@ -8,10 +8,10 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function GRAVITY(discret, iZ, option, param, ψ_, ψ▲)
 
-			ϱ = abs(ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]
+			∂ψ∂Z = abs(ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]
 
-			if (iZ ≥ 2) && (ϱ ≤ 1.0) && (ψ_ ≤ discret.ΔZ_⬓[iZ]) && option.hyPix.GravityCorection
-				return ϱ
+			if (iZ ≥ 2) && (ψ_ ≤ param.hyPix.ψϱ) && (ψ▲ ≤ param.hyPix.ψϱ) && (∂ψ∂Z > -1.0) && option.hyPix.GravityCorection
+				return 0.0
 			else
 				return  1.0
 			end
@@ -81,9 +81,9 @@ module flux
 
 				elseif option.hyPix.BottomBoundary⍰ == "Q" # <>=<>=<>=<>=<>
 					if param.hyPix.Q_Botom ≥ 0.0
-						return min(param.hyPix.Q_Botom, θ[iT-1,NiZ] - hydro.θr[NiZ])
+						return min(param.hyPix.Q_Botom,  discret.ΔZ_Aver[NiZ] * (θ[iT-1,NiZ] - hydro.θr[NiZ]) / ΔT[iT])
 					else
-						return max(param.hyPix.Q_Botom, -(hydro.θs[NiZ] - θ[iT-1,iZ]))
+						return max(param.hyPix.Q_Botom, -  discret.ΔZ_Aver[NiZ] * (hydro.θs[NiZ] - θ[iT-1,iZ]) / ΔT[iT])
 					end
 
 				else
@@ -186,6 +186,11 @@ module flux
 				if iZ ≤ NiZ-1 	# <>=<>=<>=<>=<>
 
 					K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ+1, NiZ, Ψ[iT,iZ+1], Ψ[iT,iZ])
+
+					if isnan(discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])) + K_Aver▽ / discret.ΔZ_Aver[iZ+1])
+
+						 println("Flux===", Ψ[iT,iZ]," , " ,Ψ[iT,max(iZ-1,1)])
+					end
 
 					return discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
 				

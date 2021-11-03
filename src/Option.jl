@@ -130,6 +130,7 @@ module options
 		Table_TimeSeriesDaily::Bool
 		Tabule_θΨ::Bool
 		Table_Climate::Bool
+		Plot_θprofile::Bool
 		Plot_Vegetation::Bool
 		Plot_θΨK::Bool
 		Plot_Interception::Bool

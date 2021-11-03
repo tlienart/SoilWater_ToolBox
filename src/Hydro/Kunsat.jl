@@ -160,14 +160,25 @@ module kunsat
 
 				Se = max( min(Se, 1.0), 0.0)
 
+				Ψ₁ = wrc.Se_2_ΨDual(optionₘ, Se, iZ, hydroParam)
+
+				Se_Mat = (0.5 * (θsMacMat - θr) * erfc((log( Ψ₁ / Ψm)) / (σ * √2.0))) / (θs - θr)
+
+				if θs - θsMacMat > 0.001
+					Se_Mac = (0.5 * (θs - θsMacMat) * erfc((log(Ψ₁ / ΨmMac)) / (σMac * √2.0))) / (θs - θr)
+				else
+					Se_Mac = 0.0
+				end
+
 				KsMat = Ks * (θsMacMat - θr) / (θs - θr)
-				Kunsat_Mat = KsMat * √Se * (0.5 * erfc( erfcinv(2.0 * Se) + σ / √2.0 )) ^ 2
+				Kunsat_Mat = KsMat * √Se * (0.5 * erfc( erfcinv(2.0 * Se_Mat) + σ / √2.0 )) ^ 2
 
 				KsMac = Ks * (θs - θsMacMat) / (θs - θr)
-				Kunsat_Mac = KsMac * √Se * (0.5 * erfc( erfcinv(2.0 * Se) + σMac / √2.0 )) ^ 2
+				Kunsat_Mac = KsMac * √Se * (0.5 * erfc( erfcinv(2.0 * Se_Mac) + σMac / √2.0 )) ^ 2
 
-				return Kunsat = Kunsat_Mat + Kunsat_Mac
+			return Kunsat = Kunsat_Mat + Kunsat_Mac
 			end # function Se_2_KUNSAT
+		#-------------------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -285,7 +296,11 @@ module kunsat
 
 				∂Kunsat_Mac∂Ψ =  (-Pc * KsMac*((Ψ₁ / ΨmMac)^-1)*Erfc1_Mac*sqrt(0.5SeMat*ΨΨm + 0.5SeMac*ΨΨmMac)*exp((-F_LOG_MAC - P₂ * σMac)*(P₂ * σMac + F_LOG_MAC))) / (ΨmMac*σMac) + P8 *  KsMac*((-Pπ * SeMac*((Ψ₁ / ΨmMac)^-1)*ΨΨmσ_Mac) / (√2.0 *ΨmMac*σMac) + (-Pπ * SeMat*((Ψ₁ / Ψm)^-1)*ΨΨmσ) / (√2.0 *Ψm*σ))*(Erfc1_Mac^2)*(sqrt(0.5SeMat*ΨΨm + 0.5SeMac*ΨΨmMac)^-1) 
 
-				return ∂Kunsat_Mat∂Ψ + ∂Kunsat_Mac∂Ψ
+				if isnan(∂Kunsat_Mat∂Ψ + ∂Kunsat_Mac∂Ψ)
+					return 0.0
+				else
+					return ∂Kunsat_Mat∂Ψ + ∂Kunsat_Mac∂Ψ
+				end
 			end
 	#--------------------------------------------------------------------------------
 

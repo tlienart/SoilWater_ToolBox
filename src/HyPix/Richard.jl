@@ -38,6 +38,8 @@ module richard
 				# Averaging the Residuals, depending on method
 					Residual_Max = RESIDUAL_MAX(discret, iT, NiZ, option, Residual, ΔT)
 
+					# println(iTer," , " ,abs(Residual_Max - Residual_Max_Best))
+
 				# Determine if iteration made improvement
 					if Residual_Max < Residual_Max_Best	
 						for iZ=1:NiZ
@@ -207,7 +209,8 @@ module richard
 					
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 					else
-						Ψ[iT,iZ] = param.hyPix.NewtonStep_Mean * Ψ[iT,iZ] + (1.0 - param.hyPix.NewtonStep_Mean) * Ψ₀
+						NewtonStep_Mean =  (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) / 2.0
+						Ψ[iT,iZ] =NewtonStep_Mean * Ψ[iT,iZ] + (1.0 - NewtonStep_Mean) * Ψ₀
 					end # if option.hyPix.DynamicNewtonRaphsonStep
 
 					if option.hyPix.IterReduceOverShoting

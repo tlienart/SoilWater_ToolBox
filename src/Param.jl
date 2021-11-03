@@ -76,6 +76,7 @@ module params
 
 	@option mutable struct OBSΘ
 		NmaxFuncEvals::Int64
+		ΔHpondMax::Float64
 		Year_Start::Int64
 		Month_Start::Int64
 		Day_Start::Int64
@@ -88,22 +89,23 @@ module params
 		Hour_End::Int64
 		Minute_End::Int64
 		Second_End::Int64
-		θobs_Uncert
+		θobs_Uncert::Float64
 	end
 	@option mutable struct PLOT
-		Year_Start
-		Month_Start
-		Day_Start
-		Hour_Start
-		Minute_Start
-		Second_Start
-		Year_End
-		Month_End
-		Day_End
-		Hour_End
-		Minute_End
-		Second_End
-		θΨ_Table
+		Year_Start::Int64
+		Month_Start::Int64
+		Day_Start::Int64
+		Hour_Start::Int64
+		Minute_Start::Int64
+		Second_Start::Int64
+		Year_End::Int64
+		Month_End::Int64
+		Day_End::Int64
+		Hour_End::Int64
+		Minute_End::Int64
+		Second_End::Int64
+		θprofile_Time::Vector{Float64}
+		θΨ_Table::Vector{Float64}
 	end
 	@option mutable struct HYPIXS
 		iOpt_Start::Int64
@@ -124,7 +126,6 @@ module params
 		ΔZfine::Float64
 		ΔZcoarse::Float64
 		Cosα::Float64
-		ΔHpondMax::Float64
 		Ψ_MinMin::Float64
 		Ψ_MaxMax::Float64
 		Ψ_Top::Float64
@@ -137,7 +138,6 @@ module params
 		ΔT_Rerun::Float64
 		Δθ_Max::Float64
 		NewtonStep_Min::Float64
-		NewtonStep_Mean::Float64
 		NewtonStep_Max::Float64
 		NewtonStep_Power::Float64
 		WaterBalanceResidual_Max::Float64

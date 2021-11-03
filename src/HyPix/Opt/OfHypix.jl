@@ -58,7 +58,7 @@ module ofHypix
 			end # for iZ
 
 			 # Penalty if we have too much ponding
-			 Wof_Pond = max(ΔHpond[NiZ] - param.hyPix.ΔHpondMax, 0.0) / 1000.0
+			 Wof_Pond = max(ΔHpond[NiZ] - param.hyPix.obsTheta.ΔHpondMax, 0.0) / 1000.0
 
 		return Wof = √(Wof / Float64(iCount)) + Wof_Pond
 		end # function WOF_θ
