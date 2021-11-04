@@ -70,7 +70,10 @@ module ofHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function RMSE_θ(∑T, obsTheta, Nit::Int, NiZ::Int, θ, θSim)
 
+
 				θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], Nit, NiZ, θSim, θ)
+
+				println(θSim)
 				
 				Rmse = 0.0
 				iCount = 0

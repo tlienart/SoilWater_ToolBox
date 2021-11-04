@@ -146,8 +146,94 @@ module plotHypix
 	#		module: name
 	# =============================================================
 		module makkie
-			using CairoMakie
+			using CairoMakie, LaTeXStrings
 			using Dates
+			export θPROFILE, TIMESERIES
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			#		FUNCTION : θPROFILE(∑T_Reduced, discret, obsTheta, option, param, θ_Reduced)
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			function θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, pathHyPix, Soilname, θ_Reduced)
+
+				# PATH
+					Path = pathHyPix.Plot_θprofile * ".svg"
+					println("			 ~ ", Path, "~")
+					rm(Path, force=true, recursive=true)
+
+
+				# DEPTHS TO PLOT
+					Zprofile = fill(0.0::Float64, NiZ)
+					for iZ=1:NiZ
+						Zprofile[iZ] = discret.Znode[iZ] / 100.0
+					end
+
+				# SELECTING PROFILE TO PLOT
+					Nt = length(param.hyPix.ploting.θprofile_Time)
+
+				# INITIALIZING PLOT
+					CairoMakie.activate!()
+					Makie.inline!(true)
+
+					Color_Hypix = [:red, :darkviolet, :orange,  :blue, :teal]
+
+					Fig = Figure(resolution=(600,500))
+					Title = Soilname[iSim]
+
+					Label_HyPix =fill("", Nt)
+					Label_Hydrus =fill("", Nt)
+
+					Ax1 = Axis(Fig[1,1], title=Title, xlabel= L"$\theta$  $[m^{3}  m^{-3}]$", ylabel= L"Z  $[cm]$",  font="CMU Serif", titlesize=25, fontsize=16, xlabelsize=22, ylabelsize=22, xgridvisible=false, ygridvisible=false)
+
+					# Ax2 = Axis(Fig[1,1],  font = "CMU Serif", titlesize=30, fontsize=16, xlabelsize=24, ylabelsize=24)
+
+				# For every θprofile_Time
+					for iT=1:Nt
+						Tprofile = param.hyPix.ploting.θprofile_Time[iT]
+
+						iTprofile = 1
+		
+						iTprofile = findfirst(x->x==Tprofile, ∑T_Reduced)
+						
+						if isnothing(iTprofile)
+							println("Error θprofile_Time must be one of = $(obsTheta.∑T)")
+							error()
+						end
+
+						θprofile = θ_Reduced[iTprofile, 1:NiZ]
+
+						# PLOTTING\
+
+						# Label
+							if param.hyPix.ΔT_Output==3600.0 
+								Label_HyPix[iT] = "HyP=" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Hour" 
+							else
+								Label_HyPix[iT] = "HyP_" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Day" 
+							end
+
+							if param.hyPix.ΔT_Output==3600.0 
+								Label_Hydrus[iT] = "HYD_" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Hour" 
+							else
+								Label_Hydrus[iT] = "HYD_" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Day" 
+							end
+	
+						Plot2 = lines!(Ax1, obsTheta.θobs[iT,1:NiZ], -Zprofile, color=Color_Hypix[iT], linewidth=3, label=Label_Hydrus[iT])
+						Plot1 = lines!(Ax1, θprofile, -Zprofile, color=Color_Hypix[iT], linewidth=2, label=Label_HyPix[iT], linestyle=:dash)
+						
+					end
+
+					Leg = Legend(Fig[2,1], Ax1, framevisible=true, orientation=:horizontal, tellheight=true, nbanks=2, framecolor = (:grey,0.5), bgcolor = (:grey90, 0.25), labelsize=14)
+			
+					trim!(Fig.layout)
+
+					# axislegend()
+					display(Fig)
+					save(Path, Fig)
+
+
+				
+			return nothing
+			end  # function: θPROFILE(∑T_Reduced, discret, obsTheta, option, param, θ_Reduced)
+			# ------------------------------------------------------------------
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES

@@ -116,6 +116,7 @@ module paths
 
 		Plot_Hypix_θΨK::String
 		Plot_HypixTime::String
+		Plot_θprofile::String
 		Plot_RainfallInterception::String
 		Plot_Se_Time::String
 		Plot_Se_Z::String
@@ -342,13 +343,14 @@ module paths
 			Path_Hypix_Plot = Path_Home * "/OUTPUT/Hypix/" * SiteName_Hypix * "/" * IdName_Hypix *"/Plots/" 	
 				mkpath(Path_Hypix_Plot)
 
-            path.hyPix.Plot_HypixTime  = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_HypixTime
-            path.hyPix.Plot_Hypix_θΨK  = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Hypix_θΨK
-            path.hyPix.Plot_RainfallInterception  = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_RainfallInterception
-            path.hyPix.Plot_Se_Time    = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Time
-            path.hyPix.Plot_Se_Z       = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Z
-            path.hyPix.Plot_Sorptivity = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Sorptivity
-            path.hyPix.Vegetation      = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Vegetation
+            path.hyPix.Plot_HypixTime            = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_HypixTime
+            path.hyPix.Plot_θprofile             = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_θprofile
+            path.hyPix.Plot_Hypix_θΨK            = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Hypix_θΨK
+            path.hyPix.Plot_RainfallInterception = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_RainfallInterception
+            path.hyPix.Plot_Se_Time              = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Time
+            path.hyPix.Plot_Se_Z                 = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Se_Z
+            path.hyPix.Plot_Sorptivity           = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Plot_Sorptivity
+            path.hyPix.Vegetation                = Path_Hypix_Plot * IdName_Hypix  * "_" * path.hyPix.Vegetation
 
 			# HYPIX PLOT OTHERS: RESULTS
 			Path_Hypix_Result= Path_Home * "/OUTPUT/Hypix/RESULTS/"

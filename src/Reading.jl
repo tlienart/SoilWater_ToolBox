@@ -745,7 +745,7 @@ module reading
 						
 					Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
 
-					if !(Date_End > Date_SimStart && Date_SimStart > Date_Start)
+					if !(Date_End ≥ Date_SimStart && Date_SimStart ≥ Date_Start)
 						error("HyPix: Date_Start=$Date_Start >  Date_SimStart= $Date_SimStart > Date_End=$Date_End")
 					end
 			return param

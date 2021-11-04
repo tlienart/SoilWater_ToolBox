@@ -231,7 +231,7 @@ module hypixStart
 					println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 					println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")			
 					println("			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1]")
-					println("			Number_of_cells 	   = ", NiZ, "  [-], \n")
+					println("			Number_of_cells 	    = ", NiZ, "  [-], \n")
 
 					∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, param, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], ΔHpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
 
@@ -242,7 +242,7 @@ module hypixStart
 				RmseBest[iOpt_Count] = stats.NSE(θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced])
 
 			elseif !(option.hyPix.θobs_Average) && option.hyPix.θobs
-				RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
+				# RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
 				θsim_Aver = []
 				
 			end
@@ -294,6 +294,8 @@ module hypixStart
 				end
 			println("		=== === END: Table === === \n")
 			end  # if option.hyPix.Table
+
+			plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, path.hyPix, Soilname, θ_Reduced)
 				
 			if option.other.Ploting
 			println("		=== === START: Plotting === ===")
@@ -305,9 +307,13 @@ module hypixStart
 				# 	# plotOther.PLOT_σ_2_θr(hydro, path.hyPix)
 				# 	# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix)
 				# end # option.hyPix.Plot_Other
-				
+
 				if option.hyPix.Plot_Hypix
 					plotHypix.makkie.TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, path.hyPix)
+
+					# if option.hyPix.Plot_θprofile
+					# 	plotHypix.makkie.θPROFILE(∑T_Reduced, discret, obsTheta, option, param, path.hyPix, θ_Reduced, NiZ)
+					# end  # if: option.hyPix.Plot_
 				end
 
 				if option.hyPix.Plot_θΨK

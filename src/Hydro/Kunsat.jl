@@ -194,7 +194,7 @@ module kunsat
 				KrMac = (θs - θsMacMat) / (θs - θr)
 				Kr_Mac = KrMac * √Se * (0.5* erfc( erfcinv(2.0*Se) + σMac / √2.0 ))^2.0
 
-				return Kr = Kr_Mat + Kr_Mac
+			return Kr = Kr_Mat + Kr_Mac
 			end # function: Se_2_KR
 		#---------------------------------------------------------------------
 

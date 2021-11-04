@@ -187,11 +187,6 @@ module flux
 
 					K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ+1, NiZ, Ψ[iT,iZ+1], Ψ[iT,iZ])
 
-					if isnan(discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])) + K_Aver▽ / discret.ΔZ_Aver[iZ+1])
-
-						 println("Flux===", Ψ[iT,iZ]," , " ,Ψ[iT,max(iZ-1,1)])
-					end
-
 					return discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
 				
 				else #elseif iZ == NiZ <>=<>=<>=<>=<>
