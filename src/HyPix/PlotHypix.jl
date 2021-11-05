@@ -168,7 +168,7 @@ module plotHypix
 					end
 
 				# SELECTING PROFILE TO PLOT
-					Nt = length(param.hyPix.ploting.θprofile_Time)
+					Nt = obsTheta.Nit
 
 				# INITIALIZING PLOT
 					CairoMakie.activate!()
@@ -188,7 +188,7 @@ module plotHypix
 
 				# For every θprofile_Time
 					for iT=1:Nt
-						Tprofile = param.hyPix.ploting.θprofile_Time[iT]
+						Tprofile = obsTheta.∑T[iT]
 
 						iTprofile = 1
 		
@@ -201,20 +201,20 @@ module plotHypix
 
 						θprofile = θ_Reduced[iTprofile, 1:NiZ]
 
-						# PLOTTING\
+						# PLOTTING
 
-						# Label
-							if param.hyPix.ΔT_Output==3600.0 
-								Label_HyPix[iT] = "HyP=" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Hour" 
-							else
-								Label_HyPix[iT] = "HyP_" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Day" 
-							end
+							# Label
+								if param.hyPix.ΔT_Output==3600.0 
+									Label_HyPix[iT] = "HyP=" * string(ceil(Int, Tprofile / param.hyPix.ΔT_Output)) * "Hour" 
+								else
+									Label_HyPix[iT] = "HyP_" * string(ceil(Int, Tprofile / param.hyPix.ΔT_Output)) * "Day" 
+								end
 
-							if param.hyPix.ΔT_Output==3600.0 
-								Label_Hydrus[iT] = "HYD_" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Hour" 
-							else
-								Label_Hydrus[iT] = "HYD_" * string(ceil(Int, param.hyPix.ploting.θprofile_Time[iT] / param.hyPix.ΔT_Output)) * "Day" 
-							end
+								if param.hyPix.ΔT_Output==3600.0 
+									Label_Hydrus[iT] = "HYD_" * string(ceil(Int, Tprofile / param.hyPix.ΔT_Output)) * "Hour" 
+								else
+									Label_Hydrus[iT] = "HYD_" * string(ceil(Int, Tprofile / param.hyPix.ΔT_Output)) * "Day" 
+								end
 	
 						Plot2 = lines!(Ax1, obsTheta.θobs[iT,1:NiZ], -Zprofile, color=Color_Hypix[iT], linewidth=3, label=Label_Hydrus[iT])
 						Plot1 = lines!(Ax1, θprofile, -Zprofile, color=Color_Hypix[iT], linewidth=2, label=Label_HyPix[iT], linestyle=:dash)
@@ -230,7 +230,6 @@ module plotHypix
 					save(Path, Fig)
 
 
-				
 			return nothing
 			end  # function: θPROFILE(∑T_Reduced, discret, obsTheta, option, param, θ_Reduced)
 			# ------------------------------------------------------------------

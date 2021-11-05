@@ -8,10 +8,10 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function GRAVITY(discret, iZ, option, param, ψ_, ψ▲)
 
-			∂ψ∂Z = abs(ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]
+			∂ψ∂Z = ψ_- ψ▲ / discret.ΔZ_Aver[iZ]
 
 			if (iZ ≥ 2) && (ψ_ ≤ param.hyPix.ψϱ) && (ψ▲ ≤ param.hyPix.ψϱ) && (∂ψ∂Z > -1.0) && option.hyPix.GravityCorection
-				return 0.0
+				return 0.0 
 			else
 				return  1.0
 			end

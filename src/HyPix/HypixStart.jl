@@ -205,7 +205,7 @@ module hypixStart
 				
 				# Ground water recharge
 					∑ΔQ_Bot[iOpt_Count] = 0.0
-					for iT=i∑T_CalibrStart:Nit
+					for iT=1:Nit
 						∑ΔQ_Bot[iOpt_Count] = ∑ΔQ_Bot[iOpt_Count] + ΔT[iT] * Q[iT, NiZ+1]
 					end
            
@@ -295,7 +295,6 @@ module hypixStart
 			println("		=== === END: Table === === \n")
 			end  # if option.hyPix.Table
 
-			plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, path.hyPix, Soilname, θ_Reduced)
 				
 			if option.other.Ploting
 			println("		=== === START: Plotting === ===")
@@ -311,9 +310,9 @@ module hypixStart
 				if option.hyPix.Plot_Hypix
 					plotHypix.makkie.TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, path.hyPix)
 
-					# if option.hyPix.Plot_θprofile
-					# 	plotHypix.makkie.θPROFILE(∑T_Reduced, discret, obsTheta, option, param, path.hyPix, θ_Reduced, NiZ)
-					# end  # if: option.hyPix.Plot_
+					if option.hyPix.Plot_θprofile
+						plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, path.hyPix, Soilname, θ_Reduced)
+					end  # if: option.hyPix.Plot_
 				end
 
 				if option.hyPix.Plot_θΨK

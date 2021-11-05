@@ -11,7 +11,7 @@ module thetaObs
 		function ΘOBS(obsTheta, clim, discret, Z)
 
 			# CHECKING DATA CONSISTENCY
-				if obsTheta.Date[1] ≤ clim.Date[2]
+				if obsTheta.Date[1] < clim.Date[2]
 					error("\n Hypix error: Starting date of obsTheta  $(obsTheta.Date[1]) < starting date of climate data $(clim.Date[1]) by 2 iT")
 				end # Error checking
 
@@ -23,7 +23,6 @@ module thetaObs
 			# COMPUTING CUMULATIVE TIME
 				for iT=1:obsTheta.Nit
 					obsTheta.∑T[iT] = value(obsTheta.Date[iT] - clim.Date[1] ) / 1000
-					println(obsTheta.∑T[iT])
 				end  # for it=1:obsTheta.Nit
 
 				# TRANSFORM THE DEPTH OF MEASURED Θ -> CELL DEPTH
