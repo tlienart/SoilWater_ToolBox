@@ -29,7 +29,7 @@ module memory
       Q     = fill(0.0::Float64, N_Memory, NiZ+1)
 		
       Residual = fill(0.0::Float64, NiZ)
-      ΔΨmax  = fill(0.0::Float64, NiZ)
+      ΔLnΨmax  = fill(0.0::Float64, NiZ)
       Ψ_Max    = fill(0.0::Float64, NiZ)
       Ψ_Min    = fill(0.0::Float64, NiZ)
       Ψbest    = fill(0.0::Float64, NiZ)
@@ -49,7 +49,7 @@ module memory
 
       θSim = fill(0.0::Float64, obsTheta.Nit, NiZ)
 		
-		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
 
 end  # module: memory 

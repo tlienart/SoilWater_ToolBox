@@ -11,10 +11,10 @@ module residual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RESIDUAL(discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, Q::Matrix{Float64}, Residual::Vector{Float64}, ΔHpond::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
 			if iZ==1
-				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
+				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 			end
 
-			Q[iT,iZ+1] = flux.Q!(option, discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
+			Q[iT,iZ+1] = flux.Q!(option, discret, hydro, iZ+1, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
 
 			θ[iT,iZ] = wrc.Ψ_2_θDual(option.hyPix, Ψ[iT,iZ], iZ, hydro)
 
@@ -32,9 +32,9 @@ module residual
 		function RESIDUAL_DIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)
 
 			# Q[iT,iZ] format for ForwardDiff
-				Q₁ = flux.Q!(option, discret, hydro, iZ, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ_, Ψ▲)
+				Q₁ = flux.Q!(option, discret, hydro, iZ, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ_, Ψ▲)
 			# Q[iT,iZ+1] format for ForwardDiff
-				Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, NiZ, param, ΔHpond, ΔPr, ΔT, θ, Ψ▼, Ψ_)		
+				Q₂ = flux.Q!(option,  discret, hydro, iZ+1, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ▼, Ψ_)		
 			# θ[iT,iZ] format for ForwardDiff
 				θ₂ = wrc.Ψ_2_θDual(option.hyPix,Ψ_, iZ, hydro)
 

@@ -8,10 +8,10 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function GRAVITY(discret, iZ, option, param, ψ_, ψ▲)
 
-			∂ψ∂Z = ψ_- ψ▲ / discret.ΔZ_Aver[iZ]
+			∂ψ∂Z = (ψ_- ψ▲) / discret.ΔZ_Aver[iZ]
 
-			if (iZ ≥ 2) && (ψ_ ≤ param.hyPix.ψϱ) && (ψ▲ ≤ param.hyPix.ψϱ) && (∂ψ∂Z > -1.0) && option.hyPix.GravityCorection
-				return 0.0 
+			if (iZ ≥ 2) && (ψ_ ≤ param.hyPix.ψϱ) && (ψ▲ ≤ param.hyPix.ψϱ) && (-1.0 ≤ ∂ψ∂Z) && option.hyPix.GravityCorection
+				return 0.0
 			else
 				return  1.0
 			end
@@ -49,7 +49,7 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Q
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, NiZ::Int64, param, ΔHpond, ΔPr, ΔT, θ, ψ_, ψ▲)
+		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, NiZ::Int64, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, ψ_, ψ▲)
 			if iZ == 1  # <>=<>=<>=<>=<>
 				if option.hyPix.TopBoundary⍰  == "Flux" 
 					return (ΔPr[iT] + ΔHpond[iT-1] - ΔHpond[iT]) / ΔT[iT]

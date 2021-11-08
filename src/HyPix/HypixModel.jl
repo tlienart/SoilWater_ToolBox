@@ -11,7 +11,7 @@ module hypixModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -53,7 +53,7 @@ module hypixModel
 			end  # for iZ=1:NiZ
 
 		# ADAPTIVETIMESTEP
-			ΔΨmax = timeStep.ΔΨMAX(hydro, NiZ, option, param, ΔΨmax)
+			ΔLnΨmax = timeStep.ΔΨMAX!(hydro, NiZ, option, param, ΔLnΨmax)
 
 		# FIRST TIME STEP
          Flag_NoConverge        = false::Bool
@@ -125,7 +125,7 @@ module hypixModel
 		while true # this controles the time loop
 
 			# INCREASING OR DECREASING THE TIME STEP
-				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), NiZ, option, param, Q, ΔΨmax, ΔSink, ΔT, θ, Ψ)
+				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), NiZ, option, param, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
 
 				if FlagContinueLoop == false
 					iT = iT - 1
@@ -170,7 +170,7 @@ module hypixModel
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, option)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, ΔHpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, ΔHpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, option)
 				
 			# SPECIAL BOUNDARY CONDITIONS
 				if option.hyPix.TopBoundary⍰ == "Ψ"
