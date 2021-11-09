@@ -101,14 +101,13 @@ module timeStep
 				for iZ = 1:NiZ-1
 
 					if abs(Ψ[iT,iZ] - Ψ[iT,iZ+1]) ≥ 1.0
-
 						if option.hyPix.AdaptiveTimeStep⍰ == "ΔΨ" # <>=<>=<>=<>=<>
 							Δθ₂_Max = ΔθMAX(hydro, iT, iZ, option, ΔLnΨmax, Ψ)	
 						end # option.hyPix.AdaptiveTimeStep⍰ ==:ΔΨ
 					
 						ΔT₂_New = (discret.ΔZ[iZ] * Δθ₂_Max + ΔSink[iT,iZ]) / (abs(Q[iT,iZ] - Q[iT,iZ+1]))
 
-						ΔT₂_New = min( max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
+						ΔT₂_New = min(max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
 		
 						if option.hyPix.NormMin⍰ == "Norm"
 							ΔT_New_Norm += ΔT₂_New ^ 2
@@ -134,6 +133,9 @@ module timeStep
 					ΔT₂_New = param.hyPix.ΔT_Max
 				end
 			end	
+
+			ΔT₂_New = min(max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
+
 		return ΔT₂_New, Δθ₂_Max
 		end # function ADAPTIVE_TIMESTEP
 
