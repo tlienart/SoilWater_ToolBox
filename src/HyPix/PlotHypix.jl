@@ -221,7 +221,7 @@ module plotHypix
 						
 					end
 
-					Leg = Legend(Fig[2,1], Ax1, framevisible=true, orientation=:horizontal, tellheight=true, nbanks=2, framecolor = (:grey,0.5), bgcolor = (:grey90, 0.25), labelsize=14)
+					Leg = Legend(Fig[2,1], Ax1, framevisible=true, orientation=:horizontal, tellheight=true, nbanks=2, framecolor = (:grey,0.5), labelsize=14)
 			
 					trim!(Fig.layout)
 
@@ -231,13 +231,16 @@ module plotHypix
 
 
 			return nothing
-			end  # function: θPROFILE(∑T_Reduced, discret, obsTheta, option, param, θ_Reduced)
+			end  # function: θPROFILE
 			# ------------------------------------------------------------------
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+
+				# OPTIONS
+					Option_θobs = false
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
@@ -254,49 +257,56 @@ module plotHypix
 					DateTick2= Dates.format.(DateTick, "d u Y")
 				
 				# PLOTTING
-					Fig = Figure(backgroundcolor=RGBf0(0.98, 0.98, 0.98),  font="Sans", titlesize=40, fontsize=16, xlabelsize=24, ylabelsize=24, resolution = (3000, 2500))
+				# , resolution = (3000, 2500)
+					Fig = Figure( font="Sans", titlesize=40, fontsize=16, xlabelsize=24, ylabelsize=24)
 				# Plot Climate	
 				iSubplot = 0
 				if option.hyPix.Plot_Climate
 					iSubplot += 1
-					Axis1 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix,  ylabel= L"Simulation [mm]", rightspinevisible = false)
-							
+					Axis1 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix,  ylabel= L"$\Delta Fluxes$ $[mm$ $day ^{-1}]$", rightspinevisible = false)
 
-					# Axis1.xticks = (DateTick, string.(DateTick2))
-					# Axis.xticklabelrotation = π/4
+					hidexdecorations!(Axis1, ticks=false, grid=false)
+										
+					Label1=L"$\Delta PrThrough$"
+					Plot_Climate1 = barplot!(Axis1,  ∑T_Reduced[1:Nit_Reduced], ΔPrGross_Reduced[1:Nit_Reduced], strokecolor=:cyan, strokewidth=1.5, color=:cyan)
 					
+					Label2= L" $\Delta Pr$"
+					Plot_Climate2 = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], strokecolor=:blue, strokewidth=1, color=:blue)
 					
-					Plot_Climate = barplot!(Axis1,  ∑T_Reduced[1:Nit_Reduced], ΔPrGross_Reduced[1:Nit_Reduced], strokecolor=:cyan, strokewidth=1.5, color=:cyan, label=L"$ \ PrThrough$")
-					
-					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], strokecolor=:blue, strokewidth=1, color=:blue, label= L"$\Delta \ Pr$")
-					
-					Plot_Climate = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], strokecolor=:grey, strokewidth=1, colour=:grey, label=L"$\Delta Hpond$")
+					Label3=L"$\Delta Hpond$"
+					Plot_Climate3 = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], strokecolor=:grey, strokewidth=1, colour=:grey)
 
 					# ===
-					Axis2  = Axis(Fig[iSubplot, 1], yticklabelcolor = :darkgreen, yaxisposition = :right, rightspinecolor = :green, ytickcolor = :darkgreen)
+					Axis2  = Axis(Fig[iSubplot, 1], yticklabelcolor=:black, yaxisposition = :right, rightspinecolor = :black, ytickcolor=:black, ylabel= L"$\Delta EvapoTransp$ $[mm$ $day ^{-1}]$")
 
-					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔPet_Reduced[1:Nit_Reduced], linewidth=2, colour=:darkgreen, label=L"$\Delta Pet$")
+					hidexdecorations!(Axis2, ticks=false, grid=false)
 
-					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔSink_Reduced[1:Nit_Reduced], linewidth=2, colour=:red, label=L"$\Delta Sink$")
+					Label4 =L"$\Delta Pet$"
+					Plot_Climate4 = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔPet_Reduced[1:Nit_Reduced], linewidth=2, colour=:darkgreen)
 
-					Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔEvaporation_Reduced[1:Nit_Reduced], linewidth=2, colour=:purple4, label=L"$\Delta Evap$")
+					Label5 = L"$\Delta Sink$"
+					Plot_Climate5 = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔSink_Reduced[1:Nit_Reduced], linewidth=2, colour=:red)
+
+					Label6=L"$\Delta Evap$"
+					Plot_Climate6 = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], ΔEvaporation_Reduced[1:Nit_Reduced], linewidth=2, colour=:purple4)
 
 					# Plot_Climate = lines!(Axis2, ∑T_Reduced[1:Nit_Reduced], (ΔSink_Reduced[1:Nit_Reduced].-ΔEvaporation_Reduced[1:Nit_Reduced]), colour=:blue, label=L"$\Delta Rwu$")
 					
 					# ==
-					iSubplot += 1
-					Fig[iSubplot, 1] = Legend(Fig, Axis1, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:left, valigns=:bottom)
-
-					Fig[iSubplot, 1] = Legend(Fig, Axis2, "PET", framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:right, valigns=:bottom)
+										
 					trim!(Fig.layout)
 
+					iSubplot += 1
+					Axis3  = Axis(Fig[iSubplot, 1], ylabel= L"$\Delta Q$ $[mm$ $day ^{-1}]$")
+					hidexdecorations!(Axis3, ticks=false, grid=false)
+					Plot_Climate7 = barplot!(Axis3, ∑T_Reduced[1:Nit_Reduced], -ΔQ_Reduced[1:Nit_Reduced, NiZ+1], strokecolor=:red, strokewidth=1, color=:red)
 
 					iSubplot += 1
-					Axis3  = Axis(Fig[iSubplot, 1], ylabel= L"Recharge [mm day ^{-1}]")
-					Plot_Climate = barplot!(Axis3, ∑T_Reduced[1:Nit_Reduced], -ΔQ_Reduced[1:Nit_Reduced, NiZ+1], strokecolor=:red, strokewidth=1, color=:red, label=L"$\Delta Q$")
+
+					Legend(Fig[1:2,2], [Plot_Climate1, Plot_Climate2, Plot_Climate3, Plot_Climate4, Plot_Climate5, Plot_Climate6], [Label1, Label2, Label3, Label4, Label5, Label6], framevisible=true, orientation=:vertical, tellwidth = false, tellheight = true)
 
 					iSubplot += 1
-					Fig[iSubplot, 1] = Legend(Fig, Axis3, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:left, valigns=:bottom)
+
 					trim!(Fig.layout)
 				end # if: option.hyPix.Plot_Climate
 
@@ -306,16 +316,41 @@ module plotHypix
 					Style_Hypix = [:red, :darkviolet, :orange, :teal, :blue]
 					
 					iSubplot += 1
-					Axis4 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix, xlabel="Date", ylabel=L"$\theta \ [mm^3 \ mm^{-3}]$")
+					Axis4 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix, ylabel=L"$\theta$ $[mm^3 mm^{-3}]$")
+
+					# Putting a monthly dates
+						Ndates = length(∑T_Reduced)
+
+						Ndates_Reduced = floor(Int, ∑T_Reduced[Ndates] / (30 * param.hyPix.ΔT_Output)) + 1
+						Date_Reduced2 = fill(Date_Reduced[1], Ndates_Reduced)
+						∑T_Reduced2 = fill(0, Ndates_Reduced)
+
+					iGood = 1
+					for i=1:length(∑T_Reduced)
+
+						if ∑T_Reduced[i] % (30 * param.hyPix.ΔT_Output) == 0
+							∑T_Reduced2[iGood] = ∑T_Reduced[i]	
+							Date_Reduced2[iGood] = Date_Reduced[i]
+
+							println(∑T_Reduced2[iGood] )
+							iGood += 1
+						end
+					end
+
+					# DateNewFormat = string.(Dates.format.(Date_Reduced2, "d u Y"))
+					Axis4.xticks = (∑T_Reduced2, string.(∑T_Reduced2))
+					Axis4.xticklabelrotation = π/4
 
 					# Observation θplot obs
 					for iZobs = 1:obsTheta.Ndepth
 						# lABEL
 							Label_Obs = "Obs=" * string(Int(floor(obsTheta.Z[iZobs]))) * "mm"
 
-							Label_Sim = "Sim=" * string(Int(floor((discret.Znode[obsTheta.ithetaObs[iZobs]])))) * "mm"
+							Label_Sim = "θ" * string(Int(floor((discret.Znode[obsTheta.ithetaObs[iZobs]])))) * "mm"
 
-							Plot_θ = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], linewidth=5, colour=Style_Hypix[iZobs], label=Label_Obs)
+							if Option_θobs
+								Plot_θ = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], linewidth=5, colour=Style_Hypix[iZobs], label=Label_Obs)
+							end
 
 
 							Plot_θ = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=3, colour=Style_Hypix[iZobs], label=Label_Sim)
@@ -324,13 +359,15 @@ module plotHypix
 					iSubplot += 1
 					Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:center, valigns=:bottom)
 
+					colgap!(Fig.layout, 10)
+					rowgap!(Fig.layout, 10)
 					trim!(Fig.layout)
 
 
 						# Plot = plot(Plot, Plot_θ, Plot_Climate, xmin=Date_Reduced[1], xmax=Date_Reduced[Nit_Reduced], ymin=0.0, xtick=(DateTick,DateTick2), xrotation=rad2deg(pi/4), framestyle=:box, grid=true)
 
 				end # if: option.hyPix.Plot_θ
-				
+				display(Fig)
 				save(Path, Fig)
 				println("			 ~ ", Path, "~")
 			

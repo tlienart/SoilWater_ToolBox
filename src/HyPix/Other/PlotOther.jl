@@ -1,0 +1,211 @@
+# =============================================================
+#		module: plotOther
+# =============================================================
+module plotOther
+
+	import ..hydroStruct, ..hydroRelation, ..wrc, ..timeStep
+
+	using CairoMakie
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : PLOT_θψ
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function PLOT_θΨ_Δθ(hydro, pathHyPix, param, option)
+		N_Se = 100
+
+		optionₘ = option.hyPix
+
+		hydroHorizon₂ = hydroStruct.HYDROSTRUCT(optionₘ, 1)
+		
+		hydroHorizon₂.θs[1] = 0.5
+		hydroHorizon₂.θsMacMat[1] = 0.5
+		hydroHorizon₂.θr[1] = 0.00
+		hydroHorizon₂.σ[1] = 2.0
+		hydroHorizon₂.Ψm[1] = hydroRelation.σ_2_Ψm(hydroHorizon₂.σ[1], param.hydro.kg.Ψσ,  hydro.Ψm_Min[1],  hydro.Ψm_Max[1])
+		hydroHorizon₂.ΨmMac[1] = 100.0
+		hydroHorizon₂.σMac[1] = 2.0
+
+		# Feasible range 
+			Ψ_Max= exp(16.0)
+			Ψ_Min= exp(2.0)
+
+		# Plotting the curve
+			Ψplot = exp.(range(log(Ψ_Min), stop=log(Ψ_Max), length=N_Se)) 
+			θplot = fill(0.0::Float64, N_Se)
+			for iΨ = 1:N_Se
+				θplot[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψplot[iΨ], 1, hydroHorizon₂)			
+			end # for iΨ
+
+		# INITIALIZING PLOT
+			CairoMakie.activate!()
+			Makie.inline!(true)
+
+			# AX1
+			
+			Fig = Figure(resolution = (1000, 600))
+			
+			Title = L"Time-stepping: $\Delta \theta$"
+				Ax1 = Axis(Fig[1,1], title=Title, xlabel= L"ln $\psi$ $[mm]$", ylabel=  L"$\theta$ $[m^{3}  m^{-3}]$",  font="Computer Modern", titlesize=25, fontsize=16, xlabelsize=22, ylabelsize=22 , xgridvisible=false, ygridvisible=false, ytickalign=0.1)
+
+				noto_sans_bold = assetpath("fonts", "NotoSans-Bold.ttf")
+				Label(Fig[1, 1, TopLeft()], "    (A)", textsize = 24, font = noto_sans_bold, padding = (0, 5, 5, 0), halign = :right)
+
+				xlims!(Ax1, log(Ψ_Min), log(Ψ_Max))
+				ylims!(Ax1, 0.0, hydroHorizon₂.θs[1])
+				Ax1.yticks=0:0.1:hydroHorizon₂.θs[1]
+
+				lines!(Ax1, log.(Ψplot), θplot, linewidth=2, color=:red)
+				# Plotting points on the curve
+					N_Δθ = 14
+					# Ψ_Δθ = fill(0.0::Float64, N_Δθ)
+					θ_Min = hydroHorizon₂.θr[1]
+					θ_Max = hydroHorizon₂.θs[1]
+					Δθ = range(hydroHorizon₂.θr[1], hydroHorizon₂.θs[1] , length=N_Δθ)
+
+					for iθ = 1:N_Δθ
+						Ψ_Δθ = wrc.θ_2_ΨDual(optionₘ, Δθ[iθ], 1, hydroHorizon₂)
+
+						scatter!(Ax1, [log(Ψ_Δθ),log(Ψ_Δθ)], [Δθ[iθ],Δθ[iθ]], markersize=10, color=:blue)
+						# scatter!(Ax1, [log(hydroHorizon₂.Ψm[1])], [0.5 * (hydroHorizon₂.θsMacMat[1]+hydroHorizon₂.θr[1])], markersize=20,  color=:red)
+						lines!(Ax1, [log(Ψ_Δθ), log(Ψ_Δθ)], [0.0, Δθ[iθ]], linestyle=:dash, linewidth=2, color=:grey)
+						lines!(Ax1, [log(Ψ_Min), log(Ψ_Δθ)], [Δθ[iθ], Δθ[iθ]], linestyle=:dash, linewidth=2, color=:grey)
+					end
+
+			# AX2 ============================================
+			Title = L"Time-stepping: $\Delta \Psi$"
+
+			Ax2 = Axis(Fig[1,2], title=Title, xlabel= L"ln $\psi$ $[mm]$",  font="Computer Modern", titlesize=25, fontsize=16, xlabelsize=22, ylabelsize=22 , xgridvisible=false, ygridvisible=false,  ytickalign=0.1)
+
+			noto_sans_bold = assetpath("fonts", "NotoSans-Bold.ttf")
+			Label(Fig[1, 2, TopLeft()], "(B)", textsize = 24, font = noto_sans_bold, padding = (5, 5, 5, 5), halign = :right)
+
+			xlims!(Ax2, log(Ψ_Min), log(Ψ_Max))
+			ylims!(Ax2, 0.0, hydroHorizon₂.θs[1])
+			Ax2.yticks=0:0.1:hydroHorizon₂.θs[1]
+
+			hideydecorations!(Ax2, ticks=false, grid=false)
+
+			lines!(Ax2, log.(Ψplot), θplot, linewidth=2, color=:red)
+
+			# ΔLnΨmax = fill(0.0: 1)
+			# ΔLnΨmax = timeStep.ΔΨMAX!(hydroHorizon₂, 1, option, param, ΔLnΨmax)
+
+			# timeStep.ΔθMAX(hydro, 1, 1, option, ΔLnΨmax, Ψ)
+			# Plotting points on the curve
+				N_Ψ = 14
+				Δθ = fill(0.0::Float64, N_Ψ)
+
+				ΔLogΨ = range(2.0, 16.0 , length=N_Ψ)
+				for iΨ = 1:N_Ψ
+					Ψ_Δθ = exp(ΔLogΨ[iΨ])
+
+					Δθ[iΨ] = wrc.Ψ_2_θDual(optionₘ, Ψ_Δθ, 1, hydroHorizon₂)
+
+					scatter!(Ax2, [log(Ψ_Δθ),log(Ψ_Δθ)], [Δθ[iΨ],Δθ[iΨ]], markersize=10,  color=:blue)
+					# scatter!(Ax2, [log(hydroHorizon₂.Ψm[1])], [0.5 * (hydroHorizon₂.θsMacMat[1]+hydroHorizon₂.θr[1])], marker = "x", markersize=15,  color=:red)
+					lines!(Ax2, [log(Ψ_Δθ), log(Ψ_Δθ)], [0.0, Δθ[iΨ]], linestyle=:dash, linewidth=2, color=:grey)
+					lines!(Ax2, [log(Ψ_Min), log(Ψ_Δθ)], [Δθ[iΨ], Δθ[iΨ]], linestyle=:dash, linewidth=2, color=:grey)
+				end
+
+			trim!(Fig.layout)
+			colgap!(Fig.layout, 1)
+			rowgap!(Fig.layout, 1)
+
+			save( pathHyPix.Plot_θΨ_Δθ, Fig)
+			println("			 ~ ", pathHyPix.Plot_θΨ_Δθ, "~")
+			display(Fig)
+
+			DRY_METHOD()
+	return nothing
+	end  # function: PLOT_θψ
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : name
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function DRY_METHOD()
+
+	σobs=	[0.767528364,
+				0.84759782,
+				1.154454689,
+				1.56910817,
+				1.959401769,
+				1.850609728,
+				1.554592632,
+				2.084719856,
+				2.436491598,
+				2.416681323,
+				3.24090118,
+				3.253171388]
+
+	Ψwet_Obs =	[26,
+				23,
+				23,
+				21,
+				17,
+				18,
+				9,
+				8,
+				5,
+				2,
+				0.01,
+				0.01]	
+
+	Ψdry_Obs = [2090,
+				3550,
+				8010,
+				18650,
+				35270,
+				29420,
+				15770,
+				28230,
+				34260,
+				24410,
+				19490,
+				20750]
+
+
+		N = 100
+		σmat = range(0.8, 4, length=N)
+
+		Ψwet = fill(0.0, N)
+		Ψdry =  fill(0.0, N)
+
+		for  (i , σ) in enumerate(σmat)
+
+			# Ψwet[i] = max(3.5391 * σ^3 - 20.676 *σ^2 + 24.835 * σ + 15.976, 0.0001)
+			Ψwet[i] = max(-18.37*log(σ) + 23.046, 0.01)
+
+			Ψdry[i] = exp( 1.6216 * log(σ) + 8.7268 )
+		end
+
+		# INITIALIZING PLOT
+			CairoMakie.activate!()
+			Makie.inline!(true)
+
+			Fig = Figure(resolution = (1000, 600))
+
+			Ax1 = Axis(Fig[1,1], xlabel= L"$\sigma$ $[-]$", ylabel=  L"$\Psi$ $[mm]$",  font="Computer Modern", titlesize=25, fontsize=16, xlabelsize=22, ylabelsize=22 , xgridvisible=false, ygridvisible=false, yscale = log10, yminorticksvisible = true, yminorgridvisible = true,
+			yminorticks = IntervalsBetween(10))
+
+			Ax1.yticks=[10^0, 10^1, 10^2,10^3,10^4,10^5]
+
+			lines!(Ax1, σmat, Ψwet, linewidth=3, color=:blue, label = L"\Psi _{wet} Model")
+			lines!(Ax1, σmat, Ψdry, linewidth=3, color=:red, label = L"\Psi _{dry} Model")
+			scatter!(Ax1, σobs, Ψwet_Obs, markersize=10, color=:blue, label = L"\Psi _{wet} Zhu")
+			scatter!(Ax1, σobs, Ψdry_Obs, markersize=10, color=:red, label = L"\Psi _{dry} Zhu")
+
+			Leg = Legend(Fig[2,1], Ax1, framevisible=true, orientation=:horizontal, tellheight=true, nbanks=1, framecolor = (:grey,0.5), labelsize=14)
+
+			trim!(Fig.layout)
+
+			display(Fig)
+			save( "D:/Main/MODELS/SoilWater_ToolBox/data/OUTPUT/Hypix/RESULTS/Zhu_DryMethod.svg", Fig)
+
+		
+	return nothing
+	end  # function: name
+	# ------------------------------------------------------------------
+	
+end  # module: plotOther
+# ............................................................

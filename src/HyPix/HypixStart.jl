@@ -1,6 +1,7 @@
 # =============================================================
 #		MODULE: hydro
 	# =============================================================
+
 	include("Interpolate.jl")
 	include("Opt/ThetaObs.jl")
 	include("θini.jl")
@@ -23,9 +24,11 @@
 	include("PlotHypix.jl")
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
+	include("Other/PlotOther.jl")
+
 
 module hypixStart
-	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
+	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..plotOther
 	import Statistics: mean
 	import Dates: now, value
 	export HYPIX_START
@@ -38,7 +41,7 @@ module hypixStart
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+		
 		# If no optimize
 			if !(option.hyPix.Optimisation)
 				param.hyPix.iOpt_Start = 1
@@ -300,6 +303,7 @@ module hypixStart
 			println("		=== === START: Plotting === ===")
 
 				# if option.hyPix.Plot_Other
+				# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix, param, option)
 				# 	# plotOther.ΨMINΨMAX(hydro, path.hyPix)
 				# 	plotOther.WOF_STEPS(path.hyPix)
 				# 	# plotOther.SE_Ψ_CONSTRAINED(hydro, path.hyPix)
