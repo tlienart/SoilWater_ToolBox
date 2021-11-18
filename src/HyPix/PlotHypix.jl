@@ -239,6 +239,8 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
+				# DAYS PLOT
+					ΔDays = 60
 				# OPTIONS
 					Option_θobs = false
 
@@ -258,7 +260,7 @@ module plotHypix
 				
 				# PLOTTING
 				# , resolution = (3000, 2500)
-					Fig = Figure( font="Sans", titlesize=40, fontsize=16, xlabelsize=24, ylabelsize=24)
+					Fig = Figure( font="Sans", titlesize=40, fontsize=16, xlabelsize=24, ylabelsize=18)
 				# Plot Climate	
 				iSubplot = 0
 				if option.hyPix.Plot_Climate
@@ -266,12 +268,12 @@ module plotHypix
 					Axis1 = Axis(Fig[iSubplot,1], title=pathHyPix.IdName_Hypix,  ylabel= L"$\Delta Fluxes$ $[mm$ $day ^{-1}]$", rightspinevisible = false)
 
 					hidexdecorations!(Axis1, ticks=false, grid=false)
-										
-					Label1=L"$\Delta PrThrough$"
-					Plot_Climate1 = barplot!(Axis1,  ∑T_Reduced[1:Nit_Reduced], ΔPrGross_Reduced[1:Nit_Reduced], strokecolor=:cyan, strokewidth=1.5, color=:cyan)
+						
+					Label1= L" $\Delta Pr$"
+					Plot_Climate1 = barplot!(Axis1,  ∑T_Reduced[1:Nit_Reduced], ΔPrGross_Reduced[1:Nit_Reduced], strokecolor=:blue, strokewidth=1.5, color=:blue)
 					
-					Label2= L" $\Delta Pr$"
-					Plot_Climate2 = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], strokecolor=:blue, strokewidth=1, color=:blue)
+					Label2=L"$\Delta PrThrough$"					
+					Plot_Climate2 = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], strokecolor=:cyan, strokewidth=1, color=:cyan)
 					
 					Label3=L"$\Delta Hpond$"
 					Plot_Climate3 = barplot!(Axis1, ∑T_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], strokecolor=:grey, strokewidth=1, colour=:grey)
@@ -321,24 +323,24 @@ module plotHypix
 					# Putting a monthly dates
 						Ndates = length(∑T_Reduced)
 
-						Ndates_Reduced = floor(Int, ∑T_Reduced[Ndates] / (30 * param.hyPix.ΔT_Output)) + 1
+						Ndates_Reduced = floor(Int, ∑T_Reduced[Ndates] / (ΔDays * param.hyPix.ΔT_Output)) + 1
 						Date_Reduced2 = fill(Date_Reduced[1], Ndates_Reduced)
+						Date_Reduced3 = fill("", Ndates_Reduced)
 						∑T_Reduced2 = fill(0, Ndates_Reduced)
 
 					iGood = 1
 					for i=1:length(∑T_Reduced)
 
-						if ∑T_Reduced[i] % (30 * param.hyPix.ΔT_Output) == 0
+						if ∑T_Reduced[i] % (ΔDays * param.hyPix.ΔT_Output) == 0
 							∑T_Reduced2[iGood] = ∑T_Reduced[i]	
 							Date_Reduced2[iGood] = Date_Reduced[i]
-
-							println(∑T_Reduced2[iGood] )
+							Date_Reduced3[iGood]= Dates.format(Date_Reduced2[iGood], "d u Y")
 							iGood += 1
 						end
 					end
 
 					# DateNewFormat = string.(Dates.format.(Date_Reduced2, "d u Y"))
-					Axis4.xticks = (∑T_Reduced2, string.(∑T_Reduced2))
+					Axis4.xticks = (∑T_Reduced2[1:iGood],string.(Date_Reduced3[1:iGood]))
 					Axis4.xticklabelrotation = π/4
 
 					# Observation θplot obs
@@ -357,10 +359,10 @@ module plotHypix
 					end # loop
 
 					iSubplot += 1
-					Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = false, haligns=:center, valigns=:bottom)
+					Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellheight=true, tellwidth = true, haligns=:center, valigns=:bottom)
 
-					colgap!(Fig.layout, 10)
-					rowgap!(Fig.layout, 10)
+					colgap!(Fig.layout, 90)
+					rowgap!(Fig.layout, 5)
 					trim!(Fig.layout)
 
 

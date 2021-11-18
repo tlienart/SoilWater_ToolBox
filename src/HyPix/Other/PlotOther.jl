@@ -172,11 +172,9 @@ module plotOther
 		Ψdry =  fill(0.0, N)
 
 		for  (i , σ) in enumerate(σmat)
+			Ψwet[i] =  max(-2.3116 * σ ^ 2.0 - 2.9372 * σ + 27.83, 0.0)
 
-			# Ψwet[i] = max(3.5391 * σ^3 - 20.676 *σ^2 + 24.835 * σ + 15.976, 0.0001)
-			Ψwet[i] = max(-18.37*log(σ) + 23.046, 0.01)
-
-			Ψdry[i] = exp( 1.6216 * log(σ) + 8.7268 )
+			Ψdry[i] = exp(1.6216 * log(σ) + 8.7268)
 		end
 
 		# INITIALIZING PLOT
@@ -188,7 +186,8 @@ module plotOther
 			Ax1 = Axis(Fig[1,1], xlabel= L"$\sigma$ $[-]$", ylabel=  L"$\Psi$ $[mm]$",  font="Computer Modern", titlesize=25, fontsize=16, xlabelsize=22, ylabelsize=22 , xgridvisible=false, ygridvisible=false, yscale = log10, yminorticksvisible = true, yminorgridvisible = true,
 			yminorticks = IntervalsBetween(10))
 
-			Ax1.yticks=[10^0, 10^1, 10^2,10^3,10^4,10^5]
+			Ax1.yticks=[0, 1, 100,1000,10000,100000]
+			Ax1.yscale = Makie.pseudolog10
 
 			lines!(Ax1, σmat, Ψwet, linewidth=3, color=:blue, label = L"\Psi _{wet} Model")
 			lines!(Ax1, σmat, Ψdry, linewidth=3, color=:red, label = L"\Psi _{dry} Model")

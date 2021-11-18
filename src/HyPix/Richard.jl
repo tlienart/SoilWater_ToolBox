@@ -260,9 +260,10 @@ module richard
 			function ZHA_WETING_DRYSOIL(hydro, iT, iZ, option, θ, θ₀, Ψ, Ψ₀)
 				# Ψwet = max( 3.5391 * hydro.σ[iZ]^3 - 20.676 * hydro.σ[iZ]^2 + 24.835 * hydro.σ[iZ] + 15.976, 0.0 )
 
-				Ψwet = max(-18.37 * log(hydro.σ[iZ]) + 23.046, 0.0)
+				Ψwet = max(-2.3116 * hydro.σ[iZ] ^ 2.0 - 2.9372 * hydro.σ[iZ] + 27.83, 0.0)
 
-				Ψdry = exp( 1.6216 * log(hydro.σ[iZ]) + 8.7268 )
+				# Ψdry = exp( 1.6216 * log(hydro.σ[iZ]) + 8.7268 )
+				Ψdry = exp(1.6216 * log(hydro.σ[iZ]) + 8.7268)
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
 				if Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry
