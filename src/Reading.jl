@@ -149,7 +149,7 @@ module reading
 					Data = sortslices(Data, dims=1, by=x->(x[1],x[2]), rev=false)
 
 				# Determeining if data has only 3 columns: Id, H and Theta
-				if length(Header) ≤ 4
+				if length(Header) ≤ 6
 					# Get the data of interest
 						Ψ_θΨobs, N_θΨobs  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "H[mm]", NiZ)
 				

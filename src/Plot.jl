@@ -69,13 +69,20 @@ module plot
 						Yticks = 1:1:6
 						Axis2.yticks = (Yticks,string.(Yticks))
 
-						Fig_Kθobs = scatter!(Fig[1,2], log1p.(Ψ_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.Mm_2_kPa), log1p.(K_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.MmS_2_MmH), color=:red, markersize=25, marker = '■')
+						if option.data.Kθ
+							Fig_Kθobs = scatter!(Fig[1,2], log1p.(Ψ_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.Mm_2_kPa), log1p.(K_KΨobs[iZ,1:N_KΨobs[iZ]].*cst.MmS_2_MmH), color=:red, markersize=25, marker = '■')
+						end
 
 						Fig_Kθsim = lines!(Fig[1,2], log1p.(Ψ_Sim[1:N_Se].*cst.Mm_2_kPa), log1p.(Kunsat_Sim[1:N_Se] .* cst.MmS_2_MmH), color=:blue, linewidth=3)
 
 						Fig_Ks = scatter!(Fig[1,2], [log1p.(cst.Mm_2_kPa .* 0.0)], [log1p(hydro.Ks[iZ] * cst.cst.MmS_2_MmH)], color=:green, markersize=25, marker ='●')
 
-					Leg = Fig[1, end+1] = Legend(Fig, [Fig_θΨobs, Fig_θΨsim, Fig_TotalPorosity, Fig_Kθobs, Fig_Kθsim, Fig_Ks], ["θobs(Ψ)", "θsim(Ψ)", "Φ", "Kobs(Ψ)", "Ksim(Ψ)", "Ksₛᵢₘ"])
+
+						if option.data.Kθ
+							Leg = Fig[1, end+1] = Legend(Fig, [Fig_θΨobs, Fig_θΨsim, Fig_TotalPorosity, Fig_Kθobs, Fig_Kθsim, Fig_Ks], ["θobs(Ψ)", "θsim(Ψ)", "Φ", "Kobs(Ψ)", "Ksim(Ψ)", "Ksₛᵢₘ"])
+						else
+							Leg = Fig[1, end+1] = Legend(Fig, [Fig_θΨobs, Fig_θΨsim, Fig_TotalPorosity, Fig_Kθsim, Fig_Ks], ["θobs(Ψ)", "θsim(Ψ)", "Φ", "Ksim(Ψ)", "Ksₛᵢₘ"])
+						end
 
 					Fig[2, 1:2] = Leg
 					trim!(Fig.layout)

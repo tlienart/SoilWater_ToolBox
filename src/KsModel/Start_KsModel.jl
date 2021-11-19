@@ -33,7 +33,7 @@ module startKsModel
 
 						ksmodelτ = STATISTICS_KSMODEL(hydro, iGroup_Opt, GroupBool_Select, KₛModel, ksmodelτ, optimKsmodel)
 
-						if option.other.Ploting
+						if option.other.Ploting && option.ksModel.Plot_KsModel
 							NameSim = "σ_" * string(iGroup_Opt)
 
 							plot.ksmodel.KSMODEL(hydro, KₛModel[GroupBool_Select], hydro.Ks[GroupBool_Select], NameSim, path.plotSoilwater.Plot_KsModel, hydro.θr[GroupBool_Select], hydro.θsMacMat[GroupBool_Select], hydro.σ[GroupBool_Select])
