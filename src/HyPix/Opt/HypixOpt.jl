@@ -84,7 +84,8 @@ module hypixOpt
 				ParamOpt_Max₂[iψm] = 1.0
 			end # option.hyPix.σ_2_Ψm⍰==:Constrained
 
-			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt ≠ "No")
+      # "θs_Opt⍰"                 = "No" #  <θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
+			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ ≠ "No")
 				iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
 
 				ParamOpt_Min₂[iθs] = 0.0

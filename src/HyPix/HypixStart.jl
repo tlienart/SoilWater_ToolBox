@@ -245,7 +245,7 @@ module hypixStart
 				RmseBest[iOpt_Count] = stats.NSE(θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced])
 
 			elseif !(option.hyPix.θobs_Average) && option.hyPix.θobs
-				# RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
+				RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
 				θsim_Aver = []
 				
 			end

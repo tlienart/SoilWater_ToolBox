@@ -18,7 +18,7 @@ module ofHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function WOF_θ(∑T, Nit::Int, NiZ::Int, obsTheta, param, ΔHpond, θ, θSim; θobs_Uncert=param.hyPix.obsTheta.θobs_Uncert)
 
-			θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], obsTheta.Nit, Nit, NiZ, θSim, θ)
+			θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], Nit, NiZ, θSim, θ)
 			
 			Wof = 0.0
 			iCount = 0
@@ -72,8 +72,6 @@ module ofHypix
 
 
 				θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], Nit, NiZ, θSim, θ)
-
-				println(θSim)
 				
 				Rmse = 0.0
 				iCount = 0

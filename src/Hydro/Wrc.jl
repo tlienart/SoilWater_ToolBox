@@ -9,8 +9,9 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θ_2_Se(θ₂, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr = hydroParam.θr[iZ])
 			Se = (θ₂ - θr) / (θs - θr)
-			return Se = max( min(Se, 1.0), 0.0)
+			return max( min(Se, 1.0), 0.0)
 		end # function θ_2_Se
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +19,9 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Se_2_θ(Se, iZ::Int64, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ])
 			θ₂ = Se * (θs - θr) + θr
-			return θ₂ = max( min(θ₂, θs), θr)
+			return max(min(θ₂, θs), θr)
 		end # function Se_2_θ`
+	#-----------------------------------------------------------------
 
 		
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,19 +29,20 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_θDual(optionₘ, Ψ₁, iZ, hydroParam)
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return θ₂ = wrc.kg. Ψ_2_θDual(optionₘ,Ψ₁, iZ::Int64, hydroParam)
+				return wrc.kg. Ψ_2_θDual(optionₘ,Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
-				return θ₂ = wrc.vg.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.vg.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "VangenuchtenJules"
-				return θ₂ = wrc.vgJules.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.vgJules.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "BrooksCorey"
-				return θ₂ = wrc.bc.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.bc.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "ClappHornberger"
-				return θ₂ = wrc.ch.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.ch.Ψ_2_θ(Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for Ψ_2_θDual is not yet available")
 			end
 		end # function Ψ_2_θDual
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,37 +50,39 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return Se = wrc.kg.Ψ_2_SeDual(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+				return wrc.kg.Ψ_2_SeDual(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
-				return Se = wrc.vg.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.vg.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "VangenuchtenJules"
-				return θ₂ = wrc.vgJules.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.vgJules.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "BrooksCorey"
-				return Se = wrc.bc.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.bc.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "ClappHornberger"
-				return Se = wrc.ch.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
+				return wrc.ch.Ψ_2_Se(Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for Ψ_2_SeDual is not yet available")
 			end # function Ψ_2_θDual
 		end
-
+	#-----------------------------------------------------------------
 		
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θ_2_ΨDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function θ_2_ΨDual(optionₘ, θ₁, iZ, hydroParam)
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return Ψ₁ = wrc.kg.θ_2_ΨDual(optionₘ, θ₁, iZ, hydroParam)
+				return wrc.kg.θ_2_ΨDual(optionₘ, θ₁, iZ, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
-				return Ψ₁ = wrc.vg.θ_2_Ψ(θ₁, iZ, hydroParam)
+				return wrc.vg.θ_2_Ψ(θ₁, iZ, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "BrooksCorey"
-				return Ψ₁ = wrc.bc.θ_2_Ψ(θ₁, iZ, hydroParam)
+				return wrc.bc.θ_2_Ψ(θ₁, iZ, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "ClappHornberger"
-				return Ψ₁ = wrc.ch.θ_2_Ψ(θ₁, iZ, hydroParam)
+				return wrc.ch.θ_2_Ψ(θ₁, iZ, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for θ_2_ΨDual is not yet available")
 			end # function θ_2_ΨDual
 		end
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,29 +90,31 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Se_2_ΨDual(optionₘ, Se₁, iZ, hydroParam)
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return Ψ₁ = wrc.kg.Se_2_ΨDual(optionₘ, Se₁, iZ, hydroParam)
+				return wrc.kg.Se_2_ΨDual(optionₘ, Se₁, iZ, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for Se_2_ΨDual is not yet available")
 			end # function Se_2_ΨDual
 		end
+	#-----------------------------------------------------------------
 
-		
+	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂θ∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)	
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return ∂θ∂Ψ = wrc.kg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+				return wrc.kg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
-				return ∂θ∂Ψ = wrc.vg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+				return wrc.vg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "BrooksCorey"
-				return ∂θ∂Ψ = wrc.bc.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+				return wrc.bc.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "ClappHornberger"
-				return ∂θ∂Ψ = wrc.ch.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+				return wrc.ch.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for ∂θ∂Ψ is not yet available")	
 			end
 		end # function ∂θ∂Ψ
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -115,11 +122,12 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Ψ∂θ(optionₘ, θ₁, iZ::Int64, hydroParam)	
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return ∂Ψ∂θ = wrc.kg.∂Ψ∂θ(optionₘ, θ₁, iZ::Int64, hydroParam)
+				return wrc.kg.∂Ψ∂θ(optionₘ, θ₁, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for ∂Ψ∂θ is not yet available")	
 			end
 		end # function ∂Ψ∂θ
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,11 +135,12 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)	
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return ∂Se∂Ψ = wrc.kg.∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+				return wrc.kg.∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for ∂Se∂Ψ is not yet available")	
 			end
 		end # function ∂Se∂Ψ
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,11 +148,12 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ∂Ψ∂Se(optionₘ, Se₁, iZ::Int64, hydroParam)	
 			if optionₘ.HydroModel⍰ == "Kosugi"
-				return ∂Se∂Ψ = wrc.kg.∂Ψ∂Se(optionₘ, Se₁, iZ::Int64, hydroParam)
+				return wrc.kg.∂Ψ∂Se(optionₘ, Se₁, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for ∂Ψ∂Se is not yet available")
 			end
 		end # function ∂Se∂Ψ
+	#-----------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,13 +161,15 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
 			if optionₘ.HydroModel⍰ == "BrooksCorey"
-				return Ψga = wrc.bc.GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
+				return  wrc.bc.GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "ClappHornberger"
-				return Ψga = wrc.ch.GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
+				return wrc.ch.GREEN_AMPT(optionₘ, iZ::Int64, hydroParam)
 			else
 				error("$(optionₘ.HydroModel⍰) model for GREEN_AMPT is not yet available")
 			end
 		end # function: GREEN_AMPT
+
+
 
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 	# <>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>
@@ -181,12 +193,12 @@ module wrc
 
 				if θs - θsMacMat > 0.001
 					θ_Mac = 0.5 * (θs - θsMacMat) * erfc((log(Ψ₁ / ΨmMac)) / (σMac * √2.0))
+					return θ_Mac + θ_Mat
 				else
-					θ_Mac = 0.0
+					return θ_Mat
 				end
-
-			return θ_Mac + θ_Mat
 			end # function Ψ_2_θDual
+		#-----------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -194,10 +206,11 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
-				θ₂ = Ψ_2_θDual(optionₘ,Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
+				θ₂ = Ψ_2_θDual(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
 			return wrc.θ_2_Se(θ₂, iZ::Int64, hydroParam)
 			end # function Ψ_2_SeDual
+		#-----------------------------------------------------------------
 	
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -207,16 +220,18 @@ module wrc
 
 				function Of(Ψ₁, iZ, hydroParam)
 					θmod = Ψ_2_θDual(optionₘ,Ψ₁, iZ, hydroParam)
-					return OF = (θ₂ - θmod) ^ 4.0
+				return OF = (θ₂ - θmod) ^ 4.0
 				end # Of
 
-				if θs == θsMacMat
-					Se = min((θ₂ - θr) / (θs - θr), 1.0 - eps(1000.0))
-					return Ψ₁ = Ψm * exp(erfcinv(2.0 * Se) * σ * √2.0)
+				if θs - θsMacMat > 0.001
+					Se = max( min((θ₂ - θr) / (θs - θr), 1.0) , 0.0)
+					Ψ₀ = Ψm * exp(erfcinv(2.0 * Se) * σ * √2.0)
 				else 
-					Optimization = Optim.optimize(Ψ₁ -> Of(10.0 ^ Ψ₁, iZ, hydroParam), log10(0.001), log10(100000000.0), Optim.GoldenSection())
-					return Ψ₁ = 10.0 ^ Optim.minimizer(Optimization)[1]
+					Optimization = Optim.optimize(Ψ₁ -> Of(10.0 ^ Ψ₁, iZ, hydroParam), log10(0.0001), log10(1.0E8), Optim.GoldenSection())
+					Ψ₀ = 10.0 ^ Optim.minimizer(Optimization)[1]
 				end
+
+			return min( max(Ψ₀, 0.0) , 1.0E8)
 			end # θ_2_ΨDual
 		#-------------------------------------------------------------------
 
@@ -227,7 +242,7 @@ module wrc
 			function Se_2_ΨDual(optionₘ, Se, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
 				θ₂ = wrc.Se_2_θ(Se, iZ, hydroParam)
-				return Ψ₁ = θ_2_ΨDual(optionₘ, θ₂, iZ, hydroParam)
+			return  θ_2_ΨDual(optionₘ, θ₂, iZ, hydroParam)
 			end # Se_2_ΨDual
 		#-------------------------------------------------------------------
 
@@ -237,12 +252,27 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂θ∂Ψ(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
+				if Ψ₁ < eps(1000.0)
+					Ψ₁ += eps(100.0)
+				end
+
 				# If Ψ₁ is positive than ∂θ∂Ψ_Mat should be positive
-				∂θ∂Ψ_Mat = - (θsMacMat - θr) * exp( -((log(Ψ₁ / Ψm)) ^ 2) / (2.0 * σ ^ 2)) / (Ψ₁ * σ * √(π * 2.0) + eps(1000.0))
+				∂θ∂Ψ_Mat = - (θsMacMat - θr) * exp( -((log(Ψ₁ / Ψm)) ^ 2.0) / (2.0 * σ^2.0)) / (Ψ₁ * σ * √(π * 2.0))
 
-				∂θ∂Ψ_Mac = - (θs - θsMacMat) * exp( -((log(Ψ₁ / ΨmMac)) ^ 2) / (2.0 * σMac^2)) / (Ψ₁ * σMac * √(π * 2.0) + eps(1000.0))
+				if θs - θsMacMat > 0.001
+					∂θ∂Ψ_Mac = - (θs - θsMacMat) * exp( -((log(Ψ₁ / ΨmMac)) ^ 2.0) / (2.0 * σMac^2.0)) / (Ψ₁ * σMac * √(π * 2.0))
+				else
+					∂θ∂Ψ_Mac = 0.0
+				end
 
-			return ∂θ∂Ψ_Mat + ∂θ∂Ψ_Mac
+				∂θ∂Ψ₀ = ∂θ∂Ψ_Mat + ∂θ∂Ψ_Mac
+
+				if isnan(∂θ∂Ψ₀)
+					println(" Ψ= $Ψ₁")
+					error("wrc.kg.∂θ∂Ψ = NaN")
+				else
+					return ∂θ∂Ψ₀
+				end
 			end # function ∂θ∂Ψ
 		#-------------------------------------------------------------------
 
@@ -258,6 +288,7 @@ module wrc
 
 			return Ψm_Mode, ∂θ∂Ψ_Mode
 			end # function ∂θ∂Ψ_Mode
+		#-------------------------------------------------------------------
 		
 
 		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -285,8 +316,15 @@ module wrc
 				θ₂[1] = θ₁
 				Func_∂Ψ∂θ_Numerical = θ₂ -> ForwardDiff.gradient(∂Ψ∂θ_Numerical, θ₂)
 
-			return Func_∂Ψ∂θ_Numerical(θ₂)[1]
+				∂Ψ∂θ₀ = Func_∂Ψ∂θ_Numerical(θ₂)[1]
+
+				if isnan(∂Ψ∂θ₀)
+					error("wrc.kg.∂Ψ∂θ = NaN")
+				else
+					return ∂Ψ∂θ₀
+				end
 			end # function ∂Ψ∂θ
+		#-------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -299,8 +337,15 @@ module wrc
 				Se₂[1] = Se₁
 				Func_∂Ψ∂Se_Numerical = Se₂ -> ForwardDiff.gradient(∂Ψ∂Se_Numerical, Se₂)
 
-			return Func_∂Ψ∂Se_Numerical(Se₂)[1]
+				∂Ψ∂Se₀ = Func_∂Ψ∂Se_Numerical(Se₂)[1]
+
+				if isnan(∂Ψ∂Se₀)
+					error("wrc.kg.∂Ψ∂Se = NaN")
+				else
+					return ∂Ψ∂Se₀
+				end
 			end # function ∂Se∂Ψ
+		#-------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -314,7 +359,13 @@ module wrc
 				ψ[1] = Ψ₁
 				Func_∂Ψ∂Se_Numerical = ψ -> ForwardDiff.gradient(∂Ψ∂Se_Numerical, ψ)
 
-			return Func_∂Ψ∂Se_Numerical(ψ)[1]
+				∂Se∂Ψ₀ = Func_∂Ψ∂Se_Numerical(ψ)[1]
+
+				if isnan(∂Se∂Ψ₀)
+					error("wrc.kg.∂Se∂Ψ₀ = NaN")
+				else
+					return ∂Se∂Ψ₀
+				end
 			end # function ∂Ψ∂Se
 
 	end # module kg # ...............................................

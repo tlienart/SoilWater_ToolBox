@@ -95,7 +95,8 @@ module richard
 			# ∂R∂Ψ▽2 = fill(0.0, NiZ)
 			# ∂R∂Ψ△2 =  fill(0.0, NiZ)
 
-			for iZ=1:NiZ		
+			for iZ=1:NiZ
+
 				Q, Residual, θ = residual.RESIDUAL(discret, hydro, iT, iZ, NiZ, option, param, Q, Residual, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
 				if option.hyPix.∂R∂Ψ_Numerical
@@ -157,13 +158,51 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SOLVING_TRIAGONAL_MATRIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 	This issue arises because the special-case method for inverting tridiagonals (inv_usmani) has no scaling protection. Using the factorization instead
+
+# lu(A90) \ Matrix(1.0I,size(A90))
+# gives a good result via a stable banded scheme (faster than working with a full matrix).
+
+# Furthermore, inv_usmani is currently type-unstable, so it takes much longer.
 		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, option, param, Residual, ΔLnΨmax, θ, Ψ)
+
+			if maximum(isnan.(∂R∂Ψ△[2:NiZ]))
+				println(∂R∂Ψ△[2:NiZ])
+				error("∂R∂Ψ△")
+			end
+
+			if maximum(isnan.(∂R∂Ψ[1:NiZ]))
+				println(∂R∂Ψ[1:NiZ])
+				error("∂R∂Ψ")
+			end
+
+			if maximum(isnan.(∂R∂Ψ▽[1:NiZ-1]))
+				println(∂R∂Ψ▽[2:NiZ])
+				error("∂R∂Ψ▽")
+			end
 
 			Matrix_Trid = Tridiagonal(∂R∂Ψ△[2:NiZ], ∂R∂Ψ[1:NiZ], ∂R∂Ψ▽[1:NiZ-1])
 
+			if maximum(isnan.(Matrix_Trid))
+				println(Matrix_Trid)
+				error("Tridiagonal")
+			end
+
 			Residual = reshape(Residual, NiZ, 1) # Transforming from row to column
 
+			if maximum(isnan.(Residual))
+				println(Residual)
+				error("Residual")
+			end
+
 			NewtonStep = Matrix_Trid \ -Residual
+
+			if maximum(isnan.(NewtonStep))
+				println(NewtonStep)
+				error("NewtonStep")
+			end
+
+
 
 			for iZ=1:NiZ
 				# Iteration k-1
@@ -205,9 +244,10 @@ module richard
 					
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 					else
-						NewtonStep_Mean =  (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) / 2.0
-						Ψ[iT,iZ] = 0.5 * (Ψ[iT,iZ] +  Ψ₀)
+								Ψ[iT,iZ] = 0.5 * (Ψ[iT,iZ] +  Ψ₀)
+								
 					end # if option.hyPix.DynamicNewtonRaphsonStep
+
 
 					if option.hyPix.IterReduceOverShoting
 						Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
@@ -262,7 +302,6 @@ module richard
 
 				Ψwet = max(-2.3116 * hydro.σ[iZ] ^ 2.0 - 2.9372 * hydro.σ[iZ] + 27.83, 0.0)
 
-				# Ψdry = exp( 1.6216 * log(hydro.σ[iZ]) + 8.7268 )
 				Ψdry = exp(1.6216 * log(hydro.σ[iZ]) + 8.7268)
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
@@ -272,7 +311,11 @@ module richard
 					θ[iT,iZ] = max(min(θ[iT,iZ], hydro.θs[iZ]), hydro.θr[iZ])
 
 					Ψ[iT,iZ] = θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
-				end  # Ψ₀ ≥ Ψdry && Ψ[iT,iZ] ≤ Ψwet	
+				end  # Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry
+
+				if isnan(Ψ[iT,iZ])
+					error("ZHA_WETING_DRYSOIL Ψ= NaN, iT= $iT, iZ= $iZ")
+				end
 			return Ψ
 			end  # function:ZHA_WETING_DRYSOIL
 	# ------------------------------------------------------------------

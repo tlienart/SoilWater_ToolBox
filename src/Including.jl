@@ -11,6 +11,7 @@ using Suppressor
     include("Path.jl")
 
     # include("Packages.jl")
+    include("NaNTrap.jl")
     include("Tool.jl")
     include("Cst.jl")
     include("Param.jl")
