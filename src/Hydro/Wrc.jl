@@ -179,10 +179,11 @@ module wrc
 	# =============================================================
 	module kg
 		import SpecialFunctions: erfc, erfcinv
-		import ForwardDiff
-		import Optim
+		import ForwardDiff, Optim
 		import ..wrc
-		export Ψ_2_θDual, ∂θ∂Ψ, Ψ_2_SeDual, θ_2_ΨDual
+		export ∂Se∂Ψ, ∂θ∂Ψ, ∂Ψ∂Se, ∂Ψ∂θ, Se_2_ΨDual, θ_2_ΨDual, Ψ_2_SeDual, Ψ_2_θDual
+
+		θsθsMacMat =  0.0001
 	
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_θDual
@@ -191,12 +192,13 @@ module wrc
 
 				θ_Mat = 0.5 * (θsMacMat - θr) * erfc((log( Ψ₁ / Ψm)) / (σ * √2.0)) + θr
 
-				if θs - θsMacMat > 0.001
+				if θs - θsMacMat > θsθsMacMat
 					θ_Mac = 0.5 * (θs - θsMacMat) * erfc((log(Ψ₁ / ΨmMac)) / (σMac * √2.0))
-					return θ_Mac + θ_Mat
 				else
-					return θ_Mat
+					θ_Mac = 0.0
 				end
+
+			return θ_Mac + θ_Mat
 			end # function Ψ_2_θDual
 		#-----------------------------------------------------------------
 
@@ -223,15 +225,15 @@ module wrc
 				return OF = (θ₂ - θmod) ^ 4.0
 				end # Of
 
-				if θs - θsMacMat > 0.001
+				if θs - θsMacMat > θsθsMacMat
 					Se = max( min((θ₂ - θr) / (θs - θr), 1.0) , 0.0)
 					Ψ₀ = Ψm * exp(erfcinv(2.0 * Se) * σ * √2.0)
 				else 
-					Optimization = Optim.optimize(Ψ₁ -> Of(10.0 ^ Ψ₁, iZ, hydroParam), log10(0.0001), log10(1.0E8), Optim.GoldenSection())
+					Optimization = Optim.optimize(Ψ₁ -> Of(10.0 ^ Ψ₁, iZ, hydroParam), log10(0.001), log10(1.0E10), Optim.GoldenSection())
 					Ψ₀ = 10.0 ^ Optim.minimizer(Optimization)[1]
 				end
-
-			return min( max(Ψ₀, 0.0) , 1.0E8)
+			return max(Ψ₀, 0.0)
+			# return min( max(Ψ₀, 0.0) , 1.0E8)
 			end # θ_2_ΨDual
 		#-------------------------------------------------------------------
 
@@ -242,6 +244,7 @@ module wrc
 			function Se_2_ΨDual(optionₘ, Se, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
 				θ₂ = wrc.Se_2_θ(Se, iZ, hydroParam)
+
 			return  θ_2_ΨDual(optionₘ, θ₂, iZ, hydroParam)
 			end # Se_2_ΨDual
 		#-------------------------------------------------------------------
@@ -252,14 +255,14 @@ module wrc
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂θ∂Ψ(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 
-				if Ψ₁ < eps(1000.0)
-					Ψ₁ += eps(100.0)
+				if Ψ₁ < eps(100.0)
+					Ψ₁ += eps(10.0)
 				end
 
 				# If Ψ₁ is positive than ∂θ∂Ψ_Mat should be positive
 				∂θ∂Ψ_Mat = - (θsMacMat - θr) * exp( -((log(Ψ₁ / Ψm)) ^ 2.0) / (2.0 * σ^2.0)) / (Ψ₁ * σ * √(π * 2.0))
 
-				if θs - θsMacMat > 0.001
+				if θs - θsMacMat > θsθsMacMat
 					∂θ∂Ψ_Mac = - (θs - θsMacMat) * exp( -((log(Ψ₁ / ΨmMac)) ^ 2.0) / (2.0 * σMac^2.0)) / (Ψ₁ * σMac * √(π * 2.0))
 				else
 					∂θ∂Ψ_Mac = 0.0
@@ -369,6 +372,8 @@ module wrc
 			end # function ∂Ψ∂Se
 
 	end # module kg # ...............................................
+
+
 
 
 	# ===============================================================================================

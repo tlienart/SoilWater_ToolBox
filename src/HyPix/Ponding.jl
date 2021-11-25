@@ -21,6 +21,10 @@ module ponding
 
 			# ΔHpond is computed as
 				ΔHpond[iT] = max(ΔPr[iT] + ΔHpond[iT-1] - Infilt_Max, 0.0)
+
+				if isnan(ΔHpond[iT])
+					error("ΔHpond = NaN")
+				end
 				
 		return ΔHpond
 		end  # function: PONDING

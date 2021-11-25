@@ -42,7 +42,7 @@ module plotHypix
 					
 	# 				∂θ∂Ψplot[iΨ] = wrc.∂θ∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 
-	# 				∂K∂Ψplot[iΨ] = kunsat.∂K∂Ψ(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
+	# 				∂K∂Ψplot[iΨ] = kunsat.∂K∂ΨMODEL(optionₘ, Ψplot[iΨ], iZ, hydroHorizon)
 	# 			else
 	# 				θplot[iΨ]    = NaN
 					

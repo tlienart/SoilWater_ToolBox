@@ -35,7 +35,6 @@ module timeStep
 		end # TIMESTEP()
       
 
-
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ΔΨMAX!
 	# 		Computing ΔΨMAX required by ADAPTIVE_TIMESTEP
@@ -49,7 +48,9 @@ module timeStep
 
 				θ▽ = max(θ½ - param.hyPix.Δθ_Max * 0.5, hydro.θr[iZ])
 
-				ΔLnΨmax[iZ] = (log(wrc.θ_2_ΨDual(option.hyPix, θ▽, iZ, hydro)) - log(wrc.θ_2_ΨDual(option.hyPix, θ△, iZ, hydro))) * 0.5			
+				ΔLnΨmax[iZ] = (log1p(wrc.θ_2_ΨDual(option.hyPix, θ▽, iZ, hydro)) - log1p(wrc.θ_2_ΨDual(option.hyPix, θ△, iZ, hydro))) * 0.5
+
+				println(iZ," , " , ΔLnΨmax[iZ])			
 			end # for iZ=1:NiZ
 	
 		return ΔLnΨmax
@@ -57,28 +58,33 @@ module timeStep
 	#--------------------------------------------------------------------
 
 
-	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ΔθMAX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ΔθMAX(hydro, iT::Int64, iZ::Int64, option, ΔLnΨmax::Vector{Float64}, Ψ::Matrix{Float64})
-			
-			if Ψ[iT,iZ] > ΔLnΨmax[iZ]
-				Ψ▽ = exp(log(Ψ[iT,iZ]) - ΔLnΨmax[iZ])
+
+			if log1p(Ψ[iT,iZ]) > ΔLnΨmax[iZ]
+				Ψ▽ = max(expm1(log1p(Ψ[iT,iZ]) - ΔLnΨmax[iZ]), 0.0)
+				
 			else
 				Ψ▽ = 0.0
-			end
 
-			Ψ△  = exp(log(Ψ[iT,iZ]) + ΔLnΨmax[iZ])
+			end	
+
+			Ψ△  = expm1(log1p(Ψ[iT,iZ]) + ΔLnΨmax[iZ])
 			
-			θ△ = wrc.Ψ_2_θDual(option.hyPix, Ψ▽, iZ, hydro)
+			θ△ = wrc.Ψ_2_θDual(option.hyPix, Ψ▽, iZ, hydro) + eps(100.0)
 		
 			θ▽ = wrc.Ψ_2_θDual(option.hyPix, Ψ△, iZ, hydro)
-	
+
+			if θ△ - θ▽ < 0.0 || isnan(θ△ - θ▽)
+				println(Ψ[iT,iZ]," , " ,θ△," , " ,θ▽)
+				error("ΔθMAX error")
+			end
+
 		return θ△ - θ▽
 		end  # function:  ΔθMAX
 	# ------------------------------------------------------------------
-
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

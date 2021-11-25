@@ -4,12 +4,13 @@
 module residual
 	import ..flux, ..kunsat, ..ponding, ..wrc
 	import ForwardDiff: derivative
-	export RESIDUAL_DIFF, RESIDUAL, ∂RESIDUAL∂Ψ, ∂R∂Ψ_FORWARDDIFF, ∂R∂Ψ▽_FORWARDDIFF, ∂R∂Ψ△_FORWARDDIFF
+	export ∂R∂Ψ_FORWARDDIFF, ∂R∂Ψ△_FORWARDDIFF, ∂R∂Ψ▽_FORWARDDIFF, ∂RESIDUAL∂Ψ, RESIDUAL, RESIDUAL_DIFF
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	# 		FUNCTION : RESIDUAL_DIFF DERIVATIVE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RESIDUAL(discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, Q::Matrix{Float64}, Residual::Vector{Float64}, ΔHpond::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
+			
 			if iZ==1
 				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 			end
@@ -21,9 +22,50 @@ module residual
 			Residual[iZ] = discret.ΔZ[iZ] * ((θ[iT,iZ] - θ[iT-1,iZ]) - hydro.So[iZ] * (Ψ[iT,iZ]- Ψ[iT-1,iZ]) * (θ[iT,iZ] / hydro.θs[iZ])) - ΔT[iT] * (Q[iT,iZ] - Q[iT,iZ+1]) + ΔSink[iT,iZ]
 
 		return Q, Residual, θ
-		end  # function: RESIDUAL_DIFF
+		end  # function: RESIDUAL
 	#----------------------------------------------------------------
 
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : ∂RESIDUAL∂Ψ
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function ∂RESIDUAL∂Ψ(∂K∂Ψ::Vector{Float64}, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
+
+			Sw = hydro.So[iZ] / hydro.θs[iZ]
+
+			∂K∂Ψ[iZ] = kunsat.∂K∂ΨMODEL(option.hyPix, Ψ[iT,iZ], iZ, hydro)
+
+			∂θ∂Ψ₁ = wrc.∂θ∂Ψ(option.hyPix, Ψ[iT,iZ], iZ, hydro)
+
+			∂Q∂Ψ₁ = flux.∂q∂Ψ.∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, NiZ, option, param, Ψ)
+
+			∂Q∂Ψ△₁ = flux.∂q∂Ψ.∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT, iZ,  NiZ, option, param, Ψ)
+
+			∂Q▽∂Ψ₁ = flux.∂q∂Ψ.∂Q▽∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ+1,  NiZ, option, param, Ψ)
+
+			∂Q▽∂Ψ▽₁ = flux.∂q∂Ψ.∂Q▽∂Ψ▽(∂K∂Ψ, discret, hydro, iT, iZ,  NiZ, option, param, Ψ)
+		
+			if iZ ≥ 2
+				∂R∂Ψ△ = - ΔT[iT] * ∂Q∂Ψ△₁
+			else
+				∂R∂Ψ△ = 0.0
+			end
+
+			∂R∂Ψ = discret.ΔZ[iZ] * (∂θ∂Ψ₁ * (1.0 - Sw * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) ) - Sw * θ[iT,iZ]) - ΔT[iT] * (∂Q∂Ψ₁ - ∂Q▽∂Ψ₁)
+		
+			if iZ ≤ NiZ-1
+				∂R∂Ψ▽ = ΔT[iT] * ∂Q▽∂Ψ▽₁
+			else
+				∂R∂Ψ▽ = 0.0
+			end
+
+		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽
+		end 
+	#------------------------------------------------------------------- 
+
+	# =================================================================================
+	# 		AUTOMATIC DIFFERENTIATION
+	# =================================================================================
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,7 +80,7 @@ module residual
 			# θ[iT,iZ] format for ForwardDiff
 				θ₂ = wrc.Ψ_2_θDual(option.hyPix,Ψ_, iZ, hydro)
 
-		return Residual₂ = discret.ΔZ[iZ] * ((θ₂ - θ[iT-1,iZ]) - hydro.So[iZ] * (Ψ_ - Ψ₀) * (θ[iT,iZ] / hydro.θs[iZ])) - ΔT[iT] * (Q₁ - Q₂) + ΔSink[iT,iZ] 
+		return discret.ΔZ[iZ] * ((θ₂ - θ[iT-1,iZ]) - hydro.So[iZ] * (Ψ_ - Ψ₀) * (θ[iT,iZ] / hydro.θs[iZ])) - ΔT[iT] * (Q₁ - Q₂) + ΔSink[iT,iZ] 
 		end  # function: RESIDUAL_DIFF
 	#----------------------------------------------------------------
 
@@ -54,7 +96,7 @@ module residual
 
 			∂R∂Ψ_Derivative_1 = ψ -> derivative(∂R∂Ψ_Func, ψ)	
 
-		return ∂R∂Ψ = ∂R∂Ψ_Derivative_1(ψ)
+		return ∂R∂Ψ_Derivative_1(ψ)
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
 
@@ -71,9 +113,9 @@ module residual
 
 				∂R∂Ψ_Derivative_1 = ψ▼ -> derivative(∂R∂Ψ_Func, ψ▼)			
 				
-				return ∂R∂Ψ▽ = ∂R∂Ψ_Derivative_1(ψ▼)
+				return ∂R∂Ψ_Derivative_1(ψ▼)
 			else
-				return ∂R∂Ψ▽ = 0.0
+				return 0.0
 			end
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
@@ -91,9 +133,9 @@ module residual
 				
 				∂R∂Ψ_Derivative_1 = ψ▲ -> derivative(∂R∂Ψ_Func, ψ▲)			
 				
-				return ∂R∂Ψ△ = ∂R∂Ψ_Derivative_1(ψ▲)
+				return ∂R∂Ψ_Derivative_1(ψ▲)
 			else
-				return ∂R∂Ψ△ = 0.0
+				return 0.0
 			end
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
@@ -132,7 +174,7 @@ module residual
 			
 			∂R∂Ψ_Derivative_2 = ψ▼ -> derivative(∂R∂Ψ_Derivative_1 , ψ▼)	
 
-		return ∂∂R∂Ψ▽2 = ∂R∂Ψ_Derivative_2(ψ▼)
+		return ∂R∂Ψ_Derivative_2(ψ▼)
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
 
@@ -151,47 +193,9 @@ module residual
 			
 			# ∂R∂Ψ△1 = ∂R∂Ψ_Derivative_2(ψ▲)
 
-		return ∂∂R∂Ψ△2 = ∂R∂Ψ_Derivative_2(ψ▲)
+		return ∂R∂Ψ_Derivative_2(ψ▲)
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
 
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : ∂RESIDUAL∂Ψ
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂RESIDUAL∂Ψ(∂K∂Ψ::Vector{Float64}, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, option, param, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
-
-			Sw = hydro.So[iZ] / hydro.θs[iZ]
-
-			∂K∂Ψ[iZ] = kunsat.∂K∂Ψ(option.hyPix, Ψ[iT,iZ], iZ, hydro)
-
-			∂θ∂Ψ = wrc.∂θ∂Ψ(option.hyPix, Ψ[iT,iZ], iZ, hydro)
-
-			∂Q∂Ψ = flux.∂q∂Ψ.∂Q∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, NiZ, option, param, Ψ)
-
-			∂Q∂Ψ△ = flux.∂q∂Ψ.∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT, iZ,  NiZ, option, param, Ψ)
-
-			∂Q▽∂Ψ = flux.∂q∂Ψ.∂Q▽∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ+1,  NiZ, option, param, Ψ)
-
-			∂Q▽∂Ψ▽ = flux.∂q∂Ψ.∂Q▽∂Ψ▽(∂K∂Ψ, discret, hydro, iT, iZ,  NiZ, option, param, Ψ)
-		
-			if iZ ≥ 2
-				∂R∂Ψ△ = - ΔT[iT] * ∂Q∂Ψ△
-			else
-				∂R∂Ψ△ = 0.0
-			end
-
-			∂R∂Ψ = discret.ΔZ[iZ] * (∂θ∂Ψ * (1.0 - Sw * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) ) - Sw * θ[iT,iZ]) - ΔT[iT] * (∂Q∂Ψ - ∂Q▽∂Ψ)
-		
-			if iZ ≤ NiZ-1
-				∂R∂Ψ▽ = ΔT[iT] * ∂Q▽∂Ψ▽
-			else
-				∂R∂Ψ▽ = 0.0
-			end
-
-		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽
-		end 
-	#------------------------------------------------------------------- 
-	
 end  # module: residual
 # ............................................................
