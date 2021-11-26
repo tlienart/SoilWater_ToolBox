@@ -20,7 +20,7 @@ module hypixOpt
 
 		WofBest[iOpt_Count] = BlackBoxOptim.best_fitness(Optimization)
 
-		println("			~ WOFbest = ", WofBest[iOpt_Count] , "\n")
+		println("\n			~ WOFbest = ", WofBest[iOpt_Count] , "\n")
 
 		if iOpt_Count == 1
          hydro_best        = deepcopy(hydro)

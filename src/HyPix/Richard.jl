@@ -38,7 +38,7 @@ module richard
 					Residual_Max_Best = CONVERGENCECRITERIA(discret, iT, NiZ, option, Residual, ΔT)
 				end
 
-				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, iTer, NiZ, option, param, Residual, ΔLnΨmax, θ, Ψ)
+				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, iTer, NiZ, option, param, Residual, ΔLnΨmax, θ, Ψ, Ψ_Max)
 
 				# Averaging the Residuals, depending on method
 					Residual_Max = CONVERGENCECRITERIA(discret, iT, NiZ, option, Residual, ΔT)
@@ -168,29 +168,29 @@ module richard
 # gives a good result via a stable banded scheme (faster than working with a full matrix).
 
 # Furthermore, inv_usmani is currently type-unstable, so it takes much longer.
-		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, option, param, Residual, ΔLnΨmax, θ, Ψ)
+		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, option, param, Residual, ΔLnΨmax, θ, Ψ, Ψ_Max)
 
 			if maximum(isnan.(Ψ[iT, 1:NiZ]))
 				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				error("0 Pressure")
+				println("0 Pressure")
 			end
 
 			if maximum(isnan.(∂R∂Ψ△[2:NiZ]))
 				println("Ψ=$(Ψ[iT, 2:NiZ]) \n")
 				println(∂R∂Ψ△[2:NiZ])
-				error("1 ∂R∂Ψ△")
+				println("1 ∂R∂Ψ△")
 			end
 
 			if maximum(isnan.(∂R∂Ψ[1:NiZ]))
 				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
 				println(∂R∂Ψ[1:NiZ])
-				error("2 ∂R∂Ψ")
+				println("2 ∂R∂Ψ")
 			end
 
 			if maximum(isnan.(∂R∂Ψ▽[1:NiZ-1]))
 				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
 				println(∂R∂Ψ▽[2:NiZ])
-				error("3 ∂R∂Ψ▽")
+				println("3 ∂R∂Ψ▽")
 			end
 
 			Matrix_Trid = Tridiagonal(∂R∂Ψ△[2:NiZ], ∂R∂Ψ[1:NiZ], ∂R∂Ψ▽[1:NiZ-1])
@@ -198,7 +198,7 @@ module richard
 			if maximum(isnan.(Matrix_Trid))
 				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
 				println(Matrix_Trid)
-				error("4 Tridiagonal")
+				println("4 Tridiagonal")
 			end
 
 			Residual = reshape(Residual, NiZ, 1) # Transforming from row to column
@@ -206,16 +206,26 @@ module richard
 			if maximum(isnan.(Residual))
 				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
 				println(Residual)
-				error("5 Residual")
+				println("5 Residual")
 			end
 
 			NewtonStep = Matrix_Trid \ -Residual
 
+			# More robust method for computing the Newton step if the previous fails
+				if maximum(isnan.(NewtonStep))
+					NewtonStep = lu(Matrix_Trid) \ -Residual
+				end
+
 			if maximum(isnan.(NewtonStep))
 				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
 				println(NewtonStep)
-				error("6 NewtonStep")
+				println("6 NewtonStep")
 			end
+
+			# if isnan(Ψ[iT,iZ])
+			# 	println( iT," , " ,Ψ[iT,iZ])
+			# 	error("Richard Ψ=NaN")
+			# end
 
 			for iZ=1:NiZ
 				# Iteration k-1
@@ -236,18 +246,13 @@ module richard
 					println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
 					println("Tree: =================")
 					println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
-					error("	*** HyPix error: In the triagonal matrix Ψ=NaN, try to increase ΔZ or decrease ΔTmax")
+					println("	*** HyPix error: In the triagonal matrix Ψ=NaN, try to increase ΔZ or decrease ΔTmax")
 
-					Ψ[iT,iZ] = Ψ₀
+					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
 					
 				else
 					# Newtyon step
 						Ψ[iT,iZ] += NewtonStep[iZ]
-
-						if isnan(Ψ[iT,iZ])
-							println( iT," , " ,Ψ[iT,iZ])
-							error("Richard Ψ=NaN")
-						end
 
 					# Correction of θ entering a dry soil 
 					if option.hyPix.ZhaWetingDrySoil
@@ -255,7 +260,7 @@ module richard
 					end
 
 					# Making sure it is within the feasible band 
-						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], param.hyPix.Ψ_MinMin), param.hyPix.Ψ_MaxMax)
+						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], param.hyPix.Ψ_MinMin), Ψ_Max[iZ])
 
 					if option.hyPix.DynamicNewtonRaphsonStep
 						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔLnΨmax, θ₀, Ψ)
@@ -312,9 +317,7 @@ module richard
 
 			Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, option, ΔLnΨmax, Ψ) 
 			
-			Ω = param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ, 1.0) ^ param.hyPix.NewtonStep_Power
-
-		return Ω
+		return param.hyPix.NewtonStep_Max - (param.hyPix.NewtonStep_Max - param.hyPix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ, 1.0) ^ param.hyPix.NewtonStep_Power
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
 		
@@ -331,7 +334,7 @@ module richard
 				Ψdry = exp(1.6216 * log(hydro.σ[iZ]) + 8.7268)
 
 				# Determine if there is any oscilation at the wet or dry end of the θ(Ψ) curve
-				if Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry
+				if (Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry)
 					θ[iT,iZ] = θ₀ + (Ψ[iT,iZ] - Ψ₀) * ∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro)
 
 					θ[iT,iZ] = max(min(θ[iT,iZ], hydro.θs[iZ]), hydro.θr[iZ])
@@ -339,17 +342,17 @@ module richard
 					Ψ[iT,iZ] = θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
 				end  # Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry
 
-				if isnan(∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro))
-					error("ZHA_WETING_DRYSOIL ∂θ∂Ψ= NaN, iT= $iT, iZ= $iZ")
-				end
+				# if isnan(∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro))
+				# 	error("ZHA_WETING_DRYSOIL ∂θ∂Ψ= NaN, iT= $iT, iZ= $iZ")
+				# end
 
 				if isnan(Ψ[iT,iZ])
 					error("ZHA_WETING_DRYSOIL Ψ= NaN, iT= $iT, iZ= $iZ")
 				end
 
-				if isnan(θ[iT,iZ])
-					error("ZHA_WETING_DRYSOIL θ= NaN, iT= $iT, iZ= $iZ")
-				end
+				# if isnan(θ[iT,iZ])
+				# 	error("ZHA_WETING_DRYSOIL θ= NaN, iT= $iT, iZ= $iZ")
+				# end
 
 			return Ψ
 			end  # function:ZHA_WETING_DRYSOIL
@@ -379,12 +382,10 @@ module richard
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false
 					Count_ReRun = 0
-
 				end
 			else
 				Flag_ReRun = false
 				Count_ReRun = 0
-
 			end  # if: param.hyPix.ΔT_Rerun
 
 		return Count_ReRun, Flag_ReRun, ΔT

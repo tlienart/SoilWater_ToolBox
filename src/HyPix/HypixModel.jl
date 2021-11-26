@@ -48,7 +48,7 @@ module hypixModel
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
 			for iZ=1:NiZ
-				Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ],  hydro.ΨmMac[iZ])
+				Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ], hydro.ΨmMac[iZ])
 				Ψ_Min[iZ] = param.hyPix.Ψ_MinMin
 			end  # for iZ=1:NiZ
 

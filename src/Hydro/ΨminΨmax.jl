@@ -19,7 +19,7 @@ module ΨminΨmax
 		#  Ψ_Max
 			Ψ_Max = exp(log(Ψm) + σ * Pσ)
 
-		return Ψ_Max, Ψ_Min
+	return Ψ_Max, Ψ_Min
 	end  # function: ΨMINΨMAX
 	
 end  # module ΨminΨmax

@@ -48,9 +48,7 @@ module timeStep
 
 				θ▽ = max(θ½ - param.hyPix.Δθ_Max * 0.5, hydro.θr[iZ])
 
-				ΔLnΨmax[iZ] = (log1p(wrc.θ_2_ΨDual(option.hyPix, θ▽, iZ, hydro)) - log1p(wrc.θ_2_ΨDual(option.hyPix, θ△, iZ, hydro))) * 0.5
-
-				println(iZ," , " , ΔLnΨmax[iZ])			
+				ΔLnΨmax[iZ] = (log1p(wrc.θ_2_ΨDual(option.hyPix, θ▽, iZ, hydro)) - log1p(wrc.θ_2_ΨDual(option.hyPix, θ△, iZ, hydro))) * 0.5	
 			end # for iZ=1:NiZ
 	
 		return ΔLnΨmax
@@ -64,11 +62,9 @@ module timeStep
 		function ΔθMAX(hydro, iT::Int64, iZ::Int64, option, ΔLnΨmax::Vector{Float64}, Ψ::Matrix{Float64})
 
 			if log1p(Ψ[iT,iZ]) > ΔLnΨmax[iZ]
-				Ψ▽ = max(expm1(log1p(Ψ[iT,iZ]) - ΔLnΨmax[iZ]), 0.0)
-				
+				Ψ▽ = expm1(log1p(Ψ[iT,iZ]) - ΔLnΨmax[iZ])		
 			else
 				Ψ▽ = 0.0
-
 			end	
 
 			Ψ△  = expm1(log1p(Ψ[iT,iZ]) + ΔLnΨmax[iZ])
@@ -140,8 +136,7 @@ module timeStep
 				end
 			end	
 
-			ΔT₂_New = min(max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
-
+			# ΔT₂_New = min(max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
 		return ΔT₂_New, Δθ₂_Max
 		end # function ADAPTIVE_TIMESTEP
 

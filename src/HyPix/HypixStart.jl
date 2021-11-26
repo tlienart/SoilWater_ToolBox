@@ -50,6 +50,20 @@ module hypixStart
 		
 		# LOOPING FOR EVERY SOIL	
 		for iSim = 1:length(Soilname)
+
+			Nit_Reduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
+
+			Efficiency                 = fill(0.0::Float64, Nit_Reduced)
+			Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
+			Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
+			RmseBest                   = fill(0.0::Float64, Nit_Reduced)
+			SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
+			WofBest                    = fill(0.0::Float64, Nit_Reduced)
+			ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
+			ΔT_Average                 = fill(0.0::Float64, Nit_Reduced)
+			∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
+			∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
+
 		for iOpt = param.hyPix.iOpt_Start:param.hyPix.iOpt_End
 			println("=== START RUNNING Hypix_1D ==== \n")
 			println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -104,21 +118,21 @@ module hypixStart
 					obsTheta = thetaObs.ΘOBS(obsTheta, clim, discret, Z)
 			end #  option.hyPix.θobs
 
-			# MEMORY
-				if iOpt_Count == 1
-					Nit_Reduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
+			# # MEMORY
+			# 	if iOpt_Count == 1
+			# 		Nit_Reduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
 
-					Efficiency                 = fill(0.0::Float64, Nit_Reduced)
-					Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
-					Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
-					RmseBest                   = fill(0.0::Float64, Nit_Reduced)
-					SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
-					WofBest                    = fill(0.0::Float64, Nit_Reduced)
-					ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
-					ΔT_Average                 = fill(0.0::Float64, Nit_Reduced)
-					∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
-					∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
-				end
+			# 		Efficiency                 = fill(0.0::Float64, Nit_Reduced)
+			# 		Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
+			# 		Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
+			# 		RmseBest                   = fill(0.0::Float64, Nit_Reduced)
+			# 		SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
+			# 		WofBest                    = fill(0.0::Float64, Nit_Reduced)
+			# 		ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
+			# 		ΔT_Average                 = fill(0.0::Float64, Nit_Reduced)
+			# 		∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
+			# 		∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
+			# 	end
 				
 				∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest = memory.MEMORY(clim, iOpt_Count, N_∑T_Climate, NiZ, obsTheta, param)
 
@@ -338,8 +352,7 @@ module hypixStart
 	
 			println("	=== === === END  : Looping with time ")
 			println("	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n \n")
-
-	end # for loop: iOpt
+		end # for loop: iOpt
 	end #iSim = 1:length(Soilname)
 
 	println("\n ==== END RUNNING Hypix_1D =====")
