@@ -790,7 +790,7 @@ module reading
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : HYPIX_PARAM
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function HYPIX_PARAM(Layer, hydro, hydroHorizon, iSim::Int64, NiZ::Int64, option, param, Path::String, veg)
+			function HYPIX_PARAM(Layer, hydro, hydroHorizon, iOpt::Int64, NiZ::Int64, option, param, Path::String, veg)
 				# Read data
 					Data = DelimitedFiles.readdlm(Path, ',')
 				# Read header
@@ -809,7 +809,7 @@ module reading
 					N_NameUnique = length(Name_Unique)
 			
 				# Reading the values of the parameters for the simulation of interest
-					Param, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SIM_$(iSim)")
+					Param, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SIM_$(iOpt)")
 				
 				# Minimum value of the param
 					Param_Min, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MIN")
@@ -818,7 +818,7 @@ module reading
 					Param_Max, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MAX")
 
 				# Determening which param to optimize
-					Opt, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "OPT_$(iSim)")
+					Opt, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "OPT_$(iOpt)")
 
 				# Maximum value of the param
 					Opt_LogTransform, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "LogTransform")
@@ -833,8 +833,9 @@ module reading
 				"""Determening if multistep optimisation is performed (not the first step)
 				This is such that the optimal values of the previous optimisation step is kept in memory
 				We need to determine what next param to optimize"""
-					if Flag_Opt && (iSim ≥ param.hyPix.iOpt_Start + 1)
+					if Flag_Opt && (iOpt ≥ param.hyPix.iOpt_Start + 1)
 						Flag_MultiStepOpt = true
+						println(veg)
 					else
 						Flag_MultiStepOpt = false 
 					end
@@ -864,7 +865,7 @@ module reading
 						# θsMacMat value depends on θs
 							if Symbol(Name_Unique[i]) == :θsMacMat_ƞ
 								for iZ =1:length(Param_Vect)
-									hydroHorizon.θsMacMat[iZ] =  hydroHorizon.θs[iZ] * Param_Vect[iZ]
+									hydroHorizon.θsMacMat[iZ] = hydroHorizon.θs[iZ] * Param_Vect[iZ]
 								end
 							end 
 						

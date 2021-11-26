@@ -128,7 +128,7 @@ module kunsat
 		import SpecialFunctions: erfc, erfcinv
 		export Ψ_2_KUNSAT, Se_2_KUNSAT, ∂K∂ΨMODEL
 
-		θsθsMacMat =  0.0001
+		θsθsMacMat =  0.001
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_KUNSAT

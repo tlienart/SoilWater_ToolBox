@@ -22,7 +22,7 @@ module rootWaterUptake
 			end  # for
 		end # if:
 
-		return ΔSink
+	return ΔSink
 	end  # function ROOT_WATER_UPTAKE
 	
 
@@ -41,7 +41,7 @@ module rootWaterUptake
 				while iZ ≤ NiZ && veg.Zroot ≥ Z[iZ]
 					iZ +=1
 				end
-				return N_iRoot = iZ - 1
+			return iZ - 1
 			end  # function: N_IROOT
 
 
@@ -68,7 +68,7 @@ module rootWaterUptake
 				end
 				ΔRootDensity[N_iRoot] = (RootDensityParam₂ ^ discret.Z_CellUp[N_iRoot] - RootDensityParam₂ ^ veg.Zroot) / (1.0 - RootDensityParam₂ ^ veg.Zroot)
 
-			return ΔRootDensity		
+		return ΔRootDensity		
 		end  # function rootdistribution
 		
 	end # module rootdistribution

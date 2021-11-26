@@ -34,7 +34,7 @@ module hypixModel
 		
 		# ROOTS
 		if option.hyPix.RootWaterUptake
-			N_iRoot = rootWaterUptake.rootDistribution.N_IROOT(NiZ, veg, Z)# Last cell of rootzone
+			N_iRoot = rootWaterUptake.rootDistribution.N_IROOT(NiZ, veg, Z) # Last cell of rootzone
 
 			ΔRootDensity = rootWaterUptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
 		else

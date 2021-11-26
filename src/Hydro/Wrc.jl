@@ -183,7 +183,7 @@ module wrc
 		import ..wrc
 		export ∂Se∂Ψ, ∂θ∂Ψ, ∂Ψ∂Se, ∂Ψ∂θ, Se_2_ΨDual, θ_2_ΨDual, Ψ_2_SeDual, Ψ_2_θDual
 
-		θsθsMacMat =  0.0001
+		θsθsMacMat =  0.001
 	
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : Ψ_2_θDual

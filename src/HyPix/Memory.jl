@@ -3,11 +3,12 @@
 
 # =============================================================
 module memory
+   export MEMORY_MULTISTEPOPTIMISATION, MEMORY
 	
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(clim, iOpt_Count::Int64, N_∑T_Climate::Int64, NiZ::Int64, obsTheta, param)
+	function MEMORY(clim, N_∑T_Climate::Int64, NiZ::Int64, obsTheta, param)
 
 		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
 
@@ -51,6 +52,28 @@ module memory
 		
 		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
+
+
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   #		FUNCTION : MEMORY_STEOPT
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   function MEMORY_MULTISTEPOPTIMISATION(param)
+      Nit_Reduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
+
+      Efficiency                 = fill(0.0::Float64, Nit_Reduced)
+      Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
+      Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
+      RmseBest                   = fill(0.0::Float64, Nit_Reduced)
+      SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
+      WofBest                    = fill(0.0::Float64, Nit_Reduced)
+      ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
+      ΔT_Average                 = fill(0.0::Float64, Nit_Reduced)
+      ∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
+      ∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
+      
+   return ∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average
+   end  # function: MEMORY_STEOPT
+   # ------------------------------------------------------------------
 
 end  # module: memory 
 
