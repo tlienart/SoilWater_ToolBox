@@ -242,7 +242,7 @@ module plotHypix
 				# DAYS PLOT
 					ΔDays = 60
 				# OPTIONS
-					Option_θobs = false
+					Option_θobs = true
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"

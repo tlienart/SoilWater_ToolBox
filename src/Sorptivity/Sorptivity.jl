@@ -84,7 +84,7 @@ module sorptivity
 				Kunsat = kunsat.θ_2_KUNSAT(optionₘ, θ, iZ, hydroInfilt)
 
 				# Ψ₁ = wrc.θ_2_ΨDual(optionₘ, θ, iZ, hydroInfilt)
-				
+
 			return - Kunsat * wrc.∂Ψ∂θ(optionₘ, θ, iZ, hydroInfilt)
 			end  # function: DIFFUSIVITY_θ ~~~~~~~~~~~~~~~~~
 

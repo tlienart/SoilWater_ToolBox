@@ -268,14 +268,13 @@ module wrc
 					∂θ∂Ψ_Mac = 0.0
 				end
 
-				∂θ∂Ψ₀ = ∂θ∂Ψ_Mat + ∂θ∂Ψ_Mac
-
-				if isnan(∂θ∂Ψ₀)
-					println(" Ψ= $Ψ₁")
-					error("wrc.kg.∂θ∂Ψ = NaN")
-				else
-					return ∂θ∂Ψ₀
-				end
+				# if isnan(∂θ∂Ψ₀)
+				# 	println(" Ψ= $Ψ₁")
+				# 	error("wrc.kg.∂θ∂Ψ = NaN")
+				# else
+				#	return ∂θ∂Ψ₀
+				# end
+			return ∂θ∂Ψ_Mat + ∂θ∂Ψ_Mac
 			end # function ∂θ∂Ψ
 		#-------------------------------------------------------------------
 
@@ -293,25 +292,12 @@ module wrc
 			end # function ∂θ∂Ψ_Mode
 		#-------------------------------------------------------------------
 		
-
-		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# #		FUNCTION : ∂Ψ∂θ
-		# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# 	function ∂θ∂Ψ2(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
-						
-		# 		ψ = fill(0.0::Float64, 1)
-		# 		∂Ψ∂θ_Numerical(ψ::Vector) = Ψ_2_θDual(optionₘ,abs(ψ[1]), iZ, hydroParam)
-		# 		ψ[1] = Ψ₁
-		# 		Func_∂Ψ∂θ_Numerical = ψ -> ForwardDiff.gradient(∂Ψ∂θ_Numerical, ψ)
-
-		# 	return Func_∂Ψ∂θ_Numerical(ψ)[1]
-		# 	end # function ∂Ψ∂θ
-
-
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Ψ∂θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Ψ∂θ(optionₘ, θ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
+
+				θ₁ = max(min(θs - eps(1000.0), θ₁), θr + eps(1000.0))
 					
 				θ₂ = fill(0.0::Float64, 1)
 				
@@ -322,7 +308,8 @@ module wrc
 				∂Ψ∂θ₀ = Func_∂Ψ∂θ_Numerical(θ₂)[1]
 
 				if isnan(∂Ψ∂θ₀)
-					error("wrc.kg.∂Ψ∂θ = NaN")
+					println( "======== wrc.kg.∂Ψ∂θ = NaN ======== ")
+					return 1.0
 				else
 					return ∂Ψ∂θ₀
 				end
@@ -334,28 +321,32 @@ module wrc
 		#		FUNCTION : ∂Ψ∂Se
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Ψ∂Se(optionₘ, Se₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
+
+				Se₁ = max(min(Se₁, 1.0 - eps(1000.0)), eps(1000.0))
 				
 				Se₂ = fill(0.0::Float64, 1)
 				∂Ψ∂Se_Numerical(Se₂::Vector) = Se_2_ΨDual(optionₘ, abs(Se₂[1]), iZ, hydroParam)
 				Se₂[1] = Se₁
 				Func_∂Ψ∂Se_Numerical = Se₂ -> ForwardDiff.gradient(∂Ψ∂Se_Numerical, Se₂)
 
-				∂Ψ∂Se₀ = Func_∂Ψ∂Se_Numerical(Se₂)[1]
+				return Func_∂Ψ∂Se_Numerical(Se₂)[1]
 
-				if isnan(∂Ψ∂Se₀)
-					error("wrc.kg.∂Ψ∂Se = NaN")
-				else
-					return ∂Ψ∂Se₀
-				end
+				# if isnan(∂Ψ∂Se₀)
+				# 	println(" ======== wrc.kg.∂Ψ∂Se = NaN ====")
+				# 	return 1.0
+				# else
+					# return ∂Ψ∂Se₀
+				# end
 			end # function ∂Se∂Ψ
 		#-------------------------------------------------------------------
 
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : ∂Ψ∂Se
+		#		FUNCTION : ∂Se∂Ψ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Se∂Ψ(optionₘ, Ψ₁, iZ, hydroParam; θs=hydroParam.θs[iZ], θr=hydroParam.θr[iZ], Ψm=hydroParam.Ψm[iZ], σ=hydroParam.σ[iZ], θsMacMat=hydroParam.θsMacMat[iZ], ΨmMac=hydroParam.ΨmMac[iZ], σMac=hydroParam.σMac[iZ])
 					
+				Ψ₁ = max(Ψ₁, eps(1000.0))
 				ψ = fill(0.0::Float64, 1)
 
 				∂Ψ∂Se_Numerical(ψ::Vector) = Ψ_2_SeDual(optionₘ, abs(ψ[1]), iZ, hydroParam)
@@ -365,7 +356,8 @@ module wrc
 				∂Se∂Ψ₀ = Func_∂Ψ∂Se_Numerical(ψ)[1]
 
 				if isnan(∂Se∂Ψ₀)
-					error("wrc.kg.∂Se∂Ψ₀ = NaN")
+					println("======== wrc.kg.∂Se∂Ψ₀ = NaN ======== ")
+					return 1.0
 				else
 					return ∂Se∂Ψ₀
 				end

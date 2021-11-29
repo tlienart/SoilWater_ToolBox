@@ -135,6 +135,8 @@ module hypixStart
 
 				hydro, hydroHorizon, optim, veg = reading.hyPix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iOpt, NiZ, option, param, path.hyPix.HyPixParamOpt, veg)
 
+				println("  =============== HyPix Param Read ============== ")
+
 			else
 				# Reading veg parameters
 					veg, ~ = reading.READ_STRUCT(veg, path.hyPix.HyPix_VegParam)

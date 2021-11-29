@@ -162,65 +162,59 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SOLVING_TRIAGONAL_MATRIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 	This issue arises because the special-case method for inverting tridiagonals (inv_usmani) has no scaling protection. Using the factorization instead
-
-# lu(A90) \ Matrix(1.0I,size(A90))
-# gives a good result via a stable banded scheme (faster than working with a full matrix).
-
-# Furthermore, inv_usmani is currently type-unstable, so it takes much longer.
 		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, option, param, Residual, ΔLnΨmax, θ, Ψ, Ψ_Max)
 
-			if maximum(isnan.(Ψ[iT, 1:NiZ]))
-				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				println("0 Pressure")
-			end
+			# if maximum(isnan.(Ψ[iT, 1:NiZ]))
+			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
+			# 	println("0 Pressure")
+			# end
 
-			if maximum(isnan.(∂R∂Ψ△[2:NiZ]))
-				println("Ψ=$(Ψ[iT, 2:NiZ]) \n")
-				println(∂R∂Ψ△[2:NiZ])
-				println("1 ∂R∂Ψ△")
-			end
+			# if maximum(isnan.(∂R∂Ψ△[2:NiZ]))
+			# 	println("Ψ=$(Ψ[iT, 2:NiZ]) \n")
+			# 	println(∂R∂Ψ△[2:NiZ])
+			# 	println("1 ∂R∂Ψ△")
+			# end
 
-			if maximum(isnan.(∂R∂Ψ[1:NiZ]))
-				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				println(∂R∂Ψ[1:NiZ])
-				println("2 ∂R∂Ψ")
-			end
+			# if maximum(isnan.(∂R∂Ψ[1:NiZ]))
+			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
+			# 	println(∂R∂Ψ[1:NiZ])
+			# 	println("2 ∂R∂Ψ")
+			# end
 
-			if maximum(isnan.(∂R∂Ψ▽[1:NiZ-1]))
-				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				println(∂R∂Ψ▽[2:NiZ])
-				println("3 ∂R∂Ψ▽")
-			end
+			# if maximum(isnan.(∂R∂Ψ▽[1:NiZ-1]))
+			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
+			# 	println(∂R∂Ψ▽[2:NiZ])
+			# 	println("3 ∂R∂Ψ▽")
+			# end
 
 			Matrix_Trid = Tridiagonal(∂R∂Ψ△[2:NiZ], ∂R∂Ψ[1:NiZ], ∂R∂Ψ▽[1:NiZ-1])
 
-			if maximum(isnan.(Matrix_Trid))
-				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				println(Matrix_Trid)
-				println("4 Tridiagonal")
-			end
+			# if maximum(isnan.(Matrix_Trid))
+			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
+			# 	println(Matrix_Trid)
+			# 	println("4 Tridiagonal")
+			# end
 
 			Residual = reshape(Residual, NiZ, 1) # Transforming from row to column
 
-			if maximum(isnan.(Residual))
-				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				println(Residual)
-				println("5 Residual")
-			end
+			# if maximum(isnan.(Residual))
+			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
+			# 	println(Residual)
+			# 	println("5 Residual")
+			# end
 
 			NewtonStep = Matrix_Trid \ -Residual
 
-			# More robust method for computing the Newton step if the previous fails
-				if maximum(isnan.(NewtonStep))
-					NewtonStep = lu(Matrix_Trid) \ -Residual
-				end
+			# # More robust method for computing the Newton step if the previous fails
+			# 	if maximum(isnan.(NewtonStep))
+			# 		NewtonStep = lu(Matrix_Trid) \ -Residual
+			# 	end
 
-			if maximum(isnan.(NewtonStep))
-				println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-				println(NewtonStep)
-				println("6 NewtonStep")
-			end
+			# if maximum(isnan.(NewtonStep))
+			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
+			# 	println(NewtonStep)
+			# 	println("6 NewtonStep")
+			# end
 
 			# if isnan(Ψ[iT,iZ])
 			# 	println( iT," , " ,Ψ[iT,iZ])
@@ -234,19 +228,19 @@ module richard
 				
 				# Updating Ψ
 				if isnan(NewtonStep[iZ])
-					println("iZ = $iZ")
-					println("NewtonStep = $(NewtonStep[iZ]), \n")
-					println("h: =================")
-					println("Ψ=" , Ψ[iT, 1:NiZ],"\n")
-					println("RESIDUAL =================")
-					println("RESIDUAL=" ,Residual,"\n")				
-					println("One: =================")
-					println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
-					println("Two: =================")
-					println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
-					println("Tree: =================")
-					println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
-					println("	*** HyPix error: In the triagonal matrix Ψ=NaN, try to increase ΔZ or decrease ΔTmax")
+					# println("iZ = $iZ")
+					# println("NewtonStep = $(NewtonStep[iZ]), \n")
+					# println("h: =================")
+					# println("Ψ=" , Ψ[iT, 1:NiZ],"\n")
+					# println("RESIDUAL =================")
+					# println("RESIDUAL=" ,Residual,"\n")				
+					# println("One: =================")
+					# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
+					# println("Two: =================")
+					# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
+					# println("Tree: =================")
+					# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
+					println("	================== HyPix error: In the triagonal matrix ================== ")
 
 					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
 					
@@ -265,10 +259,10 @@ module richard
 					if option.hyPix.DynamicNewtonRaphsonStep
 						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔLnΨmax, θ₀, Ψ)
 
-						if isnan(Ω)
-							println(Ω)
-							error("DYNAMIC_NEWTON_RAPHSON_STEP")
-						end
+						# if isnan(Ω)
+						# 	println(Ω)
+						# 	error("DYNAMIC_NEWTON_RAPHSON_STEP")
+						# end
 					
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 						
@@ -276,7 +270,6 @@ module richard
 						Ψ[iT,iZ] = 0.5 * (Ψ[iT,iZ] +  Ψ₀)
 
 					end # if option.hyPix.DynamicNewtonRaphsonStep
-
 
 					if option.hyPix.IterReduceOverShoting
 						Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
@@ -342,16 +335,8 @@ module richard
 					Ψ[iT,iZ] = θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
 				end  # Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry
 
-				# if isnan(∂θ∂Ψ(option.hyPix, Ψ₀, iZ, hydro))
-				# 	error("ZHA_WETING_DRYSOIL ∂θ∂Ψ= NaN, iT= $iT, iZ= $iZ")
-				# end
-
-				if isnan(Ψ[iT,iZ])
-					error("ZHA_WETING_DRYSOIL Ψ= NaN, iT= $iT, iZ= $iZ")
-				end
-
-				# if isnan(θ[iT,iZ])
-				# 	error("ZHA_WETING_DRYSOIL θ= NaN, iT= $iT, iZ= $iZ")
+				# if isnan(Ψ[iT,iZ])
+				# 	error("ZHA_WETING_DRYSOIL Ψ= NaN, iT= $iT, iZ= $iZ")
 				# end
 
 			return Ψ
