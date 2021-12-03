@@ -934,13 +934,13 @@ module reading
 					iψm = findfirst(isequal("Ψm"), ParamOpt)[1]
 
 					if option.hyPix.σ_2_Ψm⍰=="UniqueRelationship" && "Ψm" ∈ ParamOpt
-						error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==:UniqueRelationship) && (Optimise=Ψm)!")
+						error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==UniqueRelationship) && (Optimise=Ψm)!")
 
 					elseif option.hyPix.σ_2_Ψm⍰=="Constrained" && !("Ψm" ∈ ParamOpt)
-						error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==:Constrained) && (not Optimising=Ψm)!")
+						error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==Constrained) && (not Optimising=Ψm)!")
 
 					elseif option.hyPix.σ_2_Ψm⍰=="Constrained" && ParamOpt_LogTransform[iψm]==1
-						error("*** option.hyPix.σ_2_Ψm⍰==:Constrained CANNOT log transforme Ψm") 
+						error("*** option.hyPix.σ_2_Ψm⍰==Constrained CANNOT log transforme Ψm") 
 					end
 				end # Flag_Opt
 

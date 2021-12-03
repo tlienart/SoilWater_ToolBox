@@ -55,7 +55,6 @@ module hypixOpt
 
 			# New optimized param which are put into the matching veg or hydro parameters
 				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_Layer, NiZ, optim, option, param, X, veg)
-				
 		
 			# Running Hypix model	
 				∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ  = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
@@ -82,7 +81,7 @@ module hypixOpt
 
 				ParamOpt_Min₂[iψm] = 0.0
 				ParamOpt_Max₂[iψm] = 1.0
-			end # option.hyPix.σ_2_Ψm⍰==:Constrained
+			end # option.hyPix.σ_2_Ψm⍰==Constrained
 
       # "θs_Opt⍰"                 = "No" #  <θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 			if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ ≠ "No")
@@ -156,7 +155,7 @@ module hypixOpt
 					for iZ = iHorizon_Start:iHorizon_End
 						hydroHorizon.Ψm[iZ] = hydroHorizon.Ψm[iHorizon_Start]
 					end  # for iZ
-			end # option.hyPix.σ_2_Ψm⍰ ≠ :No
+			end # option.hyPix.σ_2_Ψm⍰ ≠ No
 
 			#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
 				if option.hyPix.σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
@@ -177,6 +176,14 @@ module hypixOpt
 						hydroHorizon.θs[iZ] = tool.norm.∇NORM_2_PARAMETER(hydroHorizon.θs[iZ], hydroHorizon.θs_Min[iZ], hydroHorizon.θs_Max[iZ])
 					end # iZ
 				end # if  ("θs" ∈ optim.ParamOpt) && (option.hyPix.θs_Opt⍰ == :θs_Opt)
+
+
+			#  <>=<>=<>=<>=<>=<> Assuring the limits of θs are physical
+				if  ("θs" ∈ optim.ParamOpt)
+					for iZ = iHorizon_Start:iHorizon_End
+						hydroHorizon.θs[iZ] = min( max(hydroHorizon.θs[iZ], hydroHorizon.θs_Min[iZ]), hydroHorizon.θs_Max[iZ])
+					end # iZ
+				end # if  ("θs" ∈ optim.ParamOpt) 
 		
 
 			# Converting θsMacMat_ƞ -> θsMacMat

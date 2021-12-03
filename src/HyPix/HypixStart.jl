@@ -49,14 +49,14 @@ module hypixStart
 		
 		# LOOPING FOR EVERY SOIL	
 		for iSim = 1:length(Soilname)
+			
+			println("\n	 ==== ==== ===  $(Soilname[iSim]) 	=== ==== ====\n")
 
 			# CURRENT TIME
 				Time_Start = now()
 
 			# READING STRUCTURE OF PATH
 				path = paths.PATH(iSim, option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰; Soilname=Soilname)
-
-				println("\n	 ==== ==== ===  $(path.hyPix.IdName_Hypix) 	=== ==== ====\n")
 
 			# MEMORY MULTISTEP OPTIMISATION
 				∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average = memory.MEMORY_MULTISTEPOPTIMISATION(param)
@@ -123,7 +123,7 @@ module hypixStart
 		# ========================================================
 		# Looping for every step optimisation
 		for iOpt = param.hyPix.iOpt_Start:param.hyPix.iOpt_End
-			println("=== START RUNNING Hypix_1D ==== \n")
+			
 			println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 			println("		=== === === START: Looping with time $iOpt steps \n")
 
@@ -305,7 +305,7 @@ module hypixStart
 				# end # option.hyPix.Plot_Other
 
 				if option.hyPix.Plot_Hypix
-					plotHypix.makkie.TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, option, param, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPrGross_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, path.hyPix)
+					plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iOpt, iSim, Nit_Reduced, NiZ, obsTheta, option, param,  path.hyPix, Soilname, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
 
 					if option.hyPix.Plot_θprofile
 						plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, path.hyPix, Soilname, θ_Reduced)

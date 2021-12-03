@@ -1,6 +1,6 @@
 module stats
 	import ..wrc, ..kunsat
-	export RMSE, NSE_MINIMIZE, NSE_θΨ, RELATIVE_ERR, NSE_EFFICIENCY, LINEAR_REGRESSION, NSE_WILMOT
+	export RMSE, NSE_MINIMIZE, NSE_θΨ, RELATIVE_ERR, NSE_EFFICIENCY, LINEAR_REGRESSION, NSE_WILMOT, RMSE_CONCORDANCE_CORELATION_COEFICIENT
 	using Statistics
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,7 +91,24 @@ module stats
 			Meanₒᵦₛ          = Statistics.mean(Obs)
 			Meanₛᵢₘ          = Statistics.mean(Sim)
 
-		return NseConcordanceCorelationCoeficient = (2.0 * PersonCorelation * σₒᵦₛ * σₛᵢₘ) / (σₒᵦₛ ^ 2.0 +  σₛᵢₘ ^ 2.0 + (Meanₒᵦₛ - Meanₛᵢₘ) ^ 2.0)
+		return  (2.0 * PersonCorelation * σₒᵦₛ * σₛᵢₘ) / (σₒᵦₛ ^ 2.0 +  σₛᵢₘ ^ 2.0 + (Meanₒᵦₛ - Meanₛᵢₘ) ^ 2.0)
+		end  # function: BestConcordanceCorrelationCoeficient
+	# ------------------------------------------------------------------
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : NSE_CONCORDANCE_CORELATION_COEFICIENT
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function RMSE_CONCORDANCE_CORELATION_COEFICIENT(Obs, Sim)
+			PersonCorelation = Statistics.cor(Obs, Sim)
+			σₒᵦₛ             = Statistics.std(Obs)
+			σₛᵢₘ             = Statistics.std(Sim)
+			Meanₒᵦₛ          = Statistics.mean(Obs)
+			Meanₛᵢₘ          = Statistics.mean(Sim)
+
+		Ccc = 1.0 - (2.0 * PersonCorelation * σₒᵦₛ * σₛᵢₘ) / (σₒᵦₛ ^ 2.0 +  σₛᵢₘ ^ 2.0 + (Meanₒᵦₛ - Meanₛᵢₘ) ^ 2.0)
+
+		return max(Ccc, 0.0)
 		end  # function: BestConcordanceCorrelationCoeficient
 	# ------------------------------------------------------------------
 

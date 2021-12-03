@@ -85,7 +85,7 @@ module SoilWater_ToolBox
 						@info "\n	*** Reading θ(Ψ) data from $(path.tableSoilwater.TableComplete_θΨ) *** \n"
 						θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, NiZ, path)
 					catch
-						@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠:Kosugi && param.hydro.σ_2_Ψm⍰==:Constrained => Kosugi simulation not performed yet! \n" 
+						@warn "\n option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰ ≠:Kosugi && param.hydro.σ_2_Ψm⍰==Constrained => Kosugi simulation not performed yet! \n" 
 						θ_θΨobs, Ψ_θΨobs, N_θΨobs = reading.θΨ(IdSelect, NiZ, path)
 					end 		
 				end  # if: option.data.θΨ
@@ -376,7 +376,7 @@ module SoilWater_ToolBox
 					table.hydroLab.TABLE_EXTRAPOINTS_Kθ(option.hydro, hydro, IdSelect, param.hydro.K_Table, NiZ, path.tableSoilwater.TableComplete_KΨ)
 			
 					table.hydroLab.TABLE_EXTRAPOINTS_θΨ(option.hydro, hydro, IdSelect, NiZ, path.tableSoilwater.TableComplete_θΨ, param.hydro.TableComplete_θΨ; Orientation="Vertical")
-				end # if: option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰ == :Constrained
+				end # if: option.hydro.HydroModel⍰ == :Kosugi && option.hydro.σ_2_Ψm⍰ == Constrained
 
 				# IF SMAP OUTPUTS
 				if option.run.Smap

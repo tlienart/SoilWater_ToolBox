@@ -228,6 +228,7 @@ module richard
 				
 				# Updating Ψ
 				if isnan(NewtonStep[iZ])
+
 					# println("iZ = $iZ")
 					# println("NewtonStep = $(NewtonStep[iZ]), \n")
 					# println("h: =================")
@@ -240,9 +241,9 @@ module richard
 					# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
 					# println("Tree: =================")
 					# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
-					println("	================== HyPix error: In the triagonal matrix ================== ")
-
+					
 					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
+					
 					
 				else
 					# Newtyon step
