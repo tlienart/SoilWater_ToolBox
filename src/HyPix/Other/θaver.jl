@@ -32,8 +32,6 @@ module θaver
             end
             
             θsim_Aver[iT] =  θsim_Aver[iT] / Zaver
-
-         # println(iT," , ",  " , ",θsim_Aver[iT]," ; ",θ_Reduced[iT,5] )
          end # for iT
 
       return θsim_Aver

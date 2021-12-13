@@ -698,18 +698,22 @@ module table
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : PERFORMACE
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iSim, iSim, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average, SiteName_Hypix, pathHyPix)
-				Path = pathHyPix.Table_Performance * ".csv"
+			function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, iSim, NseBest, param, pathHyPix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
+				
+				iSim₀ = param.hyPix.iOpt_Start + iOpt - 1	
+
+				Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
 				println("			~  $(Path) ~")
 
-				Header = ["Id" "WofBest" "NseBest" "Efficiency" "Global_WaterBalance" "Global_WaterBalance_NormPr" "ΔT_Average" "∑∑ΔSink" "∑ΔQ_Bot" "SwcRoots" "iNonConverge" "ΔRunTimeHypix"]
+				Header = ["Id" "WofBest" "NseBest" "CccBest" "WilmotBest" "Efficiency" "Global_WaterBalance" "Global_WaterBalance_NormPr" "ΔT_Average" "∑∑ΔSink" "∑ΔQ_Bot" "SwcRoots" "iNonConverge" "ΔRunTimeHypix"]
 
 				Id = 1:1:length(WofBest)
 
 				open(Path, "w") do io
 					# DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
+					DelimitedFiles.write(io, [0xef,0xbb,0xbf]) 
 					DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-					DelimitedFiles.writedlm(io, [Id  WofBest RmseBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iSim ΔRunTimeHypix], ",")
+					DelimitedFiles.writedlm(io, [Id  WofBest NseBest CccBest WilmotBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iOpt ΔRunTimeHypix], ",")
 				end
 			return nothing
 			end # function PERFORMACE

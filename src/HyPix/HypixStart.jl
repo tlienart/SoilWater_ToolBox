@@ -59,7 +59,7 @@ module hypixStart
 				path = paths.PATH(iSim, option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰; Soilname=Soilname)
 
 			# MEMORY MULTISTEP OPTIMISATION
-				∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average = memory.MEMORY_MULTISTEPOPTIMISATION(param)
+			∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, NseBest, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average = memory.MEMORY_MULTISTEPOPTIMISATION(param)
 
 			# DATES OF SIMULATION
 				param = reading.hyPix.DATES(param, path.hyPix)
@@ -227,7 +227,7 @@ module hypixStart
 					println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 					println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")			
 					println("			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1]")
-					println("			Number_of_cells 	    = ", NiZ, "  [-], \n")
+					println("			Number_of_cells 	     = ", NiZ, "  [-], \n")
 
 					∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, param, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], ΔHpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
 
@@ -235,17 +235,30 @@ module hypixStart
 			if option.hyPix.θobs_Average && option.hyPix.θobs	
 				θsim_Aver = θaver.θAVER(discret; Z=Z, θ_Reduced=θ_Reduced, NiZ=NiZ, Nit_Reduced=Nit_Reduced, Zaver=min(400.0, Z[NiZ]))
 
-				RmseBest[iOpt_Count] = stats.NSE(θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced])
-
 			elseif !(option.hyPix.θobs_Average) && option.hyPix.θobs
-				RmseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
+				# NseBest[iOpt_Count] = stats.NSE(θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced])
+				# NseBest[iOpt_Count] = ofHypix.θof.RMSE_θ(∑T, obsTheta, Nit, NiZ, θ, θSim)
 				θsim_Aver = []
-				
+			
 			end
 
-			if option.hyPix.θobs
-				println("			Nse 			= ", round(RmseBest[iOpt_Count], digits=5), "  [mm3 mm-3]")
-			end
+			if  option.hyPix.θobs
+				for iZobs = 1:obsTheta.Ndepth
+					CccBest[iOpt_Count] += stats.NSE_CONCORDANCE_CORELATION_COEFICIENT(θobs_Reduced[1:Nit_Reduced, iZobs], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]])
+
+					NseBest[iOpt_Count] += stats.NSE(θobs_Reduced[1:Nit_Reduced, iZobs], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]])
+
+					WilmotBest[iOpt_Count] += stats.NSE_WILMOT(θobs_Reduced[1:Nit_Reduced, iZobs], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]])
+				end # loop
+				CccBest[iOpt_Count] = CccBest[iOpt_Count] / obsTheta.Ndepth
+				NseBest[iOpt_Count] = NseBest[iOpt_Count] / obsTheta.Ndepth
+				WilmotBest[iOpt_Count] = WilmotBest[iOpt_Count] / obsTheta.Ndepth
+
+				println("			CccBest 			= ", round(CccBest[iOpt_Count], digits=5))
+				println("			NseBest 			= ", round(NseBest[iOpt_Count], digits=5))
+				println("			WilmotBest 	    = ", round(WilmotBest[iOpt_Count], digits=5))
+			end	
+
 			println("		=== === END: summary \n")
 
 
@@ -258,7 +271,8 @@ module hypixStart
 				# Writing values of veg parameters
 				table.hyPix.VEG(veg, iOpt, path.hyPix)
 
-				table.hyPix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average, Soilname, path.hyPix)		
+				table.hyPix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, iSim, NseBest, param,  path.hyPix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
+					
 
 				if option.hyPix.Table_Discretization
 					table.hyPix.DISCRETIZATION(discret, NiZ, Z[1:NiZ], path.hyPix)
@@ -298,7 +312,7 @@ module hypixStart
 				# if option.hyPix.Plot_Other
 				# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix, param, option)
 				# 	# plotOther.ΨMINΨMAX(hydro, path.hyPix)
-				# 	plotOther.WOF_STEPS(path.hyPix)
+					# plotOther.WOF_STEPS(path.hyPix)
 				# 	# plotOther.SE_Ψ_CONSTRAINED(hydro, path.hyPix)
 				# 	# plotOther.PLOT_σ_2_θr(hydro, path.hyPix)
 				# 	# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix)

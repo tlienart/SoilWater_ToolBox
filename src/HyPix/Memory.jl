@@ -42,8 +42,6 @@ module memory
       Nit_Reduced                  = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
 
       iNonConverge_iOpt          = fill(0  ::Int64, Nit_Reduced)
-      
-
 
       Laiᵀ= fill(0.0::Float64, clim.N_Climate)
 		CropCoeficientᵀ = fill(0.0::Float64, clim.N_Climate)
@@ -63,7 +61,9 @@ module memory
       Efficiency                 = fill(0.0::Float64, Nit_Reduced)
       Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
       Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
-      RmseBest                   = fill(0.0::Float64, Nit_Reduced)
+      NseBest                    = fill(0.0::Float64, Nit_Reduced)
+      CccBest                    = fill(0.0::Float64, Nit_Reduced)
+      WilmotBest                 = fill(0.0::Float64, Nit_Reduced)
       SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
       WofBest                    = fill(0.0::Float64, Nit_Reduced)
       ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
@@ -71,7 +71,7 @@ module memory
       ∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
       ∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
       
-   return ∑∑ΔSink, ∑ΔQ_Bot, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, RmseBest, SwcRoots, WofBest, ΔRunTimeHypix, ΔT_Average
+   return ∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, NseBest, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average
    end  # function: MEMORY_STEOPT
    # ------------------------------------------------------------------
 

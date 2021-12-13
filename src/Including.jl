@@ -5,7 +5,6 @@
 
 using Suppressor
 
-
 @suppress begin
     include("Option.jl")
     include("Path.jl")

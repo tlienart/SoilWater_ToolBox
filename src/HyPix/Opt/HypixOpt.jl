@@ -60,7 +60,7 @@ module hypixOpt
 				∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔHpond, ΔRootDensity, ΔT, θ, Ψ  = hypixModel.HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ, option, param, Q, Residual, veg, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 			# Weighted Objective Function
-				Wof = ofHypix.θof.WOF_θ(∑T[1:Nit], Nit, NiZ, obsTheta, param, ΔHpond[1:Nit], θ[1:Nit,1:NiZ], θSim)
+				Wof = ofHypix.WOF_θ(∑T[1:Nit], Nit, NiZ, obsTheta, param, ΔHpond[1:Nit], θ[1:Nit,1:NiZ], θSim)
 				
 		println("\n			~ Wof = $Wof ~")
 		return Wof

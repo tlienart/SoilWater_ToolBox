@@ -7,6 +7,104 @@ module plotOther
 
 	using CairoMakie
 
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : WOF_STEPS
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function WOF_STEPS()
+
+		Path_Output = path.Plot_OfStep * "Multiplestep.svg"
+
+		rm(Path_Output, force=true, recursive=true)	
+
+		Label = ["Waitoa";"Otorohanga";"Taupo";"Waihou";"Hamilton"]
+
+
+		Plot1=Plots.plot(layout=(2,2), size=(1000,600), bottom_margin=20px, grid=:x)
+
+		# TICKS 
+			Ticks =[ "1","2a","2b","3a","3b","4a","4b","5a","5b"]
+
+		# OF STEP
+			Path = path.Input_OfStep * "Of_Step.CSV"
+
+			Of_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
+			Of_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
+			Of_Taupo, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Taupo")
+			Of_Otorohanga, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Otorohanga")
+			Of_Hamilton, N_Hamilton = tool.readWrite.READ_HEADER(Path, "Hamilton")
+			
+			Id=1:N_Waitoa
+
+			Of = [Of_Waitoa Of_Waihou Of_Taupo Of_Otorohanga Of_Hamilton]
+
+			for i=1:5
+				Plots.plot!(Plot1, subplot=1, Id, Of[1:N_Waitoa, i], palette=:darkrainbow,  marker=(:circle, 4, 1.0), line=(2.0,:solid))
+			end
+			Plots.plot!(Plot1, subplot=1,  xlabel="", ylabel=L"WOF _{\theta} \ [mm^{3} \ mm^{-3}]", xticks=(1:1:9, Ticks), xtickfont=(12, :white), legend=false, title="(a) Weighted Objective Function", titlelocation = :left)
+
+		# GROUNDWATER STEP
+			Path = path.Input_OfStep * "Groundwater_Step.csv"
+
+			Groundwater_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
+			Groundwater_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
+			Groundwater_Taupo, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Taupo")
+			Groundwater_Otorohanga, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Otorohanga")
+			Groundwater_Hamilton, N_Hamilton = tool.readWrite.READ_HEADER(Path, "Hamilton")
+
+			Groundwater = [Groundwater_Waitoa Groundwater_Waihou Groundwater_Taupo Groundwater_Otorohanga Groundwater_Hamilton]
+
+			for i=1:5
+				Plots.plot!(Plot1, subplot=2, Id, Groundwater[1:N_Waitoa, i], palette=:darkrainbow,  marker=(:circle, 4, 1.0), line=(2.0,:solid))
+			end
+			# Plots.plot!(Plot1, subplot=2, xlabel=L"Multistep \ Optimisation \ Steps", ylabel=L"\zeta _{Q} ", xticks=(1:1:8, Ticks), legend=false, title="Groundwater", titlelocation = :left)
+
+			Plots.plot!(Plot1, subplot=2,  xlabel="", ylabel=L"\zeta _{Q} \ [\%]", xticks=(1:1:9, Ticks), xtickfont=(12, :white), legend=false, title="(b) Drainage", titlelocation = :left)
+
+
+		# EvapoTranspiration STEP
+			Path = path.Input_OfStep * "Sink_Step.csv"
+
+			Sink_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
+			Sink_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
+			Sink_Taupo, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Taupo")
+			Sink_Otorohanga, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Otorohanga")
+			Sink_Hamilton, N_Hamilton = tool.readWrite.READ_HEADER(Path, "Hamilton")
+
+			Sink = [Sink_Waitoa Sink_Waihou Sink_Taupo Sink_Otorohanga Sink_Hamilton]
+
+			for i=1:5
+				Plots.plot!(Plot1, subplot=3, Id, Sink[1:N_Waitoa, i],  palette=:darkrainbow,  marker=(:circle, 4, 1.0), line=(2.0,:solid))
+			end
+			# Plots.plot!(Plot1, subplot=3, xlabel=L"Multistep \ Optimisation \ Steps?", ylabel=L"\zeta _{et} ", xticks=(1:1:8, Ticks), legend=false, title="EvaopoTranspiration", titlelocation = :left)
+
+			Plots.plot!(Plot1, subplot=3, xlabel=L"Multistep \ optimisation \ [Layers]", ylabel=L"\zeta _{et}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=false, title="(c) Evapotranspiration", titlelocation = :left)
+
+
+		# Soil Water Content STEP
+			Path = path.Input_OfStep * "Swc_Step.csv"
+
+			Swc_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
+			Swc_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
+			Swc_Taupo, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Taupo")
+			Swc_Otorohanga, N_Otorohanga = tool.readWrite.READ_HEADER(Path, "Otorohanga")
+			Swc_Hamilton, N_Hamilton = tool.readWrite.READ_HEADER(Path, "Hamilton")
+
+			Swc = [Swc_Waitoa Swc_Waihou Swc_Taupo Swc_Otorohanga Swc_Hamilton]
+
+			for i=1:5
+				Plots.plot!(Plot1, subplot=4, Id, Swc[1:N_Waitoa, i], palette=:darkrainbow, marker=(:circle, 4, 1.0), label=Label[i], line=(2.0,:solid))
+			end
+			# Plots.plot!(Plot1, subplot=4, xlabel=L"Multistep \ Optimisation \ Steps", ylabel=L"\zeta _{\theta} ", xticks=(1:1:8, Ticks), legend=(-0.15,-0.18), title="Soil Water Content", titlelocation = :left)
+
+			Plots.plot!(Plot1, subplot=4, xlabel=L"Multistep \ optimisation \ [Layers]", ylabel=L"\zeta_{swc}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=(0.75,1.0), title="(d) Root zone soil water content", titlelocation = :left)
+
+			Plots.savefig(Plot1, Path_Output)
+			println("			 ~ ", Path_Output, "~")
+	end  # function: WGroundwater_STEPS
+
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PLOT_θψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

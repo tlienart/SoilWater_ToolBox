@@ -264,8 +264,8 @@ module plotHypix
 
 						Ndates_Reduced = floor(Int, ∑T_Reduced[Ndates] / (ΔDays * param.hyPix.ΔT_Output)) + 1
 						
-						Date_Reduced2 = fill("", Ndates_Reduced)
-						∑T_Reduced2 = fill(0, Ndates_Reduced)
+						Date_Reduced2 = fill("", Ndates_Reduced+1)
+						∑T_Reduced2 = fill(0, Ndates_Reduced+1)
 	
 						# Reducing dates
 						∑T_Reduced2[1] = ∑T_Reduced[1]	
