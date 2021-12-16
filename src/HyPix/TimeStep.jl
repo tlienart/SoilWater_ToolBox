@@ -73,11 +73,6 @@ module timeStep
 		
 			θ▽ = wrc.Ψ_2_θDual(option.hyPix, Ψ△, iZ, hydro)
 
-			if θ△ - θ▽ < 0.0 || isnan(θ△ - θ▽)
-				println(Ψ[iT,iZ]," , " ,θ△," , " ,θ▽)
-				error("ΔθMAX error")
-			end
-
 		return θ△ - θ▽
 		end  # function:  ΔθMAX
 	# ------------------------------------------------------------------
@@ -112,7 +107,7 @@ module timeStep
 						ΔT₂_New = min(max(param.hyPix.ΔT_Min, ΔT₂_New), param.hyPix.ΔT_Max)
 		
 						if option.hyPix.NormMin⍰ == "Norm"
-							ΔT_New_Norm += ΔT₂_New ^ 2
+							ΔT_New_Norm += ΔT₂_New ^ 2.0
 						else
 							ΔT_New_Norm = min(ΔT_New_Norm, ΔT₂_New)
 						end

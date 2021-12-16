@@ -242,7 +242,7 @@ module plotHypix
 					Ndates= 12
 
 				# OPTIONS
-					Option_θobs = true
+					Option_θobs = false
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
@@ -367,12 +367,12 @@ module plotHypix
 										Plot_θobs = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], linewidth=1.5, color=Style_Color[iZobs], label=Label_Obs)
 									end
 
-									Plot_θsim = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=1.5, color=Style_Color[iZobs], label=Label_Sim, linestyle=:dash)
+									Plot_θsim = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=1.5, color=Style_Color[iZobs], label=Label_Sim)
 							end # loop
 
 
 							iSubplot += 1
-							Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellwidth = true, haligns=:center, valigns=:bottom, nbanks=2)
+							Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellwidth = true, haligns=:center, valigns=:bottom, nbanks=1)
 
 						colgap!(Fig.layout, 90)
 						rowgap!(Fig.layout, 10)

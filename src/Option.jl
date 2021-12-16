@@ -98,7 +98,6 @@ module options
 		RootWaterUptake::Bool
 		RootWaterUptakeComp::Bool
 		Ponding::Bool
-		GravityCorection::Bool
 		LookupTable_Lai::Bool
 		LookUpTable_CropCoeficient::Bool
 		Discretisation_File_Auto⍰::String
@@ -106,6 +105,7 @@ module options
 		HydroModel⍰::String
 		TopBoundary⍰::String
 		BottomBoundary⍰::String
+		BottomImpermeable::Bool
 		∂R∂Ψ_Numerical::Bool
 		IterReduceOverShoting::Bool
 		DynamicNewtonRaphsonStep::Bool

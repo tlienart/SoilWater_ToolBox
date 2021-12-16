@@ -4,22 +4,6 @@ module flux
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : GRAVITY
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function GRAVITY(discret, iZ, option, param, ψ_, ψ▲)
-
-			∂ψ∂Z = (ψ_- ψ▲) / discret.ΔZ_Aver[iZ]
-
-			if (iZ ≥ 2) && (ψ_ ≤ param.hyPix.ψϱ) && (ψ▲ ≤ param.hyPix.ψϱ) && (-1.0 ≤ ∂ψ∂Z) && option.hyPix.GravityCorection
-				return 0.0
-			else
-				return  1.0
-			end
-		end  # function: GRAVITY
-	# ------------------------------------------------------------------
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : K_AVER!
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function K_AVER!(option, param, discret, hydro, iZ::Int64, NiZ::Int64, ψ_, ψ▲)
@@ -66,16 +50,18 @@ module flux
 			elseif 2 ≤ iZ ≤ NiZ # <>=<>=<>=<>=<>
 				K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
 
-				return K_Aver * ( ((ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα * GRAVITY(discret, iZ, option, param, ψ_, ψ▲))
+				return K_Aver * ( ((ψ_ - ψ▲) / discret.ΔZ_Aver[iZ]) + param.hyPix.Cosα)
 
 			else
 				if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
-					K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
+					# K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
+					K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro)
 
 					return K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-					K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
+					# K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
+					K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, 1, hydro)
 
 					return K_Aver * ( ((param.hyPix.Ψ_Botom - ψ_) / discret.ΔZ_⬓[NiZ]) + param.hyPix.Cosα)
 
@@ -126,7 +112,7 @@ module flux
 				else # elseif 2 ≤ iZ ≤ NiZ 	<>=<>=<>=<>=<>
 					K_Aver = flux.K_AVER!(option, param, discret, hydro, iZ, NiZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return discret.ΔZ_W[iZ] * ∂K∂Ψ[iZ] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,iZ-1])) + K_Aver / discret.ΔZ_Aver[iZ]	
+					return discret.ΔZ_W[iZ] * ∂K∂Ψ[iZ] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) + K_Aver / discret.ΔZ_Aver[iZ]	
 				end # if iZ
 			end  # function: ∂Q∂Ψ
 		#-----------------------------------------------------------------
@@ -142,7 +128,7 @@ module flux
 				else #elseif 2 ≤ iZ ≤ NiZ 	# <>=<>=<>=<>=<>
 					K_Aver = flux.K_AVER!(option, param, discret, hydro, iZ, NiZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] *  ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option,  param, Ψ[iT,iZ], Ψ[iT,iZ-1])) - K_Aver / discret.ΔZ_Aver[iZ]	
+					return (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] *  ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) - K_Aver / discret.ΔZ_Aver[iZ]	
 				end # if iZ
 			end  # function: ∂Q∂Ψ△
 		#-----------------------------------------------------------------
@@ -156,7 +142,7 @@ module flux
 				if iZ ≤ NiZ 	# <>=<>=<>=<>=<>
 					K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ, NiZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
 
-					return (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,iZ-1])) - K_Aver▽ / discret.ΔZ_Aver[iZ]	
+					return (1.0 - discret.ΔZ_W[iZ]) * ∂K∂Ψ[iZ-1] * ((Ψ[iT,iZ] - Ψ[iT,iZ-1]) / discret.ΔZ_Aver[iZ] + param.hyPix.Cosα) - K_Aver▽ / discret.ΔZ_Aver[iZ]	
 				
 				else # <>=<>=<>=<>=<>
 					if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
@@ -187,7 +173,7 @@ module flux
 
 					K_Aver▽ = flux.K_AVER!(option, param, discret, hydro, iZ+1, NiZ, Ψ[iT,iZ+1], Ψ[iT,iZ])
 
-					return discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα * flux.GRAVITY(discret, iZ, option, param, Ψ[iT,iZ], Ψ[iT,max(iZ-1,1)])) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
+					return discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + param.hyPix.Cosα) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
 				
 				else #elseif iZ == NiZ <>=<>=<>=<>=<>
 					return 0.0

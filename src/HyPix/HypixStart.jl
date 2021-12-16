@@ -24,7 +24,7 @@
 	include("PlotHypix.jl")
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
-	include("Other/PlotOther.jl")
+	# include("Other/PlotOther.jl")
 
 module hypixStart
 	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..plotOther
@@ -40,7 +40,7 @@ module hypixStart
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
+
 		# If no optimize
 			if !(option.hyPix.Optimisation)
 				param.hyPix.iOpt_Start = 1
@@ -132,7 +132,6 @@ module hypixStart
 
 			# OBTAINING HYDRAULIC AND VEGETATION PARAMETERS (depending of we have multistep optimisation)
 			if option.hyPix.Optimisation
-
 				hydro, hydroHorizon, optim, veg = reading.hyPix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iOpt, NiZ, option, param, path.hyPix.HyPixParamOpt, veg)
 
 				println("  =============== HyPix Param Read ============== ")
@@ -152,6 +151,12 @@ module hypixStart
 
 				optim = ( NparamOpt=NparamOpt, Flag_Opt=Flag_Opt)		
 			end # option.hyPix.Optimisation
+
+
+			# SPATIAL CASE BOUNDARY CONDITION
+				if option.hyPix.BottomImpermeable
+					hydro.Ks[NiZ] = hydro.Ks_Min[NiZ] / 10.0
+				end
 
 			if optim.Flag_Opt
 				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, NiZ, obsTheta, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, ΔHpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
@@ -310,16 +315,18 @@ module hypixStart
 			println("		=== === START: Plotting === ===")
 
 				# if option.hyPix.Plot_Other
+				
+				# plotOther.plots.WOF_STEPS(path)
 				# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix, param, option)
 				# 	# plotOther.ΨMINΨMAX(hydro, path.hyPix)
-					# plotOther.WOF_STEPS(path.hyPix)
+				
 				# 	# plotOther.SE_Ψ_CONSTRAINED(hydro, path.hyPix)
 				# 	# plotOther.PLOT_σ_2_θr(hydro, path.hyPix)
 				# 	# plotOther.PLOT_θΨ_Δθ(hydro, path.hyPix)
 				# end # option.hyPix.Plot_Other
 
 				if option.hyPix.Plot_Hypix
-					plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iOpt, iSim, Nit_Reduced, NiZ, obsTheta, option, param,  path.hyPix, Soilname, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+					# plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iOpt, iSim, Nit_Reduced, NiZ, obsTheta, option, param,  path.hyPix, Soilname, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
 
 					if option.hyPix.Plot_θprofile
 						plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, path.hyPix, Soilname, θ_Reduced)

@@ -44,6 +44,8 @@ module waterBalance
 
 			∑∑WaterBalance = ΔStorage - (∑ΔQtop - ∑ΔQbottom) + ∑ΔSink[iT] - ΔStorageSo
 
+			println(ΔT[iT],"," ,∑∑WaterBalance," , ",  ∑ΔQbottom)
+
 			∑WaterBalance_η[iT] = ∑∑WaterBalance / ∑ΔQtop
 		end  # for iT=1:Nit
 

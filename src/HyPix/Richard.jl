@@ -164,29 +164,6 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, option, param, Residual, ΔLnΨmax, θ, Ψ, Ψ_Max)
 
-			# if maximum(isnan.(Ψ[iT, 1:NiZ]))
-			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-			# 	println("0 Pressure")
-			# end
-
-			# if maximum(isnan.(∂R∂Ψ△[2:NiZ]))
-			# 	println("Ψ=$(Ψ[iT, 2:NiZ]) \n")
-			# 	println(∂R∂Ψ△[2:NiZ])
-			# 	println("1 ∂R∂Ψ△")
-			# end
-
-			# if maximum(isnan.(∂R∂Ψ[1:NiZ]))
-			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-			# 	println(∂R∂Ψ[1:NiZ])
-			# 	println("2 ∂R∂Ψ")
-			# end
-
-			# if maximum(isnan.(∂R∂Ψ▽[1:NiZ-1]))
-			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-			# 	println(∂R∂Ψ▽[2:NiZ])
-			# 	println("3 ∂R∂Ψ▽")
-			# end
-
 			Matrix_Trid = Tridiagonal(∂R∂Ψ△[2:NiZ], ∂R∂Ψ[1:NiZ], ∂R∂Ψ▽[1:NiZ-1])
 
 			# if maximum(isnan.(Matrix_Trid))
@@ -197,30 +174,7 @@ module richard
 
 			Residual = reshape(Residual, NiZ, 1) # Transforming from row to column
 
-			# if maximum(isnan.(Residual))
-			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-			# 	println(Residual)
-			# 	println("5 Residual")
-			# end
-
 			NewtonStep = Matrix_Trid \ -Residual
-
-			# # More robust method for computing the Newton step if the previous fails
-			# 	if maximum(isnan.(NewtonStep))
-			# 		NewtonStep = lu(Matrix_Trid) \ -Residual
-			# 	end
-
-			# if maximum(isnan.(NewtonStep))
-			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-			# 	println(NewtonStep)
-			# 	println("6 NewtonStep")
-			# end
-
-			# if isnan(Ψ[iT,iZ])
-			# 	println( iT," , " ,Ψ[iT,iZ])
-			# 	error("Richard Ψ=NaN")
-			# end
-
 			for iZ=1:NiZ
 				# Iteration k-1
 					Ψ₀ = Ψ[iT,iZ]
@@ -243,8 +197,7 @@ module richard
 					# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
 					
 					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
-					
-					
+							
 				else
 					# Newtyon step
 						Ψ[iT,iZ] += NewtonStep[iZ]
@@ -259,11 +212,6 @@ module richard
 
 					if option.hyPix.DynamicNewtonRaphsonStep
 						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, option, param, ΔLnΨmax, θ₀, Ψ)
-
-						# if isnan(Ω)
-						# 	println(Ω)
-						# 	error("DYNAMIC_NEWTON_RAPHSON_STEP")
-						# end
 					
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 						
@@ -284,20 +232,35 @@ module richard
 	# ------------------------------------------------------------------
 
 	
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# #		FUNCTION : Ψ_REDUCE_OVERSHOOTING
+	# # 		Making sure that the steps of NR are not too big and within the limits of ΔLnΨmax
+	# # 		Does not work
+	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	# 	function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
+	# 		if Ψ[iT,iZ] ≤ Ψ₀
+	# 			Ψ[iT,iZ] = max(Ψ[iT,iZ], expm1(log1p(Ψ₀) - ΔLnΨmax[iZ]))
+	# 		else
+	# 			Ψ[iT,iZ] = min(Ψ[iT,iZ], expm1(log1p(Ψ₀) + ΔLnΨmax[iZ]))
+	# 		end	
+	# 	return Ψ
+	# 	end  # function: Ψ_REDUCE_OVERSHOOTING
+	# #---------------------------------------------------------------
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
 	# 		Making sure that the steps of NR are not too big and within the limits of ΔLnΨmax
 	# 		Does not work
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
-			if Ψ[iT,iZ] ≤ Ψ₀
-				Ψ[iT,iZ] = max(Ψ[iT,iZ], expm1(log1p(Ψ₀) - ΔLnΨmax[iZ]))
-			else
-				Ψ[iT,iZ] = min(Ψ[iT,iZ], expm1(log1p(Ψ₀) + ΔLnΨmax[iZ]))
-			end	
-		return Ψ
-		end  # function: Ψ_REDUCE_OVERSHOOTING
-	#---------------------------------------------------------------
+	function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
+		if Ψ[iT,iZ] ≤ Ψ₀
+			Ψ[iT,iZ] = max(Ψ[iT,iZ], Ψ₀ - expm1(ΔLnΨmax[iZ]))
+		else
+			Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψ₀ +  expm1(ΔLnΨmax[iZ]))
+		end	
+	return Ψ
+	end  # function: Ψ_REDUCE_OVERSHOOTING
+#------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -335,11 +298,6 @@ module richard
 
 					Ψ[iT,iZ] = θ_2_ΨDual(option.hyPix, θ[iT,iZ] , iZ, hydro)
 				end  # Ψ[iT,iZ] ≤ Ψwet && Ψ₀ ≥ Ψdry
-
-				# if isnan(Ψ[iT,iZ])
-				# 	error("ZHA_WETING_DRYSOIL Ψ= NaN, iT= $iT, iZ= $iZ")
-				# end
-
 			return Ψ
 			end  # function:ZHA_WETING_DRYSOIL
 	# ------------------------------------------------------------------
@@ -352,7 +310,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, option, param, Q, ΔHpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 3		
+			if option.hyPix.Flag_ReRun	&& Count_ReRun ≤ 2		
 				Q[iT,1] = flux.Q!(option, discret, hydro, 1, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 				for iZ=1:NiZ
 					Q[iT,iZ+1] = flux.Q!(option, discret, hydro, iZ+1, iT, NiZ, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
@@ -365,6 +323,11 @@ module richard
 					Flag_ReRun = true
 					Count_ReRun += 1
 				
+				elseif Flag_NoConverge
+					Flag_ReRun = true
+					Count_ReRun += 1
+					ΔT[iT] = 0.75 * ΔT[iT]
+
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false
 					Count_ReRun = 0
