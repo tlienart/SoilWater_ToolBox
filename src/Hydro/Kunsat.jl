@@ -281,7 +281,7 @@ module kunsat
 
 				P₂ = 1.0 / √(2.0) 
 				Pπ = 1.0 / √(π)
-				Pc = 0.39894228040143265
+				Pc = 1.0 / √(2.0*π) 
 				P8 = 1.0 / 8.0
 				
 				F_LOG = (P₂ * log(Ψ₁ / Ψm)) / σ
@@ -294,11 +294,11 @@ module kunsat
 				ΨΨmMac = erfc(log(Ψ₁ / ΨmMac) / (√2.0 *σMac))
 				ΨΨmσ_Mac = exp((-(log(Ψ₁ / ΨmMac) / (√2.0 *σMac))*log(Ψ₁ / ΨmMac)) / (√2.0 *σMac))
 
-				∂Kunsat_Mat∂Ψ = (-Pc * KsMat*((Ψ₁ / Ψm)^-1)*Erfc1_Mat*sqrt(0.5SeMat*ΨΨm + 0.5SeMac*ΨΨmMac)*exp(((-F_LOG) - P₂ * σ) * (P₂ * σ + F_LOG))) / (Ψm*σ)+ P8 * KsMat*((-Pπ * SeMac*((Ψ₁ / ΨmMac)^-1)*ΨΨmσ_Mac) / (√2.0 *ΨmMac*σMac) + (-Pπ * SeMat*((Ψ₁ / Ψm)^-1)*ΨΨmσ) / (√2.0 *Ψm*σ))*(Erfc1_Mat^2)*(sqrt(0.5 * SeMat*ΨΨm + 0.5SeMac*ΨΨmMac)^-1)
+				∂Kunsat_Mat∂Ψ = (-Pc * KsMat*((Ψ₁ / Ψm)^-1)*Erfc1_Mat*sqrt(0.5*SeMat*ΨΨm+0.5*SeMac*ΨΨmMac)*exp(((-F_LOG) - P₂*σ) * (P₂*σ + F_LOG))) / (Ψm*σ)+ P8*KsMat*(-Pπ)*((SeMac*((Ψ₁ / ΨmMac)^-1)*ΨΨmσ_Mac) / (√2.0 *ΨmMac*σMac) + (SeMat*((Ψ₁ / Ψm)^-1)*ΨΨmσ) / (√2.0 *Ψm*σ))*(Erfc1_Mat^2)*(sqrt(0.5*SeMat*ΨΨm+0.5*SeMac*ΨΨmMac)^-1)
 				
 			
 				if θs - θsMacMat > θsθsMacMat 
-					∂Kunsat_Mac∂Ψ =  (-Pc * KsMac*((Ψ₁ / ΨmMac)^-1)*Erfc1_Mac*sqrt(0.5SeMat*ΨΨm + 0.5SeMac*ΨΨmMac)*exp((-F_LOG_MAC - P₂ * σMac)*(P₂ * σMac + F_LOG_MAC))) / (ΨmMac*σMac) + P8 *  KsMac*((-Pπ * SeMac*((Ψ₁ / ΨmMac)^-1)*ΨΨmσ_Mac) / (√2.0 *ΨmMac*σMac) + (-Pπ * SeMat*((Ψ₁ / Ψm)^-1)*ΨΨmσ) / (√2.0 *Ψm*σ))*(Erfc1_Mac^2)*(sqrt(0.5SeMat*ΨΨm + 0.5SeMac*ΨΨmMac)^-1.0)
+					∂Kunsat_Mac∂Ψ =  (-Pc * KsMac*((Ψ₁ / ΨmMac)^-1)*Erfc1_Mac*sqrt(0.5*SeMat*ΨΨm+0.5*SeMac*ΨΨmMac)*exp((-F_LOG_MAC - P₂*σMac)*(P₂ * σMac + F_LOG_MAC))) / (ΨmMac*σMac) + P8 *(-Pπ)*KsMac*((SeMac*((Ψ₁ / ΨmMac)^-1)*ΨΨmσ_Mac) / (√2.0 *ΨmMac*σMac) + (SeMat*((Ψ₁ / Ψm)^-1)*ΨΨmσ) / (√2.0 *Ψm*σ))*(Erfc1_Mac^2)*(sqrt(0.5*SeMat*ΨΨm+0.5*SeMac*ΨΨmMac)^-1.0)
 				else
 					∂Kunsat_Mac∂Ψ = 0.0
 				end 
