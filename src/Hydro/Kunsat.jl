@@ -6,6 +6,9 @@ module kunsat
 	#		FUNCTION : Ψ_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if  optionₘ.HydroModel⍰ == "Kosugi"
 				return kunsat.kg.Ψ_2_KUNSAT(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif  optionₘ.HydroModel⍰ == "Vangenuchten" ||  optionₘ.HydroModel⍰ == "VangenuchtenJules"
@@ -25,6 +28,9 @@ module kunsat
 	#		FUNCTION : ΨSE_2_KUNSAT
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam)
+
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if  optionₘ.HydroModel⍰ == "Kosugi"
 				return kunsat.kg.ΨSE_2_KUNSAT(optionₘ, Ψ₁, Se, iZ::Int64, hydroParam)
 			else
@@ -88,6 +94,9 @@ module kunsat
 	#		FUNCTION : ∂K∂ΨMODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	  function ∂K∂ΨMODEL(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if  optionₘ.HydroModel⍰ == "Kosugi"
 				return kunsat.kg.∂K∂ΨMODEL(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif  optionₘ.HydroModel⍰ == "Vangenuchten"

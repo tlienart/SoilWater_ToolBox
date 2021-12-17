@@ -12,7 +12,7 @@ module flux
 					return 0.0
 
 				elseif option.hyPix.TopBoundary⍰  == "Ψ" # <> = <> = <> = <> = <>
-					return Ψ_2_KUNSAT(option.hyPix, ψ_, 1, hydro)
+					return max(Ψ_2_KUNSAT(option.hyPix, ψ_, 1, hydro), 1.0E-14)
 
 				else 	# <> = <> = <> = <> = <>
 					error("K_AVER! option.hyPix.TopBoundary⍰ not found")
@@ -20,11 +20,10 @@ module flux
 				end
 
 			elseif 2 ≤ iZ ≤ NiZ # <>=<>=<>=<>=<>
-				return discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro)
+				return max(discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro), 1.0E-14)
 
 			else
-				return Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro)
-
+				return max(Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro), 1.0E-14)
 			end
 		end  # function: K_AVER!
 	#-------------------------------------------------------------------
@@ -33,10 +32,10 @@ module flux
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : Q
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, NiZ::Int64, param, Q, ΔHpond, ΔPr, ΔSink, ΔT, θ, ψ_, ψ▲)
+		function Q!(option, discret, hydro, iZ::Int64, iT::Int64, NiZ::Int64, param, Hpond, ΔPr, ΔSink, ΔT, θ, ψ_, ψ▲)
 			if iZ == 1  # <>=<>=<>=<>=<>
 				if option.hyPix.TopBoundary⍰  == "Flux" 
-					return (ΔPr[iT] + ΔHpond[iT-1] - ΔHpond[iT]) / ΔT[iT]
+					return (ΔPr[iT] + Hpond[iT-1] - Hpond[iT]) / ΔT[iT]
 
 				elseif option.hyPix.TopBoundary⍰ == "Ψ" 
 					K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
@@ -54,23 +53,22 @@ module flux
 
 			else
 				if option.hyPix.BottomBoundary⍰ == "Free" # <>=<>=<>=<>=<>
-					# K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
-					K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro)
+					K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
 
 					return K_Aver * param.hyPix.Cosα
 
 				elseif option.hyPix.BottomBoundary⍰ == "Ψ" # <>=<>=<>=<>=<>
-					# K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
-					K_Aver = Ψ_2_KUNSAT(option.hyPix, ψ_, 1, hydro)
+					K_Aver = K_AVER!(option, param, discret, hydro, iZ, NiZ, ψ_, ψ▲)
 
 					return K_Aver * ( ((param.hyPix.Ψ_Botom - ψ_) / discret.ΔZ_⬓[NiZ]) + param.hyPix.Cosα)
 
 				elseif option.hyPix.BottomBoundary⍰ == "Q" # <>=<>=<>=<>=<>
-					if param.hyPix.Q_Botom ≥ 0.0
-						return min(param.hyPix.Q_Botom,  discret.ΔZ_Aver[NiZ] * (θ[iT-1,NiZ] - hydro.θr[NiZ]) / ΔT[iT])
-					else
-						return max(param.hyPix.Q_Botom, -  discret.ΔZ_Aver[NiZ] * (hydro.θs[NiZ] - θ[iT-1,iZ]) / ΔT[iT])
-					end
+					# if param.hyPix.Q_Botom ≥ 0.0
+					# 	return min(param.hyPix.Q_Botom,  discret.ΔZ_Aver[NiZ] * (θ[iT-1,NiZ] - hydro.θr[NiZ]) / ΔT[iT])
+					# else
+					# 	return max(param.hyPix.Q_Botom, -  discret.ΔZ_Aver[NiZ] * (hydro.θs[NiZ] - θ[iT-1,iZ]) / ΔT[iT])
+					# end
+					return param.hyPix.Q_Botom
 
 				else
 					error("Q! option.hyPix.BottomBoundary⍰ not found")
@@ -164,7 +162,6 @@ module flux
 		#-----------------------------------------------------------------
 
 
-
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ∂Q▽∂Ψ▽
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,7 +174,6 @@ module flux
 				
 				else #elseif iZ == NiZ <>=<>=<>=<>=<>
 					return 0.0
-
 				end
 			end  # function: ∂Q▽∂Ψ▽
 

@@ -15,7 +15,7 @@ module memory
       N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + 10
 		
       ΔEvaporation = fill(0.0::Float64, N_Memory)
-      ΔHpond       = fill(0.0::Float64, N_Memory)
+      Hpond       = fill(0.0::Float64, N_Memory)
       ΔPet         = fill(0.0::Float64, N_Memory)
       ΔPr          = fill(0.0::Float64, N_Memory)
       ΔT           = fill(0.0::Float64, N_Memory)
@@ -48,7 +48,7 @@ module memory
 
       θSim = fill(0.0::Float64, obsTheta.Nit, NiZ)
 		
-		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔHpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, Hpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
 
 

@@ -5,7 +5,7 @@ module Δtchange
 	import ..interpolate, ..reading, ..tool, ..cst
 	import Dates: value, DateTime, Day, Second, Hour, now
 
-	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, Nit::Int64, NiZ::Int64, param, Q, ΔEvaporation, ΔHpond, ΔT, θ, Ψ, ∑T_Climate)
+	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, Nit::Int64, NiZ::Int64, param, Q, ΔEvaporation, Hpond, ΔT, θ, Ψ, ∑T_Climate)
 
 		# PREPROCESSING ∑Evaporation, ∑ΔQ
          ∑Evaporation = fill(0.0::Float64, Nit)
@@ -80,7 +80,7 @@ module Δtchange
 				∑PrGross_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T_Climate[1:clim.N_Climate], ∑T_Reduced, Nit_Reduced, clim.N_Climate, ∑PrGross_Reduced, ∑Pr_Gross)
 
 			ΔPond_Reduced = fill(0.0, Nit_Reduced)
-				ΔPond_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, ΔPond_Reduced, ΔHpond)
+				ΔPond_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, ΔPond_Reduced, Hpond)
 
 			# From ∑ to Δ
             ΔEvaporation_Reduced = fill(0.0::Float64, Nit_Reduced)

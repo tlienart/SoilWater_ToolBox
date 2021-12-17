@@ -26,7 +26,7 @@ module waterBalance
 
 				@fastmath @inbounds for iZ = 1:NiZ
 					ΔStorage += discret.ΔZ[iZ] * ( (θ[iT,iZ] - θ[i∑T_CalibrStart-1,iZ]) )
-					
+	
 					ΔStorageSo += discret.ΔZ[iZ] * hydro.So[iZ] * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) * (θ[iT,iZ] / hydro.θs[iZ])
 				end # for iT=1:NiZ
 
@@ -44,7 +44,6 @@ module waterBalance
 
 			∑∑WaterBalance = ΔStorage - (∑ΔQtop - ∑ΔQbottom) + ∑ΔSink[iT] - ΔStorageSo
 
-			println(ΔT[iT],"," ,∑∑WaterBalance," , ",  ∑ΔQbottom)
 
 			∑WaterBalance_η[iT] = ∑∑WaterBalance / ∑ΔQtop
 		end  # for iT=1:Nit

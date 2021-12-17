@@ -16,7 +16,7 @@ module ofHypix
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : WOF_θ
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function WOF_θ(∑T, Nit::Int, NiZ::Int, obsTheta, param, ΔHpond, θ, θSim; θobs_Uncert=param.hyPix.obsTheta.θobs_Uncert)
+		function WOF_θ(∑T, Nit::Int, NiZ::Int, obsTheta, param, Hpond, θ, θSim; θobs_Uncert=param.hyPix.obsTheta.θobs_Uncert)
 
 			θSim = interpolate.INTERPOLATE_2D_LOOP(∑T, obsTheta.∑T[1:obsTheta.Nit], Nit, NiZ, θSim, θ)
 
@@ -44,7 +44,7 @@ module ofHypix
 			end # for iZ
 
 			# Penalty if we have too much ponding
-			 Wof_Pond = max(ΔHpond[NiZ] - param.hyPix.obsTheta.ΔHpondMax, 0.0) / 100.0
+			 Wof_Pond = max(Hpond[NiZ] - param.hyPix.obsTheta.ΔHpondMax, 0.0) / 100.0
 
 		return Wof + Wof_Pond
 		end # function WOF_θ
