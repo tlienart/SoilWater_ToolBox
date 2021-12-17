@@ -2,7 +2,7 @@
 #		MODULE WRC
 # =============================================================
 module wrc
-	export Ψ_2_θDual, Ψ_2_SeDual, θ_2_ΨDual, θ_2_Se, Se_2_θ, ∂Ψ∂Se, ∂Se∂Ψ, ∂θ∂Ψ, ∂Ψ∂θ
+	export ∂Se∂Ψ, ∂θ∂Ψ, ∂Ψ∂Se, ∂Ψ∂θ, Se_2_θ, θ_2_Se, θ_2_ΨDual, Ψ_2_SeDual, Ψ_2_θDual
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : θ_2_Se
@@ -28,6 +28,9 @@ module wrc
 	#		FUNCTION : Ψ_2_θDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_θDual(optionₘ, Ψ₁, iZ, hydroParam)
+
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if optionₘ.HydroModel⍰ == "Kosugi"
 				return wrc.kg. Ψ_2_θDual(optionₘ,Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
@@ -49,6 +52,9 @@ module wrc
 	#		FUNCTION : Ψ_2_SeDual
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function Ψ_2_SeDual(optionₘ, Ψ₁, iZ, hydroParam)
+
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if optionₘ.HydroModel⍰ == "Kosugi"
 				return wrc.kg.Ψ_2_SeDual(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
@@ -101,7 +107,10 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂θ∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)	
+		function ∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if optionₘ.HydroModel⍰ == "Kosugi"
 				return wrc.kg.∂θ∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			elseif optionₘ.HydroModel⍰ == "Vangenuchten"
@@ -133,7 +142,10 @@ module wrc
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ∂Se∂Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)	
+		function ∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
+			
+			Ψ₁ = max(Ψ₁, 0.0)
+
 			if optionₘ.HydroModel⍰ == "Kosugi"
 				return wrc.kg.∂Se∂Ψ(optionₘ, Ψ₁, iZ::Int64, hydroParam)
 			else

@@ -61,18 +61,19 @@ module timeStep
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ΔθMAX(hydro, iT::Int64, iZ::Int64, option, ΔLnΨmax::Vector{Float64}, Ψ::Matrix{Float64})
 
-			if log1p(Ψ[iT,iZ]) > ΔLnΨmax[iZ]
-				Ψ▽ = expm1(log1p(Ψ[iT,iZ]) - ΔLnΨmax[iZ])		
+			Ψ₀ = max(Ψ[iT,iZ], 0.0)
+
+			if log1p(Ψ₀) > ΔLnΨmax[iZ]
+				Ψ▽ = expm1(log1p(Ψ₀) - ΔLnΨmax[iZ])		
 			else
 				Ψ▽ = 0.0
 			end	
 
-			Ψ△  = expm1(log1p(Ψ[iT,iZ]) + ΔLnΨmax[iZ])
+			Ψ△  = expm1(log1p(Ψ₀) + ΔLnΨmax[iZ])
 			
 			θ△ = wrc.Ψ_2_θDual(option.hyPix, Ψ▽, iZ, hydro) + eps(100.0)
 		
 			θ▽ = wrc.Ψ_2_θDual(option.hyPix, Ψ△, iZ, hydro)
-
 		return θ△ - θ▽
 		end  # function:  ΔθMAX
 	# ------------------------------------------------------------------
