@@ -81,7 +81,7 @@ module plotOther
 					end
 					# Plots.plot!(Plot1, subplot=3, xlabel=L"Multistep \ Optimisation \ Steps?", ylabel=L"\zeta _{et} ", xticks=(1:1:8, Ticks), legend=false, title="EvaopoTranspiration", titlelocation = :left)
 
-					Plots.plot!(Plot1, subplot=3, xlabel=L"Multistep \ optimisation \ [Layers]", ylabel=L"\zeta _{et}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=false, title="(c) Evapotranspiration", titlelocation = :left)
+					Plots.plot!(Plot1, subplot=3, xlabel=L"Multistep \ optimization \ [Layers]", ylabel=L"\zeta _{et}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=false, title="(c) Evapotranspiration", titlelocation = :left)
 
 
 				# Soil Water Content STEP
@@ -100,7 +100,7 @@ module plotOther
 					end
 					# Plots.plot!(Plot1, subplot=4, xlabel=L"Multistep \ Optimisation \ Steps", ylabel=L"\zeta _{\theta} ", xticks=(1:1:8, Ticks), legend=(-0.15,-0.18), title="Soil Water Content", titlelocation = :left)
 
-					Plots.plot!(Plot1, subplot=4, xlabel=L"Multistep \ optimisation \ [Layers]", ylabel=L"\zeta_{swc}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=(0.75,1.0), title="(d) Root zone soil water content", titlelocation = :left)
+					Plots.plot!(Plot1, subplot=4, xlabel=L"Multistep \ optimization \ [Layers]", ylabel=L"\zeta_{swc}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=(0.75,1.0), title="(d) Root zone soil water content", titlelocation = :left)
 
 					Plots.savefig(Plot1, Path_Output)
 					println("			 ~ ", Path_Output, "~")
@@ -294,7 +294,7 @@ module plotOther
 
 				Fig = Figure(resolution = (1000, 600))
 
-				Ax1 = Axis(Fig[1,1], xlabel= L"$\sigma$ $[-]$", ylabel=  L"$\Psi$ $[mm]$",  font="Computer Modern", titlesize=25, fontsize=16, xlabelsize=22, ylabelsize=22 , xgridvisible=false, ygridvisible=false, yscale = log10, yminorticksvisible = true, yminorgridvisible = true,
+				Ax1 = Axis(Fig[1,1], xlabel= L"$\sigma$ $[-]$", ylabel=  L"$\Psi$ $[mm]$",  font="Computer Modern", titlesize=25, fontsize=25, xlabelsize=25, ylabelsize=25 , xgridvisible=false, ygridvisible=false, yscale = log10, yminorticksvisible = true, yminorgridvisible = true,
 				yminorticks = IntervalsBetween(10))
 
 				Ax1.yticks=[0, 1, 100,1000,10000,100000]

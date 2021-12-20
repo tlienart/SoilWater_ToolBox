@@ -37,10 +37,10 @@ using Suppressor
     
     include("HyPix/VegStruct.jl")
     include("HyPix/Discretization.jl")
-    # include("NoCore/Smap/ReadSmap.jl")
-    # include("NoCore/Smap/TableSmap.jl")
-    # include("NoCore/Smap/Smap2Hypix.jl")
-    # include("NoCore/Smap/PlotSmap.jl")
+    include("NoCore/Smap/ReadSmap.jl")
+    include("NoCore/Smap/TableSmap.jl")
+    include("NoCore/Smap/Smap2Hypix.jl")
+    include("NoCore/Smap/PlotSmap.jl")
 
     include("HydroLab/OfHydrolab.jl")
     include("HydroLab/HydrolabOpt.jl")

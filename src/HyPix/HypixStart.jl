@@ -21,10 +21,10 @@
 	include("Other/θaver.jl")
 	include("Memory.jl")
 	include("Climate.jl")
-	include("PlotHypix.jl")
+	include("Other/PlotHypix.jl")
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
-	# include("Other/PlotOther.jl")
+	include("Other/PlotOther.jl")
 
 module hypixStart
 	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..plotOther
@@ -119,6 +119,7 @@ module hypixStart
 			# LOOKUP TABLE 
             Laiᵀ_η            = reading.hyPix.LOOKUPTABLE_LAI(clim, option, path.hyPix, veg)
             CropCoeficientᵀ_η = reading.hyPix.LOOKUPTABLE_CROPCOEFICIENT(clim, option, path.hyPix, veg)
+				plotOther.plots.WOF_STEPS(path)
 
 		# ========================================================
 		# Looping for every step optimisation

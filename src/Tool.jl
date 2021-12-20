@@ -109,7 +109,7 @@ module tool
 					Data_Select = zeros(Union{Float64,Missing}, (NiZ, N_Point_Max))
 
 				elseif typeof(Data_Output[1]) == SubString{String}
-					Data_Select = fill("A"::String, (NiZ, N_Point_Max))
+					Data_Select = fill(Data_Output[1], (NiZ, N_Point_Max))
 					Flag_String = true
 
 				else
