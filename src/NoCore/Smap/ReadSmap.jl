@@ -6,6 +6,8 @@
    	import Polynomials, DelimitedFiles
 		   export SMAP, ROCKFRAGMENT_WETTABLE_STRUCT
 
+			RockFragment_Max = 0.9
+
 			function SMAP(IdSelect, NiZ, Path)
 				println("    ~  $(Path) ~")
 
@@ -28,6 +30,8 @@
 				Smap_Depth, ~  = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "depth_mm", NiZ; N_Point_Max=1)
 
 				RockFragment, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "Stone_Prop", NiZ; N_Point_Max=1)
+
+				RockFragment = min.(RockFragment_Max, RockFragment)
 
 				Smap_RockDepth, ~ = tool.readWrite.READ_ROW_SELECT(IdSelect, Data, Header, "RockDepth_mm", NiZ; N_Point_Max=1)
 

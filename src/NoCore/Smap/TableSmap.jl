@@ -2,7 +2,7 @@
 #		module: tableSmap
 # =============================================================
 module tableSmap
-   import ..tool, ..wrc
+   import ..tool, ..wrc, ..kunsat
    import DelimitedFiles, CSV, Tables
 
    	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,12 +49,15 @@ module tableSmap
          HeaderSmap = true # <true> the greek characters are replaced by alphabet; <false> original parameter names with no units usefull to use values in SoilWater-ToolBox
 
          # User input
-            Option_BrooksCorey       = true
-            Option_ClappHornberger   = true
-            Option_VanGenuchten      = true
-            Option_VanGenuchtenJules = true
+            Option_BrooksCorey       = false
+            Option_ClappHornberger   = false
+            Option_VanGenuchten      = false
+            Option_VanGenuchtenJules = false
             Option_Kosugi            = true
-            Option_Kosugi_Table      = true
+            Option_Kosugi_Table_θψ   = true
+            Option_Kosugi_Table_Kψ   = true
+
+            
 
          Header = ["Id"; "SoilName"; "Depth_mm"; "IsTopsoil"; "RockFragment_%";"RockDepth_mm"; "MaxRootingDepth_mm"; "PermeabilityClass"; "SmapFH"]
          Data = []
@@ -210,8 +213,8 @@ module tableSmap
          end # Option_Kosugi
 
 
-      # HydroModel_θΨ == "Option_Kosugi_Table"
-      if Option_Kosugi_Table # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+      # HydroModel_θΨ == "Option_Kosugi_Table_θψ"
+      if Option_Kosugi_Table_θψ # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
          HydroModel_θΨ = "Kosugi"
 
          N_Ψ = length(param.smap.Ψ_Table[:])
@@ -225,9 +228,36 @@ module tableSmap
          end # iZ
 
          if isfile(Path_θΨ)
-            Select_θΨ = string.(Int64.(param.smap.Ψ_Table)) .* "mm"            
+            Select_θΨ = "ThetaH_" .* string.(Int64.(param.smap.Ψ_Table)) .* "_mm"            
 
             Data = hcat(Data[1:NiZ, :], θ₂[1:NiZ, :])
+      
+            Header_θΨ = Select_θΨ
+
+            Header =  append!(Header, Header_θΨ)
+         end
+      end # Option_Kosugi
+
+
+
+      # HydroModel_θΨ == "Option_Kosugi_Table_Kψ"
+      if Option_Kosugi_Table_Kψ # <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
+         HydroModel_θΨ = "Kosugi"
+
+         N_Ψ = length(param.hydro.K_Table[:])
+         K₂ = fill(0.0::Float64, (NiZ, N_Ψ))
+
+         for iZ=1:NiZ
+            for iΨ =1:N_Ψ
+               Ψ₂ = param.hydro.K_Table[iΨ]
+               K₂[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ₂, iZ, hydro)
+            end # iΨ
+         end # iZ
+
+         if isfile(Path_θΨ)
+            Select_θΨ = "KunsatH_" .* string.(Int64.(param.hydro.K_Table)) .* "_mm s-1"            
+
+            Data = hcat(Data[1:NiZ, :], K₂[1:NiZ, :])
       
             Header_θΨ = Select_θΨ
 

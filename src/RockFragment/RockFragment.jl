@@ -53,6 +53,7 @@ module rockFragment
 				end #  for iZ = 1:NiZ	
 			return  θ_θΨobs
 			end  # function: STONECORRECTION_NONEWETABLE
+		#..................................................................
 
 			
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,6 +67,7 @@ module rockFragment
 				end
 			return  Φ
 			end  # function: STONECORRECTION_NONEWETABLE
+		#..................................................................
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

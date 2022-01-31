@@ -10,8 +10,6 @@ module params
 		N_iZ_Plot_End
 	end
 	@option mutable struct KG
-		Ψσ_Min
-		Ψσ_Max
 		Ψσ
 	end
 	@option mutable struct SMAPS

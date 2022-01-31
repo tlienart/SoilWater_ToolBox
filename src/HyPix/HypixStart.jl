@@ -24,7 +24,7 @@
 	include("Other/PlotHypix.jl")
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
-	include("Other/PlotOther.jl")
+	# include("Other/PlotOther.jl")
 
 module hypixStart
 	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..plotOther
@@ -35,7 +35,7 @@ module hypixStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_START(Soilname, option, param,  PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
+	function HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
@@ -119,7 +119,6 @@ module hypixStart
 			# LOOKUP TABLE 
             Laiᵀ_η            = reading.hyPix.LOOKUPTABLE_LAI(clim, option, path.hyPix, veg)
             CropCoeficientᵀ_η = reading.hyPix.LOOKUPTABLE_CROPCOEFICIENT(clim, option, path.hyPix, veg)
-				plotOther.plots.WOF_STEPS(path)
 
 		# ========================================================
 		# Looping for every step optimisation
@@ -152,7 +151,6 @@ module hypixStart
 
 				optim = ( NparamOpt=NparamOpt, Flag_Opt=Flag_Opt)		
 			end # option.hyPix.Optimisation
-
 
 			# SPATIAL CASE BOUNDARY CONDITION
 				if option.hyPix.BottomImpermeable
@@ -327,7 +325,7 @@ module hypixStart
 				# end # option.hyPix.Plot_Other
 
 				if option.hyPix.Plot_Hypix
-					# plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iOpt, iSim, Nit_Reduced, NiZ, obsTheta, option, param,  path.hyPix, Soilname, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+					plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iOpt, iSim, Nit_Reduced, NiZ, obsTheta, option, param,  path.hyPix, Soilname, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
 
 					if option.hyPix.Plot_θprofile
 						plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, option, param, path.hyPix, Soilname, θ_Reduced)

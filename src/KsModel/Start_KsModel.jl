@@ -33,6 +33,7 @@ module startKsModel
 
 						ksmodelτ = STATISTICS_KSMODEL(hydro, iGroup_Opt, GroupBool_Select, KₛModel, ksmodelτ, optimKsmodel)
 
+
 						if option.other.Ploting && option.ksModel.Plot_KsModel
 							NameSim = "σ_" * string(iGroup_Opt)
 
@@ -40,7 +41,6 @@ module startKsModel
 						end # if option.Plot
 
 					end # if optimKsmodel.NparamOpt[iGroup_Opt] ≥ 1
-
 				end # for iGroup_Opt=1:N_Group
 
 			# RUN KₛModel
@@ -52,7 +52,6 @@ module startKsModel
 				KₛModel = θψ2KsModel.KSMODEL(GroupBool_Select, hydro, ipGroup, KₛModel, KₛModel⍰, ksmodelτ, NiZ::Int64, optim, optimKsmodel, option, param; Flag_IsTopsoil=false, Flag_RockFragment=false, IsTopsoil=[], RockFragment=[])
 
 				~ = STATISTICS_KSMODEL(hydro, iGroup_Opt, GroupBool_Select, KₛModel, ksmodelτ, optimKsmodel)
-	
 			end  # if: optimKsmodel
 
 			if option.other.Ploting
@@ -64,6 +63,9 @@ module startKsModel
 			for iZ=1:NiZ
 				if "Ks" ∉ optim.ParamOpt
 					hydro.Ks[iZ] = KₛModel[iZ]
+
+					# If wanting to assure that the feasible range is physical
+					hydro.Ks[iZ] = max( min(hydro.Ks[iZ], hydro.Ks_Max[iZ]), hydro.Ks_Min[iZ])
 				end #  hydro.Ks[iZ] < eps(100.0)
 			end # if: hydro.Ks[iZ] > eps(10.0)
 		
@@ -113,11 +115,13 @@ module startKsModel
 				ksmodelτ.Wilmot_τ[iGroup_Opt] = stats.NSE_WILMOT(log1p.(hydro.Ks[GroupBool_Select]) , log1p.(KₛModel[GroupBool_Select]))
 				ksmodelτ.Ccc_τ[iGroup_Opt]    = stats.stats.NSE_CONCORDANCE_CORELATION_COEFICIENT(log1p.(hydro.Ks[GroupBool_Select]) , log1p.(KₛModel[GroupBool_Select]))
 
-			# PRINING RESULTS 
+			# PRINING RESULTS
+			if sum(optimKsmodel.NparamOpt) ≥ 1 
 				println("		 Nse_τ    =  $(ksmodelτ.Nse_τ)")
 				println("		 Rmse_τ   =  $(ksmodelτ.Rmse_τ)")
 				println("		 Wilmot_τ =  $(ksmodelτ.Wilmot_τ)")
 				println("		 Ccc_τ    =  $(ksmodelτ.Ccc_τ)")
+			end
 
 				for iParam = 1:optimKsmodel.NparamOpt[iGroup_Opt]	
 					# Getting the current values of every layer of the hydro parameter of interest

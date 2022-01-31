@@ -60,10 +60,7 @@ module SoilWater_ToolBox
 
 		# _______________________ START: reading _______________________ 
 		println("----- START READING -----------------------------------------------")
-			
-			# DERIVING OPTIM PARAMETERS FOR OPTIONS. THIS WILL BE RECOMPUTED: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-
-		
+	
 			# DETERMINE WHICH SOILS/ PROFILE TO RUN: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 			if Soilwater_OR_Hypix⍰=="Hypix"
 				IdSelect, IdSelect_True, Soilname, NiZ = reading.ID(PathIdSelect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
@@ -118,8 +115,7 @@ module SoilWater_ToolBox
 
 					hydro, NiZ = reading.READ_STRUCT(hydroₒ, path.inputSoilwater.HydroParamPrecomputed)
 					@info "\n	*** Reading hydro parameters from file *** \n "
-
-				end
+				end # option.run.HydroLabθΨ⍰ == "File"
 
 			# IF WE HAVE BULK DENSITY AND ROCK FRAGMENT DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				if option.data.Φ⍰ == "ρᵦ"
@@ -163,9 +159,7 @@ module SoilWater_ToolBox
 				
 				elseif option.data.Pedological⍰ == "Smap"
 					IsTopsoil, RockClass, RockFragment, Smap_Depth, Smap_MaxRootingDepth, Smap_PermeabilityClass, Smap_RockDepth, Smap_SmapFH, Soilname = readSmap.SMAP(IdSelect, NiZ, path.inputSmap.Smap)
-
 				end  # if: option.data.Pedological⍰
-
 
 
 			#--- NON CORE ----
@@ -181,6 +175,7 @@ module SoilWater_ToolBox
 
 
 		# _______________________ START: running HydroLabθΨ _______________________ 
+
 		if option.run.HydroLabθΨ⍰ ≠ "No" && option.run.HydroLabθΨ⍰ ≠ "File"
 		println("----- START RUNNING HYDROLABΘΨ -----------------------------------------------")
 			# STRUCTURES
@@ -201,16 +196,18 @@ module SoilWater_ToolBox
 			# CORRECT θ(Ψ) FOR ROCK FRAGMENT
 			if option.run.RockCorection
 				if option.rockFragment.RockInjectedIncluded⍰ =="InjectRock"
+					@info "\n Correction for rock fragments  \n" 
 					θ_θΨobs = rockFragment.injectRock.CORECTION_θΨ!(NiZ, N_θΨobs, RockFragment, θ_θΨobs)
 				end #  option.rockFragment.RockInjectedIncluded⍰ ==:InjectRock
 
 				if option.rockFragment.CorectStoneRockWetability
+					@info "\n Correction for rock wettability  \n" 
 					θ_θΨobs = rockFragment.CORECTION_θΨ_WETABLE!(NiZ, N_θΨobs, rfWetable, RockClass, RockFragment, θ_θΨobs, Ψ_θΨobs)
 				end # option.rockFragment.CorrectStoneWetability
 			end # if:option.run.RockCorection
 
 
-			# OPTIMISING THE HYDRAULIC PARAMETERS
+			# OPTIMISING HYDRAULIC PARAMETERS
 			if "Ks" ∈ optim.ParamOpt
 				hydro, hydroOther = hydrolabOpt.HYDROLABOPT_START(NiZ=NiZ, ∑Psd=∑Psd, θ_θΨobs=θ_θΨobs, Ψ_θΨobs=Ψ_θΨobs, N_θΨobs=N_θΨobs, K_KΨobs=K_KΨobs, Ψ_KΨobs=Ψ_KΨobs, N_KΨobs=N_KΨobs, hydro=hydro, hydroOther=hydroOther, option=option, optionₘ=option.hydro, optim=optim, param=param)
 
@@ -480,13 +477,13 @@ println("\n\n ===== START SOIL WATER TOOLBOX =====")
 
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Unsoda")
 
-	@time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapSwat")
+	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="SmapSwat")
 
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Convert")
 
-		# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Lysimeters")
+	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="SoilWater", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Lysimeters")
 
-	#  @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="Hypix", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Convert")
+	 @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="Hypix", SiteName_Hypix="LYSIMETERS", SiteName_Soilwater="Convert")
 
 	# @time SoilWater_ToolBox.SOILWATER_TOOLBOX(;Soilwater_OR_Hypix⍰="Hypix", SiteName_Hypix="TESTCASE", SiteName_Soilwater="Convert")
 println("==== END SOIL WATER TOOLBOX ====")

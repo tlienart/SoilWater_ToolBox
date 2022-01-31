@@ -46,7 +46,6 @@ module options
 	@option mutable struct HYDRO
 		HydroModel⍰::String
 		HydroModel_List
-		θsOpt⍰::String
 		θrOpt⍰::String
 		σ_2_Ψm⍰::String
 		Plot_θΨ::Bool
@@ -65,7 +64,6 @@ module options
 		Psd_2_θr⍰::String
 		∑Psd_2_ξ1::Bool
 		HydroModel⍰::String
-		θsOpt⍰::String
 		θrOpt⍰::String
 		σ_2_Ψm⍰::String
 		Plot_Psd_θΨ::Bool
@@ -84,8 +82,7 @@ module options
 		BestUniv_Continous::Bool                	  
 		SorptivitySplitModel⍰::String  
 		SorptivityModel⍰::String     
-		HydroModel⍰::String       
-		θsOpt⍰::String            
+		HydroModel⍰::String             
 		θrOpt⍰::String            
 		σ_2_Ψm⍰::String               
 		Plot_Sorptivity::Bool        	 

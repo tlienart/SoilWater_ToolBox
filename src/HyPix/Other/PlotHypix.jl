@@ -95,55 +95,10 @@ module plotHypix
 	# end # function θΨK
 
 
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# #		FUNCTION : ROOTDENSITY
-	# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# 	function VEG_FUNCTIONS(discret, iOpt, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
 
-	# 		Plot_All = PGFPlots.GroupPlot(2, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
-
-	# 		# PLOT VEG_FUNCTIONS
-	# 			ΔRootDensity_Norm = fill(0.0::Float64, N_iRoot)
-	# 			# Taking accoung the tickness of the discretisation
-	# 			# for iZ=1:N_iRoot
-	# 			# 		ΔRootDensity_Norm[iZ] = Z[N_iRoot] * ΔRootDensity[iZ] / discret.ΔZ[iZ]
-	# 			# end
-
-	# 			# Plotting
-	# 				Plot_RootDensity = PGFPlots.Plots.Linear(ΔRootDensity[1:N_iRoot], discret.Znode[1:N_iRoot], style=" smooth, cyan, very thick", mark="none")
-
-	# 				Plot = [Plot_RootDensity]
-
-	# 				push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Delta Rdf \ [\%] $", ylabel=L"$Z \ [mm]$", title="(a)"))
-			
-	# 		# PLOT StressReduction
-	# 			# Data	
-	# 			N_Se = 6
-	# 			Ψstress = fill(0.0::Float64, 2, N_Se) 
-	# 			Ψstress[1,1] = veg.Ψfeddes1 / 10.0
-	# 			Ψstress[1,2] = veg.Ψfeddes1
-	# 			Ψstress[1,3] = veg.Ψfeddes2
-	# 			Ψstress[1,4] = veg.Ψfeddes3
-	# 			Ψstress[1,5] = veg.Ψfeddes4
-	# 			Ψstress[1,6] = veg.Ψfeddes4 * 2.0
-
-	# 			Wsf = fill(0.0::Float64, N_Se)
-	# 			for iΨ ∈ 1:N_Se
-	# 				Wsf[iΨ] = rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(2, iΨ, veg, Ψstress)
-	# 			end
-
-	# 			Plot_Wsf = PGFPlots.Plots.Linear(Ψstress[1,1:N_Se] .* cst.Mm_2_kPa, Wsf[1:N_Se], style="violet, very thick", mark="none")
-
-	# 			Plot = [Plot_Wsf]
-
-	# 			push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Psi \ [kPa]$", xmode="log", ylabel=L"$ F_{waterStress} \ [-]$", title="(b)"))
-
-	# 		Path = pathHyPix.Vegetation * "_" * string(iOpt) * ".svg"
-	# 		PGFPlots.save(Path, Plot_All)	
-	# 	end  # function ROOTDENSITY
 
 	# =============================================================
-	#		module: name
+	#		module: makkie
 	# =============================================================
 		module makkie
 			using CairoMakie, LaTeXStrings
@@ -242,10 +197,10 @@ module plotHypix
 					Ndates= 12
 
 				# OPTIONS
-					Option_θobs = false
+					Option_θobs = true
 
 				# PATH
-					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
+					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * "_val.svg"
 					rm(Path, force=true, recursive=true)
 
 				# STYLE colour
@@ -367,12 +322,12 @@ module plotHypix
 										Plot_θobs = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], linewidth=1.5, color=Style_Color[iZobs], label=Label_Obs)
 									end
 
-									Plot_θsim = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=1.5, color=Style_Color[iZobs], label=Label_Sim)
+									Plot_θsim = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=1.5, color=Style_Color[iZobs], label=Label_Sim, linestyle = :dash)
 							end # loop
 
 
 							iSubplot += 1
-							Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellwidth = true, haligns=:center, valigns=:bottom, nbanks=1)
+							Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellwidth = true, haligns=:center, valigns=:bottom, nbanks=2)
 
 						colgap!(Fig.layout, 90)
 						rowgap!(Fig.layout, 10)
