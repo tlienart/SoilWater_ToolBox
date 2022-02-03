@@ -98,9 +98,15 @@ since we've given it the label `\label{equation blah}`, we can refer it like so:
 
 In a similar vein you can cite references that would be at the bottom of the page: \citep{noether15, bezanson17}.
 
+<<<<<<< HEAD
 **Note**: the LaTeX commands you define can also incorporate standard markdown (though not in a math environment) so for instance let's define a silly `\bolditalic` command.
 
 \newcommand{\bolditalic}[1]{_**!#1**_} <!--_ ignore this comment, it helps atom to not get confused by the trailing underscore when highlighting the code but is not necessary.-->
+=======
+For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl//Authors)
+
+For information on HyPix model [HyPix model](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl//HYPIX/HyPix_Introducing)
+>>>>>>> 6b2dff238bca9b1573a0bbbbebe3c1dbba4f73f8
 
 and use it \bolditalic{here for example}.
 
