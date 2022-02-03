@@ -1,20 +1,3 @@
-<!-- MathJax -->
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-		     TeX: {
-      equationNumbers: {
-        autoNumber: "AMS"
-      }
-    },
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-        inlineMath: [['$','$']]
-      }
-    });
-  </script>
-<script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-
-
 # HYPIX
 
 Modelling unsaturated flow in highly heterogeneous soils can be accurately performed by solving the [Richards (1931)](#_ENDREF_13) equation (RE), which is commonly adopted by soil vegetation atmosphere transfer models. However, RE is highly nonlinear, and despite numerous efforts over the last decade its solution using numerical methods is demanding, and problems finding techniques to achieve fast and accurate solutions are unresolved (e.g. [Zha *et al*., 2019](#_ENDREF_14)). Here, we propose improvements to RE and implement them in HyPix, using the mixed form of RE, as recommended by [Celia *et al*. (1990)](#_ENDREF_14). The solution of RE is based on [Hassane Maina and Ackerer (2017)](#_ENDREF_15), for which the RE partial differential equation is solved using a *cell-centered finite-volume (implicit finite differences)* scheme for the spatial discretization, with an implicit Euler scheme for the temporal discretization by using the weighted average inter-cell hydraulic conductivity.
@@ -33,7 +16,7 @@ where $\varDelta T^t$ [T] is the time-step at time $t$; $\varDelta Z_{i}$ [L] is
 <figcaption align = "center"><b>Figure 1 - Diagram describing the 1D vertical discretization of the Richards equation, where i  is the cell number (cell 1 is the top cell and cell Ni is the bottom cell, therefore cell = i  is below cell = i–1); ΔPr  [L] is the precipitation reaching the top of the canopy; ΔPrground [L]  is the precipitation reaching the soil surface (cell = 1); ΔHpond  [L] is the ponding water; and ΔQi+1/2 = Qi+1/2 ΔT [L] is the inter-cell water volume (positive downwards). Water is removed from the soil profile by transpiration, ΔTransp [L], and evaporation, ΔEvapo [L], depending on θ and potential evapotranspiration, ΔPet [L] (partitioned between potential evaporation, ΔPetevap [L], and potential transpiration, ΔPettransp [L]).</b></figcaption></figure>
 
 
-### ***Computing water infiltration into the soil profile***
+### **Computing water infiltration into the soil profile**
 
 The amount of water infiltrating into the top cell, $i = 1$, for a period of time, $\varDelta T$, is computed by $\varDelta Q_{1/2}$ [L] ([Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/SoilWater-ToolBox-FlowChart.bmp)). As RE cannot compute the top air–soil boundary, we compute $\varDelta Q_{1/2}$ using the two-term approximation of [Haverkamp *et al*. (1994)](#_ENDREF_16), as suggested by [Fernández-Gálvez *et al*. (2019)](#_ENDREF_17). We do not include the 3D radial flux considered in the two-term expansions because HyPix computes 1D water infiltration. The maximum infiltration depth for a given $\varDelta T$ is $\varDelta Qmax_{\frac{1}{2}}^{t}$ [L], and is computed as:
 
@@ -73,7 +56,7 @@ $$\begin{equation}
 
 where $\varDelta Pr_{through}^{t}$ [L] is the *throughfall precipitation* (i.e., the amount of water reaching the top cell; computed in [rainfall interception](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Interception)).
 
-###	***Computing water fluxes, Q***
+###	**Computing water fluxes, Q**
 
    #### *Cells below the top cell: $2 ≤ i ≤ N_{i}$*
 
@@ -115,7 +98,7 @@ where $\psi_{\max} = 10^{7}$ mm is the maximum value of $\psi $; and $Ω [1 ; 0
 
 It is expected that for every $k$, $R$ decreases such that $\left| R\left( \psi _{i}^{t,k+1} \right) \right|\,\,\leqslant \left| R\left( \psi _{i}^{t,k} \right) \right|$. The solution of the Jacobian takes place by means of the *tridiagonal function* that is an effective modification of the Gauss algorithm for the solution of the tridiagonal linear set of equations ([Appendix 7.1](XXXXX)). We use the efficient *tridiagonal function* derived from the LAPACK package within Julia to solve the matrix (https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/). 
 
-### ***Residuals of the Richards equation***
+### **Residuals of the Richards equation**
 
 The NR method is used to solve $\psi _{i}^{t}$ such that the residuals of each cell, $R_{i}^{t}$ [L], equal close to 0:
 
@@ -125,13 +108,13 @@ $$\begin{equation}
 
 where $\varDelta Sink_{i}$ [L] is the sink computed for a given $\varDelta T$. To stabilize the numerical scheme, $\varDelta Sink_{i}$ is computed with the $ψ_{i}$ values derived from the previous time-step. 
 
-### ***Automatic differentiation of the Jacobian with Julia language***
+### **Automatic differentiation of the Jacobian with Julia language**
 
 One of the shortcomings of the NR solver is that it requires the mathematical derivatives of $R$ [Eq. (9)]() (Appendix 7.2),  the implementation of which is complicated and time consuming. For example, if we wish to modify the inter-cell hydraulic conductivity [Eq. (7)](), it requires recalculation of the derivatives.
 To address this shortcoming, HyPix implements an option whereby the derivatives are analytically derived automatically by using the forward-mode automatic differentiation *[ForwardDiff](https://github.com/JuliaDiff)* in the Julia package ([Revels *et al*., 2016](#_ENDREF_27)). *ForwardDiff* (version 0.10.16) was found to be as accurate as using the mathematical derivatives, and only 10–25% slower compared to using mathematical derivatives. 
 
 
-### ***Convergence criterion***
+### **Convergence criterion**
 
 For a given time-step, $\varDelta T$, the iteration of the NR stops either when $k = N_{k}$, where $N_{k}$ is a user-defined maximum number of iterations ([Table 2](XXXX)), or when a convergence criterion is satisfied for the overall water balance of the residuals, $WB_{residual}$ [T<sup>-1</sup>], as described below.
 
@@ -153,11 +136,11 @@ $$\begin{equation}
 
 where Ni is the total number of cells, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp), and $WB_{residual}$ is the overall water balance of the residuals. The $R$ is normalized, such that WBresidual is independent of the cell size and the time-step. $WB_{residual}$ considers the overall error of the water balance of the soil profile. The feasible range of $WB_{residual}$ is provided in [Table 2](XXXX).
 
-### ***Novel adaptive time-step management***
+### **Novel adaptive time-step management**
 
 The time management module optimizes the size of the time-step, $\varDelta T$, such that HyPix uses the largest $\varDelta T$ while meeting the targeted water balance accuracy. There are a large number of heuristic time-stepping methods in the literature (e.g. [Thomas and Gladwell, 1988](#_ENDREF_30); [Kavetski *et al.*, 2001](#_ENDREF_31); [Kavetski and Binning, 2004](#_ENDREF_32); [Miller *et al.*, 2006](#_ENDREF_33)). Among them we selected and improved on the adaptive time-step management of Kirkland et al. (1992) and Ross (2003), because their method is physically based, such that $\varDelta T$ is directly derived from the residuals of the water balance [Eq. (10)]() and requires only one physical fitting physical parameter. $\varDelta T$ is calculated via a maximum increase or decrease of the degree of saturation for each cell, which ensures a higher time resolution when $θ$ variations are large. This improves the convergence rate at the wetting front.
 
-#### ***Traditional adaptive time-step management: $\varDelta T$-$\varDelta θ$*** 
+#### **Traditional adaptive time-step management: $\varDelta T$-$\varDelta θ$** 
 
 The time-step management of [Kirkland *et al.* (1992)](#_ENDREF_34) and [Ross (2003)](#_ENDREF_35) was developed specifically for the RE based on $θ$. $\varDelta T$-$Δθ$ is derived by rearranging the terms of the residual [Eq. (10)]() assuming that $R ≈ 0$ and $S_{0} ≈ 0$ ($S_{0}$ is by definition small and strictly 0 for non-compressible fluids), leading to:
 
@@ -175,7 +158,7 @@ where $N_i$ is the total number of cells, as described in [Figure 1](https://man
 
 The computational time in HyPix decreases when $\varDelta T$ increases when, for example: **(a)** the size of the cell, $\varDelta Z$, increases, **(b)** the hydraulic properties from one cell to another, depicted by $Q$, do not change dramatically (homogeneous soils), and **(c)** the amplitude of the variation of $θ$ decreases.
 
-#### ***Novel adaptive time-step management: $\varDelta T$-$\varDelta \psi$*** 
+#### **Novel adaptive time-step management: $\varDelta T$-$\varDelta \psi$** 
 
 For the robustness of the solution of the RE [(Eq. (1))]() based on $ψ$ , the change of $\varDelta \psi$ between two consecutive time-steps needs to be small. Nevertheless, as shown in [Figure 2](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp), a small change of $θ$ could result in a large change of $\psi$, particularly near saturation and at the dry end of the $θ(ψ)$ curve. To address this shortcoming, we improve the traditional [Ross (2003)](#_ENDREF_39) time-step, $\varDelta T-\varDeltaθ$ [(Eq. (12))](), by allowing $\varDelta θ_{max}$ to vary $\varDelta θ_{max_i}$. For that we introduce a temporary parameter, $\varDelta ψ_{max}$, computed from $θ(ψ)$ and $\varDelta θ_{max}$ [(Eq. (12))]():
 
@@ -205,8 +188,7 @@ The selected $\varDelta T$ is computed using [Eq. (13)]().
 ![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp "Figure 2. Example illustrating that small changes of θ could result in large changes of ψ, particularly near saturation and at the dry end of the unimodal θ(ψ) [Eq. (1)].")
 <figcaption align = "center"><b>Figure 2 - Example illustrating that small changes of θ could result in large changes of ψ, particularly near saturation and at the dry end of the unimodal θ(ψ) [Eq. (1) FROM HYDRAULIC FUNCTIONS!!!!].</b></figcaption></figure>
 
-### ***Condition to rerun the time-step*** 
-
+## **Condition to rerun the time-step** 
 $\varDelta T^t$ is computed by using past pressure, $ψ^{t-1}$, which may not reflect, for example, the passage of a wetting front. Therefore, to assure a good water balance and the stability of the solution of the RE, HyPix recomputes $\varDelta T^t$ if $\varDelta T^t(\psi ^t)\ll \varDelta T^t(\psi ^{t-1})$. HyPix is rerun if the following condition is met:
 
 $$\begin{equation}
@@ -216,9 +198,9 @@ $$\begin{equation}
 where $P_{\varDelta θ _{max}\_Rerun}$ is a user-defined parameter for which the feasible range is provided in [Table 2]().
 
 
-### ***Accuracy and efficiency of simulations***
+### **Accuracy and efficiency of simulations**
 
-#### ***Water balance***
+#### **Water balance**
 
 The overall water balance, $WB$ [L], of the simulation is derived from the residuals, $R$ [[Eq. (10)]](), and is computed for every time-step as follows:
 
@@ -235,7 +217,7 @@ WB^{*t}=\frac{WB_{}^{t}}{\sum_{t=1}^{Nt}{\varDelta Q_{\frac{1}{2}}^{t}}}
 
 An acceptable water balance at the end of the simulation occurs when $WB^{*t}$ is smaller than the uncertainty of measuring precipitation.
 
-#### ***Efficiency of solving the Richards equation***
+#### **Efficiency of solving the Richards equation**
 
 The efficiency of a simulation, $E_{ff}$ [T <sup>-1</sup>], is defined as the average number of iterations, $k$, per day required to achieve a suitable $WB^*$ [[Eq.(20)]](), and it is computed as:
 
