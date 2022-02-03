@@ -3,11 +3,11 @@
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 # International SoilWater-ToolBox 2021
+
 ## *Current state and future*
 
-
 J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
----
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 > <sup> 1 </sup> Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
 
@@ -18,7 +18,6 @@ J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilbur
 > <sup> 4 </sup> Univ Lyon, Université Claude Bernard Lyon 1, CNRS, ENTPE, UMR5023 LEHNA, Vaulx en Velin, Lyon 69518, **France**
 
 > <sup> 5 </sup> National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
-
 
 ---
 
@@ -97,14 +96,7 @@ For information on the author [Authors](https://manaakiwhenua.github.io/SoilWate
 
 For information on HyPix model [HyPixhttps://github.com/manaakiwhenua/SoilWater_ToolBox](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
 
-## TESTING EQUATIONS
-
-$$
-\frac{A}{B}
-
-$$
-
-## 8.  Publications
+## ## 8.  Publications
 
 Fernández-Gálvez, J., Pollacco, J.A.P., Lassabatere, L., Angulo-Jaramillo, R., Carrick, S., 2019. A general Beerkan Estimation of Soil Transfer parameters method predicting hydraulic parameters of any unimodal water retention and hydraulic conductivity curves: Application to the Kosugi soil hydraulic model without using particle size distribution data. Advances in Water Resources 129, 118--130. https://doi.org/10.1016/j.advwatres.2019.05.005Fernández-Gálvez,
 
