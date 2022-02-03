@@ -93,9 +93,9 @@ Potential future applications include:
 
 ## 9. Further links (tests)
 
-For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
+For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl//Authors)
 
-For information on HyPix model [HyPixhttps://github.com/manaakiwhenua/SoilWater_ToolBox](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
+For information on HyPix model [HyPix model](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl//HYPIX/HyPix_Introducing)
 
 ## TESTING EQUATIONS
 
