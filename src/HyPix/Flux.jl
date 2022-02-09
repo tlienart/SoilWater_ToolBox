@@ -16,11 +16,14 @@ module flux
 
 				else 	# <> = <> = <> = <> = <>
 					error("K_AVER! option.hyPix.TopBoundary⍰ not found")
-
 				end
 
 			elseif 2 ≤ iZ ≤ NiZ # <>=<>=<>=<>=<>
-				return max(discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro), 1.0E-14)
+				
+				# return max(discret.ΔZ_W[iZ] * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + (1.0 - discret.ΔZ_W[iZ]) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro), 1.0E-14)
+
+				# Harmonic mean (generalised mean)
+				return max( (discret.ΔZ[iZ] + discret.ΔZ[iZ-1]) * Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro) /  (discret.ΔZ[iZ] *  Ψ_2_KUNSAT(option.hyPix, ψ_, iZ, hydro) + discret.ΔZ[iZ-1] * Ψ_2_KUNSAT(option.hyPix, ψ▲, iZ-1, hydro)),  1.0E-14)
 
 			else
 				return max(Ψ_2_KUNSAT(option.hyPix, ψ_, NiZ, hydro), 1.0E-14)

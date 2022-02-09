@@ -1,7 +1,9 @@
 # =============================================================
-#		MODULE: hydro
-	# =============================================================
+#		MODULE: hypixStart
+# =============================================================
 
+	include("ReadWrite/optionHypix.jl")
+	include("ReadWrite/paramHypix.jl")
 	include("Interpolate.jl")
 	include("Opt/ThetaObs.jl")
 	include("θini.jl")
@@ -27,7 +29,7 @@
 	# include("Other/PlotOther.jl")
 
 module hypixStart
-	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..paths, ..plotHypix, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..plotOther
+	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..optionsHypix, ..ofHypix, ..paramHypix, ..paths, ..plotHypix, ..plotOther, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
 	import Statistics: mean
 	import Dates: now, value
 	export HYPIX_START
@@ -37,12 +39,33 @@ module hypixStart
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 
+
+		# ===========================================================
+		# 								PATHS
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			Path_Hypix = dirname(dirname(@__DIR__)) # moving down the path twice
+			PathData_Hypix  = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * SiteName_Hypix
+
+
+		# ===========================================================
+		# 					READING HYPIX OPTIONS/ PARAMETERS 
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		IdSelect, IdSelect_True, Soilname, NiZ = reading.ID(PathIdSelect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
+
+			# Reading structure optionHypix
+				paramHypix = paramHypix.PARAM_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
+
+				optionHypix = optionsHypix.OPTION_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
+
+
+
 		# ===========================================================
 		# 					LOOP FOR DIFFERENTY SIMULATIONS
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		# If no optimize
-			if !(option.hyPix.Optimisation)
+			if !(optionHypix.hypix.Optimisation)
 				param.hyPix.iOpt_Start = 1
 				param.hyPix.iOpt_End = 1
 			end
