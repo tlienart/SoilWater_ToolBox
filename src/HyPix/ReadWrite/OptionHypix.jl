@@ -6,7 +6,7 @@
    OPTION_HYPIX 
 automatically puts the values of options from toml file into mutuable structures optionHypix
 """
-module optionsHypix
+module optionHypix
 
 	using Configurations, TOML
 
@@ -28,7 +28,6 @@ module optionsHypix
 		HydroModel⍰::String
 		TopBoundary⍰::String
 		BottomBoundary⍰::String
-		BottomImpermeable::Bool
 		∂R∂Ψ_Numerical::Bool
 		IterReduceOverShoting::Bool
 		DynamicNewtonRaphsonStep::Bool

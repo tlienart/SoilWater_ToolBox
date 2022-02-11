@@ -4,6 +4,7 @@
 
 	include("ReadWrite/optionHypix.jl")
 	include("ReadWrite/paramHypix.jl")
+	include("ReadWrite/pATHHypix.jl")
 	include("Interpolate.jl")
 	include("Opt/ThetaObs.jl")
 	include("θini.jl")
@@ -29,22 +30,41 @@
 	# include("Other/PlotOther.jl")
 
 module hypixStart
-	import ..climate, ..cst, ..discretization, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..optionsHypix, ..ofHypix, ..paramHypix, ..paths, ..plotHypix, ..plotOther, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
+	import ..climate, ..cst, ..discretization, ..flux, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..optionHypix, ..paramHypix, ..pathHypix, ..paths, ..plotHypix, ..plotOther, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
 	import Statistics: mean
 	import Dates: now, value
 	export HYPIX_START
 
+
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
+	function HYPIX_START(SiteName_Hypix)
+
+		# GETTING PATHS
+			Path_Hypix = dirname(dirname(@__DIR__)) # moving down the path twice
+
+			Path_LinkingFile  = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * SiteName_Hypix * "\\" * SiteName_Hypix * "_LinkingFile.csv"
+
+			@assert isfile(Path_LinkingFile)
+
+
+		
+		
+	return
+	end  # function: HYPIX_START
+	# ------------------------------------------------------------------
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : HYPIX_START
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function HYPIX_START₀(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
 
 
 		# ===========================================================
 		# 								PATHS
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			Path_Hypix = dirname(dirname(@__DIR__)) # moving down the path twice
-			PathData_Hypix  = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * SiteName_Hypix
+		
 
 
 		# ===========================================================
@@ -56,7 +76,9 @@ module hypixStart
 			# Reading structure optionHypix
 				paramHypix = paramHypix.PARAM_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
 
-				optionHypix = optionsHypix.OPTION_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
+				optionHypix = optionHypix.OPTION_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
+
+				pathHypix = pathHypix.OPTION_PATH(1, PathData_Hypix, SiteName_Hypix, Soilname)
 
 
 
@@ -175,10 +197,6 @@ module hypixStart
 				optim = ( NparamOpt=NparamOpt, Flag_Opt=Flag_Opt)		
 			end # option.hyPix.Optimisation
 
-			# SPATIAL CASE BOUNDARY CONDITION
-				if option.hyPix.BottomImpermeable
-					hydro.Ks[NiZ] = eps(1000.0)
-				end
 
 			if optim.Flag_Opt
 				hydro, hydro_best, hydroHorizon, hydroHorizon_best, veg, veg_best, WofBest = hypixOpt.HYPIXOPTIMISATION_START(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iOpt_Count, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, NiZ, obsTheta, optim, option, param, Q, Residual, veg, veg_best, WofBest, Z, ΔEvaporation, Hpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, θSim, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)

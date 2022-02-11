@@ -29,9 +29,11 @@ module SoilWater_ToolBox
 				option.run.Hypix = false
 
 			elseif Soilwater_OR_Hypix⍰ == "Hypix"
-				option = options.OPTIONS(PathData_Hypix, SiteName_Hypix)
+				# TODO dirty solution
+				option = options.OPTIONS(PathData_SoilWater, SiteName_Soilwater)
+				# option = options.OPTIONS(PathData_Hypix, SiteName_Hypix)
 
-				param = params.PARAM(PathData_Hypix, SiteName_Hypix)
+				# param = params.PARAM(PathData_Hypix, SiteName_Hypix)
 
 				option.run.Hypix = true
 
@@ -321,7 +323,8 @@ module SoilWater_ToolBox
 		
 		# _______________________ START: HyPix _______________________ 
 		if option.run.Hypix
-			hypixStart.HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
+			# hypixStart.HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
+			hypixStart.HYPIX_START(SiteName_Hypix)
 		end # option.run.Hypix
 		# ------------------------END: HyPix---------------------------
 
