@@ -2,9 +2,18 @@
 #		MODULE: hypixStart
 # =============================================================
 
-	include("ReadWrite/optionHypix.jl")
-	include("ReadWrite/paramHypix.jl")
-	include("ReadWrite/pATHHypix.jl")
+	Path_SoilWater = dirname(dirname(@__DIR__)) * "/src/" # moving down the path twice
+
+	include(Path_SoilWater * "Hydro/Wrc.jl")
+	include(Path_SoilWater * "Hydro/Kunsat.jl")
+	include(Path_SoilWater * "Cst.jl")
+	include(Path_SoilWater * "Reading.jl")
+	include(Path_SoilWater * "Tool.jl")
+
+	include("ReadWriteHypix/ReadLinkingFile.jl")
+	include("ReadWriteHypix/OptionHypix.jl")
+	include("ReadWriteHypix/ParamHypix.jl")
+	include("ReadWriteHypix/PathHypix.jl")
 	include("Interpolate.jl")
 	include("Opt/ThetaObs.jl")
 	include("θini.jl")
@@ -24,15 +33,16 @@
 	include("Other/θaver.jl")
 	include("Memory.jl")
 	include("Climate.jl")
-	include("Other/PlotHypix.jl")
+	# include("Other/PlotHypix.jl")
 	include("HypixModel.jl")
 	include("Opt/HypixOpt.jl")
 	# include("Other/PlotOther.jl")
 
 module hypixStart
-	import ..climate, ..cst, ..discretization, ..flux, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..optionHypix, ..paramHypix, ..pathHypix, ..paths, ..plotHypix, ..plotOther, ..reading, ..stats, ..table, ..thetaObs, ..tool, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver
+	import ..climate, ..cst, ..discretization, ..flux, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..interpolate, ..memory, ..ofHypix, ..optionHypix, ..paramHypix, ..pathHypix, ..paths, ..plotHypix, ..plotOther, ..reading, ..stats, ..table, ..thetaObs, ..vegStruct, ..waterBalance, ..Δtchange, ..θaver, ..readLinkingFile
 	import Statistics: mean
 	import Dates: now, value
+
 	export HYPIX_START
 
 
@@ -44,10 +54,8 @@ module hypixStart
 		# GETTING PATHS
 			Path_Hypix = dirname(dirname(@__DIR__)) # moving down the path twice
 
-			Path_LinkingFile  = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * SiteName_Hypix * "\\" * SiteName_Hypix * "_LinkingFile.csv"
-
-			@assert isfile(Path_LinkingFile)
-
+			readLinkingFile.LINKING_FILE(Path_Hypix, SiteName_Hypix)
+			
 
 		
 		
@@ -59,12 +67,6 @@ module hypixStart
 	#		FUNCTION : HYPIX_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function HYPIX_START₀(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
-
-
-		# ===========================================================
-		# 								PATHS
-		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		
 
 
 		# ===========================================================
@@ -400,3 +402,5 @@ module hypixStart
 	
 end  # module hydro
 # ............................................................
+
+@time hypixStart.HYPIX_START("LYSIMETERS")
