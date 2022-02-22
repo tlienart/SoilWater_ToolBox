@@ -46,16 +46,16 @@ module SoilWater_ToolBox
 		# ------------------------END: option/ param/ path---------------------------
 
 		# ++++++++++++++++++++++ SCENARIOS ++++++++++++++++++++++++++++++++++++++++++
-		N_Scenarios = 1
+		N_Scenario = 1
 		if option.run.Smap
 			Scenarios = option.hydro.HydroModel_List
-			N_Scenarios =	length(Scenarios)
+			N_Scenario =	length(Scenarios)
 		end 
-		for iSim =1:N_Scenarios
+		for iSim =1:N_Scenario
 			if option.run.Smap
 				option.hydro.HydroModel⍰ = Scenarios[iSim]
 				path = paths.PATH(1,  option, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
-				println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / $N_Scenarios \n \n")
+				println("+++++++++++++++++ SCENARIOS: option.hydro.HydroParam=$(option.hydro.HydroModel⍰)  $iSim / $N_Scenario \n \n")
 			end
 		#..............................................................................
 

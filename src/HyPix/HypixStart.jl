@@ -54,10 +54,19 @@ module hypixStart
 		# GETTING PATHS
 			Path_Hypix = dirname(dirname(@__DIR__)) # moving down the path twice
 
-			readLinkingFile.LINKING_FILE(Path_Hypix, SiteName_Hypix)
-			
+			date, Id, N_Scenario, pathInputHypix, Soilname = readLinkingFile.LINKING_FILE(Path_Hypix, SiteName_Hypix)
 
-		
+			for iScenario = 1:N_Scenario
+				println(Soilname[iScenario])
+
+				paramHypix = paramHypix.PARAM_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
+
+				optionHypix = optionHypix.OPTION_HYPIX(1, PathData_Hypix, SiteName_Hypix, Soilname)
+
+				pathHypix = pathHypix.OPTION_PATH(1, PathData_Hypix, SiteName_Hypix, Soilname)
+				
+			end
+			
 		
 	return
 	end  # function: HYPIX_START

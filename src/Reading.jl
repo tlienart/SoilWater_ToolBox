@@ -18,7 +18,7 @@ module reading
 				Data = Data[2:end,begin:end]
 				Data = sortslices(Data, dims=1)
 
-				Id, N_iZ_All  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
+				Id, N_Scenario  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Id")
 			
 				Id_True, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, PathOptionSelect)
 
@@ -29,8 +29,8 @@ module reading
 				try
 					Soilname, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Soilname")
 				catch # If not available
-					Soilname = fill("", N_iZ_All)
-					for i=1:N_iZ_All
+					Soilname = fill("", N_Scenario)
+					for i=1:N_Scenario
 						Soilname[i] = PathModelName  * "_" * string(Id[i])
 					end
 				end
@@ -40,11 +40,11 @@ module reading
 				IdSelect_True = convert.(Bool, Id_True)
 
 			# Checking for errors
-				for iZ=2:N_iZ_All
+				for iZ=2:N_Scenario
 					if (Id[iZ] - Id[iZ-1]) < 1
 						error("Id does not increase monotically at iD $(Id[iZ]) ")
 					end
-				end # for iZ=2:N_iZ_All
+				end # for iZ=2:N_Scenario
 		
 			NiZ = sum(Id_True)
 

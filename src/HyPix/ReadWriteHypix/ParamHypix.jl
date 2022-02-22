@@ -80,18 +80,7 @@ module paramHypix
 		hyPix::HYPIXS
 	end
 
-	function PARAM_HYPIX(iSim, PathData_Hypix, SiteName_Hypix, Soilname)
-			# Specific path for which the options are only true for the Soilname in question
-			Path = PathData_Hypix * "/" * Soilname[iSim] *  "/ParamOptionPath/" * SiteName_Hypix * "_ParamHypix.toml" 
-
-			if !isfile(Path)
-				# Global path for which the options are true for all Soilname
-				Path = PathData_Hypix * "/" *  Soilname[iSim] * "/ParamOptionPath/" * Soilname[iSim] * "_ParamHypix.toml"
-
-			elseif !isfile(Path)
-				error("Cannot find $Path")
-			end
-
-	return Configurations.from_toml(PARAMHYPIX, Path)
+	function PARAM_HYPIX(Path)
+		return Configurations.from_toml(PARAMHYPIX, Path)
 	end # param
 end # module param
