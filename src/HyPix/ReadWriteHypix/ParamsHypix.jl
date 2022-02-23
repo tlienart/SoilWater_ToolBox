@@ -1,7 +1,7 @@
 # =============================================================
-#		MODULE: param
+#		MODULE: paramHypix
 # =============================================================
-module paramHypix
+module paramsHypix
 
 	using Configurations
 
@@ -38,7 +38,7 @@ module paramHypix
 		θprofile_Time::Vector{Float64}
 		θΨ_Table::Vector{Float64}
 	end
-	@option mutable struct HYPIXS
+	@option mutable struct PARAMHYPIX
 		iOpt_Start::Int64
 		iOpt_End::Int64
 		Year_Start::Int64
@@ -76,11 +76,7 @@ module paramHypix
 		ploting::PLOT
 	end
 
-	@option mutable struct PARAMHYPIX
-		hyPix::HYPIXS
-	end
-
-	function PARAM_HYPIX(Path)
-		return Configurations.from_toml(PARAMHYPIX, Path)
-	end # param
-end # module param
+	function PARAM_HYPIX(PathParamHypix::String)
+		return Configurations.from_toml(PARAMHYPIX, PathParamHypix)
+	end # paramHypix
+end # module paramHypix

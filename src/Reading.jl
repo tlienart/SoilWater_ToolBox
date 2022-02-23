@@ -645,7 +645,7 @@ module reading
 		import  ...tool, ...horizonLayer
 		import Dates: value, DateTime, hour, minute, month, now, Hour
 		import DelimitedFiles
-		export CLIMATE, DATES, DISCRETIZATION, HYPIX_PARAM, LOOKUPTABLE_CROPCOEFICIENT, LOOKUPTABLE_LAI
+		export CLIMATE, DATES, DISCRETISATION, HYPIX_PARAM, LOOKUPTABLE_CROPCOEFICIENT, LOOKUPTABLE_LAI
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : DATES
@@ -753,37 +753,33 @@ module reading
 
 			
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		#		FUNCTION : DISCRETIZATION
+		#		FUNCTION : DISCRETISATION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function DISCRETIZATION(PathDiscretization)
+			function DISCRETISATION(Path::String)
 				# Read data
-					Data = DelimitedFiles.readdlm(PathDiscretization, ',')
-				# Read header
-					Header = Data[1,1:end]
-				# Remove first READ_ROW_SELECT
-					Data = Data[2:end,begin:end]
-
-				Z, NiZ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Z")
-				Layer, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Layer")
-				N_Layer = maximum(Layer)
+					Data, Header = DelimitedFiles.readdlm(Path, ',', header=true, use_mmap=true)
+			
+               Z, NiZ   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Z")
+               Layer, ~ = tool.readWrite.READ_HEADER_FAST(Data, Header, "Layer")
+               N_Layer  = Int64(maximum(Layer))
 
 				# Depending on the initial boundary condition 
 					if "θini" ∈ Header
 						θini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "θini")
-						Ψini=[]
+						Ψini = []
 						Flag_θΨini = :θini 
 
 					elseif "Ψini" ∈ Header
 						Ψini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Ψini")
-						θini =[]
+						θini = []
 						Flag_θΨini = :Ψini
 
 					else
-						error("In $PathDiscretization cannot find <θini> or <Ψini> in $Header")
+						error("In $Path cannot find <θini> or <Ψini> in $Header")
 					end
 
 			return Flag_θΨini, Layer, N_Layer, NiZ, Z, θini, Ψini
-			end # function DISCRETIZATION
+			end # function DISCRETISATION
 		#-------------------------------------------------------------------------
 
 
@@ -967,32 +963,19 @@ module reading
 		#		FUNCTION : CLIMATE
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			struct CLIMATEDATA
-				Date      :: Vector{DateTime}
-				Pr        :: Vector{Float64}
-				Pet       :: Vector{Float64}
-				Temp      :: Vector{Float64}
-				N_Climate :: Int64
+				Date      ::  Vector{DateTime}
+				Pr        ::  Vector{Float64}
+				Pet       ::  Vector{Float64}
+				Temp      ::  Vector{Float64}
+				N_Climate ::  Int64
 				Pr_Through :: Vector{Float64}
 			end
 
-			Option_ReadTemperature = false
 
-			function CLIMATE(option, param, pathHyPix)
-				# if option.hyPix.ClimateDataTimestep⍰ == "Daily"
-					Pr_Name          = "Rain(mm)"
-					Pet_Name         = "PET(mm)"
-					Temperature_Name = "Tmax(C)" # Maximum temperature which is not correct
-
-				# elseif option.hyPix.ClimateDataTimestep⍰ == "Hourly"
-				# 	Pr_Name          = "Pr_mm"
-				# 	Pet_Name         = "Pet_mm"
-				# 	Temperature_Name = "Temp_c"
-				# end #  option.hyPix.ClimateDataTimestep⍰
+			function CLIMATE(dateHypix, iScenario::Int64, PathClimate::String; Option_ReadTemperature=false)
 
 				# READ DATA
-					Data = DelimitedFiles.readdlm(pathHyPix.Climate, ',')
-					Header = Data[1,1:end]
-					Data = Data[2:end,begin:end]
+					Data, Header = DelimitedFiles.readdlm(PathClimate, ',', header=true, use_mmap=true)
 
 					Year, N_Climate = tool.readWrite.READ_HEADER_FAST(Data, Header,"Year")
 					Month, ~        = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month")
@@ -1000,22 +983,22 @@ module reading
 					Hour, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
 					Minute, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute")
 					Second, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
-					Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, Pr_Name)
-					Pet, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, Pet_Name)
+					Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, "Rain(mm)")
+					Pet, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, "PET(mm)")
 					if Option_ReadTemperature 
-						Temp, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, Temperature_Name)
+						Temp, ~      = tool.readWrite.READ_HEADER_FAST(Data, Header, "Tmax(C)")
 					else
 						Temp = fill(24.0::Float64, N_Climate)
 					end
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
-					Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
+					Date_Start = DateTime(dateHypix.Year_Start[iScenario], dateHypix.Month_Start[iScenario], dateHypix.Day_Start[iScenario], dateHypix.Hour_Start[iScenario], dateHypix.Minute_Start[iScenario], dateHypix.Second_Start[iScenario])
 					
-					Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
+					Date_End = DateTime(dateHypix.Year_End[iScenario], dateHypix.Month_End[iScenario], dateHypix.Day_End[iScenario], dateHypix.Hour_End[iScenario], dateHypix.Minute_End[iScenario], dateHypix.Second_End[iScenario])
 
 				# CHECKING & CORRECTING
 					# End Date feasible
-						Date_End_Maximum = DateTime(Year[N_Climate], Month[N_Climate], Day[N_Climate], Hour[N_Climate], Minute[N_Climate], Second[N_Climate]) 
+						Date_End_Maximum = DateTime(Year[end], Month[end], Day[end], Hour[end], Minute[end], Second[end]) 
 
 						Date_End = min(Date_End_Maximum, Date_End)
 
@@ -1036,29 +1019,24 @@ module reading
 					end # iT=1:N_Climate
 
 					# Need to include one date iT-1 at the beginning to compute ΔT
-						iTrue_First = findfirst(True[1:N_Climate])
+						iTrue_First = findfirst(True[:])
 						True[iTrue_First-1] = true
 
 					# New reduced number of simulations
-						Date = Date[True[1:N_Climate]]
-						Pr   = Pr[True[1:N_Climate]]
-						Pet  = Pet[True[1:N_Climate]]
-						Temp = Temp[True[1:N_Climate]]
+						Date = Date[True[:]]
+						Pr   = Pr[True[:]]
+						Pet  = Pet[True[:]]
+						Temp = Temp[True[:]]
 
 					# Update N_Climate	
-						N_Climate = count(True[1:N_Climate]) # New number of data
+						N_Climate = count(True[:]) # New number of data
 				
 				# To be used after interception model
-					Pr_Through = zeros(Float64, N_Climate)
+					Pr_Through = fill(0.0::Float64, N_Climate)
 
 			# STRUCTURE
-				clim = CLIMATEDATA(Date, Pr, Pet, Temp, N_Climate, Pr_Through)
+				return clim = CLIMATEDATA(Date, Pr, Pet, Temp, N_Climate, Pr_Through)
 
-			# SAVING SPACE 
-				Data = nothing
-				True = nothing
-
-			return clim
 			end # function: CLIMATE
 		#---------------------------------------------------------------------
 

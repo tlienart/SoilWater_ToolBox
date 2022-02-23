@@ -33,7 +33,6 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function READ_HEADER_FAST(Data, Header, Name)
 				N_X, N_Y = size(Data) # Size of the array
-
 				
 				# Getting the column which matches the name of the header
 				Name = replace(Name, " " => "") # Remove white spaces
@@ -43,7 +42,10 @@ module tool
 					Header = reshape(Header, N_Y, 1)
 					iColumn = Int64(findfirst(isequal(Name), reshape(Header, N_Y, 1))[1])
 
-					@views Data_Output =  Data[1:N_X,iColumn]
+					Data_Output =  Data[1:N_X,iColumn]
+
+					# convert(Vector{any}, Data_Output)
+
 				# catch
 				# 	println(Header)
 				# 	error("\n          SOILWATERTOOLBOX ERROR: cannot find  $Name   \n \n")

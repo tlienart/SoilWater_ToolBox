@@ -374,14 +374,14 @@ module table
 		import ...cst, ...tool, ...wrc, ...kunsat
 		import DelimitedFiles
 		import Dates: value, DateTime, year, month, day, hour, minute, second
-		export DAILY_CLIMATE, DISCRETIZATION, HYDRO, PERFORMANCE, Q, TIME_SERIES, TIME_SERIES_DAILY, VEG, θ, θΨ, Ψ, θAVERAGE
+		export DAILY_CLIMATE, DISCRETISATION, HYDRO, PERFORMANCE, Q, TIME_SERIES, TIME_SERIES_DAILY, VEG, θ, θΨ, Ψ, θAVERAGE
 
 		# ===================================================
 		#          DISCRETISATION AUTO
 		# ===================================================
-			function DISCRETIZATION_AUTO(Flag_θΨini, Layer, pathHyPix, Z, θΨini_Cell)
+			function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Float64}, PathDiscretisation::String, Z::Vector{Float64}, θΨini_Cell::Vector{Float64})
 
-				println("			~  $(pathHyPix.Discretization) ~")
+				# println("			~  $(PathDiscretisation) ~")
 
 				if Flag_θΨini == :Ψini
 					Header = ["iZ";"Z"; "Layer"; "Ψini"]
@@ -392,20 +392,20 @@ module table
 
 				iZ = collect(1:1:length(Z))
 
-				open(pathHyPix.Discretization, "w") do io
+				open(PathDiscretisation, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",") # Header
 					DelimitedFiles.writedlm(io, [iZ Z Layer θΨini_Cell], ",")
 				end # open
 
 			return nothing
-			end # Table DISCRETIZATION_AUTO
+			end # Table DISCRETISATION_AUTO
 		#------------------------------------------------------
 
 
 		# ===================================================
 		#          Discretization
 		# ===================================================
-			function DISCRETIZATION(discret, NiZ, Z, pathHyPix)
+			function DISCRETISATION(discret, NiZ, Z, pathHyPix)
 				println("			~  $(pathHyPix.Table_Discretisation) ~")
 
 				Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
@@ -415,7 +415,7 @@ module table
 					DelimitedFiles.writedlm(io, [Z[1:NiZ] discret.ΔZ[1:NiZ] discret.ΔZ_⬓[1:NiZ] discret.Znode[1:NiZ] discret.ΔZ_Aver[1:NiZ] discret.ΔZ_W[1:NiZ] discret.Z_CellUp[1:NiZ]], ",")
 				end
 			return nothing
-			end # Table DISCRETIZATION
+			end # Table DISCRETISATION
 		#------------------------------------------------------
 
 
@@ -471,7 +471,7 @@ module table
 					DelimitedFiles.writedlm(io, [∑T ΔT ∑Pr ΔPr Hpond Recharge ∑WaterBalance_η], ",")
 				end
 			return nothing
-			end # Table DISCRETIZATION
+			end # Table DISCRETISATION
 		#------------------------------------------------------
 
 		# ===================================================

@@ -16,7 +16,7 @@ module readLinkingFile
       MultistepOpt     ::Vector{String}
       OptionHypix      ::Vector{String}
       ParamHypix       ::Vector{String}
-      Path             ::Vector{String}
+      PathHypix        ::Vector{String}
       SoilLayer        ::Vector{String}
       Vegetation       ::Vector{String}
       θdata            ::Vector{String}
@@ -38,19 +38,27 @@ module readLinkingFile
       Hour_Start      ::Vector{UInt64}
       Hour_Start_Sim  ::Vector{UInt64}
       Hour_End        ::Vector{UInt64}
+
+      Minute_Start      ::Vector{UInt64}
+      Minute_Start_Sim  ::Vector{UInt64}
+      Minute_End        ::Vector{UInt64}
+
+      Second_Start      ::Vector{UInt64}
+      Second_Start_Sim  ::Vector{UInt64}
+      Second_End        ::Vector{UInt64}
    end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : LINKING_FILES
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function LINKING_FILE(Path_Hypix::String, SiteName_Hypix::String)
+   function LINKING_FILE(Path_Hypix::String, ProjectHypix::String)
 
       # PATHS
-         Path_LinkingFile = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * SiteName_Hypix * "\\" * SiteName_Hypix * "_LinkingFile.csv"
+         Path_LinkingFile = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * ProjectHypix * "\\" * ProjectHypix * "_LinkingFile.csv"
 
          @assert isfile(Path_LinkingFile)
    
-         Path_Input = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * SiteName_Hypix * "\\"
+         Path_Input = Path_Hypix * "\\data\\INPUT\\Data_Hypix\\" * ProjectHypix * "\\"
    
       # READING DATA
          Data, Header = readdlm(Path_LinkingFile, ',', header = true, use_mmap = true)
@@ -71,7 +79,7 @@ module readLinkingFile
       # READING
          Id, ~ = READ_HEADER_FAST(Data, Header, "Id")
    
-         Soilname, ~ = READ_HEADER_FAST(Data, Header, "Soilname")
+         SiteName, ~ = READ_HEADER_FAST(Data, Header, "SiteName")
    
       ## READ DATES ===
          Year_Start, ~      = READ_HEADER_FAST(Data, Header, "Year_Start")
@@ -89,8 +97,16 @@ module readLinkingFile
          Hour_Start, ~      = READ_HEADER_FAST(Data, Header, "Hour_Start")
          Hour_Start_Sim, ~  = READ_HEADER_FAST(Data, Header, "Hour_Start_Sim")
          Hour_End, ~        = READ_HEADER_FAST(Data, Header, "Hour_End")
+
+         Minute_Start     = fill(0.0::Float64, N_Scenario)
+         Minute_Start_Sim = fill(0.0::Float64, N_Scenario)
+         Minute_End       = fill(0.0::Float64, N_Scenario)
    
-         date = DATES(Year_Start, Year_Start_Sim, Year_End, Month_Start, Month_Start_Sim, Month_End,Day_Start, Day_Start_Sim, Day_End, Hour_Start, Hour_Start_Sim, Hour_End)
+         Second_Start     = fill(0.0::Float64, N_Scenario)
+         Second_Start_Sim = fill(0.0::Float64, N_Scenario)
+         Second_End       = fill(0.0::Float64, N_Scenario)
+   
+         dateHypix = DATES(Year_Start, Year_Start_Sim, Year_End, Month_Start, Month_Start_Sim, Month_End,Day_Start, Day_Start_Sim, Day_End, Hour_Start, Hour_Start_Sim, Hour_End, Minute_Start, Minute_Start_Sim, Minute_End, Second_Start, Second_Start_Sim , Second_End)
    
       ## READING PATH ===
          Climate = READ_PATH(Data, Header, Path_Input, "CLIMATE")
@@ -103,20 +119,21 @@ module readLinkingFile
          MultistepOpt = READ_PATH(Data, Header, Path_Input, "MULTISTEP_OPT", AllowMissing = true)
          OptionHypix = READ_PATH(Data, Header, Path_Input, "OPTION"; PathAdd = "ParamOptionPath\\OPTION")
          ParamHypix = READ_PATH(Data, Header, Path_Input, "PARAM"; PathAdd = "ParamOptionPath\\PARAM")
-         Path = READ_PATH(Data, Header, Path_Input, "PATH"; PathAdd = "ParamOptionPath\\PATH")
+         PathHypix = READ_PATH(Data, Header, Path_Input, "PATH"; PathAdd = "ParamOptionPath\\PATH")
          SoilLayer = READ_PATH(Data, Header, Path_Input, "SOILLAYER")
          Vegetation = READ_PATH(Data, Header, Path_Input, "VEGETATION")
          θdata = READ_PATH(Data, Header, Path_Input, "SOILMOISTURE")
       
-         pathInputHypix = PATHINPUT(Climate, Discretisation, HydroInput, HydroRange, KsModel, LookUpTable_Crop, LookUpTable_Lai, MultistepOpt, OptionHypix, ParamHypix, Path, SoilLayer, Vegetation, θdata)
+         pathInputHypix = PATHINPUT(Climate, Discretisation, HydroInput, HydroRange, KsModel, LookUpTable_Crop, LookUpTable_Lai, MultistepOpt, OptionHypix, ParamHypix, PathHypix, SoilLayer, Vegetation, θdata)
    
-   return date, Id, N_Scenario, pathInputHypix, Soilname
+   return dateHypix, Id, N_Scenario, pathInputHypix, SiteName
    end  # function: LINKING_FILES
 # ------------------------------------------------------------------
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #		FUNCTION : READ_PATH
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function READ_PATH(Data, Header, Path_Input, PathName; PathAdd="", AllowMissing=false)
+   function READ_PATH(Data::Matrix{Any}, Header::Matrix{AbstractString}, Path_Input::String, PathName::String; PathAdd=""::String, AllowMissing=false::Bool)
+
       Output, ~ = READ_HEADER_FAST(Data, Header, PathName)	
       for i = eachindex(Output)
          if Output[i] ≠  "missing"
@@ -125,7 +142,9 @@ module readLinkingFile
             else
                Output[i] = Path_Input * PathAdd * "//" * Output[i]
             end
-            @assert isfile(Output[i])
+            if PathName ≠ "DISCRETISATION"
+               @assert isfile(Output[i])
+            end
          else
             if AllowMissing==false
                error("$PathName not allowed missing data")

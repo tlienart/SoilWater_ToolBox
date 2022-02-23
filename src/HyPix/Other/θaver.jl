@@ -2,7 +2,7 @@
 #		module: θaver
 # =============================================================
 module θaver
-   import ..discretization
+   import ..discretisation
    export θAVER
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

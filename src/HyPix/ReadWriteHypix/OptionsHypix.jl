@@ -1,12 +1,12 @@
 # =============================================================
-#		module option hypix
+#		module optionHypix hypix
 # =============================================================
 
 """
    OPTION_HYPIX 
 automatically puts the values of options from toml file into mutuable structures optionHypix
 """
-module optionHypix
+module optionsHypix
 
 	using Configurations, TOML
 
@@ -15,7 +15,7 @@ module optionHypix
       PlotVscode::Bool
 	end
 
-	@option mutable struct HYPIX
+	@option mutable struct OPTIONHYPIX
 		RainfallInterception::Bool
 		Evaporation::Bool
 		RootWaterUptake::Bool
@@ -66,31 +66,15 @@ module optionHypix
 		Plot_Flux::Bool
 		Plot_WaterBalance::Bool
 		Plot_ΔT::Bool
+		other::OTHER
 	end
 
-   @option mutable struct OPTIONHYPIX
-		other::OTHER
-      hypix::HYPIX
-   end # struct OPTION
-	
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : OPTION_HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function OPTION_HYPIX(iSim, PathData_Hypix, SiteName_Hypix, Soilname)
-
-			# Specific path for which the options are only true for the Soilname in question
-			Path = PathData_Hypix * "/" * Soilname[iSim] *  "/ParamOptionPath/" * SiteName_Hypix * "_OptionHypix.toml" 
-
-			if !isfile(Path)
-				# Global path for which the options are true for all Soilname
-				Path = PathData_Hypix * "/" *  Soilname[iSim] * "/ParamOptionPath/" * Soilname[iSim] * "_OptionHypix.toml"
-
-			elseif !isfile(Path)
-				error("Cannot find $Path")
-			end
-
-		return Configurations.from_toml(OPTIONHYPIX, Path)
+		function OPTION_HYPIX(PathOptionHypix::String)
+			return Configurations.from_toml(OPTIONHYPIX, PathOptionHypix)
 		end  # function: OPTION_HYPIX
 
 end # module optionHypix

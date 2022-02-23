@@ -1,11 +1,11 @@
 # =============================================================
 #		module: discret
 # =============================================================
-module discretization
-	export DISCRETIZATION, DISCRETIZATION_AUTO
+module discretisation
+	export DISCRETISATION, DISCRETISATION_AUTO
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION :  DISCRETIZATION
+	#		FUNCTION :  DISCRETISATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		struct DISCRET
 			NiZ
@@ -17,7 +17,7 @@ module discretization
 			ΔZ_W
 		end
 		
-		function DISCRETIZATION(NiZ::Int64, Z)
+		function DISCRETISATION(NiZ::Int64, Z)
 			Z_CellUp = fill(0.0::Float64, NiZ)
 			Znode    = fill(0.0::Float64, NiZ)
 			ΔZ       = fill(0.0::Float64, NiZ)
@@ -49,27 +49,27 @@ module discretization
 			end # for
 
 		return discret = DISCRET(NiZ, Z_CellUp, Znode, ΔZ, ΔZ_⬓, ΔZ_Aver, ΔZ_W)
-		end # function DISCRETIZATION
+		end # function DISCRETISATION
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : DISCRETIZATION_AUTO
+	#		FUNCTION : DISCRETISATION_AUTO
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	""" 
-					DISCRETIZATION_AUTO(N_Layer, Zlayer Zroot)
+					DISCRETISATION_AUTO(N_Layer, Zlayer Zroot)
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
-		function DISCRETIZATION_AUTO(option, param; Flag_θΨini, N_Layer, Zlayer, θini, Ψini)
+		function DISCRETISATION_AUTO(optionHypix, paramHypix; Flag_θΨini::Symbol, N_Layer::Int64, Zlayer::Vector{Float64}, θini, Ψini)
 
 			# Determine if we selected to input θini or Ψini
-				if Flag_θΨini ==:Ψini
+				if Flag_θΨini == :Ψini
 					θΨini = Ψini
-				elseif Flag_θΨini ==:θini
+				elseif Flag_θΨini == :θini
 					θΨini = θini
 				end
 
-			ΔZlayer = fill(0.0::Float64, N_Layer)
+				ΔZlayer = fill(0.0::Float64, N_Layer)
 
 			# Computing ΔZlayer
 				ΔZlayer[1]= Zlayer[1]
@@ -77,16 +77,16 @@ module discretization
 					ΔZlayer[iZ] = Zlayer[iZ] - Zlayer[iZ-1]
 				end # for
 
-			# Computing the number of discretization
-            ΔZcell     = []
-            Layer      = []
-            θΨini_Cell = []
+			# Computing the number of discretisation
+            ΔZcell     = Float64[]
+            Layer      = Float64[]
+            θΨini_Cell = Float64[]
 
 				for iLayer = 1:N_Layer
-					if  Zlayer[iLayer] < param.hyPix.ZfineCoarse
-						ΔZ_Max = param.hyPix.ΔZfine
+					if  Zlayer[iLayer] < paramHypix.ZfineCoarse
+						ΔZ_Max = paramHypix.ΔZfine
 					else
-						ΔZ_Max = param.hyPix.ΔZcoarse
+						ΔZ_Max = paramHypix.ΔZcoarse
 					end
 
 					Nsplit = ceil(ΔZlayer[iLayer] / ΔZ_Max) # Number of splitting from Layer->Cell
@@ -109,14 +109,17 @@ module discretization
 				end
 				
 			# if HydrostaticEquilibrium
-				if option.hyPix.HydrostaticEquilibrium
+				if optionHypix.HydrostaticEquilibrium
 					@warn "			*** Hini at Hydrostatic Equilibrium ***"
 					for iZ = 1:N
 						θΨini_Cell[iZ] = Z[N] - Z[iZ]
 					end
 				end
-		return Layer, Z, θΨini_Cell
-		end  # function: DISCRETIZATION_AUTO
+
+				NiZ = length(Layer)
+
+		return Layer, NiZ, Z, θΨini_Cell
+		end  # function: DISCRETISATION_AUTO
 
 end  # module: discret
 # ............................................................

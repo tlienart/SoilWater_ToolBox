@@ -8,11 +8,11 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : MEMORY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function MEMORY(clim, N_∑T_Climate::Int64, NiZ::Int64, obsTheta, param)
+	function MEMORY(clim, N_∑T_Climate::Int64, NiZ::Int64, obsTheta, paramHypix)
 
-		# N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + Int(N_∑T_Climate % param.hyPix.ΔT_Min + 1)
+		# N_Memory = ceil(Int, N_∑T_Climate / paramHypix.ΔT_Min) + Int(N_∑T_Climate % paramHypix.ΔT_Min + 1)
 
-      N_Memory = ceil(Int, N_∑T_Climate / param.hyPix.ΔT_Min) + 10
+      N_Memory = ceil(Int, N_∑T_Climate / paramHypix.ΔT_Min) + 10
 		
       ΔEvaporation = fill(0.0::Float64, N_Memory)
       Hpond       = fill(0.0::Float64, N_Memory)
@@ -39,7 +39,7 @@ module memory
       ∂R∂Ψ△    = fill(0.0::Float64, NiZ)
       ∂R∂Ψ▽    = fill(0.0::Float64, NiZ)
       
-      Nit_Reduced                  = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
+      Nit_Reduced                  = paramHypix.iOpt_End - paramHypix.iOpt_Start + 1
 
       iNonConverge_iOpt          = fill(0  ::Int64, Nit_Reduced)
 
@@ -55,8 +55,8 @@ module memory
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : MEMORY_STEOPT
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   function MEMORY_MULTISTEPOPTIMISATION(param)
-      Nit_Reduced = param.hyPix.iOpt_End - param.hyPix.iOpt_Start + 1
+   function MEMORY_MULTISTEPOPTIMISATION(paramHypix)
+      Nit_Reduced = paramHypix.iOpt_End - paramHypix.iOpt_Start + 1
 
       Efficiency                 = fill(0.0::Float64, Nit_Reduced)
       Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)

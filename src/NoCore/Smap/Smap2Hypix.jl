@@ -2,7 +2,7 @@
 #		module: smap2hypix
 # =============================================================
 module smap2hypix
-   import ..tool, ..cst, ..discretization, ..hydroStruct, ..reading, ..vegStruct, ..wrc
+   import ..tool, ..cst, ..discretisation, ..hydroStruct, ..reading, ..vegStruct, ..wrc
    import DelimitedFiles, Tables, CSV
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,13 +65,13 @@ module smap2hypix
             iLayers = collect(1:1:length(Smap_Depth_Soil))
 
             Path_Output₂ = Path_Output * "/Layer" * "_" * string(Soilname₀) * ".csv"
-            TABLE_DISCRETIZATION(Path_Output₂, Smap_Depth_Soil, iLayers)
+            TABLE_DISCRETISATION(Path_Output₂, Smap_Depth_Soil, iLayers)
                   
             # Automatic Disscretizing of SoilProfiles per soil =====
-               SoilProfile, Z = discretization.DISCRETIZATION_AUTO(param, N_Layer=length(Smap_Depth_Soil), Zlayer=Smap_Depth_Soil, Zroot=800.0)
+               SoilProfile, Z = discretisation.DISCRETISATION_AUTO(param, N_Layer=length(Smap_Depth_Soil), Zlayer=Smap_Depth_Soil, Zroot=800.0)
 
                Path_Output₃ = Path_Output * "/Discretization_2" * "_" * string(Soilname₀) * ".csv"
-               TABLE_DISCRETIZATION(Path_Output₃, SoilProfile, Z)
+               TABLE_DISCRETISATION(Path_Output₃, SoilProfile, Z)
 
             return nothing
          end  # function: DISCRETISATION
@@ -146,9 +146,9 @@ module smap2hypix
 
    
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : TABLE_DISCRETIZATION
+   #		FUNCTION : TABLE_DISCRETISATION
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function TABLE_DISCRETIZATION(Path, Z, iLayers)
+      function TABLE_DISCRETISATION(Path, Z, iLayers)
          Header = ["iZ";"Z"; "Layer"]
 
          iZ = collect(1:1:length(Z))

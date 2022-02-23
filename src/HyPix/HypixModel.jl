@@ -11,16 +11,16 @@ module hypixModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ::Int64, option, param, Q, Residual, veg, Z, ΔEvaporation, Hpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ::Int64, optionHypix, paramHypix, Q, Residual, veg, Z, ΔEvaporation, Hpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
-				if option.hyPix.LookupTable_Lai
+				if optionHypix.LookupTable_Lai
 					Laiᵀ[iT]  = (veg.Lai_Max - veg.Lai_Min) * Laiᵀ_η[iT] + veg.Lai_Min
 				else
 					Laiᵀ[iT] = veg.Lai
 				end
-				if option.hyPix.LookUpTable_CropCoeficient
+				if optionHypix.LookUpTable_CropCoeficient
 					CropCoeficientᵀ[iT]  = (veg.CropCoeficient_Max - veg.CropCoeficient_Min) * CropCoeficientᵀ_η[iT]  + veg.CropCoeficient_Min
 				else
 					CropCoeficientᵀ[iT]  = veg.CropCoeficient
@@ -28,32 +28,32 @@ module hypixModel
 			end # for
 
 		# RAINFALL INTERCEPTION
-		if option.hyPix.RainfallInterception
-			∑Pet_Climate, ∑Pr_Climate, clim = interception.RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ, option, veg)
+		if optionHypix.RainfallInterception
+			∑Pet_Climate, ∑Pr_Climate, clim = interception.RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ, optionHypix, veg)
 		end
 		
 		# ROOTS
-		if option.hyPix.RootWaterUptake
+		if optionHypix.RootWaterUptake
 			N_iRoot = rootWaterUptake.rootDistribution.N_IROOT(NiZ, veg, Z) # Last cell of rootzone
 
 			ΔRootDensity = rootWaterUptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
 		else
 			ΔRootDensity = 0.0
 			N_iRoot = 1
-		end # option.hyPix.RootWaterUptake
+		end # optionHypix.RootWaterUptake
 
-		# if option.hyPix.Evaporation 
+		# if optionHypix.Evaporation 
 		# 	N_iEvapo = evaporation.N_IEVAPO(NiZ, veg, Z) # Smap_Depth where evaporation can occure
-		# end # option.hyPix.Evaporation
+		# end # optionHypix.Evaporation
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
 			for iZ=1:NiZ
 				Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ], hydro.ΨmMac[iZ])
-				Ψ_Min[iZ] = param.hyPix.Ψ_MinMin
+				Ψ_Min[iZ] = paramHypix.Ψ_MinMin
 			end  # for iZ=1:NiZ
 
 		# ADAPTIVETIMESTEP
-			ΔLnΨmax = timeStep.ΔΨMAX!(hydro, NiZ, option, param, ΔLnΨmax)
+			ΔLnΨmax = timeStep.ΔΨMAX!(hydro, NiZ, optionHypix, paramHypix, ΔLnΨmax)
 
 		# FIRST TIME STEP
          Flag_NoConverge        = false::Bool
@@ -80,16 +80,16 @@ module hypixModel
 				
 				for iZ = 1:NiZ
 					θ[1,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ] ) # Just in case
-					Ψ[1,iZ]   = θ_2_ΨDual(option.hydro, θini[iZ], iZ, hydro)
+					Ψ[1,iZ]   = θ_2_ΨDual(optionHypix.hydro, θini[iZ], iZ, hydro)
 
-					if iZ == 1 && option.hyPix.TopBoundary⍰ == "Ψ"
-						Ψ[1,1] = param.hyPix.Ψ_Top
-						θ[1,1]  = Ψ_2_θDual(option.hydro, Ψ[iT,1], iZ, hydro)
+					if iZ == 1 && optionHypix.TopBoundary⍰ == "Ψ"
+						Ψ[1,1] = paramHypix.Ψ_Top
+						θ[1,1]  = Ψ_2_θDual(optionHypix.hydro, Ψ[iT,1], iZ, hydro)
 					end
 	
-					if iZ == NiZ && option.hyPix.BottomBoundary⍰ == "Ψ"
-						Ψ[1,NiZ] = param.hyPix.Ψ_Botom
-						θ[1,NiZ]  = Ψ_2_θDual(option.hydro, Ψ[1,NiZ], NiZ, hydro)
+					if iZ == NiZ && optionHypix.BottomBoundary⍰ == "Ψ"
+						Ψ[1,NiZ] = paramHypix.Ψ_Botom
+						θ[1,NiZ]  = Ψ_2_θDual(optionHypix.hydro, Ψ[1,NiZ], NiZ, hydro)
 					end
 
 					Ψini[iZ] = Ψ[1,iZ]
@@ -101,17 +101,17 @@ module hypixModel
 			elseif Flag_θΨini == :Ψini
 				θini = fill(0.0::Float64, NiZ)
 
-				if option.hyPix.TopBoundary⍰ == "Ψ"
-					Ψini[1] = param.hyPix.Ψ_Top
+				if optionHypix.TopBoundary⍰ == "Ψ"
+					Ψini[1] = paramHypix.Ψ_Top
 				end
 
-				if option.hyPix.BottomBoundary⍰ == "Ψ"
-					Ψini[NiZ] = param.hyPix.Ψ_Botom
+				if optionHypix.BottomBoundary⍰ == "Ψ"
+					Ψini[NiZ] = paramHypix.Ψ_Botom
 				end
 
 				for iZ = 1:NiZ
 					Ψ[1,iZ] = Ψini[iZ]
-					θ[1,iZ]  = Ψ_2_θDual(option.hydro, Ψini[iZ], iZ, hydro)
+					θ[1,iZ]  = Ψ_2_θDual(optionHypix.hydro, Ψini[iZ], iZ, hydro)
 					θini[iZ] = θ[1,iZ]
 
 					Ψbest[iZ]  = Ψ[1,iZ]
@@ -125,7 +125,7 @@ module hypixModel
 		while true # this controles the time loop
 
 			# INCREASING OR DECREASING THE TIME STEP
-				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), NiZ, option, param, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
+				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
 
 				if FlagContinueLoop == false
 					iT = iT - 1
@@ -136,11 +136,11 @@ module hypixModel
 				∑Pr[iT], ΔPr[iT], iT_Pr = interpolate.∑_2_Δ(∑Pr[iT-1], ∑Pr_Climate, ∑T, ∑T_Climate, iT_Pr, clim.N_Climate, Flag_ReRun, iT)
 
 			# POTENTIAL EVAPOTRANSPIRATION
-				if option.hyPix.RootWaterUptake || option.hyPix.Evaporation
+				if optionHypix.RootWaterUptake || optionHypix.Evaporation
 					∑Pet[iT], ΔPet[iT], iT_Pet = interpolate.∑_2_Δ(∑Pet[iT-1], ∑Pet_Climate, ∑T, ∑T_Climate, iT_Pet, clim.N_Climate, Flag_ReRun, iT)
-				end # option.hyPix.RootWaterUptake || option.hyPix.Evaporation
+				end # optionHypix.RootWaterUptake || optionHypix.Evaporation
 
-				if option.hyPix.Evaporation						
+				if optionHypix.Evaporation						
 					ΔPet_Evap, ΔPet_Transp = pet.BEER_LAMBERT_LAW(iT, Laiᵀ[iT_Pr-1], ΔPet, veg)
 				else
 					ΔPet_Transp = ΔPet[iT]
@@ -148,32 +148,32 @@ module hypixModel
 				end
 				
 			# ROOT WATER UPTAKE MODEL
-				if option.hyPix.RootWaterUptake
-					ΔSink = rootWaterUptake.ROOT_WATER_UPTAKE(CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, option, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
-				end # option.hyPix.RootWaterUptake
+				if optionHypix.RootWaterUptake
+					ΔSink = rootWaterUptake.ROOT_WATER_UPTAKE(CropCoeficientᵀ[iT_Pr-1], iT, N_iRoot, optionHypix, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)					
+				end # optionHypix.RootWaterUptake
 
 			# EVAPORATION FROM THE SURFACE WITH HIGHEST Se
-				if option.hyPix.Evaporation
+				if optionHypix.Evaporation
 					ΔEvaporation = evaporation.EVAPORATION!(hydro, iT, ΔEvaporation, ΔPet_Evap, θ)
 					
 					ΔSink[iT,1] += ΔEvaporation[iT]
-				end # option.hyPix.Evaporation
+				end # optionHypix.Evaporation
 
 			# Checking that not too much water is removed from the layer
-				if option.hyPix.RootWaterUptake || option.hyPix.Evaporation
+				if optionHypix.RootWaterUptake || optionHypix.Evaporation
 					for iZ=1:N_iRoot
 						ΔSink[iT,iZ] = min(ΔSink[iT,iZ], discret.ΔZ[iZ] * (θ[iT-1,iZ] - hydro.θr[iZ]))
 					end
-				end # if: option
+				end # if: optionHypix
 
 			# SORPTIVITY TO COMPUTE INFILTRATION RATE				
-				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, option, option.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
+				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, optionHypix, optionHypix.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, Hpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, param, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, option)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, Hpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, paramHypix, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, optionHypix)
 				
 			# SPECIAL BOUNDARY CONDITIONS
-				if option.hyPix.TopBoundary⍰ == "Ψ"
+				if optionHypix.TopBoundary⍰ == "Ψ"
 					ΔPr[iT] = ΔT[iT] * Q[iT, 1]
 					∑Pr[iT] = ∑Pr[iT-1] + ΔPr[iT]
 				end

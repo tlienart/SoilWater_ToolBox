@@ -4,7 +4,7 @@ module interception
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RAINFALL_INTERCEPTION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ_Norm, option, veg)
+	function RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ_Norm, optionHypix, veg)
 			
 		# INTERCEPTION MODEL
 		Sint = 0.0
@@ -13,7 +13,7 @@ module interception
 
 		@fastmath @inbounds for iT = 2:clim.N_Climate
 			# Maximum water storage of the vegetation
-				if option.hyPix.Lai_2_SintMax
+				if optionHypix.Lai_2_SintMax
 					Sint_Sat = LAI_2_SINTMAX(iT, Laiᵀ_Norm, veg)
 				else
 					Sint_Sat = veg.Sint_Sat

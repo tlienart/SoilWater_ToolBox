@@ -5,7 +5,7 @@ module Δtchange
 	import ..interpolate, ..reading, ..tool, ..cst
 	import Dates: value, DateTime, Day, Second, Hour, now
 
-	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, Nit::Int64, NiZ::Int64, param, Q, ΔEvaporation, Hpond, ΔT, θ, Ψ, ∑T_Climate)
+	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, Nit::Int64, NiZ::Int64, paramHypix, Q, ΔEvaporation, Hpond, ΔT, θ, Ψ, ∑T_Climate)
 
 		# PREPROCESSING ∑Evaporation, ∑ΔQ
          ∑Evaporation = fill(0.0::Float64, Nit)
@@ -30,7 +30,7 @@ module Δtchange
 		# PREPARING DATA FOR PLOTS
 			ΔT_Sim = value(obsTheta.Date[obsTheta.Nit] - obsTheta.Date[1]) / 1000
 
-			∑T_Reduced = collect(range(0.0, step=param.hyPix.ΔT_Output, stop=ΔT_Sim)) 
+			∑T_Reduced = collect(range(0.0, step=paramHypix.ΔT_Output, stop=ΔT_Sim)) 
 			
 			# Take account that we are starting at Date_Start_Calibr
 			ΔT_Start_Calibr = value(obsTheta.Date[1] - clim.Date[1]) / 1000
@@ -42,7 +42,7 @@ module Δtchange
 		# PREPARING DATES WITH INTERVAL:
 			# COMPUTING CUMULATIVE TIME
 
-			Date_Reduced = collect(range(obsTheta.Date[1], step=Second(param.hyPix.ΔT_Output), stop=obsTheta.Date[obsTheta.Nit]))
+			Date_Reduced = collect(range(obsTheta.Date[1], step=Second(paramHypix.ΔT_Output), stop=obsTheta.Date[obsTheta.Nit]))
 
 		# INTERPOLATING DATA
 			θ_Reduced = fill(0.0::Float64, Nit_Reduced, NiZ)	

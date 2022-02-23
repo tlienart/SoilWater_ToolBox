@@ -9,7 +9,7 @@ module checkError
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CHECK_ERROR
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CHECK_ERROR(clim, hydroHorizon, N_Layer, N_iRoot, NiZ, param, veg, Z)
+	function CHECK_ERROR(clim, hydroHorizon, N_Layer, N_iRoot, NiZ, paramHypix, veg, Z)
 
 		# DETERMENING IF PATH IS OPEN
 			CHECK_IFOPEN(pathHyPix.Table_Discretisation)
@@ -22,44 +22,44 @@ module checkError
 			CHECK_IFOPEN(pathHyPix.Table_Se)
 
 		# CHECKING IF THE OPTIONS ARE VALID	
-			if option.hyPix.HydroModel⍰ ≠ "Kosugi" && option.hyPix.HydroModel⍰ ≠ "Vangenuchten"
-				error("\n Hypix error: HydroModel⍰ option = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [Vangenuchten] or [Kosugi]")
+			if optionHypix.HydroModel⍰ ≠ "Kosugi" && optionHypix.HydroModel⍰ ≠ "Vangenuchten"
+				error("\n Hypix error: HydroModel⍰ optionHypix = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [Vangenuchten] or [Kosugi]")
 			end
 
-			if option.hyPix.BottomBoundary⍰ ≠ "Free" && option.hyPix.BottomBoundary⍰ ≠ "Ψ"
-				error("\n Hypix error: BottomBoundary⍰ option = $BottomBoundary⍰ not yet supported. BottomBoundary⍰ must = either [Free] or [Pressure]")
+			if optionHypix.BottomBoundary⍰ ≠ "Free" && optionHypix.BottomBoundary⍰ ≠ "Ψ"
+				error("\n Hypix error: BottomBoundary⍰ optionHypix = $BottomBoundary⍰ not yet supported. BottomBoundary⍰ must = either [Free] or [Pressure]")
 			end
 
-			Date_Start = DateTime(param.hyPix.Year_Start, param.hyPix.Month_Start, param.hyPix.Day_Start, param.hyPix.Hour_Start, param.hyPix.Minute_Start, param.hyPix.Second_Start)
+			Date_Start = DateTime(paramHypix.Year_Start, paramHypix.Month_Start, paramHypix.Day_Start, paramHypix.Hour_Start, paramHypix.Minute_Start, paramHypix.Second_Start)
 
-			Date_End = DateTime(param.hyPix.Year_End, param.hyPix.Month_End, param.hyPix.Day_End, param.hyPix.Hour_End, param.hyPix.Minute_End, param.hyPix.Second_End)
+			Date_End = DateTime(paramHypix.Year_End, paramHypix.Month_End, paramHypix.Day_End, paramHypix.Hour_End, paramHypix.Minute_End, paramHypix.Second_End)
 
 			if Date_End < Date_Start
 				error("\n Hypix error: End Run Data = $(Date_End) before Start Run Data = $(Date_Start) !!!")
 			end
 
 		# CHECKING HYDRO PARAMETERS
-			if option.hyPix.HydroModel⍰ == "Kosugi"
+			if optionHypix.HydroModel⍰ == "Kosugi"
 				for iHorizon in 1:N_Layer
 					if hydroHorizon.θs[iHorizon] <  hydroHorizon.θsMacMat[iHorizon]
 						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(pathHyPix.Hydraulic)")
 					end
 				end # for iHorizon in 1:N_Layer
-			end # option.hyPix.HydroModel⍰
+			end # optionHypix.HydroModel⍰
 		
 		# CHECKING THE ROOT DENSITY PARAMETERS
-			if option.hyPix.RootWaterUptake
+			if optionHypix.RootWaterUptake
 				CHECK_ROOTDISTRIBUTION(veg, N_iRoot, Z)
 			end
 
 		# CHECKING STARTING & ENDING DATES OF PLOTS 
-			if option.other.Ploting
-				CHECK_DATES_PLOTS(clim, param)
+			if optionHypix.other.Ploting
+				CHECK_DATES_PLOTS(clim, paramHypix)
 			end
 
 		# CHECKING 
-			# if maximum(param.hyPix.plot.Cells_Plot) ≥ NiZ 
-			# 	error("\n Hypix error:  param.hyPix.plot.Cells_Plot = $(param.hyPix.plot.Cells_Plot) must be ≤  NiZ =  $NiZ")
+			# if maximum(paramHypix.plot.Cells_Plot) ≥ NiZ 
+			# 	error("\n Hypix error:  paramHypix.plot.Cells_Plot = $(paramHypix.plot.Cells_Plot) must be ≤  NiZ =  $NiZ")
 			# end
 
 		return
@@ -100,11 +100,11 @@ module checkError
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : CHECK_DATES_PLOTS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function CHECK_DATES_PLOTS(clim, param)
+	function CHECK_DATES_PLOTS(clim, paramHypix)
 
-	# 	if !(DateTime(clim.Year[1], clim.Month[1], clim.Day[1], clim.Hour[1], clim.Minute[1], clim.Second[1]) ≤ DateTime(param.hyPix.plot.Year_Start, param.hyPix.plot.Month_Start, param.hyPix.plot.Day_Start, param.hyPix.plot.Hour_Start, param.hyPix.plot.Minute_Start, param.hyPix.plot.Second_Start) < DateTime(param.hyPix.plot.Year_End, param.hyPix.plot.Month_End, param.hyPix.plot.Day_End, param.hyPix.plot.Hour_End, param.hyPix.plot.Minute_End, param.hyPix.plot.Second_End) ≤ DateTime(clim.Year[clim.N_Climate], clim.Month[clim.N_Climate], clim.Day[clim.N_Climate], clim.Hour[clim.N_Climate], clim.Minute[clim.N_Climate], clim.Second[clim.N_Climate]))
+	# 	if !(DateTime(clim.Year[1], clim.Month[1], clim.Day[1], clim.Hour[1], clim.Minute[1], clim.Second[1]) ≤ DateTime(paramHypix.plot.Year_Start, paramHypix.plot.Month_Start, paramHypix.plot.Day_Start, paramHypix.plot.Hour_Start, paramHypix.plot.Minute_Start, paramHypix.plot.Second_Start) < DateTime(paramHypix.plot.Year_End, paramHypix.plot.Month_End, paramHypix.plot.Day_End, paramHypix.plot.Hour_End, paramHypix.plot.Minute_End, paramHypix.plot.Second_End) ≤ DateTime(clim.Year[clim.N_Climate], clim.Month[clim.N_Climate], clim.Day[clim.N_Climate], clim.Hour[clim.N_Climate], clim.Minute[clim.N_Climate], clim.Second[clim.N_Climate]))
 				
-	# 		return error("\n \n Hypix ERROR: Dates of plot Year_Start=$(param.hyPix.plot.Year_Start), Month_Start=$(param.hyPix.plot.Month_Start), Day_Start=$(param.hyPix.plot.Day_Start), Hour_Start$(param.hyPix.plot.Hour_Start), Minute_Start= $(param.hyPix.plot.Minute_Start), Second= $(param.hyPix.plot.Second_Start) .OR. Year_End=$(param.hyPix.plot.Year_End), Month_End=$(param.hyPix.plot.Month_End), Day_End=$(param.hyPix.plot.Day_End), Hour_End$(param.hyPix.plot.Hour_End), Minute_End= $(param.hyPix.plot.Minute_End), Second= $(param.hyPix.plot.Second_End)")
+	# 		return error("\n \n Hypix ERROR: Dates of plot Year_Start=$(paramHypix.plot.Year_Start), Month_Start=$(paramHypix.plot.Month_Start), Day_Start=$(paramHypix.plot.Day_Start), Hour_Start$(paramHypix.plot.Hour_Start), Minute_Start= $(paramHypix.plot.Minute_Start), Second= $(paramHypix.plot.Second_Start) .OR. Year_End=$(paramHypix.plot.Year_End), Month_End=$(paramHypix.plot.Month_End), Day_End=$(paramHypix.plot.Day_End), Hour_End$(paramHypix.plot.Hour_End), Minute_End= $(paramHypix.plot.Minute_End), Second= $(paramHypix.plot.Second_End)")
 	# 	end # if 
 	return
 	end  # function CHECK_DATES_PLOTS

@@ -18,7 +18,7 @@ module plotOther
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function WOF_STEPS(path)
 
-				Path_Output = path.hyPix.Plot_OfStep * "Multiplestep.svg"
+				Path_Output = pathHypix.Plot_OfStep * "Multiplestep.svg"
 
 				rm(Path_Output, force=true, recursive=true)	
 
@@ -30,7 +30,7 @@ module plotOther
 					Ticks =[ "1","2a","2b","3a","3b","4a","4b","5a","5b"]
 
 				# OF STEP
-					Path = path.hyPix.Input_OfStep * "Of_Step.CSV"
+					Path = pathHypix.Input_OfStep * "Of_Step.CSV"
 
 					Of_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 					Of_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -48,7 +48,7 @@ module plotOther
 					Plots.plot!(Plot1, subplot=1,  xlabel="", ylabel=L"WOF _{\theta} \ [mm^{3} \ mm^{-3}]", xticks=(1:1:9, Ticks), xtickfont=(12, :white), legend=false, title="(a) Weighted Objective Function", titlelocation = :left)
 
 				# GROUNDWATER STEP
-					Path = path.hyPix.Input_OfStep * "Groundwater_Step.csv"
+					Path = pathHypix.Input_OfStep * "Groundwater_Step.csv"
 
 					Groundwater_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 					Groundwater_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -67,7 +67,7 @@ module plotOther
 
 
 				# EvapoTranspiration STEP
-					Path = path.hyPix.Input_OfStep * "Sink_Step.csv"
+					Path = pathHypix.Input_OfStep * "Sink_Step.csv"
 
 					Sink_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 					Sink_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -85,7 +85,7 @@ module plotOther
 					Plots.plot!(Plot1, subplot=3, xlabel=L"Multistep \ optimization \ [Layers]", ylabel=L"\zeta _{et}  \ [\%]", xticks=(1:1:9, Ticks), tickfont=(12, :black), legend=false, title="(c) Evapotranspiration", titlelocation = :left)
 
 				# Soil Water Content STEP
-					Path = path.hyPix.Input_OfStep * "Swc_Step.csv"
+					Path = pathHypix.Input_OfStep * "Swc_Step.csv"
 
 					Swc_Waitoa, N_Waitoa = tool.readWrite.READ_HEADER(Path, "Waitoa")
 					Swc_Waihou, N_Waihou = tool.readWrite.READ_HEADER(Path, "Waihou")
@@ -173,10 +173,10 @@ module plotOther
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : PLOT_θψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function PLOT_θΨ_Δθ(hydro, pathHyPix, param, option)
+		function PLOT_θΨ_Δθ(hydro, pathHyPix, paramHypix, optionHypix)
 			N_Se = 100
 
-			optionₘ = option.hyPix
+			optionₘ = optionHypix
 
 			hydroHorizon₂ = hydroStruct.HYDROSTRUCT(optionₘ, 1)
 			
@@ -184,7 +184,7 @@ module plotOther
 			hydroHorizon₂.θsMacMat[1] = 0.5
 			hydroHorizon₂.θr[1] = 0.00
 			hydroHorizon₂.σ[1] = 2.0
-			hydroHorizon₂.Ψm[1] = hydroRelation.σ_2_Ψm(hydroHorizon₂.σ[1], param.hydro.kg.Ψσ,  hydro.Ψm_Min[1],  hydro.Ψm_Max[1])
+			hydroHorizon₂.Ψm[1] = hydroRelation.σ_2_Ψm(hydroHorizon₂.σ[1], paramHypix.hydro.kg.Ψσ,  hydro.Ψm_Min[1],  hydro.Ψm_Max[1])
 			hydroHorizon₂.ΨmMac[1] = 100.0
 			hydroHorizon₂.σMac[1] = 2.0
 
@@ -255,9 +255,9 @@ module plotOther
 				lines!(Ax2, -log.(Ψplot), θplot, linewidth=2, color=:red)
 
 				# ΔLnΨmax = fill(0.0: 1)
-				# ΔLnΨmax = timeStep.ΔΨMAX!(hydroHorizon₂, 1, option, param, ΔLnΨmax)
+				# ΔLnΨmax = timeStep.ΔΨMAX!(hydroHorizon₂, 1, optionHypix, paramHypix, ΔLnΨmax)
 
-				# timeStep.ΔθMAX(hydro, 1, 1, option, ΔLnΨmax, Ψ)
+				# timeStep.ΔθMAX(hydro, 1, 1, optionHypix, ΔLnΨmax, Ψ)
 				# Plotting points on the curve
 					N_Ψ = 5
 					Δθ = fill(0.0::Float64, N_Ψ)
