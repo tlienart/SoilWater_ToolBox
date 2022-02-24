@@ -8,51 +8,15 @@ module paramsHypix
 	@option mutable struct OBSΘ
 		NmaxFuncEvals::Int64
 		ΔHpondMax::Float64
-		Year_Start::Int64
-		Month_Start::Int64
-		Day_Start::Int64
-		Hour_Start::Int64
-		Minute_Start::Int64
-		Second_Start::Int64
-		Year_End::Int64
-		Month_End::Int64
-		Day_End::Int64
-		Hour_End::Int64
-		Minute_End::Int64
-		Second_End::Int64
 		θobs_Uncert::Float64
 	end
 	@option mutable struct PLOT
-		Year_Start::Int64
-		Month_Start::Int64
-		Day_Start::Int64
-		Hour_Start::Int64
-		Minute_Start::Int64
-		Second_Start::Int64
-		Year_End::Int64
-		Month_End::Int64
-		Day_End::Int64
-		Hour_End::Int64
-		Minute_End::Int64
-		Second_End::Int64
 		θprofile_Time::Vector{Float64}
 		θΨ_Table::Vector{Float64}
 	end
 	@option mutable struct PARAMHYPIX
 		iOpt_Start::Int64
 		iOpt_End::Int64
-		Year_Start::Int64
-		Month_Start::Int64
-		Day_Start::Int64
-		Hour_Start::Int64
-		Minute_Start::Int64
-		Second_Start::Int64
-		Year_End::Int64
-		Month_End::Int64
-		Day_End::Int64
-		Hour_End::Int64
-		Minute_End::Int64
-		Second_End::Int64
 		ZfineCoarse::Float64
 		ΔZfine::Float64
 		ΔZcoarse::Float64

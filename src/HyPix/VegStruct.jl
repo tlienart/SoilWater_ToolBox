@@ -52,7 +52,7 @@ module vegStruct
          Sint_Lai             = 0.0
          Sint_Sat             = 0.0
 
-         return   veg = VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat)
+       return  VEG(Zroot, ΔRdf_Top, Zroot_Top, Lai, Lai_Min, Lai_Max, CropCoeficient, CropCoeficient_Min, CropCoeficient_Max, ExtinctCoefRadiation, Ψfeddes1, Ψfeddes2, Ψfeddes3, Ψfeddes4, RootWaterUptakeComp, Zevapo, Sint_Lai, Sint_Sat)
 
       end # function VEG
 	

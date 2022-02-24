@@ -8,7 +8,7 @@ module thetaObs
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ΘOBS
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function ΘOBS(obsTheta, clim, discret, Z)
+		function ΘOBS(obsTheta, clim, discret, Z::Vector{Float64})
 
 			# CHECKING DATA CONSISTENCY
 				if obsTheta.Date[1] < clim.Date[2]

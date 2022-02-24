@@ -4,6 +4,7 @@
 module readLinkingFile
    import DelimitedFiles: readdlm
    import ..tool.readWrite: READ_HEADER_FAST
+   import Dates:DateTime
 
    Base.@kwdef struct PATHINPUT
       Climate          ::Vector{String}
@@ -23,29 +24,29 @@ module readLinkingFile
    end
 
    Base.@kwdef struct DATES
-      Year_Start      ::Vector{UInt64}
-      Year_Start_Sim  ::Vector{UInt64}
-      Year_End        ::Vector{UInt64}
+      Year_Start      ::Vector{Int64}
+      Year_Start_Sim  ::Vector{Int64}
+      Year_End        ::Vector{Int64}
 
-      Month_Start     ::Vector{UInt64}
-      Month_Start_Sim ::Vector{UInt64}
-      Month_End       ::Vector{UInt64}
+      Month_Start     ::Vector{Int64}
+      Month_Start_Sim ::Vector{Int64}
+      Month_End       ::Vector{Int64}
 
-      Day_Start       ::Vector{UInt64}
-      Day_Start_Sim   ::Vector{UInt64}
-      Day_End         ::Vector{UInt64}
+      Day_Start       ::Vector{Int64}
+      Day_Start_Sim   ::Vector{Int64}
+      Day_End         ::Vector{Int64}
       
-      Hour_Start      ::Vector{UInt64}
-      Hour_Start_Sim  ::Vector{UInt64}
-      Hour_End        ::Vector{UInt64}
+      Hour_Start      ::Vector{Int64}
+      Hour_Start_Sim  ::Vector{Int64}
+      Hour_End        ::Vector{Int64}
 
-      Minute_Start      ::Vector{UInt64}
-      Minute_Start_Sim  ::Vector{UInt64}
-      Minute_End        ::Vector{UInt64}
+      Minute_Start      ::Vector{Int64}
+      Minute_Start_Sim  ::Vector{Int64}
+      Minute_End        ::Vector{Int64}
 
-      Second_Start      ::Vector{UInt64}
-      Second_Start_Sim  ::Vector{UInt64}
-      Second_End        ::Vector{UInt64}
+      Second_Start      ::Vector{Int64}
+      Second_Start_Sim  ::Vector{Int64}
+      Second_End        ::Vector{Int64}
    end
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,7 +69,7 @@ module readLinkingFile
    
          IdSelect_True = convert.(Bool, Id_True)
    
-         Data = @view Data[IdSelect_True, :]
+         Data = Data[IdSelect_True, :]
    
       # NUMBER OF SCENARIOS
          N_Scenario = sum(Id_True)
@@ -105,24 +106,37 @@ module readLinkingFile
          Second_Start     = fill(0.0::Float64, N_Scenario)
          Second_Start_Sim = fill(0.0::Float64, N_Scenario)
          Second_End       = fill(0.0::Float64, N_Scenario)
+
+      	# Checking for error
+            for iScenario = 1:N_Scenario
+               Date_Start    = DateTime(Year_Start[iScenario], Month_Start[iScenario], Day_Start[iScenario], Hour_Start[iScenario], Minute_Start[iScenario], Second_Start[iScenario])
+      
+               Date_SimStart = DateTime(Year_Start_Sim[iScenario], Month_Start_Sim[iScenario], Day_Start[iScenario], Hour_Start[iScenario], Minute_Start[iScenario], Second_Start[iScenario])
+                  
+               Date_End      = DateTime(Year_End[iScenario], Month_End[iScenario], Day_End[iScenario], Hour_End[iScenario], Minute_End[iScenario], Second_End[iScenario])
+
+               if !(Date_End ≥ Date_SimStart && Date_SimStart ≥ Date_Start)
+                  error("In iScenario=$iScenario HyPix: Date_Start=$Date_Start >  Date_SimStart= $Date_SimStart > Date_End=$Date_End")
+               end
+            end   
    
          dateHypix = DATES(Year_Start, Year_Start_Sim, Year_End, Month_Start, Month_Start_Sim, Month_End,Day_Start, Day_Start_Sim, Day_End, Hour_Start, Hour_Start_Sim, Hour_End, Minute_Start, Minute_Start_Sim, Minute_End, Second_Start, Second_Start_Sim , Second_End)
    
       ## READING PATH ===
-         Climate = READ_PATH(Data, Header, Path_Input, "CLIMATE")
-         Discretisation = READ_PATH(Data, Header, Path_Input, "DISCRETISATION")
-         HydroInput = READ_PATH(Data, Header, Path_Input, "HYDRO_INPUT", AllowMissing = true)
-         HydroRange = READ_PATH(Data, Header, Path_Input, "HYDRO_RANGE"; PathAdd = "ParamOptionPath\\HYDRO_RANGE", AllowMissing = true)
-         KsModel = READ_PATH(Data, Header, Path_Input, "KSMODEL"; PathAdd = "ParamOptionPath\\KSMODEL")
+         Climate          = READ_PATH(Data, Header, Path_Input, "CLIMATE")
+         Discretisation   = READ_PATH(Data, Header, Path_Input, "DISCRETISATION")
+         HydroInput       = READ_PATH(Data, Header, Path_Input, "HYDRO_INPUT", AllowMissing = true)
+         HydroRange       = READ_PATH(Data, Header, Path_Input, "HYDRO_RANGE"; PathAdd = "ParamOptionPath\\HYDRO_RANGE", AllowMissing = true)
+         KsModel          = READ_PATH(Data, Header, Path_Input, "KSMODEL"; PathAdd = "ParamOptionPath\\KSMODEL")
          LookUpTable_Crop = READ_PATH(Data, Header, Path_Input, "LookUpTable_Crop"; PathAdd = "LookUpTable\\LookUpTable_Crop")
-         LookUpTable_Lai = READ_PATH(Data, Header, Path_Input, "LookUpTable_Lai"; PathAdd = "LookUpTable\\LookUpTable_Lai")
-         MultistepOpt = READ_PATH(Data, Header, Path_Input, "MULTISTEP_OPT", AllowMissing = true)
-         OptionHypix = READ_PATH(Data, Header, Path_Input, "OPTION"; PathAdd = "ParamOptionPath\\OPTION")
-         ParamHypix = READ_PATH(Data, Header, Path_Input, "PARAM"; PathAdd = "ParamOptionPath\\PARAM")
-         PathHypix = READ_PATH(Data, Header, Path_Input, "PATH"; PathAdd = "ParamOptionPath\\PATH")
-         SoilLayer = READ_PATH(Data, Header, Path_Input, "SOILLAYER")
-         Vegetation = READ_PATH(Data, Header, Path_Input, "VEGETATION")
-         θdata = READ_PATH(Data, Header, Path_Input, "SOILMOISTURE")
+         LookUpTable_Lai  = READ_PATH(Data, Header, Path_Input, "LookUpTable_Lai"; PathAdd = "LookUpTable\\LookUpTable_Lai")
+         MultistepOpt     = READ_PATH(Data, Header, Path_Input, "MULTISTEP_OPT", AllowMissing = true)
+         OptionHypix      = READ_PATH(Data, Header, Path_Input, "OPTION"; PathAdd = "ParamOptionPath\\OPTION")
+         ParamHypix       = READ_PATH(Data, Header, Path_Input, "PARAM"; PathAdd = "ParamOptionPath\\PARAM")
+         PathHypix        = READ_PATH(Data, Header, Path_Input, "PATH"; PathAdd = "ParamOptionPath\\PATH")
+         SoilLayer        = READ_PATH(Data, Header, Path_Input, "SOILLAYER")
+         Vegetation       = READ_PATH(Data, Header, Path_Input, "VEGETATION")
+         θdata            = READ_PATH(Data, Header, Path_Input, "SOILMOISTURE")
       
          pathInputHypix = PATHINPUT(Climate, Discretisation, HydroInput, HydroRange, KsModel, LookUpTable_Crop, LookUpTable_Lai, MultistepOpt, OptionHypix, ParamHypix, PathHypix, SoilLayer, Vegetation, θdata)
    

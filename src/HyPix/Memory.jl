@@ -10,45 +10,43 @@ module memory
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	function MEMORY(clim, N_∑T_Climate::Int64, NiZ::Int64, obsTheta, paramHypix)
 
-		# N_Memory = ceil(Int, N_∑T_Climate / paramHypix.ΔT_Min) + Int(N_∑T_Climate % paramHypix.ΔT_Min + 1)
-
       N_Memory = ceil(Int, N_∑T_Climate / paramHypix.ΔT_Min) + 10
 		
       ΔEvaporation = fill(0.0::Float64, N_Memory)
-      Hpond       = fill(0.0::Float64, N_Memory)
-      ΔPet         = fill(0.0::Float64, N_Memory)
-      ΔPr          = fill(0.0::Float64, N_Memory)
-      ΔT           = fill(0.0::Float64, N_Memory)
-      ∑Pet         = fill(0.0::Float64, N_Memory)
-      ∑Pr          = fill(0.0::Float64, N_Memory)
-      ∑T           = fill(0.0::Float64, N_Memory)
+      Hpond        = similar(ΔEvaporation)
+      ΔPet         = similar(ΔEvaporation)
+      ΔPr          = similar(ΔEvaporation)
+      ΔT           = similar(ΔEvaporation)
+      ∑Pet         = similar(ΔEvaporation)
+      ∑Pr          = similar(ΔEvaporation)
+      ∑T           = similar(ΔEvaporation)
 
       ΔSink = fill(0.0::Float64, N_Memory, NiZ)
-      Ψ     = fill(0.0::Float64, N_Memory, NiZ)
-      θ     = fill(0.0::Float64, N_Memory, NiZ)
+      Ψ     = similar(ΔSink)
+      θ     = similar(ΔSink)
 		
       Q     = fill(0.0::Float64, N_Memory, NiZ+1)
 		
       Residual = fill(0.0::Float64, NiZ)
-      ΔLnΨmax  = fill(0.0::Float64, NiZ)
-      Ψ_Max    = fill(0.0::Float64, NiZ)
-      Ψ_Min    = fill(0.0::Float64, NiZ)
-      Ψbest    = fill(0.0::Float64, NiZ)
-      ∂K∂Ψ     = fill(0.0::Float64, NiZ)
-      ∂R∂Ψ     = fill(0.0::Float64, NiZ)
-      ∂R∂Ψ△    = fill(0.0::Float64, NiZ)
-      ∂R∂Ψ▽    = fill(0.0::Float64, NiZ)
+      ΔLnΨmax  = similar(Residual)
+      Ψ_Max    = similar(Residual)
+      Ψ_Min    = similar(Residual)
+      Ψbest    = similar(Residual)
+      ∂K∂Ψ     = similar(Residual)
+      ∂R∂Ψ     = similar(Residual)
+      ∂R∂Ψ△    = similar(Residual)
+      ∂R∂Ψ▽    = similar(Residual)
       
       Nit_Reduced                  = paramHypix.iOpt_End - paramHypix.iOpt_Start + 1
 
-      iNonConverge_iOpt          = fill(0  ::Int64, Nit_Reduced)
+      iNonConverge_iOpt          = fill(0::Int64  ::Int64, Nit_Reduced)
 
       Laiᵀ= fill(0.0::Float64, clim.N_Climate)
-		CropCoeficientᵀ = fill(0.0::Float64, clim.N_Climate)
+		CropCoeficientᵀ = similar(Laiᵀ)
 
       θSim = fill(0.0::Float64, obsTheta.Nit, NiZ)
 		
-		return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, Hpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+	return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, Hpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
 
 
@@ -59,17 +57,17 @@ module memory
       Nit_Reduced = paramHypix.iOpt_End - paramHypix.iOpt_Start + 1
 
       Efficiency                 = fill(0.0::Float64, Nit_Reduced)
-      Global_WaterBalance        = fill(0.0::Float64, Nit_Reduced)
-      Global_WaterBalance_NormPr = fill(0.0::Float64, Nit_Reduced)
-      NseBest                    = fill(0.0::Float64, Nit_Reduced)
-      CccBest                    = fill(0.0::Float64, Nit_Reduced)
-      WilmotBest                 = fill(0.0::Float64, Nit_Reduced)
-      SwcRoots                   = fill(0.0::Float64, Nit_Reduced)
-      WofBest                    = fill(0.0::Float64, Nit_Reduced)
-      ΔRunTimeHypix              = fill(0.0::Float64, Nit_Reduced)
-      ΔT_Average                 = fill(0.0::Float64, Nit_Reduced)
-      ∑ΔQ_Bot                    = fill(0.0::Float64, Nit_Reduced)
-      ∑∑ΔSink                    = fill(0.0::Float64, Nit_Reduced)
+      Global_WaterBalance        = similar(Efficiency)
+      Global_WaterBalance_NormPr = similar(Efficiency)
+      NseBest                    = similar(Efficiency)
+      CccBest                    = similar(Efficiency)
+      WilmotBest                 = similar(Efficiency)
+      SwcRoots                   = similar(Efficiency)
+      WofBest                    = similar(Efficiency)
+      ΔRunTimeHypix              = similar(Efficiency)
+      ΔT_Average                 = similar(Efficiency)
+      ∑ΔQ_Bot                    = similar(Efficiency)
+      ∑∑ΔSink                    = similar(Efficiency)
       
    return ∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, NseBest, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average
    end  # function: MEMORY_STEOPT

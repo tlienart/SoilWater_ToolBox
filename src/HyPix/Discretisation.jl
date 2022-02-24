@@ -17,7 +17,7 @@ module discretisation
 			ΔZ_W
 		end
 		
-		function DISCRETISATION(NiZ::Int64, Z)
+		function DISCRETISATION(NiZ::Int64, Z::Vector{Float64})
 			Z_CellUp = fill(0.0::Float64, NiZ)
 			Znode    = fill(0.0::Float64, NiZ)
 			ΔZ       = fill(0.0::Float64, NiZ)
@@ -25,8 +25,8 @@ module discretisation
 			ΔZ_Aver  = fill(0.0::Float64, NiZ)
 			ΔZ_W     = fill(0.0::Float64, NiZ)
 			
-			# Cell 1
-				ΔZ[1]       = Z[1]
+			# Cell 1[p]
+				ΔZ[1]       = Z[1];
 				ΔZ_⬓[1]     = ΔZ[1] * 0.5
 				Z_CellUp[1] = 0.0
 				Znode[1]    = ΔZ_⬓[1]	
@@ -60,14 +60,7 @@ module discretisation
 
 	Automatically performs the discretisatio of the HyPix model wheh you enter the depth of the layers
 	"""
-		function DISCRETISATION_AUTO(optionHypix, paramHypix; Flag_θΨini::Symbol, N_Layer::Int64, Zlayer::Vector{Float64}, θini, Ψini)
-
-			# Determine if we selected to input θini or Ψini
-				if Flag_θΨini == :Ψini
-					θΨini = Ψini
-				elseif Flag_θΨini == :θini
-					θΨini = θini
-				end
+		function DISCRETISATION_AUTO(optionHypix, paramHypix; N_Layer::Int64, Zlayer::Vector{Float64}, θini_or_Ψini)
 
 				ΔZlayer = fill(0.0::Float64, N_Layer)
 
@@ -80,7 +73,7 @@ module discretisation
 			# Computing the number of discretisation
             ΔZcell     = Float64[]
             Layer      = Float64[]
-            θΨini_Cell = Float64[]
+            θini_or_Ψini_Cell = Float64[]
 
 				for iLayer = 1:N_Layer
 					if  Zlayer[iLayer] < paramHypix.ZfineCoarse
@@ -95,7 +88,7 @@ module discretisation
 					for iDiscret=1:Nsplit
 						append!(ΔZcell, ΔZcell₀)
                   append!(Layer, iLayer)
-						append!(θΨini_Cell, θΨini[iLayer])
+						append!(θini_or_Ψini_Cell, θini_or_Ψini[iLayer])
 					end
 				end # ilayer
 				N = length(ΔZcell)
@@ -112,13 +105,13 @@ module discretisation
 				if optionHypix.HydrostaticEquilibrium
 					@warn "			*** Hini at Hydrostatic Equilibrium ***"
 					for iZ = 1:N
-						θΨini_Cell[iZ] = Z[N] - Z[iZ]
+						θini_or_Ψini_Cell[iZ] = Z[N] - Z[iZ]
 					end
 				end
 
 				NiZ = length(Layer)
 
-		return Layer, NiZ, Z, θΨini_Cell
+		return Layer, NiZ, Z, θini_or_Ψini_Cell
 		end  # function: DISCRETISATION_AUTO
 
 end  # module: discret

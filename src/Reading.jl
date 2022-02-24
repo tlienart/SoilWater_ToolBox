@@ -645,6 +645,7 @@ module reading
 		import  ...tool, ...horizonLayer
 		import Dates: value, DateTime, hour, minute, month, now, Hour
 		import DelimitedFiles
+		import CSV, Tables
 		export CLIMATE, DATES, DISCRETISATION, HYPIX_PARAM, LOOKUPTABLE_CROPCOEFICIENT, LOOKUPTABLE_LAI
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -765,20 +766,20 @@ module reading
 
 				# Depending on the initial boundary condition 
 					if "θini" ∈ Header
-						θini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "θini")
-						Ψini = []
+						θini_or_Ψini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "θini")
 						Flag_θΨini = :θini 
 
 					elseif "Ψini" ∈ Header
-						Ψini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Ψini")
-						θini = []
+						θini_or_Ψini, ~ =  tool.readWrite.READ_HEADER_FAST(Data, Header, "Ψini")
 						Flag_θΨini = :Ψini
 
 					else
 						error("In $Path cannot find <θini> or <Ψini> in $Header")
 					end
 
-			return Flag_θΨini, Layer, N_Layer, NiZ, Z, θini, Ψini
+					θini_or_Ψini 
+
+			return Flag_θΨini, Layer, N_Layer, NiZ, Z, θini_or_Ψini
 			end # function DISCRETISATION
 		#-------------------------------------------------------------------------
 
@@ -971,25 +972,28 @@ module reading
 				Pr_Through :: Vector{Float64}
 			end
 
-
 			function CLIMATE(dateHypix, iScenario::Int64, PathClimate::String; Option_ReadTemperature=false)
 
 				# READ DATA
-					Data, Header = DelimitedFiles.readdlm(PathClimate, ',', header=true, use_mmap=true)
+					Data = CSV.File(PathClimate, header=true)
 
-					Year, N_Climate = tool.readWrite.READ_HEADER_FAST(Data, Header,"Year")
-					Month, ~        = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month")
-					Day, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day")
-					Hour, ~         = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
-					Minute, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute")
-					Second, ~       = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
-					Pr, ~           = tool.readWrite.READ_HEADER_FAST(Data, Header, "Rain(mm)")
-					Pet, ~          = tool.readWrite.READ_HEADER_FAST(Data, Header, "PET(mm)")
+					Year   = convert(Vector{Int64}, Tables.getcolumn(Data, :Year))
+					Month  = convert(Vector{Int64}, Tables.getcolumn(Data, :Month))
+					Day    = convert(Vector{Int64}, Tables.getcolumn(Data,  :Day))
+					Hour   = convert(Vector{Int64}, Tables.getcolumn(Data,  :Hour))
+					Minute = convert(Vector{Int64}, Tables.getcolumn(Data, :Minute))
+					Second = convert(Vector{Int64}, Tables.getcolumn(Data,  :Second))
+					Pr     = convert(Vector{Float64}, Tables.getcolumn(Data,  Symbol("Rain(mm)")))
+					Pet    = convert(Vector{Float64}, Tables.getcolumn(Data, Symbol("PET(mm)")))
+					
+					N_Climate = length(Year)
+
 					if Option_ReadTemperature 
-						Temp, ~      = tool.readWrite.READ_HEADER_FAST(Data, Header, "Tmax(C)")
+						Temp=  convert(Vector{Float64}, Tables.getcolumn(Data,  Symbol("Tmax(C)")))
 					else
 						Temp = fill(24.0::Float64, N_Climate)
 					end
+
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
 					Date_Start = DateTime(dateHypix.Year_Start[iScenario], dateHypix.Month_Start[iScenario], dateHypix.Day_Start[iScenario], dateHypix.Hour_Start[iScenario], dateHypix.Minute_Start[iScenario], dateHypix.Second_Start[iScenario])
@@ -1045,36 +1049,36 @@ module reading
 		#		FUNCTION : θOBSERVATION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			Base.@kwdef mutable struct θOBSERVATION
-				Date    :: Vector{DateTime}
-				Z  	  :: Vector{Float64}
+				Date      :: Vector{DateTime}
+				Z  	    :: Vector{Float64}
 				ithetaObs :: Vector{Int64}
-				Nit    :: Int64 # Number of time steps
-				Ndepth  :: Int64 # Numver of soil profile with observed θ
-				θobs 	  :: Array{Float64,2}
-				∑T  	  :: Vector{Float64}
+				Nit       :: Int64 # Number of time steps
+				Ndepth    :: Int64 # Numver of soil profile with observed θ
+				θobs 	    :: Array{Float64,2}
+				∑T  	    :: Vector{Float64}
 			end # mutable struct
 
-			function TIME_SERIES(clim, option, param, pathHyPix)
+			function θDATA(clim, dateHypix, iScenario, Pathθobs)
 			# Read data
-				Data = DelimitedFiles.readdlm(pathHyPix.obsTheta, ',')
-			# Read header
-				Header = Data[1,1:end]
-			# Remove first READ_ROW_SELECT
-				Data = Data[2:end,begin:end]
+				Data₀ = CSV.File(Pathθobs, header=true)
 
-				Year, Nit   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Year")
-				Month, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "Month")
-				Day, ~     = tool.readWrite.READ_HEADER_FAST(Data, Header, "Day")
-				Hour, ~    = tool.readWrite.READ_HEADER_FAST(Data, Header, "Hour")
-				Minute, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Minute")
-				Second, ~  = tool.readWrite.READ_HEADER_FAST(Data, Header, "Second")
+				Header = string.(Tables.columnnames(Data₀))
+
+            Year   = convert(Vector{Int64}, Tables.getcolumn(Data₀, :Year))
+            Month  = convert(Vector{Int64}, Tables.getcolumn(Data₀, :Month))
+            Day    = convert(Vector{Int64}, Tables.getcolumn(Data₀, :Day))
+            Hour   = convert(Vector{Int64}, Tables.getcolumn(Data₀, :Hour))
+            Minute = convert(Vector{Int64}, Tables.getcolumn(Data₀, :Minute))
+            Second = convert(Vector{Int64}, Tables.getcolumn(Data₀,:Second))
+
+				Data = Tables.matrix(Data₀)
+
+            Nit    = length(Year)
 
 				# READING THE DEPTH OF Θ MEASUREMENTS FROM HEADER: data having Z=
-					# Data, Header = DelimitedFiles.readdlm(pathHyPix.obsTheta, ','; header=true)
-
-						Array_iHeader = []
-						Ndepth = 0
-						iCount = 0
+						Array_iHeader = Int64[]
+						Ndepth = 0::Int64
+						iCount = 0::Int64
 						for iHeader in Header
 							iCount += 1
 							if occursin("Z=", iHeader) # Searching for 'Z=' in the header
@@ -1084,13 +1088,13 @@ module reading
 						end # iHeader
 
 					# Isolating data with Z= measurements
-						Nit,~ = size(Data)
-						θobs = Data[1:Nit, minimum(Array_iHeader): maximum(Array_iHeader)]
+						# Nit,~ = size(Data)
+						θobs = Data[:, minimum(Array_iHeader): maximum(Array_iHeader)]
 
 					# The depths were we have θ measurements
 						Z = fill(0.0::Float64, Ndepth)
 
-						i = 0
+						i = 0::Int64
 						for iHeader in Header
 							if occursin("Z=", iHeader)
 								i += 1
@@ -1104,9 +1108,9 @@ module reading
 						end #  iHeader
 
 				# REDUCING THE NUMBER OF SIMULATIONS SUCH THAT IT IS WITHIN THE SELECTED RANGE
-					Date_Start_Calibr = DateTime(param.hyPix.obsTheta.Year_Start, param.hyPix.obsTheta.Month_Start, param.hyPix.obsTheta.Day_Start, param.hyPix.obsTheta.Hour_Start, param.hyPix.obsTheta.Minute_Start, param.hyPix.obsTheta.Second_Start)
+					Date_Start_Calibr = DateTime(dateHypix.Year_Start_Sim[iScenario], dateHypix.Month_Start_Sim[iScenario], dateHypix.Day_Start_Sim[iScenario], dateHypix.Hour_Start_Sim[iScenario], dateHypix.Minute_Start_Sim[iScenario], dateHypix.Second_Start_Sim[iScenario])
 					
-					Date_End_Calibr = DateTime(param.hyPix.obsTheta.Year_End, param.hyPix.obsTheta.Month_End, param.hyPix.obsTheta.Day_End, param.hyPix.obsTheta.Hour_End, param.hyPix.obsTheta.Minute_End, param.hyPix.obsTheta.Second_End)
+					Date_End_Calibr = DateTime(dateHypix.Year_End[iScenario], dateHypix.Month_End[iScenario], dateHypix.Day_End[iScenario], dateHypix.Hour_End[iScenario], dateHypix.Minute_End[iScenario], dateHypix.Second_End[iScenario])
 
 				# Compared to observed climate data
                Date_Start_Calibr = max(Date_Start_Calibr, clim.Date[2])
@@ -1114,8 +1118,8 @@ module reading
 
 				# SELECTING THE DATA WITHING FEASIBLE RANGE
 					True = falses(Nit) # Initiating with false
-					Date = fill(Date_Start_Calibr::DateTime,  Nit)
-					iCount = 0 
+					Date = fill(Date_Start_Calibr::DateTime, Nit)
+					iCount = 0 ::Int64
 					for iT=1:Nit
 						Date[iT] = DateTime(Year[iT], Month[iT], Day[iT], Hour[iT], Minute[iT], Second[iT])
 
@@ -1156,11 +1160,11 @@ module reading
 					ithetaObs = fill(0::Int64, Ndepth)
 
 				# SAVING SPACE 
-					Data = nothing
-					True = nothing
+					# Data = nothing
+					# True = nothing
 
 				# STRUCTURE
-					return obsTheta = θOBSERVATION(Date, Z, ithetaObs, Nit, Ndepth, θobs, ∑T)
+			return θOBSERVATION(Date, Z, ithetaObs, Nit, Ndepth, θobs, ∑T)
 			end  # function: TIME_SERIES
 
 
@@ -1168,36 +1172,36 @@ module reading
 		#		FUNCTION : LOOKUPTABLE
 		#		Parameters as a function of time
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function LOOKUPTABLE_LAI(clim, option, pathHyPix, veg)	
-				if option.hyPix.LookupTable_Lai == true
-					LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_Lai, "Lai")
+			function LOOKUPTABLE_LAI(clim, optionHypix, PathLai::String, veg)	
+				if optionHypix.LookupTable_Lai == true
+					LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(PathLai, "Lai")
 				end
 				
 				i = 1
 				Laiᵀ_Norm = fill(0.0::Float64, clim.N_Climate) 
 				for Date in clim.Date
 					Month = month(Date)
-					if option.hyPix.LookupTable_Lai == true
+					if optionHypix.LookupTable_Lai == true
 						Laiᵀ_Norm[i] = LookUpTable_Lai[Month]
 					else
 						Laiᵀ_Norm[i] = veg.Lai
 					end
-					i+=1
+					i += 1
 				end
 			
 			return Laiᵀ_Norm
 			end  # function: LOOKUPTABLE_LAI
 
-			function LOOKUPTABLE_CROPCOEFICIENT(clim, option, pathHyPix, veg)
-				if option.hyPix.LookUpTable_CropCoeficient == true
-					LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(pathHyPix.LookUpTable_CropCoeficient, "CropCoeficient")
+			function LOOKUPTABLE_CROPCOEFICIENT(clim, optionHypix, PathLai::String, veg)
+				if optionHypix.LookUpTable_CropCoeficient == true
+					LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(PathLai, "CropCoeficient")
 				end
 				
 				i = 1
 				CropCoeficientᵀ_Norm = fill(0.0::Float64, clim.N_Climate) 
 				for Date in clim.Date
 					Month = month(Date)
-					if option.hyPix.LookUpTable_CropCoeficient == true
+					if optionHypix.LookUpTable_CropCoeficient == true
 						CropCoeficientᵀ_Norm[i] = LookUpTable_CropCoeficient[Month]
 					else
 						CropCoeficientᵀ_Norm[i] = veg.CropCoeficient

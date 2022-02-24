@@ -374,12 +374,12 @@ module table
 		import ...cst, ...tool, ...wrc, ...kunsat
 		import DelimitedFiles
 		import Dates: value, DateTime, year, month, day, hour, minute, second
-		export DAILY_CLIMATE, DISCRETISATION, HYDRO, PERFORMANCE, Q, TIME_SERIES, TIME_SERIES_DAILY, VEG, θ, θΨ, Ψ, θAVERAGE
+		export DAILY_CLIMATE, DISCRETISATION_RRE, HYDRO, PERFORMANCE, Q, TIME_SERIES, TIME_SERIES_DAILY, VEG, θ, θΨ, Ψ, θAVERAGE
 
 		# ===================================================
 		#          DISCRETISATION AUTO
 		# ===================================================
-			function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Float64}, PathDiscretisation::String, Z::Vector{Float64}, θΨini_Cell::Vector{Float64})
+			function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Float64}, PathDiscretisation::String, Z::Vector{Float64}, θini_or_Ψini_Cell::Vector{Float64})
 
 				# println("			~  $(PathDiscretisation) ~")
 
@@ -394,7 +394,7 @@ module table
 
 				open(PathDiscretisation, "w") do io
 					DelimitedFiles.writedlm(io,[Header] , ",") # Header
-					DelimitedFiles.writedlm(io, [iZ Z Layer θΨini_Cell], ",")
+					DelimitedFiles.writedlm(io, [iZ Z Layer θini_or_Ψini_Cell], ",")
 				end # open
 
 			return nothing
@@ -405,7 +405,7 @@ module table
 		# ===================================================
 		#          Discretization
 		# ===================================================
-			function DISCRETISATION(discret, NiZ, Z, pathHyPix)
+			function DISCRETISATION_RRE(discret, NiZ, Z, pathHyPix)
 				println("			~  $(pathHyPix.Table_Discretisation) ~")
 
 				Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
