@@ -9,7 +9,7 @@ module horizonLayer
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION :   HORIZON_2_LAYER
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ::Int64, optionHypix)
+	function HYDROHORIZON_2_HYDRO(hydroHorizon, Layer::Vector{Int64}, NiZ::Int64, optionHypix)
 
 		hydro = hydroStruct.HYDROSTRUCT(optionHypix, NiZ)
 

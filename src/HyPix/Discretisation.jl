@@ -72,7 +72,7 @@ module discretisation
 
 			# Computing the number of discretisation
             ΔZcell     = Float64[]
-            Layer      = Float64[]
+            Layer      = Int64[]
             θini_or_Ψini_Cell = Float64[]
 
 				for iLayer = 1:N_Layer

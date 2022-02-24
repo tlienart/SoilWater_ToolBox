@@ -379,7 +379,7 @@ module table
 		# ===================================================
 		#          DISCRETISATION AUTO
 		# ===================================================
-			function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Float64}, PathDiscretisation::String, Z::Vector{Float64}, θini_or_Ψini_Cell::Vector{Float64})
+			function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Int64}, PathDiscretisation::String, Z::Vector{Float64}, θini_or_Ψini_Cell::Vector{Float64})
 
 				# println("			~  $(PathDiscretisation) ~")
 
