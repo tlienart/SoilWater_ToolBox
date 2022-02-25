@@ -98,7 +98,7 @@ module richard
 			for iZ=1:NiZ
 				Q, Residual, θ = residual.RESIDUAL(discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Q, Residual, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-				if optionHypix.∂R∂Ψ_Numerical
+				if optionHypix.∂R∂Ψ_NumericalAuto
 					∂R∂Ψ[iZ] = residual.∂R∂Ψ_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,NiZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,NiZ)], Ψ_Max)
 
 					∂R∂Ψ▽[iZ]  = residual.∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,NiZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,NiZ)], Ψ_Max)
@@ -106,7 +106,7 @@ module richard
 					∂R∂Ψ△[iZ]  = residual.∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, max(iZ-1,1)], Ψ[iT-1, iZ], Ψ[iT-1,iZ], Ψ[iT-1,max(iZ-1,1)], Ψ[iT-1, min(iZ+1,NiZ)], Ψ[iT,iZ], Ψ[iT, min(iZ+1,NiZ)], Ψ_Max)
 				else
 					∂R∂Ψ[iZ], ∂R∂Ψ△[iZ], ∂R∂Ψ▽[iZ] = residual.∂RESIDUAL∂Ψ(∂K∂Ψ, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, ΔT, θ, Ψ)
-				end # if optionHypix.∂R∂Ψ_Numerical
+				end # if optionHypix.∂R∂Ψ_NumericalAuto"
 			end #for iZ= 1:NiZ
 
 			# # FOR TESTING...
@@ -217,9 +217,9 @@ module richard
 
 					end # if optionHypix.DynamicNewtonRaphsonStep
 
-					if optionHypix.IterReduceOverShoting
-						Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
-					end
+					# if optionHypix.IterReduceOverShoting
+					# 	Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
+					# end
 
 				end
 			end # for iZ=1:NiZ	
@@ -244,20 +244,20 @@ module richard
 	# 	end  # function: Ψ_REDUCE_OVERSHOOTING
 	# #---------------------------------------------------------------
 
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
-	# 		Making sure that the steps of NR are not too big and within the limits of ΔLnΨmax
-	# 		Does not work
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
-		if Ψ[iT,iZ] ≤ Ψ₀
-			Ψ[iT,iZ] = max(Ψ[iT,iZ], Ψ₀ - expm1(ΔLnΨmax[iZ]))
-		else
-			Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψ₀ +  expm1(ΔLnΨmax[iZ]))
-		end	
-	return Ψ
-	end  # function: Ψ_REDUCE_OVERSHOOTING
-#------------------------------------------------------------
+# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
+# 	# 		Making sure that the steps of NR are not too big and within the limits of ΔLnΨmax
+# 	# 		Does not work
+# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 	function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
+# 		if Ψ[iT,iZ] ≤ Ψ₀
+# 			Ψ[iT,iZ] = max(Ψ[iT,iZ], Ψ₀ - expm1(ΔLnΨmax[iZ]))
+# 		else
+# 			Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψ₀ +  expm1(ΔLnΨmax[iZ]))
+# 		end	
+# 	return Ψ
+# 	end  # function: Ψ_REDUCE_OVERSHOOTING
+# #------------------------------------------------------------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

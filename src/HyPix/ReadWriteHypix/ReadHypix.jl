@@ -3,13 +3,97 @@
 # =============================================================
 module readHypix
 
-   import  ..tool, ..horizonLayer
+   import ..climate, ..discretisation, ..horizonLayer, ..hydroStruct, ..memory, ..optionsHypix, ..paramsHypix, ..pathsHypix, ..reading, ..table, ..thetaObs, ..tool, ..vegStruct
+
    import Dates: value, DateTime, hour, minute, month, now, Hour
    import DelimitedFiles
    import CSV, Tables
-   export CLIMATE, DISCRETISATION, HYPIX_PARAM, LOOKUPTABLE_CROPCOEFICIENT, LOOKUPTABLE_LAI
+   export READ_START
 
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : READ_START
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      function READ_START(dateHypix, Id, iScenario, N_Scenario, Path_Hypix, pathInputHypix, ProjectHypix, SiteName)
+         println(SiteName[iScenario])
+
+         paramHypix = paramsHypix.PARAM_HYPIX(pathInputHypix.ParamHypix[iScenario])
+
+         optionHypix = optionsHypix.OPTION_HYPIX(pathInputHypix.OptionHypix[iScenario])
+
+         pathOutputHypix = pathsHypix.PATH_HYPIX(Path_Hypix, pathInputHypix.PathHypix[iScenario], ProjectHypix, SiteName[iScenario])
+         
+         # READING CLIMATE DATA ====
+            clim = readHypix.CLIMATE(dateHypix, iScenario, pathInputHypix.Climate[iScenario])
+
+            # Process climate
+               ∑Pet_Climate, ∑Pr_Climate, ∑T_Climate, N_∑T_Climate, Temp = climate.CLIMATE(clim, optionHypix)
+
+         # READING DISCRETISATION ===
+            # Create Discretisation.csv from SoilLayer.csv
+            if optionHypix.Discretisation_File_Auto⍰ == "Auto"
+               # Read SoilLayer, could be either θini, Ψini
+               Flag_θΨini, Layer, N_Layer, ~, Zlayer, θini_or_Ψini = readHypix.DISCRETISATION(pathInputHypix.SoilLayer[iScenario])
+
+               # Performing auto discretisation			
+               Layer, NiZ, Z, θini_or_Ψini_Cell = discretisation.DISCRETISATION_AUTO(optionHypix, paramHypix; N_Layer=N_Layer, Zlayer=Zlayer, θini_or_Ψini=θini_or_Ψini)
+         
+               table.hyPix.DISCRETISATION_AUTO(Flag_θΨini, Layer, pathInputHypix.Discretisation[iScenario], Z, θini_or_Ψini_Cell)
+            else
+               # Read discretisation
+               Flag_θΨini, Layer, N_Layer, NiZ, Z, θini_or_Ψini = readHypix.DISCRETISATION(pathInputHypix.Discretisation[iScenario])
+
+            end # if optionHypix.Discretisation_File_Auto⍰ == "Auto" 
+
+            # Process discretisation of the soil profile ~~~~~
+               discret = discretisation.DISCRETISATION(NiZ, Z)
+
+         # READING OBSERVED θ ===
+            if optionHypix.θobs
+               # Read observed θ
+                  obsTheta = readHypix.θDATA(clim, dateHypix, iScenario, pathInputHypix.θdata[iScenario])
+               # Process observed θ
+                  obsTheta = thetaObs.ΘOBS(obsTheta, clim, discret, Z)
+            end #  optionHypix.θobs
       
+         # LOOKUP TABLE ===
+            # Initialiozing vegetation parameters into veg structure
+               veg = vegStruct.VEGSTRUCT() 
+               Laiᵀ_η            = readHypix.LOOKUPTABLE_LAI(clim, optionHypix, pathInputHypix.LookUpTable_Lai[iScenario], veg)
+               CropCoeficientᵀ_η = readHypix.LOOKUPTABLE_CROPCOEFICIENT(clim, optionHypix, pathInputHypix.LookUpTable_Crop[iScenario], veg)
+               
+         # INITIALIZING THE STRUCTURE ===
+            # Initializing hydroHorizon structure
+               hydroHorizon = hydroStruct.HYDROSTRUCT(optionHypix, N_Layer)
+
+            # Initializing hydraulic paramHypix into structure 
+               hydro = hydroStruct.HYDROSTRUCT(optionHypix, NiZ)
+
+            # Optimisation
+               hydroHorizon_best = hydroStruct.HYDROSTRUCT(optionHypix, N_Layer)
+               hydro_best        = hydroStruct.HYDROSTRUCT(optionHypix, NiZ)
+               veg_best          = vegStruct.VEGSTRUCT()
+
+         # VEGETATION PARAMETERS
+            if ! (optionHypix.opt.Optimisation)
+               veg, ~ = reading.READ_STRUCT(veg, pathInputHypix.Vegetation[iScenario])
+      
+         # HYDRAULIC PARAMETERS
+               hydroHorizon, ~ = reading.READ_STRUCT(hydroHorizon, pathInputHypix.MultistepOpt[iScenario])
+               hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
+            end # optionHypix.Optimisation
+
+         # MEMORY 
+            # Multistep optimisation
+               ∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, NseBest, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average = memory.MEMORY_MULTISTEPOPTIMISATION(paramHypix)
+
+            # Memory	
+               ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, Hpond, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest = memory.MEMORY(clim, N_∑T_Climate, NiZ, obsTheta, paramHypix)
+         
+   return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑∑ΔSink, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, ∑ΔQ_Bot, CccBest, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Efficiency, Flag_θΨini, Flag_θΨini, Global_WaterBalance, Global_WaterBalance_NormPr, Hpond, hydro, hydro_best, hydroHorizon, hydroHorizon_best, iNonConverge_iOpt, Laiᵀ, Laiᵀ_η, Layer, N_∑T_Climate, N_Layer, NiZ, NseBest, obsTheta, optionHypix, paramHypix, pathInputHypix, pathOutputHypix, Q, Residual, SwcRoots, Temp, veg, veg_best, WilmotBest, WofBest, Z, Zlayer, ΔEvaporation, ΔLnΨmax, ΔPet, ΔPr, ΔRunTimeHypix, ΔSink, ΔT, ΔT_Average, θ, θini_or_Ψini, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+   end  # function: READ_START
+   # ------------------------------------------------------------------
+
+   
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : DISCRETISATION
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -47,7 +131,7 @@ module readHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : HYPIX_PARAM
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function HYPIX_PARAM(Layer, hydro, hydroHorizon, iOpt::Int64, NiZ::Int64, option, param, Path::String, veg)
+      function HYPIX_PARAM(Layer, hydro, hydroHorizon, iMultistep::Int64, NiZ::Int64, option, param, Path::String, veg)
          # Read data
             Data = DelimitedFiles.readdlm(Path, ',')
          # Read header
@@ -66,7 +150,7 @@ module readHypix
             N_NameUnique = length(Name_Unique)
       
          # Reading the values of the parameters for the simulation of interest
-            Param, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SIM_$(iOpt)")
+            Param, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SIM_$(iMultistep)")
          
          # Minimum value of the param
             Param_Min, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MIN")
@@ -75,7 +159,7 @@ module readHypix
             Param_Max, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "MAX")
 
          # Determening which param to optimize
-            Opt, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "OPT_$(iOpt)")
+            Opt, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "OPT_$(iMultistep)")
 
          # Maximum value of the param
             Opt_LogTransform, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "LogTransform")
@@ -90,7 +174,7 @@ module readHypix
          """Determening if multistep optimisation is performed (not the first step)
          This is such that the optimal values of the previous optimisation step is kept in memory
          We need to determine what next param to optimize"""
-            if Flag_Opt && (iOpt ≥ param.hyPix.iOpt_Start + 1)
+            if Flag_Opt && (iMultistep ≥ param.hyPix.iOptMultiStep_Start + 1)
                Flag_MultiStepOpt = true
                println(veg)
             else
@@ -399,7 +483,7 @@ module readHypix
 
          # ∑T_Reduced = collect(range(Date[1], step=Hour[1], stop=Date[end])) 
             # ΔTimeStep = param.hyPix.ΔT_Output
-            # if option.hyPix.θobs_Hourly && ΔTimeStep < 86400
+            # if option.hyPix.θobs_Reduced && ΔTimeStep < 86400
             # 	True = falses(Nit)
             # 	iCount = 0 
             # 	for iT=1:Nit
@@ -413,7 +497,7 @@ module readHypix
             # 	Date = Date[True[1:Nit]]
             # 	θobs = θobs[True[1:Nit],1:Ndepth]
             # 	Nit = count(True[1:Nit]) # New reduced amount of data
-            # end # θobs_Hourly
+            # end # θobs_Reduced
 
          # This will be computed at PrioProcess
             ∑T        = fill(0.0::Float64, Nit)

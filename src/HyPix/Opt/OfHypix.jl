@@ -27,20 +27,6 @@ module ofHypix
 
 					# # 	# Error
 							θerror = abs(obsTheta.θobs[iT,iZ] - θSim[iT, obsTheta.ithetaObs[iZ]])
-
-					# 	# Taking into account uncertainty bar
-					# 		θobs_Min = obsTheta.θobs[iT,iZ] - θobs_Uncert
-
-					# 		θobs_Max = obsTheta.θobs[iT,iZ] + θobs_Uncert
-
-					# 	if θobs_Min ≤ θSim[iT, obsTheta.ithetaObs[iZ]] ≤ θobs_Max
-
-					# 		# Wof += Wdepth * θobs_Uncert  / 10.0
-
-					# 		Wof += Wdepth * θobs_Uncert * (θerror / θobs_Uncert) ^ 2.0
-							
-					# 	else
-					# 		Wof += Wdepth * θerror
 	
 							Wof += Wdepth * θerror ^ 2.0
 						# end # if θobs_Min ≤ θSim[iT, obsTheta.ithetaObs[iZ]] ≤ θobs_Max
@@ -52,7 +38,7 @@ module ofHypix
 			end # for iZ
 
 			 # Penalty if we have too much ponding
-			 Wof_Pond = max(Hpond[NiZ] - paramHypix.obsTheta.ΔHpondMax, 0.0) / 1000.0
+			 Wof_Pond = max(Hpond[NiZ] - paramHypix.opt.ΔHpondMax, 0.0) / 1000.0
 
 		return Wof = √(Wof / Float64(iCount)) + Wof_Pond
 		end # function WOF_θ

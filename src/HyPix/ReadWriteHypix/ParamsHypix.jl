@@ -5,18 +5,17 @@ module paramsHypix
 
 	using Configurations
 
-	@option mutable struct OBSΘ
+	@option mutable struct OPT
 		NmaxFuncEvals::Int64
 		ΔHpondMax::Float64
-		θobs_Uncert::Float64
 	end
 	@option mutable struct PLOT
 		θprofile_Time::Vector{Float64}
 		θΨ_Table::Vector{Float64}
 	end
 	@option mutable struct PARAMHYPIX
-		iOpt_Start::Int64
-		iOpt_End::Int64
+		iOptMultiStep_Start::Int64
+		iOptMultiStep_End::Int64
 		ZfineCoarse::Float64
 		ΔZfine::Float64
 		ΔZcoarse::Float64
@@ -36,7 +35,7 @@ module paramsHypix
 		NewtonStep_Power::Float64
 		WaterBalanceResidual_Max::Float64
 		ΔT_Output::Float64
-		obsTheta::OBSΘ
+		opt::OPT
 		ploting::PLOT
 	end
 

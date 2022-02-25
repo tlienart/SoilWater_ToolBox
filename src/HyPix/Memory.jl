@@ -37,7 +37,7 @@ module memory
       ∂R∂Ψ△    = similar(Residual)
       ∂R∂Ψ▽    = similar(Residual)
       
-      Nit_Reduced                  = paramHypix.iOpt_End - paramHypix.iOpt_Start + 1
+      Nit_Reduced                  = paramHypix.iOptMultiStep_End - paramHypix.iOptMultiStep_Start + 1
 
       iNonConverge_iOpt          = fill(0::Int64  ::Int64, Nit_Reduced)
 
@@ -54,7 +54,7 @@ module memory
    #		FUNCTION : MEMORY_STEOPT
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    function MEMORY_MULTISTEPOPTIMISATION(paramHypix)
-      Nit_Reduced = paramHypix.iOpt_End - paramHypix.iOpt_Start + 1
+      Nit_Reduced = paramHypix.iOptMultiStep_End - paramHypix.iOptMultiStep_Start + 1
 
       Efficiency                 = fill(0.0::Float64, Nit_Reduced)
       Global_WaterBalance        = similar(Efficiency)

@@ -83,7 +83,7 @@ module flux
 
 	# =============================================================
 	#		module: ∂Q∂ψ
-	# 		only in use if ∂R∂Ψ_Numerical = false
+	# 		only in use if ∂R∂Ψ_NumericalAuto" = false
 	# =============================================================
 	module ∂q∂Ψ
 		import ..flux

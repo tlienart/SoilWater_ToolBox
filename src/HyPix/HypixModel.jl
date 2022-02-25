@@ -6,12 +6,12 @@ module hypixModel
 	import ..evaporation, ..interception, ..interpolate, ..pet, ..richard, ..rootWaterUptake, ..sorptivity, ..timeStep, ..ΨminΨmax
 	import ..wrc: θ_2_ΨDual, Ψ_2_θDual
 
-	export HYPIX
+	export HYPIX_MODEL
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : HYPIX
+	#		FUNCTION : HYPIX_MODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ::Int64, optionHypix, paramHypix, Q, Residual, veg, Z, ΔEvaporation, Hpond, ΔPet, ΔPr, ΔSink, ΔT, ΔLnΨmax, θ, θini, Ψ, Ψini, Ψ_Max, Ψ_Min, Ψbest)
+	function HYPIX_MODEL(∂K∂Ψ::Vector{Float64}, ∂R∂Ψ::Vector{Float64}, ∂R∂Ψ△::Vector{Float64}, ∂R∂Ψ▽::Vector{Float64}, ∑Pet::Vector{Float64}, ∑Pet_Climate::Vector{Float64}, ∑Pr::Vector{Float64}, ∑Pr_Climate::Vector{Float64}, ∑T::Vector{Float64}, ∑T_Climate::Vector{Float64}, clim, CropCoeficientᵀ::Vector{Float64}, CropCoeficientᵀ_η::Vector{Float64}, discret, Flag_θΨini::Symbol, hydro, Laiᵀ::Vector{Float64}, Laiᵀ_η::Vector{Float64}, N_∑T_Climate::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, Residual::Vector{Float64}, veg, Z::Vector{Float64}, ΔEvaporation::Vector{Float64}, Hpond::Vector{Float64}, ΔPet::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, ΔLnΨmax::Vector{Float64}, θ::Matrix{Float64}, θini_or_Ψini::Vector{Float64}, Ψ::Matrix{Float64}, Ψ_Max::Vector{Float64}, Ψ_Min::Vector{Float64}, Ψbest::Vector{Float64})
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -38,8 +38,8 @@ module hypixModel
 
 			ΔRootDensity = rootWaterUptake.rootDistribution.ROOT_DENSITY(discret, N_iRoot, veg, Z)
 		else
-			ΔRootDensity = 0.0
-			N_iRoot = 1
+			ΔRootDensity = 0.0::Float64
+			N_iRoot = 1::Int64
 		end # optionHypix.RootWaterUptake
 
 		# if optionHypix.Evaporation 
@@ -79,8 +79,8 @@ module hypixModel
 				Ψini =  fill(0.0::Float64, NiZ)
 				
 				for iZ = 1:NiZ
-					θ[1,iZ]   = max( min(hydro.θs[iZ], θini[iZ]), hydro.θr[iZ] ) # Just in case
-					Ψ[1,iZ]   = θ_2_ΨDual(optionHypix.hydro, θini[iZ], iZ, hydro)
+					θ[1,iZ]   = max( min(hydro.θs[iZ], θini_or_Ψini[iZ]), hydro.θr[iZ] ) # Just in case
+					Ψ[1,iZ]   = θ_2_ΨDual(optionHypix.hydro, θini_or_Ψini[iZ], iZ, hydro)
 
 					if iZ == 1 && optionHypix.TopBoundary⍰ == "Ψ"
 						Ψ[1,1] = paramHypix.Ψ_Top
@@ -102,7 +102,7 @@ module hypixModel
 				θini = fill(0.0::Float64, NiZ)
 
 				if optionHypix.TopBoundary⍰ == "Ψ"
-					Ψini[1] = paramHypix.Ψ_Top
+					θini_or_Ψini[1] = paramHypix.Ψ_Top
 				end
 
 				if optionHypix.BottomBoundary⍰ == "Ψ"
@@ -111,7 +111,7 @@ module hypixModel
 
 				for iZ = 1:NiZ
 					Ψ[1,iZ] = Ψini[iZ]
-					θ[1,iZ]  = Ψ_2_θDual(optionHypix.hydro, Ψini[iZ], iZ, hydro)
+					θ[1,iZ]  = Ψ_2_θDual(optionHypix.hydro, θini_or_Ψini[iZ], iZ, hydro)
 					θini[iZ] = θ[1,iZ]
 
 					Ψbest[iZ]  = Ψ[1,iZ]
@@ -183,7 +183,7 @@ module hypixModel
 		Nit = iT # Maximum time steps
 
 	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, Hpond, ΔRootDensity, ΔT, θ, Ψ
-	end  # function: HYPIX
+	end  # function: HYPIX_MODEL
 	
 end  # module hypix
 # ............................................................

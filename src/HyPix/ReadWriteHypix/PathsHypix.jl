@@ -14,7 +14,6 @@ module pathsHypix
 		Table_KΨ::String
 		Table_Performance::String
 		Table_Q::String
-		Table_Signature::String
 		Table_TimeSerie::String
 		Table_TimeSerie_Daily::String
 		Table_Veg::String
@@ -27,7 +26,6 @@ module pathsHypix
 		Plot_θprofile::String
 		Plot_RainfallInterception::String
 		Plot_Se_Time::String
-		Plot_Se_Z::String
 		Plot_Sorptivity::String
 		Vegetation::String
 
@@ -63,7 +61,6 @@ module pathsHypix
 					pathOutputHypix.Table_KΨ              = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_KΨ
 					pathOutputHypix.Table_Performance     = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_Performance
 					pathOutputHypix.Table_Q               = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_Q
-					pathOutputHypix.Table_Signature       = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_Signature
 					pathOutputHypix.Table_TimeSerie       = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_TimeSerie
 					pathOutputHypix.Table_TimeSerie_Daily = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_TimeSerie_Daily
 					pathOutputHypix.Table_Veg             = Path_Hypix_Table  *  SiteName₀ * "_"* pathOutputHypix.Table_Veg
@@ -80,7 +77,6 @@ module pathsHypix
 						pathOutputHypix.Plot_Hypix_θΨK            = Path_Hypix_Plot * SiteName₀  * "_" * pathOutputHypix.Plot_Hypix_θΨK
 						pathOutputHypix.Plot_RainfallInterception = Path_Hypix_Plot * SiteName₀  * "_" * pathOutputHypix.Plot_RainfallInterception
 						pathOutputHypix.Plot_Se_Time              = Path_Hypix_Plot * SiteName₀  * "_" * pathOutputHypix.Plot_Se_Time
-						pathOutputHypix.Plot_Se_Z                 = Path_Hypix_Plot * SiteName₀  * "_" * pathOutputHypix.Plot_Se_Z
 						pathOutputHypix.Plot_Sorptivity           = Path_Hypix_Plot * SiteName₀  * "_" * pathOutputHypix.Plot_Sorptivity
 						pathOutputHypix.Vegetation                = Path_Hypix_Plot * SiteName₀  * "_" * pathOutputHypix.Vegetation
 

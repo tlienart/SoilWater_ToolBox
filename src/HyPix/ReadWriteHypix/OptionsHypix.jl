@@ -10,9 +10,11 @@ module optionsHypix
 
 	using Configurations, TOML
 
-	@option mutable struct OTHER
-      Ploting::Bool
-      PlotVscode::Bool
+	@option mutable struct OPT
+		σ_2_Ψm⍰::String
+		σ_2_θr::Bool
+		θs_Opt⍰::String
+		Optimisation::Bool
 	end
 
 	@option mutable struct OPTIONHYPIX
@@ -28,31 +30,29 @@ module optionsHypix
 		HydroModel⍰::String
 		TopBoundary⍰::String
 		BottomBoundary⍰::String
-		∂R∂Ψ_Numerical::Bool
-		IterReduceOverShoting::Bool
+		∂R∂Ψ_NumericalAuto::Bool
+		# IterReduceOverShoting::Bool
 		DynamicNewtonRaphsonStep::Bool
 		ZhaWetingDrySoil::Bool
 		AdaptiveTimeStep⍰::String
 		NormMin⍰::String
 		Flag_ReRun::Bool
 		Lai_2_SintMax::Bool
-		σ_2_Ψm⍰::String
-		σ_2_θr::Bool
-		θs_Opt⍰::String
-		Optimisation::Bool
+
 		θobs::Bool
-		θobs_Average::Bool
-		θobs_Hourly::Bool
+		θavr_RootZone::Bool
+		θobs_Reduced::Bool
+		
 		Table::Bool
 		Table_Discretization::Bool
 		Table_Q::Bool
-		Table_RootWaterUptake::Bool
 		Table_TimeSeries::Bool
 		Table_Ψ::Bool
 		Table_θ::Bool
 		Table_TimeSeriesDaily::Bool
 		Tabule_θΨ::Bool
 		Table_Climate::Bool
+		Ploting::Bool
 		Plot_θprofile::Bool
 		Plot_Vegetation::Bool
 		Plot_θΨK::Bool
@@ -65,8 +65,7 @@ module optionsHypix
 		Plot_Ψ::Bool
 		Plot_Flux::Bool
 		Plot_WaterBalance::Bool
-		Plot_ΔT::Bool
-		other::OTHER
+		opt::OPT
 	end
 
 

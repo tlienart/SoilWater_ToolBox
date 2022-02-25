@@ -1,15 +1,14 @@
 module interception
-	import ..plot
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RAINFALL_INTERCEPTION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function RAINFALL_INTERCEPTION_START(∑Pet_Climate, ∑Pr_Climate, clim, Laiᵀ_Norm, optionHypix, veg)
+	function RAINFALL_INTERCEPTION_START(∑Pet_Climate::Vector{Float64}, ∑Pr_Climate::Vector{Float64}, clim, Laiᵀ_Norm::Vector{Float64}, optionHypix, veg)
 			
 		# INTERCEPTION MODEL
-		Sint = 0.0
-		clim.Pr_Through[1] = 0.0
-		clim.Pet[1] = 0.0
+		Sint = 0.0::Float64
+		clim.Pr_Through[1] = 0.0::Float64
+		clim.Pet[1] = 0.0::Float64
 
 		@fastmath @inbounds for iT = 2:clim.N_Climate
 			# Maximum water storage of the vegetation
@@ -47,7 +46,7 @@ module interception
 	"""
 	const PevapInt = 0.666
 
-	function RAINFALL_INTERCEPTION(GapFrac, Sint, Sint_Sat, ΔPet_Int, ΔPr)
+	function RAINFALL_INTERCEPTION(GapFrac::Float64, Sint::Float64, Sint_Sat::Float64, ΔPet_Int::Float64, ΔPr::Float64)
 		# Requires initial Sint
 
 		# ΔPr: falls on top of the vegetation; ΔPr_Int: amount of ΔPr which is intercepted by the vegetaion which depends on parameter GapFrac; ΔPr_Ground: precipitation which is not intercepted
@@ -70,7 +69,7 @@ module interception
 		# Total amount of throughfall
 			ΔPr_Through = ΔPr_Ground + ΔPr_Over
 
-		return Sint, ΔEvap_Int, ΔPr_Through
+	return Sint, ΔEvap_Int, ΔPr_Through
 	end # RAINFALL_INTERCEPTION
 
 
@@ -83,23 +82,23 @@ module interception
 		Converts LAI to Sint_Sat
 		The general equation based on Menzel’s equation
 		"""
-		function LAI_2_SINTMAX(iT, Laiᵀ_Norm, veg)
+		function LAI_2_SINTMAX(iT::Int64, Laiᵀ_Norm::Vector{Float64}, veg)
 			Sint_Sat = veg.Sint_Lai * log(1.0 + Laiᵀ_Norm[iT])
 			
-			println("    ~ Sint_Sat = ", round(Sint_Sat,digits=3), "  ~")
+			# println("    ~ Sint_Sat = ", round(Sint_Sat,digits=3), "  ~")
 
-			return Sint_Sat
+		return Sint_Sat
 		end # function: LAI_2_storageVeg_Max
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : LAI_2_GAPFRAC
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function LAI_2_GAPFRAC(iT, Laiᵀ_Norm, veg)
+		function LAI_2_GAPFRAC(iT::Int64, Laiᵀ_Norm::Vector{Float64}, veg)
 			GapFrac = 1.0 - exp(-veg.ExtinctCoefRadiation * Laiᵀ_Norm[iT])
 			#  println("			~ GapFrac = ", round(GapFrac, digits=2),"  ~")
 
-			return GapFrac
+		return GapFrac
 		end  # function: LAI_2_GAPFRAC
 
 end # module interception

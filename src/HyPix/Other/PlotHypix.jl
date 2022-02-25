@@ -11,7 +11,7 @@ module plotHypix
 	# ========================================
 	# PLOTTING HYDRAULIC RELATIONSHIP FOR EVERY HORIZON
 	# ======================================== 
-	# function θΨK(hydroHorizon, N_Layer, iOpt, pathHyPix)
+	# function θΨK(hydroHorizon, N_Layer, iMultistep, pathHyPix)
 
 	# 	# Deriving the Min and Max Ψ from principals of soil physics
 	# 	Ψ_Min_Horizon = fill(0.0::Float64, N_Layer)
@@ -90,7 +90,7 @@ module plotHypix
 
 	# 	end #iZ ............................................
 
-	# 	Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iOpt) * ".svg"
+	# 	Path = pathHyPix.Plot_Hypix_θΨK * "_" * string(iMultistep) * ".svg"
 	# 	PGFPlots.save(Path, Plot_θΨK) 
 	# end # function θΨK
 
@@ -108,7 +108,7 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : θPROFILE(∑T_Reduced, discret, obsTheta, optionHypix, paramHypix, θ_Reduced)
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function θPROFILE(∑T_Reduced, discret, iSim, NiZ, obsTheta, optionHypix, paramHypix, pathHyPix, Soilname, θ_Reduced)
+			function θPROFILE(∑T_Reduced, discret, iScenario, NiZ, obsTheta, optionHypix, paramHypix, pathHyPix, SiteName, θ_Reduced)
 
 				# PATH
 					Path = pathHyPix.Plot_θprofile * ".svg"
@@ -132,7 +132,7 @@ module plotHypix
 					Color_Hypix = [:red, :darkviolet, :orange,  :blue, :teal]
 
 					Fig = Figure(resolution=(600,500))
-					Title = Soilname[iSim]
+					Title = SiteName[iScenario]
 
 					Label_HyPix =fill("", Nt)
 					Label_Hydrus =fill("", Nt)
@@ -191,7 +191,7 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iOpt, iSim, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix, pathHyPix, Soilname, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+			function TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iMultistep, iScenario, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix, pathHyPix, SiteName, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
 
 				# Number of days to print 
 					Ndates= 12
@@ -200,7 +200,7 @@ module plotHypix
 					Option_θobs = true
 
 				# PATH
-					Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * "_val.svg"
+					Path = pathHyPix.Plot_HypixTime * "_" * string(iMultistep) * "_val.svg"
 					rm(Path, force=true, recursive=true)
 
 				# STYLE colour
@@ -247,7 +247,7 @@ module plotHypix
 				if optionHypix.Plot_Climate
 					iSubplot += 1
 
-					Axis1 = Axis(Fig[iSubplot,1], title=Soilname[iSim], ylabel= L"$\Delta Fluxes$ $[mm$ $day ^{-1}]$", rightspinevisible = false, xgridvisible=false, ygridvisible=false)
+					Axis1 = Axis(Fig[iSubplot,1], title=SiteName[iScenario], ylabel= L"$\Delta Fluxes$ $[mm$ $day ^{-1}]$", rightspinevisible = false, xgridvisible=false, ygridvisible=false)
 
 					xlims!(Axis1, ∑T_Reduced[1], ∑T_Reduced[Nit_Reduced])
 					ylims!(Axis1, low=0)
@@ -360,7 +360,7 @@ module plotHypix
 			# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# 	#		FUNCTION : PLOT_SORPTIVITY
 			# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 	function PLOT_SORPTIVITY(hydro, iOpt, optionHypix, pathHyPix)
+			# 	function PLOT_SORPTIVITY(hydro, iMultistep, optionHypix, pathHyPix)
 			# 		println("  ==  START: PLOT_SORPTIVITY_SeIni  ==")
 
 			# 		# Setting the range of values for Se
@@ -382,7 +382,7 @@ module plotHypix
 
 			# 			Plots.plot!(Plot1, Se_Ini[1:N_SeIni] , Sorptivity_Mod[1:N_SeIni], framestyle = [:box :semi :origin :zerolines :grid :true], xlabel=L"Initial \ Se \ [-]", ylabel=L"Sorptivity \  [ \ mm \ \sqrt s \ ]", label="", grid=false) 
 					
-			# 			Path =pathHyPix.Plot_Sorptivity  * "_" * string(iOpt) * ".svg"
+			# 			Path =pathHyPix.Plot_Sorptivity  * "_" * string(iMultistep) * ".svg"
 
 			# 			Plots.savefig(Plot1, Path)
 
@@ -394,15 +394,15 @@ module plotHypix
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			# #		FUNCTION : TIMESERIES
 			# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			# 	function TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iOpt, Nit_Reduced, NiZ, optionHypix, paramHypix, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
+			# 	function TIMESERIES(Date_Reduced, ∑T_Reduced, obsTheta, discret, iMultistep, Nit_Reduced, NiZ, optionHypix, paramHypix, ΔEvaporation_Reduced, ΔQ_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, clim, i∑T_CalibrStart_Day, θsim_Aver, pathHyPix)
 
 			# 	# PATH
-			# 		Path = pathHyPix.Plot_HypixTime * "_" * string(iOpt) * ".svg"
+			# 		Path = pathHyPix.Plot_HypixTime * "_" * string(iMultistep) * ".svg"
 			# 		rm(Path, force=true, recursive=true)
 
 			# 	# TICKS
 			# 		# Date_Start_Calibr = obsTheta.Date[1]
-			# 		Date_Start_Calibr = DateTime(paramHypix.obsTheta.Year_Start, paramHypix.obsTheta.Month_Start, paramHypix.obsTheta.Day_Start, paramHypix.obsTheta.Hour_Start, paramHypix.obsTheta.Minute_Start, paramHypix.obsTheta.Second_Start) # since we need to compute the culmulativeof the 1rst day
+			# 		Date_Start_Calibr = DateTime(paramHypix.opt.Year_Start, paramHypix.opt.Month_Start, paramHypix.opt.Day_Start, paramHypix.opt.Hour_Start, paramHypix.opt.Minute_Start, paramHypix.opt.Second_Start) # since we need to compute the culmulativeof the 1rst day
 					
 			# 		# Date_End_Calibr = obsTheta.Date[end]
 			# 		Date_End_Calibr = DateTime(paramHypix.Year_End, paramHypix.Month_End, paramHypix.Day_End, paramHypix.Hour_End, paramHypix.Minute_End, paramHypix.Second_End)
@@ -463,7 +463,7 @@ module plotHypix
 		
 			# 				# Plot_θ = Plots.plot!(Plot, subplot=iSubplot, Date_Reduced[1:Nit_Reduced], max.(θobs_Reduced[1:Nit_Reduced, iZobs].-paramHypix.hypixStart.calibr.θobs_Uncert, 0.0), line=(0.5,:solid), linecolour=Style_Color[iZobs], label=false)
 							
-			# 				if optionHypix.θobs_Average
+			# 				if optionHypix.θavr_RootZone
 			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, Date_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, ithetaObs], line=(2.5,:solid), linecolour=Style_Color[ithetaObs], label="Obs θaver [0-40cm]")
 
 			# 					Plot_θ = Plots.plot!(Plot, subplot=iSubplot, Date_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced], label="Sim θaver [0-40cm]", line=(2.5,:solid), linecolour=:blue)

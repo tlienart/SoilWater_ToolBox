@@ -18,7 +18,6 @@ module checkError
 			CHECK_IFOPEN(pathHyPix.Table_Q)
 			CHECK_IFOPEN(pathHyPix.Table_Ψ)
 			CHECK_IFOPEN(pathHyPix.Table_WaterBalance)
-			CHECK_IFOPEN(pathHyPix.Table_RootWaterUptake)
 			CHECK_IFOPEN(pathHyPix.Table_Se)
 
 		# CHECKING IF THE OPTIONS ARE VALID	
@@ -52,15 +51,7 @@ module checkError
 				CHECK_ROOTDISTRIBUTION(veg, N_iRoot, Z)
 			end
 
-		# CHECKING STARTING & ENDING DATES OF PLOTS 
-			if optionHypix.other.Ploting
-				CHECK_DATES_PLOTS(clim, paramHypix)
-			end
 
-		# CHECKING 
-			# if maximum(paramHypix.plot.Cells_Plot) ≥ NiZ 
-			# 	error("\n Hypix error:  paramHypix.plot.Cells_Plot = $(paramHypix.plot.Cells_Plot) must be ≤  NiZ =  $NiZ")
-			# end
 
 		return
 	end  # function CHECK_ERROR

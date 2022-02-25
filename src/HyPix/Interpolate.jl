@@ -62,7 +62,7 @@ module interpolate
 
 				while !(FlagBreak)
 					if ∑T_Reduced[iT_Reduced] < ∑T[iT_X-1]
-						error("HYPIX INTERPOLATE_2D_LOOP:  ∑T_Reduced[iT_Reduced] < ∑T[iT_X-1] iT_Reduced=$iT_Reduced iT_X=$iT_X")
+						error("HYPIX_MODEL INTERPOLATE_2D_LOOP:  ∑T_Reduced[iT_Reduced] < ∑T[iT_X-1] iT_Reduced=$iT_Reduced iT_X=$iT_X")
 					end
 
 					if (∑T[iT_X-1] ≤ ∑T_Reduced[iT_Reduced] ≤ ∑T[iT_X]) || (iT_X == Nit) 

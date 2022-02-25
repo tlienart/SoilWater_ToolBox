@@ -110,7 +110,7 @@ module plotOther
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ROOTDENSITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		# function VEG_FUNCTIONS(discret, iOpt, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
+		# function VEG_FUNCTIONS(discret, iMultistep, N_iRoot, veg, Z, ΔRootDensity, pathHyPix)
 
 		# 	Plot_All = PGFPlots.GroupPlot(2, 1, groupStyle = "horizontal sep = 3cm, vertical sep = 3cm")
 
@@ -150,7 +150,7 @@ module plotOther
 
 		# 		push!(Plot_All, PGFPlots.Axis(Plot, style="width=12cm, height=8cm", xlabel=L"$ \Psi \ [kPa]$", xmode="log", ylabel=L"$ F_{waterStress} \ [-]$", title="(b)"))
 
-		# 	Path = pathHyPix.Vegetation * "_" * string(iOpt) * ".svg"
+		# 	Path = pathHyPix.Vegetation * "_" * string(iMultistep) * ".svg"
 		# 	PGFPlots.save(Path, Plot_All)	
 		# end  # function ROOTDENSITY
 		

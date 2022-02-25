@@ -7,7 +7,7 @@ module rootWaterUptake
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ROOT_WATER_UPTAKE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 function ROOT_WATER_UPTAKE(CropCoeficient, iT::Int64, N_iRoot::Int64, optionHypix, veg, ΔPet_Transp, ΔRootDensity, ΔSink, Ψ)
+	 function ROOT_WATER_UPTAKE(CropCoeficient::Float64, iT::Int64, N_iRoot::Int64, optionHypix, veg, ΔPet_Transp::Vector{Float64}, ΔRootDensity::Vector{Float64}, ΔSink::Vector{Float64}, Ψ::Matrix{Float64})
 
 		if optionHypix.RootWaterUptakeComp
 			for iZ = 1:N_iRoot
@@ -36,7 +36,7 @@ module rootWaterUptake
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : COMPUTTING N OF ROOTING DEPTH
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function N_IROOT(NiZ::Int64, veg, Z)::Int64
+			function N_IROOT(NiZ::Int64, veg, Z::Vector{Float64})::Int64
 				iZ = 1
 				while iZ ≤ NiZ && veg.Zroot ≥ Z[iZ]
 					iZ +=1
@@ -49,7 +49,7 @@ module rootWaterUptake
 		#		FUNCTION : rootdistribution
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		"""Optimizing the value of RootDensityParam such that for the top soil of depth Zroot_Top we have ΔRdf_Top of roots and that it complies with the maximum depth"""
-		function ROOT_DENSITY(discret, N_iRoot::Int64, veg, Z)
+		function ROOT_DENSITY(discret, N_iRoot::Int64, veg, Z::Vector{Float64})
 		
 			# Deriving the root density parameters
 				function OF_ROOTDENSITY(veg, N_iRoot, RootDensityParam, Z)
@@ -85,7 +85,7 @@ module rootWaterUptake
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : WATER_STRESS_FUNCTION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function WATER_STRESS_FUNCTION(iT::Int64, iZ::Int64, veg, Ψ)
+			function WATER_STRESS_FUNCTION(iT::Int64, iZ::Int64, veg, Ψ::Matrix{Float64})
 				if veg.Ψfeddes3 < Ψ[iT-1,iZ] < veg.Ψfeddes4
 					return RootWaterUptake = (Ψ[iT-1,iZ] - veg.Ψfeddes4) / (veg.Ψfeddes3 - veg.Ψfeddes4)
 				
@@ -115,7 +115,7 @@ module rootWaterUptake
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : ROOTCOMPENSATION
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function ROOT_COMPENSATION(iT, iZ, N_iRoot, veg, ΔRootDensity, Ψ)
+			function ROOT_COMPENSATION(iT::Int64, iZ::Int64, N_iRoot::Int64, veg, ΔRootDensity::Vector{Float64}, Ψ::Matrix{Float64})
 				
 				#Compute the denominator which is used to normalize
 				∑RootCompensation = 0.0
