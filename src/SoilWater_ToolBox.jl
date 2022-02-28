@@ -115,7 +115,7 @@ module SoilWater_ToolBox
 				if option.run.HydroLabθΨ⍰ == "File"
 					hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
 
-					hydro, NiZ = reading.READ_STRUCT(hydroₒ, path.inputSoilwater.HydroParamPrecomputed)
+					hydro, NiZ = tool.readWrite.READ_STRUCT(hydroₒ, path.inputSoilwater.HydroParamPrecomputed)
 					@info "\n	*** Reading hydro parameters from file *** \n "
 				end # option.run.HydroLabθΨ⍰ == "File"
 

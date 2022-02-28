@@ -3,7 +3,7 @@
 # =============================================================
 module readHypix
 
-   import ..climate, ..discretisation, ..horizonLayer, ..hydroStruct, ..memory, ..optionsHypix, ..paramsHypix, ..pathsHypix, ..reading, ..table, ..thetaObs, ..tool, ..vegStruct
+   import ..climate, ..discretisation, ..horizonLayer, ..hydroStruct, ..memory, ..optionsHypix, ..paramsHypix, ..pathsHypix, ..tableHypix, ..thetaObs, ..tool, ..vegStruct
 
    import Dates: value, DateTime, hour, minute, month, now, Hour
    import DelimitedFiles
@@ -35,9 +35,9 @@ module readHypix
                Flag_θΨini, Layer, N_Layer, ~, Zlayer, θini_or_Ψini = readHypix.DISCRETISATION(pathInputHypix.SoilLayer[iScenario])
 
                # Performing auto discretisation			
-               Layer, NiZ, Z, θini_or_Ψini_Cell = discretisation.DISCRETISATION_AUTO(optionHypix, paramHypix; N_Layer=N_Layer, Zlayer=Zlayer, θini_or_Ψini=θini_or_Ψini)
+               Layer, NiZ, Z, θini_or_Ψini = discretisation.DISCRETISATION_AUTO(optionHypix, paramHypix; N_Layer=N_Layer, Zlayer=Zlayer, θini_or_Ψini=θini_or_Ψini)
          
-               table.hyPix.DISCRETISATION_AUTO(Flag_θΨini, Layer, pathInputHypix.Discretisation[iScenario], Z, θini_or_Ψini_Cell)
+               tableHypix.DISCRETISATION_AUTO(Flag_θΨini, Layer, pathInputHypix.Discretisation[iScenario], Z, θini_or_Ψini)
             else
                # Read discretisation
                Flag_θΨini, Layer, N_Layer, NiZ, Z, θini_or_Ψini = readHypix.DISCRETISATION(pathInputHypix.Discretisation[iScenario])
@@ -75,10 +75,10 @@ module readHypix
 
          # VEGETATION PARAMETERS
             if ! (optionHypix.opt.Optimisation)
-               veg, ~ = reading.READ_STRUCT(veg, pathInputHypix.Vegetation[iScenario])
-      
+               veg, ~ = tool.readWrite.READ_STRUCT(veg, pathInputHypix.Vegetation[iScenario])
+
          # HYDRAULIC PARAMETERS
-               hydroHorizon, ~ = reading.READ_STRUCT(hydroHorizon, pathInputHypix.MultistepOpt[iScenario])
+               hydroHorizon, ~ = tool.readWrite.READ_STRUCT(hydroHorizon, pathInputHypix.HydroInput[iScenario])
                hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
             end # optionHypix.Optimisation
 

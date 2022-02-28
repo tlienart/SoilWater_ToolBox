@@ -48,8 +48,8 @@ module hypixModel
 
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
 			for iZ=1:NiZ
-				Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ],  hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ], hydro.ΨmMac[iZ])
-				Ψ_Min[iZ] = paramHypix.Ψ_MinMin
+            Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ], hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ], hydro.ΨmMac[iZ])
+            Ψ_Min[iZ]   = paramHypix.Ψ_MinMin
 			end  # for iZ=1:NiZ
 
 		# ADAPTIVETIMESTEP
@@ -80,20 +80,19 @@ module hypixModel
 				
 				for iZ = 1:NiZ
 					θ[1,iZ]   = max( min(hydro.θs[iZ], θini_or_Ψini[iZ]), hydro.θr[iZ] ) # Just in case
-					Ψ[1,iZ]   = θ_2_ΨDual(optionHypix.hydro, θini_or_Ψini[iZ], iZ, hydro)
+					Ψ[1,iZ]   = θ_2_ΨDual(optionHypix, θini_or_Ψini[iZ], iZ, hydro)
 
 					if iZ == 1 && optionHypix.TopBoundary⍰ == "Ψ"
 						Ψ[1,1] = paramHypix.Ψ_Top
-						θ[1,1]  = Ψ_2_θDual(optionHypix.hydro, Ψ[iT,1], iZ, hydro)
+						θ[1,1]  = Ψ_2_θDual(optionHypix, Ψ[iT,1], iZ, hydro)
 					end
 	
 					if iZ == NiZ && optionHypix.BottomBoundary⍰ == "Ψ"
 						Ψ[1,NiZ] = paramHypix.Ψ_Botom
-						θ[1,NiZ]  = Ψ_2_θDual(optionHypix.hydro, Ψ[1,NiZ], NiZ, hydro)
+						θ[1,NiZ]  = Ψ_2_θDual(optionHypix, Ψ[1,NiZ], NiZ, hydro)
 					end
 
 					Ψini[iZ] = Ψ[1,iZ]
-
 					Ψbest[iZ]  = Ψini[iZ]
 					Q[1,NiZ] = 0.0
 				end
@@ -102,7 +101,7 @@ module hypixModel
 				θini = fill(0.0::Float64, NiZ)
 
 				if optionHypix.TopBoundary⍰ == "Ψ"
-					θini_or_Ψini[1] = paramHypix.Ψ_Top
+					θini[1] = paramHypix.Ψ_Top
 				end
 
 				if optionHypix.BottomBoundary⍰ == "Ψ"
@@ -110,8 +109,8 @@ module hypixModel
 				end
 
 				for iZ = 1:NiZ
-					Ψ[1,iZ] = Ψini[iZ]
-					θ[1,iZ]  = Ψ_2_θDual(optionHypix.hydro, θini_or_Ψini[iZ], iZ, hydro)
+					Ψ[1,iZ] = θini_or_Ψini[iZ]
+					θ[1,iZ]  = Ψ_2_θDual(optionHypix, θini_or_Ψini[iZ], iZ, hydro)
 					θini[iZ] = θ[1,iZ]
 
 					Ψbest[iZ]  = Ψ[1,iZ]
@@ -166,8 +165,8 @@ module hypixModel
 					end
 				end # if: optionHypix
 
-			# SORPTIVITY TO COMPUTE INFILTRATION RATE				
-				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, optionHypix, optionHypix.hydro; Rtol = 10^-3.0, SorptivityModelScaled=false)
+			# SORPTIVITY TO COMPUTE INFILTRATION RATE		
+				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, optionHypix, optionHypix; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS
 				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, Hpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, paramHypix, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, optionHypix)

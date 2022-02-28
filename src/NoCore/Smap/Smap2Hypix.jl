@@ -29,7 +29,7 @@ module smap2hypix
                mkpath(Path_Output)
 
             # Reading the hydraulic parameters of each soil profile
-               hydroSmap, N_iSoilProfile = reading.READ_STRUCT(hydroSmap, Path_Input; iStart=iSoilProfile_Start[iSoilProfile], iEnd=iSoilProfile_End[iSoilProfile])
+               hydroSmap, N_iSoilProfile = tool.readWrite.READ_STRUCT(hydroSmap, Path_Input; iStart=iSoilProfile_Start[iSoilProfile], iEnd=iSoilProfile_End[iSoilProfile])
 
                Path_Output₂ = Path_Output * "/HypixHydro" * "_" * Soilname[iSoilProfile] * ".csv"
                TABLE_HYDRO_VEG(hydroSmap, N_iSoilProfile, Path_Output₂)
@@ -46,7 +46,7 @@ module smap2hypix
                # Abstracting data
                Path_Vegetaion ="D:\\DATAraw\\JULESdata\\Vegetation\\Vegetation.csv"
                
-               vegSmap, NiZ = reading.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
+               vegSmap, NiZ = tool.readWrite.READ_STRUCT(vegSmap, Path_Vegetaion; iStart=1, iEnd=1)
 
                vegSmap.Zroot = min(vegSmap.Zroot, Smap_MaxRootingDepth[1])
 

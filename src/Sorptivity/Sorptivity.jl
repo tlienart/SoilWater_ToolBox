@@ -10,7 +10,7 @@ module sorptivity
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SORPTIVITY
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SORPTIVITY(θini, iZ, hydroInfilt, option, optionₘ; Rtol= 10^-8.0, SorptivityModelScaled = true) #Rtol=10^-3.0
+		function SORPTIVITY(θini::Float64, iZ::Int64, hydroInfilt, option, optionₘ; Rtol= 10^-8.0, SorptivityModelScaled=true) #Rtol=10^-3.0
 
 			# INITIALIZING
 				Ψ_Sat = 0.0
@@ -25,7 +25,7 @@ module sorptivity
 
 				Ψ⬙ = wrc.θ_2_ΨDual(optionₘ, θ⬙, iZ, hydroInfilt)
 
-			if option.infilt.SorptivitySplitModel⍰ == "Split"  # <>=<>=<>=<>=<>
+			# if option.infilt.SorptivitySplitModel⍰ == "Split"  # <>=<>=<>=<>=<>
 				# Sorptivity based on θ
 					function SORPTIVITY_θ²(hydroInfilt, iZ, θ, θini, optionₘ)
 						# Se = wrc.θ_2_Se(θ, iZ, hydroInfilt)
@@ -43,36 +43,36 @@ module sorptivity
 
 					Sorptivity_Ψ² = QuadGK.quadgk(Ψ₁ -> SORPTIVITY_Ψ²(hydroInfilt, iZ, θini, Ψ₁), Ψ_Sat, Ψ⬙, rtol=Rtol)[1]
 
-			return Sorptivity = √(max(Sorptivity_θ², eps()) + max(Sorptivity_Ψ², eps()))
-			elseif option.infilt.SorptivitySplitModel⍰ == "Split_η" # <>=<>=<>=<>=<>
+			return √(max(Sorptivity_θ², eps()) + max(Sorptivity_Ψ², eps()))
+			# elseif option.infilt.SorptivitySplitModel⍰ == "Split_η" # <>=<>=<>=<>=<>
 	
-				Ψ⬙_η = wrc.θ_2_ΨDual(optionₘ, θ⬙, iZ, hydroInfilt) / hydroInfilt.Ψm[iZ] # dimensionless water potential
+			# 	Ψ⬙_η = wrc.θ_2_ΨDual(optionₘ, θ⬙, iZ, hydroInfilt) / hydroInfilt.Ψm[iZ] # dimensionless water potential
 
-				ΨSat_η = Ψ_Sat / hydroInfilt.Ψm[iZ]
+			# 	ΨSat_η = Ψ_Sat / hydroInfilt.Ψm[iZ]
 
-				# Scaled sorptivity based on Se
-					function SORPTIVITY_Se_η(Se, hydroInfilt, iZ, Se_Ini)
-						return DIFFUSIVITY_Se_η(Se, iZ, hydroInfilt, optionₘ) * FLUXCONC(option, Se, Se_Ini)
-					end # SORPTIVITY_Se_η
+			# 	# Scaled sorptivity based on Se
+			# 		function SORPTIVITY_Se_η(Se, hydroInfilt, iZ, Se_Ini)
+			# 			return DIFFUSIVITY_Se_η(Se, iZ, hydroInfilt, optionₘ) * FLUXCONC(option, Se, Se_Ini)
+			# 		end # SORPTIVITY_Se_η
 
-					Sorptivity_Se_η = QuadGK.quadgk(Se -> SORPTIVITY_Se_η(Se, hydroInfilt, iZ, Se_Ini), Se_Ini, SeIni_⬙, rtol=Rtol)[1]
+			# 		Sorptivity_Se_η = QuadGK.quadgk(Se -> SORPTIVITY_Se_η(Se, hydroInfilt, iZ, Se_Ini), Se_Ini, SeIni_⬙, rtol=Rtol)[1]
 				
-				# Scaled SORPTIVITY_Se_Ψ
-					function SORPTIVITY_Se_Ψ_η(Ψ_η, hydroInfilt, iZ, Se_Ini)
-						Ψ₂ = Ψ_η * hydroInfilt.Ψm[iZ]
+			# 	# Scaled SORPTIVITY_Se_Ψ
+			# 		function SORPTIVITY_Se_Ψ_η(Ψ_η, hydroInfilt, iZ, Se_Ini)
+			# 			Ψ₂ = Ψ_η * hydroInfilt.Ψm[iZ]
 
-						Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₂, iZ, hydroInfilt)
+			# 			Se = wrc.Ψ_2_SeDual(optionₘ, Ψ₂, iZ, hydroInfilt)
 
-						return kunsat.Se_2_KR(optionₘ, Se, iZ, hydroInfilt) * FLUXCONC(option, Se, Se_Ini)
-					end # SORPTIVITY_Se_Ψ
+			# 			return kunsat.Se_2_KR(optionₘ, Se, iZ, hydroInfilt) * FLUXCONC(option, Se, Se_Ini)
+			# 		end # SORPTIVITY_Se_Ψ
 
-					Sorptivity_Se_Ψ_η = QuadGK.quadgk(Ψ_η -> SORPTIVITY_Se_Ψ_η(Ψ_η, hydroInfilt, iZ, Se_Ini), ΨSat_η, Ψ⬙_η, rtol=Rtol)[1]
+			# 		Sorptivity_Se_Ψ_η = QuadGK.quadgk(Ψ_η -> SORPTIVITY_Se_Ψ_η(Ψ_η, hydroInfilt, iZ, Se_Ini), ΨSat_η, Ψ⬙_η, rtol=Rtol)[1]
 	
-				# To avoid numerical instability when Se = 1
-				Sorptivity_η = √(max(Sorptivity_Se_η , eps()) + max(Sorptivity_Se_Ψ_η , eps()))
+			# 	# To avoid numerical instability when Se = 1
+			# 	Sorptivity_η = √(max(Sorptivity_Se_η , eps()) + max(Sorptivity_Se_Ψ_η , eps()))
 	
-			return Sorptivity_η * √(hydroInfilt.Ks[iZ] * (hydroInfilt.θs[iZ] - hydroInfilt.θr[iZ]) * hydroInfilt.Ψm[iZ])
-			end # option.infilt.SorptivitySplitModel⍰
+			# return Sorptivity_η * √(hydroInfilt.Ks[iZ] * (hydroInfilt.θs[iZ] - hydroInfilt.θr[iZ]) * hydroInfilt.Ψm[iZ])
+			# end # option.infilt.SorptivitySplitModel⍰
 
 		end # function SORPTIVITY
 

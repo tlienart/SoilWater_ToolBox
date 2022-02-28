@@ -21,7 +21,7 @@ module checkError
 			CHECK_IFOPEN(pathHyPix.Table_Se)
 
 		# CHECKING IF THE OPTIONS ARE VALID	
-			if optionHypix.HydroModel⍰ ≠ "Kosugi" && optionHypix.HydroModel⍰ ≠ "Vangenuchten"
+			if optionHypix.Model⍰ ≠ "Kosugi" && optionoptionHypix ≠ "Vangenuchten"
 				error("\n Hypix error: HydroModel⍰ optionHypix = $HydroModel⍰ not yet supported. HydroModel⍰ must = either [Vangenuchten] or [Kosugi]")
 			end
 
@@ -38,13 +38,13 @@ module checkError
 			end
 
 		# CHECKING HYDRO PARAMETERS
-			if optionHypix.HydroModel⍰ == "Kosugi"
+			if optionHypix.Model⍰ == "Kosugi"
 				for iHorizon in 1:N_Layer
 					if hydroHorizon.θs[iHorizon] <  hydroHorizon.θsMacMat[iHorizon]
 						error("\n Hypix error: at iHorizon = $iHorizon θs must be ≥ θsMacMat : $(pathHyPix.Hydraulic)")
 					end
 				end # for iHorizon in 1:N_Layer
-			end # optionHypix.HydroModel⍰
+			end # optionHypix.Model⍰
 		
 		# CHECKING THE ROOT DENSITY PARAMETERS
 			if optionHypix.RootWaterUptake

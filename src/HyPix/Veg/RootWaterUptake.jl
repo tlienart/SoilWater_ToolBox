@@ -7,7 +7,7 @@ module rootWaterUptake
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ROOT_WATER_UPTAKE
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 function ROOT_WATER_UPTAKE(CropCoeficient::Float64, iT::Int64, N_iRoot::Int64, optionHypix, veg, ΔPet_Transp::Vector{Float64}, ΔRootDensity::Vector{Float64}, ΔSink::Vector{Float64}, Ψ::Matrix{Float64})
+	 function ROOT_WATER_UPTAKE(CropCoeficient::Float64, iT::Int64, N_iRoot::Int64, optionHypix, veg, ΔPet_Transp::Float64, ΔRootDensity::Vector{Float64}, ΔSink::Matrix{Float64}, Ψ::Matrix{Float64})
 
 		if optionHypix.RootWaterUptakeComp
 			for iZ = 1:N_iRoot
@@ -124,7 +124,7 @@ module rootWaterUptake
 				end
 				
 				# Compute the Compensation
-				if ∑RootCompensation > 0.0
+				if ∑RootCompensation > 0.0-0 
 					# return RootCompensation = (rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ (veg.RootWaterUptakeComp - 1.0)) / ∑RootCompensation
 
 					return RootCompensation = (rootWaterUptake.stressReduction.WATER_STRESS_FUNCTION(iT, iZ, veg, Ψ) * ΔRootDensity[iZ] ^ veg.RootWaterUptakeComp) / ∑RootCompensation

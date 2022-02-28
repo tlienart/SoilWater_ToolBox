@@ -4,7 +4,7 @@
 module reading
 	import ..tool, ..table
 	import  DelimitedFiles
-	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD, READ_STRUCT
+	export ID, θΨ, KUNSATΨ, INFILTRATION, PSD
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : ID
@@ -303,45 +303,6 @@ module reading
 				end		
 		return N_θΨobs, θ_θΨobs, Ψ_θΨobs
 		end  # function: θψ_ADDPOINTS+
-	#----------------------------------------------------------------------
-
-
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : READ_STRUCT
-	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function READ_STRUCT(structures, Path::String; iStart=1, iEnd=2^63 - 1)
-			println("    ~  $(Path) ~")
-
-			# Read data
-				Data, Header = DelimitedFiles.readdlm(Path, ',', header=true, use_mmap=true)
-
-			# Select data of interest
-				NiZ = size(Data)[1] # Initial
-				iEnd= min(NiZ, iEnd)
-				Data = Data[iStart:iEnd,1:end]
-				NiZ = iEnd - iStart + 1 # Final
-
-			# Reading the Model data
-			for iFieldname in propertynames(structures)
-
-				# Putting the values of Output_Vector into structures
-				Output_Vector = fill(0.0::Float64, NiZ)					
-				try
-					Output_Vector, Ndata = tool.readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
-				catch
-					# @warn "SoilWater-ToolBox: cannong find $iFieldname"
-					Output_Vector = fill(0.0::Float64, NiZ)
-				end
-
-				try
-					setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
-				catch
-					setfield!(structures, Symbol(iFieldname), Float64(Output_Vector[1]))
-				end
-			end
-
-		return structures, NiZ
-		end  # function: READ_STRUCT
 	#----------------------------------------------------------------------
 
 

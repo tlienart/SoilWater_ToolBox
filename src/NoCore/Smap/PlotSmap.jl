@@ -40,21 +40,21 @@ module plotSmap
                      hydroData = hydroStruct.HYDROSTRUCT(NiZ)  
                   # Populate the values of the parameters
                   option.hydro.HydroModel⍰ = "ClappHornberger"
-                     hydroData, ~ = reading.READ_STRUCT(hydroData, Path)
+                     hydroData, ~ = tool.readWrite.READ_STRUCT(hydroData, Path)
 
                Path = "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_Loam.csv"
                   option.hydro.HydroModel⍰ = "ClappHornberger"
                   # Structure of the hydroparameters
                      hydroData2 = hydroStruct.HYDROSTRUCT(NiZ)
                   # Populate the values of the parameters
-                     hydroData2, ~ = reading.READ_STRUCT(hydroData2, Path) 
+                     hydroData2, ~ = tool.readWrite.READ_STRUCT(hydroData2, Path) 
 
                  Path =  "D:\\Main\\MODELS\\SoilWater-ToolBox2\\src\\INPUT\\Data_SoilWater\\Smap20210226\\Smap20210226_VangenuchtenJules_Constrained_A_Table_ThetaHK.csv"
                   option.hydro.HydroModel⍰ = "VangenuchtenJules"
                   # Structure of the hydroparameters
                      hydroData3 = hydroStruct.HYDROSTRUCT(NiZ)
                   # Populate the values of the parameters
-                     hydroData3, ~ = reading.READ_STRUCT(hydroData3, Path) 
+                     hydroData3, ~ = tool.readWrite.READ_STRUCT(hydroData3, Path) 
 
             end # if Flag_OtherData
 
