@@ -165,7 +165,7 @@ module hypixModel
 					end
 				end # if: optionHypix
 
-			# SORPTIVITY TO COMPUTE INFILTRATION RATE		
+			# SORPTIVITY TO COMPUTE INFILTRATION RATE
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, optionHypix, optionHypix; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS

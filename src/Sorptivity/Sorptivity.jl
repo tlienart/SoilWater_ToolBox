@@ -33,7 +33,7 @@ module sorptivity
 					return  DIFFUSIVITY_θ(θ, iZ, hydroInfilt, optionₘ) * (hydroInfilt.θs[iZ] + θ - 2.0 * θini)
 					end # SORPTIVITY_θ² ~~~~~~~~~~~~~~~~~
 
-					Sorptivity_θ² = QuadGK.quadgk(θ -> SORPTIVITY_θ²(hydroInfilt, iZ, θ, θini, optionₘ), θini, θ⬙, rtol=Rtol)[1]
+				Sorptivity_θ² = QuadGK.quadgk(θ -> SORPTIVITY_θ²(hydroInfilt, iZ, θ, θini, optionₘ), θini, θ⬙, rtol=Rtol)[1]
 
 				# Sorptivity based on Ψ₁
 					function SORPTIVITY_Ψ²(hydroInfilt, iZ, θini, Ψ₁)
@@ -43,7 +43,8 @@ module sorptivity
 
 					Sorptivity_Ψ² = QuadGK.quadgk(Ψ₁ -> SORPTIVITY_Ψ²(hydroInfilt, iZ, θini, Ψ₁), Ψ_Sat, Ψ⬙, rtol=Rtol)[1]
 
-			return √(max(Sorptivity_θ², eps()) + max(Sorptivity_Ψ², eps()))
+				return √(max(Sorptivity_θ², eps()) + max(Sorptivity_Ψ², eps()))
+
 			# elseif option.infilt.SorptivitySplitModel⍰ == "Split_η" # <>=<>=<>=<>=<>
 	
 			# 	Ψ⬙_η = wrc.θ_2_ΨDual(optionₘ, θ⬙, iZ, hydroInfilt) / hydroInfilt.Ψm[iZ] # dimensionless water potential

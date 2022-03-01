@@ -85,7 +85,7 @@ module tableHypix
    #          Discretization
    # ===================================================
       function DISCRETISATION_RRE(discret, NiZ, Z, pathHyPix)
-         println("			~  $(pathHyPix.Table_Discretisation) ~")
+         # println("			~  $(pathHyPix.Table_Discretisation) ~")
 
          Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
 
@@ -103,7 +103,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function HYDRO(hydroHorizon, iScenario, N_Layer, pathOutputHypix)
          Path = pathOutputHypix.Table_Hydro  * "_" * string(iScenario) * ".csv"
-         println("			~ $(Path) ~")
+         # println("			~ $(Path) ~")
 
          Id = 1:1:N_Layer
 
@@ -125,7 +125,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function VEG(veg, iScenario, pathHyPix)
          Path = pathHyPix.Table_Veg * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(1, veg)
 
@@ -143,7 +143,7 @@ module tableHypix
    # ===================================================
       function TIME_SERIES(∑T, ΔT, ∑Pr, ΔPr, Hpond, Recharge, ∑WaterBalance_η, iScenario, pathHyPix)		
          Path = pathHyPix.Table_TimeSerie * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
          
          Header =  ["∑T[mm]" "ΔT[mm]" "∑Pr[mm/ΔT]" "ΔPr[mm/ΔT]" "Hpond[mm]" "Recharge[mm/ΔT]" "∑WaterBalance_η[mm]"]
 
@@ -163,7 +163,7 @@ module tableHypix
          Header =  ["iD" "Year" "Month" "Day" "Hour" "Minute" "Second" "∑T[Hour]" "ΔPr_Through[mm/day]" "ΔPet[mm/day]" "ΔSink[mm/day]" "ΔEvaporation[mm/day]" "Hpond[mm]" "Recharge[mm/day]" "∑WaterBalance_η_Profile[mm/day]"]
 
          Path = pathHyPix.Table_TimeSerie_Daily * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Id = 1:1:Nit_Reduced
 
@@ -197,7 +197,7 @@ module tableHypix
    # ===================================================
       function θ(Date_Reduced, θ_Reduced, Znode, iScenario, pathHyPix)
          Path = pathHyPix.Table_θ * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Nit_Reduced = length(Date_Reduced)
 
@@ -231,7 +231,7 @@ module tableHypix
    # ===================================================
       function Q(Date_Reduced, ΔQ_Reduced, Z_Bottom, Znode, iScenario, pathHyPix)	
          Path = pathHyPix.Table_Q * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Nit_Reduced = length(Date_Reduced)
 
@@ -267,7 +267,7 @@ module tableHypix
    # ===================================================
       function Ψ(Date_Reduced, Ψ_Reduced, Znode, iScenario, pathHyPix)
          Path = pathHyPix.Table_Ψ * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Nit_Reduced = length(Date_Reduced)
 
@@ -301,7 +301,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function θΨ(hydroHorizon, iScenario, N_Layer, optionₘ, paramHypix, pathHyPix)		
          Path = pathHyPix.Table_θΨ * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          N_θΨobs = Int64(length(paramHypix.ploting.θΨ_Table))
 
@@ -344,7 +344,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function KΨ(hydroHorizon, iScenario, N_Layer, optionₘ, paramHypix, pathHyPix)				
          Path = pathHyPix.Table_KΨ * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          N_θΨobs = Int64(length(paramHypix.ploting.θΨ_Table))
 
@@ -388,7 +388,7 @@ module tableHypix
          iSim₀ = paramHypix.iOptMultiStep_Start + iOpt	
 
          Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Header = ["Id" "WofBest" "NseBest" "CccBest" "WilmotBest" "Efficiency" "Global_WaterBalance" "Global_WaterBalance_NormPr" "ΔT_Average" "∑∑ΔSink" "∑ΔQ_Bot" "SwcRoots" "iNonConverge" "ΔRunTimeHypix"]
 
@@ -410,7 +410,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function DAILY_CLIMATE(∑T_Climate, clim, iScenario, pathHyPix)
          Path = pathHyPix.Table_DailyClimate * "_" * string(iScenario) * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          local ∑T_Int = ceil.(Int, ∑T_Climate[1:clim.N_Climate] .* cst.Second_2_Day)
 
@@ -430,7 +430,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function θAVERAGE(Date_Reduced, iScenario, θobs_Reduced, θsim_Aver, pathHyPix)
          Path = pathHyPix.Table_θaverage * ".csv"
-         println("			~  $(Path) ~")
+         # println("			~  $(Path) ~")
 
          Header = ["Id", "Year","Month","Day" ,"θobs_Aver", "θsim_Aver"]
 

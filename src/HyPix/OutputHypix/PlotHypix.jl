@@ -350,7 +350,7 @@ module plotHypix
 			#		module: plots
 			# =============================================================
 			# module plots
-			# import ...sorptivity, ..wrc, ..cst, ...reading
+			# import ...sorptivity, ..wrc, ..cst
 			# export PLOT_SORPTIVITY
 
 			# 	using Plots.PlotMeasures, LaTeXStrings

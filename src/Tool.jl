@@ -27,7 +27,7 @@ module tool
 	module readWrite
 		import DelimitedFiles
 		import CSV, Tables
-		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, READ_θΨK_2D
+		export FIELDNAME_2_STRUCT_VECT, STRUCT_2_FIELDNAME, READ_HEADER, READ_ROW_SELECT, READ_θΨK_2D, READ_STRUCT_SIMPLE
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_HEADER_FAST
@@ -275,8 +275,8 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_STRUCT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_STRUCT(structures, Path::String)
-				println("    ~  $(Path) ~")
+			function READ_STRUCT_SIMPLE(structures, Path::String)
+				# println("    ~  $(Path) ~")
 
 				# Read data
 					Data = CSV.File(Path, header=true)

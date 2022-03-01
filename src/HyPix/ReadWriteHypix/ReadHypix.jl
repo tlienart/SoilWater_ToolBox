@@ -14,7 +14,6 @@ module readHypix
 	#		FUNCTION : READ_START
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function READ_START(dateHypix, Id, iScenario, N_Scenario, Path_Hypix, pathInputHypix, ProjectHypix, SiteName)
-         println(SiteName[iScenario])
 
          paramHypix = paramsHypix.PARAM_HYPIX(pathInputHypix.ParamHypix[iScenario])
 
@@ -75,10 +74,10 @@ module readHypix
 
          # VEGETATION PARAMETERS
             if ! (optionHypix.opt.Optimisation)
-               veg, ~ = tool.readWrite.READ_STRUCT(veg, pathInputHypix.Vegetation[iScenario])
+               veg, ~ = tool.readWrite.READ_STRUCT_SIMPLE(veg, pathInputHypix.Vegetation[iScenario])
 
          # HYDRAULIC PARAMETERS
-               hydroHorizon, ~ = tool.readWrite.READ_STRUCT(hydroHorizon, pathInputHypix.HydroInput[iScenario])
+               hydroHorizon, ~ = tool.readWrite.READ_STRUCT_SIMPLE(hydroHorizon, pathInputHypix.HydroInput[iScenario])
                hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
             end # optionHypix.Optimisation
 
@@ -176,7 +175,6 @@ module readHypix
          We need to determine what next param to optimize"""
             if Flag_Opt && (iMultistep ≥ param.hyPix.iOptMultiStep_Start + 1)
                Flag_MultiStepOpt = true
-               println(veg)
             else
                Flag_MultiStepOpt = false 
             end
