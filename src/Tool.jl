@@ -275,36 +275,28 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_STRUCT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_STRUCT_SIMPLE(structures, Path::String)
+			function READ_STRUCT_SIMPLE(structure, Path::String)
 				# println("    ~  $(Path) ~")
 
 				# Read data
 					Data = CSV.File(Path, header=true)
-					Header = string.(Tables.columnnames(Data))
 				
 				# Select data of interest
 					NiZ = size(Data)[1] # Initial
 			
 				# Reading the Model data
-				for iFieldname in propertynames(structures)
+				for iFieldname in propertynames(structure)			
+					
+					Output_Vector = convert(Vector{Float64}, Tables.getcolumn(Data, iFieldname))
 
-					# Putting the values of Output_Vector into structures
-					Output_Vector = fill(0.0::Float64, NiZ)					
-					try
-						Output_Vector = convert(Vector{Float64}, Tables.getcolumn(Data, iFieldname))
-					catch
-						# @warn "SoilWater-ToolBox: cannong find $iFieldname"
-						Output_Vector = fill(0.0::Float64, NiZ)
-					end
-
-					try
-						setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
-					catch
-						setfield!(structures, Symbol(iFieldname), Float64(Output_Vector[1]))
+					if typeof(getfield(structure, iFieldname)) == Vector{Float64}
+						setfield!(structure, Symbol(iFieldname), Float64.(Output_Vector))
+					else
+						setfield!(structure, Symbol(iFieldname), Float64(Output_Vector[1]))
 					end
 				end
 
-			return structures, NiZ
+			return structure, NiZ
 			end  # function: READ_STRUCT
 		#----------------------------------------------------------------------
 
@@ -312,7 +304,7 @@ module tool
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		#		FUNCTION : READ_STRUCT
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function READ_STRUCT2(structures, Path::String; iStart=1, iEnd=2^63 - 1)
+			function READ_STRUCT2(structure, Path::String; iStart=1, iEnd=2^63 - 1)
 				println("    ~  $(Path) ~")
 
 				# Read data
@@ -325,9 +317,9 @@ module tool
 					NiZ = iEnd - iStart + 1 # Final
 
 				# Reading the Model data
-				for iFieldname in propertynames(structures)
+				for iFieldname in propertynames(structure)
 
-					# Putting the values of Output_Vector into structures
+					# Putting the values of Output_Vector into structure
 					Output_Vector = fill(0.0::Float64, NiZ)					
 					try
 						Output_Vector, Ndata = readWrite.READ_HEADER_FAST(Data, Header, string(iFieldname))
@@ -337,13 +329,13 @@ module tool
 					end
 
 					try
-						setfield!(structures, Symbol(iFieldname), Float64.(Output_Vector))
+						setfield!(structure, Symbol(iFieldname), Float64.(Output_Vector))
 					catch
-						setfield!(structures, Symbol(iFieldname), Float64(Output_Vector[1]))
+						setfield!(structure, Symbol(iFieldname), Float64(Output_Vector[1]))
 					end
 				end
 
-			return structures, NiZ
+			return structure, NiZ
 			end  # function: READ_STRUCT
 	#----------------------------------------------------------------------
 

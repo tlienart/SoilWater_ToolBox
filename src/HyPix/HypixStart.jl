@@ -5,9 +5,11 @@
 include("IncludeHypix.jl")
 
 module hypixStart
+
 	import ..cst, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..readHypix, ..readLinkingFile, ..stats, ..tableHypix, ..waterBalance, ..θaver, ..Δtchange
 	import Statistics: mean
 	import Dates: now, value
+	# import ..plotHypix
 
 	export HYPIX_START
 
@@ -158,56 +160,24 @@ module hypixStart
 
 						println("			CccBest 			= ", round(CccBest[iOpt_Count], digits=5))
 						println("			NseBest 			= ", round(NseBest[iOpt_Count], digits=5))
-						println("			WilmotBest 	        = ", round(WilmotBest[iOpt_Count], digits=5))
+						println("			WilmotBest     = ", round(WilmotBest[iOpt_Count], digits=5))
 					end	
 					println("		=== === END: summary \n")
-
 
 					if optionHypix.Table
 						tableHypix.TABLE_HYPIX(∑∑ΔSink, ∑Pr, ∑T, ∑T_Climate, ∑T_Reduced, ∑WaterBalance_η, ∑WaterBalanceη_Reduced, ∑ΔQ_Bot, CccBest, clim, Date_Reduced, discret, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, Hpond, hydroHorizon, iMultistep, iNonConverge_iOpt, iScenario, N_Layer, Nit, Nit_Reduced, NiZ, NseBest, optionHypix, paramHypix, pathOutputHypix, Q, SwcRoots, veg, WilmotBest, WofBest, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr, ΔPr_Reduced, ΔQ_Reduced, ΔRunTimeHypix, ΔSink_Reduced, ΔT, ΔT_Average, θ_Reduced, θobs_Reduced, θsim_Aver, Ψ_Reduced)
 					end
-
 		
 					if optionHypix.Ploting
 					println("		=== === START: Plotting === ===")
-
-						# if optionHypix.Plot_Other
-						
-						# plotOther.plots.WOF_STEPS(path)
-						# plotOther.PLOT_θΨ_Δθ(hydro, pathOutputHypix, paramHypix, optionHypix)
-						# 	# plotOther.ΨMINΨMAX(hydro, pathOutputHypix)
-						
-						# 	# plotOther.SE_Ψ_CONSTRAINED(hydro, pathOutputHypix)
-						# 	# plotOther.PLOT_σ_2_θr(hydro, pathOutputHypix)
-						# 	# plotOther.PLOT_θΨ_Δθ(hydro, pathOutputHypix)
-						# end # optionHypix.Plot_Other
-
-						if optionHypix.Plot_Hypix
-							plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iMultistep, iScenario, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix,  pathOutputHypix, SiteName, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
-
-							if optionHypix.Plot_θprofile
-								plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iScenario, NiZ, obsTheta, optionHypix, paramHypix, pathOutputHypix, SiteName, θ_Reduced)
-							end  # if: optionHypix.Plot_
-						end
-
-						if optionHypix.Plot_θΨK
-							plotHypix.θΨK(hydroHorizon, N_Layer, iMultistep, pathOutputHypix)
-						end
-						if optionHypix.Plot_Vegetation && optionHypix.RootWaterUptake
-							plotHypix.VEG_FUNCTIONS(discret, iMultistep, N_iRoot, veg, Z, ΔRootDensity, pathOutputHypix)
-						end
-						if optionHypix.Plot_Interception
-							plotHypix.plots.RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iMultistep, pathOutputHypix)
-						end
-						if  optionHypix.Plot_Sorptivity
-							plotHypix.plots.PLOT_SORPTIVITY(hydro, iMultistep, optionHypix, pathOutputHypix)
-						end
+				
+						plotHypix.PLOT_HYPIX(∑T_Reduced, clim, Date_Reduced, discret, hydro, hydroHorizon, i∑T_CalibrStart_Day, iMultistep, iScenario, N_iRoot, N_Layer, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix, pathOutputHypix, SiteName, veg, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRootDensity, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+		
 					println("		=== === END: Plotting === === \n")
 					end # if optionHypix.Plotting
 			
-					println("	=== === === END   ",iMultistep, "  steps ")
-					println("	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n \n")
-
+			println("	=== === === END   ",iMultistep, "  steps ")
+			println("	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n \n")
 			end # for loop: iMultistep
 
 		end # for iScenario = 1:N_Scenario

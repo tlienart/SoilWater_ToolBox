@@ -4,7 +4,38 @@
 module plotHypix
 	import  ..cst, ..kunsat, ..rootWaterUptake, ..tool, ..wrc, ..ΨminΨmax
 	import Dates: value, DateTime
-	# using PGFPlots
+
+
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : PLOT_HYPIX
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		function PLOT_HYPIX(∑T_Reduced, clim, Date_Reduced, discret, hydro, hydroHorizon, i∑T_CalibrStart_Day, iMultistep, iScenario, N_iRoot, N_Layer, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix, pathOutputHypix, SiteName, veg, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRootDensity, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+
+			if optionHypix.Plot_Hypix
+				plotHypix.makkie.TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iMultistep, iScenario, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix,  pathOutputHypix, SiteName, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+			end
+
+			if optionHypix.Plot_θprofile
+				plotHypix.makkie.θPROFILE(∑T_Reduced, discret, iScenario, NiZ, obsTheta, optionHypix, paramHypix, pathOutputHypix, SiteName, θ_Reduced)
+			end  # if: optionHypix.Plot_
+			if optionHypix.Plot_θΨK
+				plotHypix.θΨK(hydroHorizon, N_Layer, iMultistep, pathOutputHypix)
+			end
+			if optionHypix.Plot_Vegetation && optionHypix.RootWaterUptake
+				plotHypix.VEG_FUNCTIONS(discret, iMultistep, N_iRoot, veg, Z, ΔRootDensity, pathOutputHypix)
+			end
+			if optionHypix.Plot_Interception
+				plotHypix.plots.RAINFALL_INTERCEPTION(clim, i∑T_CalibrStart_Day, iMultistep, pathOutputHypix)
+			end
+			if  optionHypix.Plot_Sorptivity
+				plotHypix.plots.PLOT_SORPTIVITY(hydro, iMultistep, optionHypix, pathOutputHypix)
+			end
+			
+
+		return nothing
+		end  # function: PLOT_HYPIX
+	# ------------------------------------------------------------------
+
 
 	# export θΨK
 
@@ -101,7 +132,7 @@ module plotHypix
 	#		module: makkie
 	# =============================================================
 		module makkie
-			using CairoMakie, LaTeXStrings
+			using CairoMakie
 			using Dates
 			export θPROFILE, TIMESERIES
 
