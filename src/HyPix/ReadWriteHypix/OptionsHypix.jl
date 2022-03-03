@@ -62,9 +62,7 @@ module optionsHypix
 		Plot_Hypix::Bool
 		Plot_Climate::Bool
 		Plot_θ::Bool
-		Plot_Ψ::Bool
 		Plot_Flux::Bool
-		Plot_WaterBalance::Bool
 		opt::OPT
 	end
 

@@ -45,8 +45,7 @@ Path_SoilWater = dirname(dirname(@__DIR__)) * "/src/" # moving down the path twi
 
    # include("θini.jl")
 
-   # include("OutputHypix/PlotHypix.jl")
-
+   include("OutputHypix/PlotHypix.jl")
    # include("OutputHypix/PlotOther.jl")
 
 end # @suppress begin	

@@ -76,48 +76,32 @@ module hypixModel
 			
 		# Boundary conditions
 			if Flag_θΨini == :θini
-				Ψini =  fill(0.0::Float64, NiZ)
-				
 				for iZ = 1:NiZ
-					θ[1,iZ]   = max( min(hydro.θs[iZ], θini_or_Ψini[iZ]), hydro.θr[iZ] ) # Just in case
-					Ψ[1,iZ]   = θ_2_ΨDual(optionHypix, θini_or_Ψini[iZ], iZ, hydro)
-
-					if iZ == 1 && optionHypix.TopBoundary⍰ == "Ψ"
-						Ψ[1,1] = paramHypix.Ψ_Top
-						θ[1,1]  = Ψ_2_θDual(optionHypix, Ψ[iT,1], iZ, hydro)
-					end
-	
-					if iZ == NiZ && optionHypix.BottomBoundary⍰ == "Ψ"
-						Ψ[1,NiZ] = paramHypix.Ψ_Botom
-						θ[1,NiZ]  = Ψ_2_θDual(optionHypix, Ψ[1,NiZ], NiZ, hydro)
-					end
-
-					Ψini[iZ] = Ψ[1,iZ]
-					Ψbest[iZ]  = Ψini[iZ]
-					Q[1,NiZ] = 0.0
+               θ[1,iZ] = max( min(hydro.θs[iZ], θini_or_Ψini[iZ]), hydro.θr[iZ] ) # Just in case
+               Ψ[1,iZ] = θ_2_ΨDual(optionHypix, θini_or_Ψini[iZ], iZ, hydro)
 				end
 
 			elseif Flag_θΨini == :Ψini
-				θini = fill(0.0::Float64, NiZ)
-
-				if optionHypix.TopBoundary⍰ == "Ψ"
-					θini[1] = paramHypix.Ψ_Top
-				end
-
-				if optionHypix.BottomBoundary⍰ == "Ψ"
-					Ψini[NiZ] = paramHypix.Ψ_Botom
-				end
-
 				for iZ = 1:NiZ
-					Ψ[1,iZ] = θini_or_Ψini[iZ]
-					θ[1,iZ]  = Ψ_2_θDual(optionHypix, θini_or_Ψini[iZ], iZ, hydro)
-					θini[iZ] = θ[1,iZ]
-
-					Ψbest[iZ]  = Ψ[1,iZ]
-					Q[1,NiZ] = 0.0
+               Ψ[1,iZ] = θini_or_Ψini[iZ]
+               θ[1,iZ] = Ψ_2_θDual(optionHypix, θini_or_Ψini[iZ], iZ, hydro)
 				end
 			end
 
+			if optionHypix.TopBoundary⍰ == "Ψ"
+				Ψ[1,1] = paramHypix.Ψ_Top
+				θ[1,1]  = Ψ_2_θDual(optionHypix, paramHypix.Ψ_Top, 1, hydro)
+			end
+
+			if optionHypix.BottomBoundary⍰ == "Ψ"
+				Ψ[1,NiZ] = paramHypix.Ψ_Botom
+				θ[1,NiZ]  = Ψ_2_θDual(optionHypix, paramHypix.Ψ_Botom, NiZ, hydro)	
+			end
+
+			for iZ = 1:NiZ
+            Ψbest[iZ] = Ψ[1,iZ]
+            Q[1,NiZ]  = 0.0
+			end
 			Q[1,NiZ+1] = 0.0
 
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+

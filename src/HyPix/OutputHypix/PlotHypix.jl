@@ -222,20 +222,17 @@ module plotHypix
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			#		FUNCTION : TIMESERIES
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			function TIMESERIES(∑T_Reduced, clim, Date_Reduced, discret, i∑T_CalibrStart_Day, iMultistep, iScenario, Nit_Reduced, NiZ, obsTheta, optionHypix, paramHypix, pathHyPix, SiteName, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, θ_Reduced, θobs_Reduced, θsim_Aver)
+			function TIMESERIES(∑T_Reduced::Vector{Float64}, clim, Date_Reduced::Vector{Dates.DateTime}, discret, i∑T_CalibrStart_Day::Int64, iMultistep::Int64, iScenario::Int64, Nit_Reduced::Int64, NiZ::Int64, obsTheta, optionHypix, paramHypix, pathHyPix, SiteName::Vector{Any}, ΔEvaporation_Reduced::Vector{Float64}, ΔPet_Reduced::Vector{Float64}, ΔPond_Reduced::Vector{Float64}, ΔPr_Reduced::Vector{Float64}, ΔPrGross_Reduced::Vector{Float64}, ΔQ_Reduced::Matrix{Float64}, ΔSink_Reduced::Vector{Float64}, θ_Reduced::Matrix{Float64}, θobs_Reduced::Matrix{Float64}, θsim_Aver::Vector{Float64})
 
 				# Number of days to print 
-					Ndates= 12
-
-				# OPTIONS
-					Option_θobs = true
+					Nticks = 12
 
 				# PATH
 					Path = pathHyPix.Plot_HypixTime * "_" * string(iMultistep) * "_val.svg"
 					rm(Path, force=true, recursive=true)
 
 				# STYLE colour
-					Style_Color = [:red, :darkviolet, :orange, :teal, :blue]
+					Style_Color = [:red, :darkviolet, :orange, :teal, :blue, :green]
 
 				# TICKS
 					# Date_Start_Calibr = obsTheta.Date[1]
@@ -244,22 +241,23 @@ module plotHypix
 					Date_End_Calibr = obsTheta.Date[end]
 					
 				# DAYS PLOT
-					ΔDays = floor(Int, Dates.value((Date_End_Calibr - Date_Start_Calibr)) / ((Ndates - 1) * 60 *60 * 24 * 1000))::Int64
+					ΔDays = floor(Int, Dates.value((Date_End_Calibr - Date_Start_Calibr)) / ((Nticks - 1) * paramHypix.ΔT_Output * 1000))::Int64
+
 					# Putting a monthly dates
 						Ndates = length(∑T_Reduced)
 
 						Ndates_Reduced = floor(Int, ∑T_Reduced[Ndates] / (ΔDays * paramHypix.ΔT_Output)) + 1
 						
 						Date_Reduced2 = fill("", Ndates_Reduced+1)
-						∑T_Reduced2 = fill(0, Ndates_Reduced+1)
+						∑T_Reduced2 = fill(0::Int64, Ndates_Reduced+1)
 	
 						# Reducing dates
 						∑T_Reduced2[1] = ∑T_Reduced[1]	
 		
 						Date_Reduced2[1]= Dates.format(Date_Reduced[1], "d u Y")
 						iGood = 2
-						for i=1:length(∑T_Reduced)
-							if ∑T_Reduced[i] -  ∑T_Reduced[1] ≥ ((iGood - 1) * ΔDays * 86400.0)
+						for i=1:Ndates
+							if ∑T_Reduced[i] -  ∑T_Reduced[1] ≥ ((iGood - 1) * ΔDays * paramHypix.ΔT_Output)
 
 								∑T_Reduced2[iGood] = ∑T_Reduced[i]	
 		
@@ -349,16 +347,15 @@ module plotHypix
 
 									Label_Sim = "θsim" * string(Int(floor((discret.Znode[obsTheta.ithetaObs[iZobs]])))) * "mm"
 
-									if Option_θobs
+									if optionHypix.θobs
 										Plot_θobs = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θobs_Reduced[1:Nit_Reduced, iZobs], linewidth=1.5, color=Style_Color[iZobs], label=Label_Obs)
 									end
 
 									Plot_θsim = lines!(Axis4, ∑T_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced, obsTheta.ithetaObs[iZobs]], linewidth=1.5, color=Style_Color[iZobs], label=Label_Sim, linestyle = :dash)
 							end # loop
 
-
 							iSubplot += 1
-							Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellwidth = true, haligns=:center, valigns=:bottom, nbanks=2)
+							# Fig[iSubplot, 1] = Legend(Fig, Axis4, framevisible=true, orientation=:horizontal, tellwidth = true, haligns=:center, valigns=:bottom, nbanks=2)
 
 						colgap!(Fig.layout, 90)
 						rowgap!(Fig.layout, 10)

@@ -9,7 +9,7 @@ module hypixStart
 	import ..cst, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..readHypix, ..readLinkingFile, ..stats, ..tableHypix, ..waterBalance, ..θaver, ..Δtchange
 	import Statistics: mean
 	import Dates: now, value
-	# import ..plotHypix
+	import ..plotHypix
 
 	export HYPIX_START
 
@@ -112,12 +112,16 @@ module hypixStart
 				
 						println("		=== ===START: summary  $iMultistep steps ...")
 
-						println("			∑Pr 			= ", ceil(Int, ∑Pr_Clim), "  [mm]")
-						println("			∑Pr_Soil 		= ", ceil(Int, ∑Pr[Nit] - ∑Pr[i∑T_CalibrStart]),  "  [mm]")
-						println("			∑Pr_Intercepted/∑Pr 	= ", ceil(Int, 100. * (∑Pr_Clim - (∑Pr[Nit]-∑Pr[i∑T_CalibrStart])) / (∑Pr_Clim + eps(10.0))),  "  [%]")
-						println("			∑Pet_Net 		= ", ceil(Int, ∑Pet_Net), "  [mm]")
-						println("			∑Pet 			= ", ceil(Int, ∑Pet[Nit]- ∑Pet[i∑T_CalibrStart]), "  [mm]")
-						println("			∑ΔSink/∑Pet_Net 	= ", ceil(Int, 100.0 * ∑ΔSink[Nit] /(∑Pet_Net + eps(10.0))), "  [%] \n")
+						if optionHypix.TopBoundary⍰ ≠ "Ψ"
+							println("			∑Pr 			= ", ceil(Int, ∑Pr_Clim), "  [mm]")
+							println("			∑Pr_Soil 		= ", ceil(Int, ∑Pr[Nit] - ∑Pr[i∑T_CalibrStart]),  "  [mm]")
+							println("			∑Pr_Intercepted/∑Pr 	= ", ceil(Int, 100. * (∑Pr_Clim - (∑Pr[Nit]-∑Pr[i∑T_CalibrStart])) / (∑Pr_Clim + eps())),  "  [%]")
+						end
+						if optionHypix.RootWaterUptake
+							println("			∑Pet_Net 		= ", ceil(Int, ∑Pet_Net), "  [mm]")
+							println("			∑Pet 			= ", ceil(Int, ∑Pet[Nit]- ∑Pet[i∑T_CalibrStart]), "  [mm]")
+							println("			∑ΔSink/∑Pet_Net 	= ", ceil(Int, 100.0 * ∑ΔSink[Nit] /(∑Pet_Net + eps(10.0))), "  [%] \n")
+						end
 						
 						println("			∑SoilWaterContentRootEnd = ", round(SwcRoots[iOpt_Count], digits=3), "  [mm]")
 						println("			∑ΔSink 			= ", -ceil(Int, ∑∑ΔSink[iOpt_Count]), "  [mm]")
@@ -160,7 +164,7 @@ module hypixStart
 
 						println("			CccBest 			= ", round(CccBest[iOpt_Count], digits=5))
 						println("			NseBest 			= ", round(NseBest[iOpt_Count], digits=5))
-						println("			WilmotBest     = ", round(WilmotBest[iOpt_Count], digits=5))
+						println("			WilmotBest                   = ", round(WilmotBest[iOpt_Count], digits=5))
 					end	
 					println("		=== === END: summary \n")
 
@@ -188,4 +192,4 @@ module hypixStart
 end  # module hydro
 # ............................................................
 
-@time hypixStart.HYPIX_START("LYSIMETERS")
+@time hypixStart.HYPIX_START("TESTCASE")
