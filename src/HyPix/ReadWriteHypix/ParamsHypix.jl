@@ -21,7 +21,6 @@ module paramsHypix
 		ΔZcoarse::Float64
 		Cosα::Float64
 		Ψ_MinMin::Float64
-		Ψ_MaxMax::Float64
 		Ψ_Top::Float64
 		Ψ_Botom::Float64
 		Q_Botom::Float64

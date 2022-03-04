@@ -39,7 +39,7 @@ module richard
 					Residual_Max = CONVERGENCECRITERIA(discret, iT, NiZ, optionHypix, Residual, ΔT)
 
 				# Determine if iteration made improvement
-					if Residual_Max < Residual_Max_Best	
+					if Residual_Max ≤ Residual_Max_Best	
 						for iZ=1:NiZ
 							Ψbest[iZ] = Ψ[iT,iZ]
 						end
@@ -74,7 +74,7 @@ module richard
 			# Determine if the simulation is going to rerun with a different time step
 				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-		return Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, Hpond, ΔT, θ, Ψ
+		return Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, iTer,IterCount, Q, Hpond, ΔT, θ, Ψ
 		end  # function: RICHARD_SOLVING
 	#-----------------------------------------------------------------
 
@@ -134,22 +134,14 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function CONVERGENCECRITERIA(discret, iT::Int64, NiZ::Int64, optionHypix, Residual, ΔT)
 			Residual_Norm = 0.0
-			Residual_Max  = 0.0
 
 			# Does not take into consideration the last cell which has a perfect mass balance
 			for iZ = 1:NiZ
-				if optionHypix.NormMin⍰ == "Norm"
-					Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2.0
-				else
-					Residual_Max = max( Residual_Max, abs(Residual[iZ]) / (ΔT[iT] * discret.ΔZ[iZ]) ) 
-				end
+				Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2.0
 			end # for: iZ=NiZ
 
-			if optionHypix.NormMin⍰ == "Norm"
-				return Residual_Max = √(Residual_Norm / Float64(NiZ))
-			end
+			return  √(Residual_Norm / Float64(NiZ))
 					
-		return Residual_Max
 		end  # function: CONVERGENCECRITERIA
 	#-----------------------------------------------------------------
 
@@ -307,7 +299,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-			if optionHypix.Flag_ReRun	&& Count_ReRun ≤ 2		
+			if optionHypix.Flag_ReRun && Count_ReRun ≤ 2		
 				Q[iT,1] = flux.Q!(optionHypix, discret, hydro, 1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
 				for iZ=1:NiZ
 					Q[iT,iZ+1] = flux.Q!(optionHypix, discret, hydro, iZ+1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
@@ -323,8 +315,7 @@ module richard
 				elseif Flag_NoConverge
 					Flag_ReRun = true
 					Count_ReRun += 1
-					# ΔT[iT] = 0.5 *(ΔT[iT] + paramHypix.ΔT_Min)
-					ΔT[iT] = 0.75 * paramHypix.ΔT_Min
+					ΔT[iT] =  max( ΔT[iT] * inv(paramHypix.ΔT_Rerun), paramHypix.ΔT_Min)
 
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false

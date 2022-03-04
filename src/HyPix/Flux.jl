@@ -63,11 +63,6 @@ module flux
 					return K_Aver * ( ((paramHypix.Ψ_Botom - ψ_) / discret.ΔZ_⬓[NiZ]) + paramHypix.Cosα)
 
 				elseif optionHypix.BottomBoundary⍰ == "Q" # <>=<>=<>=<>=<>
-					# if paramHypix.Q_Botom ≥ 0.0
-					# 	return min(paramHypix.Q_Botom,  discret.ΔZ_Aver[NiZ] * (θ[iT-1,NiZ] - hydro.θr[NiZ]) / ΔT[iT])
-					# else
-					# 	return max(paramHypix.Q_Botom, -  discret.ΔZ_Aver[NiZ] * (hydro.θs[NiZ] - θ[iT-1,iZ]) / ΔT[iT])
-					# end
 					return paramHypix.Q_Botom
 
 				else
@@ -121,7 +116,7 @@ module flux
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			function ∂Q∂Ψ△(∂K∂Ψ, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, optionHypix, paramHypix, Ψ)
 				if iZ == 1 						# <>=<>=<>=<>=<>
-					return 0.0
+					return 0.0::Float64
 
 				else #elseif 2 ≤ iZ ≤ NiZ 	# <>=<>=<>=<>=<>
 					K_Aver = flux.K_AVER!(optionHypix, paramHypix, discret, hydro, iZ, NiZ, Ψ[iT,iZ], Ψ[iT,iZ-1])
@@ -152,7 +147,7 @@ module flux
 						return ∂K∂Ψ[NiZ] * ((paramHypix.Ψ_Botom - Ψ[iT,NiZ]) / discret.ΔZ_⬓[NiZ] + paramHypix.Cosα) - K_Aver▽ /  discret.ΔZ_⬓[NiZ]
 
 					elseif optionHypix.BottomBoundary⍰ == "Q" # <>=<>=<>=<>=<>
-						return  0.0
+						return  0.0::Float64
 
 					else
 						error(" ∂Q▽∂Ψ optionHypix.BottomBoundary⍰ not found")
@@ -173,7 +168,7 @@ module flux
 					return discret.ΔZ_W[iZ+1] * ∂K∂Ψ[iZ+1] * ((Ψ[iT,iZ+1] - Ψ[iT,iZ]) / discret.ΔZ_Aver[iZ+1] + paramHypix.Cosα) + K_Aver▽ / discret.ΔZ_Aver[iZ+1]
 				
 				else #elseif iZ == NiZ <>=<>=<>=<>=<>
-					return 0.0
+					return 0.0::Float64
 				end
 			end  # function: ∂Q▽∂Ψ▽
 

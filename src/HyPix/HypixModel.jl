@@ -49,8 +49,13 @@ module hypixModel
 		# MINIMUM OR MAXIMUM Ψ VALUES THIS IS SUCH THAT ∂Θ∂Ψ ≠ 0 WHICH INFLUENCES THE NEWTON-RAPHSON METHOD TO BE REMOVED
 			for iZ=1:NiZ
             Ψ_Max[iZ],~ = ΨminΨmax.ΨMINΨMAX(hydro.θs[iZ], hydro.θsMacMat[iZ],  hydro.σ[iZ],  hydro.σMac[iZ], hydro.Ψm[iZ], hydro.ΨmMac[iZ])
-            Ψ_Min[iZ]   = paramHypix.Ψ_MinMin
 			end  # for iZ=1:NiZ
+
+			if optionHypix.BottomBoundary⍰ == "Q" || minimum(hydro.Ks[:]) < 1.0E-5 
+				paramHypix.Ψ_MinMin = -1.0E4
+			else
+				paramHypix.Ψ_MinMin = -1.0E3
+			end
 
 		# ADAPTIVETIMESTEP
 			ΔLnΨmax = timeStep.ΔΨMAX!(hydro, NiZ, optionHypix, paramHypix, ΔLnΨmax)
@@ -59,6 +64,7 @@ module hypixModel
          Flag_NoConverge        = false::Bool
          Flag_ReRun             = false::Bool
          IterCount              = 0::Int64
+			iTer = 10
          iNonConverge           = 0::Int64
          iT                     = 1::Int64
          iT_Pet                 = 2::Int64
@@ -108,7 +114,7 @@ module hypixModel
 		while true # this controles the time loop
 
 			# INCREASING OR DECREASING THE TIME STEP
-				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, Float64(N_∑T_Climate), NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
+				∑T, FlagContinueLoop, iT, ΔT, Δθ_Max = timeStep.TIMESTEP(∑T, discret, Flag_ReRun, hydro, iT, iTer, Float64(N_∑T_Climate), NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
 
 				if FlagContinueLoop == false
 					iT = iT - 1
@@ -153,7 +159,7 @@ module hypixModel
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, optionHypix, optionHypix; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, IterCount, Q, Hpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, paramHypix, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, optionHypix)
+				Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, iTer, IterCount, Q, Hpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, paramHypix, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max, Ψbest, optionHypix)
 				
 			# SPECIAL BOUNDARY CONDITIONS
 				if optionHypix.TopBoundary⍰ == "Ψ"

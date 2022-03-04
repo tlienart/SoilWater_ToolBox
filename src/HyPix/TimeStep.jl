@@ -5,7 +5,7 @@ module timeStep
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION :  TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIMESTEP(∑T, discret, Flag_ReRun::Bool, hydro, iT::Int64, N_∑T_Climate::Float64, NiZ::Int64, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
+		function TIMESTEP(∑T, discret, Flag_ReRun::Bool, hydro, iT::Int64, iTer::Int64, N_∑T_Climate::Float64, NiZ::Int64, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
 
 			Δθ_Max = paramHypix.Δθ_Max
 
@@ -14,6 +14,11 @@ module timeStep
 				ΔT₂, Δθ_Max = ADAPTIVE_TIMESTEP(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, θ, Ψ)
 				iT += 1 # Going to the next simulation
 				ΔT[iT] = ΔT₂
+
+				if iTer ≤ 5
+					ΔT[iT] = min(ΔT[iT] * paramHypix.ΔT_Rerun, paramHypix.ΔT_Max)
+				end
+
 			end
 
 			# Check if we are at the last time step
@@ -83,21 +88,14 @@ module timeStep
 	#		FUNCTION : ADAPTIVE_TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ADAPTIVE_TIMESTEP(discret, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, θ, Ψ)
-
-			# Searching for the minimum value of ΔT of the simulation
-				if optionHypix.NormMin⍰ == "Norm"
-					ΔT_New_Norm = 0.0
-				else
-					ΔT_New_Norm = Inf
-				end
 			
 			# Initializing
 				Δθ₂_Max = paramHypix.Δθ_Max
+				ΔT_New_Norm = 0.0::Float64
 
 			# Computing smallest Δθ_Max
-				Ngood = 0
+				Ngood = 0::Int64
 				for iZ = 1:NiZ-1
-
 					if abs(Ψ[iT,iZ] - Ψ[iT,iZ+1]) ≥ 1.0
 						if optionHypix.AdaptiveTimeStep⍰ == "ΔΨ" # <>=<>=<>=<>=<>
 							Δθ₂_Max = ΔθMAX(hydro, iT, iZ, optionHypix, ΔLnΨmax, Ψ)	
@@ -107,32 +105,21 @@ module timeStep
 
 						ΔT₂_New = min(max(paramHypix.ΔT_Min, ΔT₂_New), paramHypix.ΔT_Max)
 		
-						if optionHypix.NormMin⍰ == "Norm"
-							ΔT_New_Norm += ΔT₂_New ^ 2.0
-						else
-							ΔT_New_Norm = min(ΔT_New_Norm, ΔT₂_New)
-						end
+						ΔT_New_Norm += ΔT₂_New ^ 2.0
+
 						Ngood += 1
 					end
-
 				end # for: iZ=2:NiZ
 
 		# Averaging	
-			if optionHypix.NormMin⍰ == "Norm"
-				if Ngood ≥ 1
-					ΔT₂_New = √(ΔT_New_Norm / Float64(Ngood))
-				else
-					ΔT₂_New = paramHypix.ΔT_Max
-				end
+			if Ngood ≥ 1
+				ΔT₂_New = √(ΔT_New_Norm / Float64(Ngood))
 			else
-				if Ngood ≥ 1
-					ΔT₂_New = ΔT_New_Norm
-				else
-					ΔT₂_New = paramHypix.ΔT_Max
-				end
-			end	
+				ΔT₂_New = paramHypix.ΔT_Max
+			end
 
-			# ΔT₂_New = min(max(paramHypix.ΔT_Min, ΔT₂_New), paramHypix.ΔT_Max)
+			ΔT₂_New = min(max(paramHypix.ΔT_Min, ΔT₂_New), paramHypix.ΔT_Max)
+			
 		return ΔT₂_New, Δθ₂_Max
 		end # function ADAPTIVE_TIMESTEP
 
