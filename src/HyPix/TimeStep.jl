@@ -5,7 +5,7 @@ module timeStep
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION :  TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function TIMESTEP(∑T, discret, Flag_ReRun::Bool, hydro, iT::Int64, iTer::Int64, N_∑T_Climate::Float64, NiZ::Int64, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, ΔT, θ, Ψ)
+		function TIMESTEP(∑T::Vector{Float64}, discret, Flag_ReRun::Bool, hydro, iT::Int64, iTer::Int64, N_∑T_Climate::Float64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, ΔLnΨmax::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
 
 			Δθ_Max = paramHypix.Δθ_Max
 
@@ -15,10 +15,10 @@ module timeStep
 				iT += 1 # Going to the next simulation
 				ΔT[iT] = ΔT₂
 
-				if iTer ≤ 5
-					ΔT[iT] = min(ΔT[iT] * paramHypix.ΔT_Rerun, paramHypix.ΔT_Max)
-				end
-
+				# No convergence need to slowdown
+					# if iTer == paramHypix.N_Iter
+					# 	ΔT[iT] = min(ΔT[iT], ΔT[iT-1])
+					# end
 			end
 
 			# Check if we are at the last time step
@@ -65,7 +65,6 @@ module timeStep
 	#		FUNCTION : ΔθMAX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ΔθMAX(hydro, iT::Int64, iZ::Int64, optionHypix, ΔLnΨmax::Vector{Float64}, Ψ::Matrix{Float64})
-
 			Ψ₀ = max(Ψ[iT,iZ], 0.0)
 
 			if log1p(Ψ₀) > ΔLnΨmax[iZ]

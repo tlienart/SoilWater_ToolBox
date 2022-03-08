@@ -27,6 +27,7 @@ module paramsHypix
 		ΔT_Min::Float64
 		ΔT_Max::Float64
 		N_Iter::Int64
+		So::Float64
 		ΔT_Rerun::Float64
 		Δθ_Max::Float64
 		NewtonStep_Min::Float64

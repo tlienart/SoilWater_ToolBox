@@ -11,7 +11,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD_ITERATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, NiZ::Int64, paramHypix, Q, Residual, Sorptivity::Float64, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT, θ::Matrix{Float64}, Ψ::Matrix{Float64}, Ψ_Max::Vector{Float64}, Ψbest::Vector{Float64}, optionHypix)
+		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iCount_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, NiZ::Int64, paramHypix, Q, Residual, Sorptivity::Float64, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT, Δθₘₐₓ_η::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64}, Ψ_Max::Vector{Float64}, Ψbest::Vector{Float64}, optionHypix)
 
 			# INITIALIZING
 			@inbounds @simd for iZ = 1:NiZ
@@ -21,7 +21,7 @@ module richard
 			# ITTERATION
 			Residual_Max_Best = Inf
 			iTer = 0::Int64
-			while iTer ≤ paramHypix.N_Iter	
+			while iTer ≤ paramHypix.N_Iter - 1	
 				iTer += 1
 				IterCount += 1 # Counting the iterations
 
@@ -33,14 +33,14 @@ module richard
 					Residual_Max_Best = CONVERGENCECRITERIA(discret, iT, NiZ, optionHypix, Residual, ΔT)
 				end
 
-				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, iTer, NiZ, optionHypix, paramHypix, Residual, ΔLnΨmax, θ, Ψ, Ψ_Max)
+				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, iTer, NiZ, optionHypix, paramHypix, Residual, ΔLnΨmax, Δθₘₐₓ_η, θ, Ψ, Ψ_Max)
 
 				# Averaging the Residuals, depending on method
 					Residual_Max = CONVERGENCECRITERIA(discret, iT, NiZ, optionHypix, Residual, ΔT)
 
 				# Determine if iteration made improvement
-					if Residual_Max ≤ Residual_Max_Best	
-						for iZ=1:NiZ
+					if Residual_Max < Residual_Max_Best	
+						@inbounds @simd for iZ=1:NiZ
 							Ψbest[iZ] = Ψ[iT,iZ]
 						end
 						Residual_Max_Best = Residual_Max
@@ -53,18 +53,16 @@ module richard
 			end # while: iTer ======================
 
 			# Making sure we get the best if convergence fails
-			if iTer ≥ paramHypix.N_Iter
+			# No convergence
+			if iTer == paramHypix.N_Iter
 				Flag_NoConverge = true
 
-				iNonConverge += 1
-
 				# Put the best values
-				for iZ=1:NiZ
+				@inbounds @simd for iZ=1:NiZ
 					Ψ[iT,iZ] = Ψbest[iZ]
 				end
 			else
 				Flag_NoConverge = false
-
 			end #  iTer == paramHypix.N_Iter
 
 			for iZ=1:NiZ
@@ -72,9 +70,9 @@ module richard
 			end
 
 			# Determine if the simulation is going to rerun with a different time step
-				Count_ReRun, Flag_ReRun, ΔT = RERUN_HYPIX(Count_ReRun, discret, Flag_NoConverge, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
+			Flag_ReRun, iCount_ReRun, iNonConverge, ΔT = RERUN_HYPIX(discret, Flag_NoConverge, Hpond, hydro, iCount_ReRun, iNonConverge, iT, NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔPr, ΔSink, ΔT, Δθₘₐₓ_η, θ, Ψ)
 
-		return Count_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, iTer,IterCount, Q, Hpond, ΔT, θ, Ψ
+		return iCount_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, iTer,IterCount, Q, Hpond, ΔT, θ, Ψ
 		end  # function: RICHARD_SOLVING
 	#-----------------------------------------------------------------
 
@@ -87,7 +85,7 @@ module richard
 			if optionHypix.Ponding
 				Hpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, optionHypix, paramHypix, Q, Sorptivity, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ)
 			else
-				Hpond[iT] = 0.0
+				Hpond[iT] = 0.0::Float64
 			end
 
 	#----------------------------------------------------------------
@@ -114,7 +112,6 @@ module richard
 				# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
 				# println("∂R∂Ψ_Num=" , ∂R∂Ψ2[1:NiZ],"\n")
 
-
 				# println("Two: =================")
 				# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
 				# println("∂R∂Ψ▽_Der=" , ∂R∂Ψ▽2[1:NiZ],"\n") # No good
@@ -133,15 +130,14 @@ module richard
 	#     Averaging the Residuals, depending on method
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function CONVERGENCECRITERIA(discret, iT::Int64, NiZ::Int64, optionHypix, Residual, ΔT)
-			Residual_Norm = 0.0
+			Residual_Norm = 0.0::Float64
 
 			# Does not take into consideration the last cell which has a perfect mass balance
 			for iZ = 1:NiZ
 				Residual_Norm += (Residual[iZ] / (ΔT[iT] * discret.ΔZ[iZ])) ^ 2.0
 			end # for: iZ=NiZ
 
-			return  √(Residual_Norm / Float64(NiZ))
-					
+		return  √(Residual_Norm / Float64(NiZ))			
 		end  # function: CONVERGENCECRITERIA
 	#-----------------------------------------------------------------
 
@@ -149,15 +145,9 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : SOLVING_TRIAGONAL_MATRIX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, optionHypix, paramHypix, Residual, ΔLnΨmax, θ, Ψ, Ψ_Max)
+		function SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT::Int64, iTer::Int64, NiZ::Int64, optionHypix, paramHypix, Residual, ΔLnΨmax, Δθₘₐₓ_η, θ, Ψ, Ψ_Max)
 
 			Matrix_Trid = Tridiagonal(∂R∂Ψ△[2:NiZ], ∂R∂Ψ[1:NiZ], ∂R∂Ψ▽[1:NiZ-1])
-
-			# if maximum(isnan.(Matrix_Trid))
-			# 	println("Ψ=$(Ψ[iT, 1:NiZ]) \n")
-			# 	println(Matrix_Trid)
-			# 	println("4 Tridiagonal")
-			# end
 
 			Residual = reshape(Residual, NiZ, 1) # Transforming from row to column
 
@@ -168,51 +158,35 @@ module richard
 					θ₀ = θ[iT,iZ]
 				
 				# Updating Ψ
-				if isnan(NewtonStep[iZ])
+				if !isnan(NewtonStep[iZ])
+					# Newton step
+					Ψ[iT,iZ] += NewtonStep[iZ]
 
-					# println("iZ = $iZ")
-					# println("NewtonStep = $(NewtonStep[iZ]), \n")
-					# println("h: =================")
-					# println("Ψ=" , Ψ[iT, 1:NiZ],"\n")
-					# println("RESIDUAL =================")
-					# println("RESIDUAL=" ,Residual,"\n")				
-					# println("One: =================")
-					# println("∂R∂Ψ_Deriv=" , ∂R∂Ψ[1:NiZ],"\n") # No good at cell N
-					# println("Two: =================")
-					# println("∂R∂Ψ▽_Num=" , ∂R∂Ψ▽[1:NiZ],"\n")
-					# println("Tree: =================")
-					# println("∂R∂Ψ△_Num=" , ∂R∂Ψ△[1:NiZ],"\n") # Good
-					
-					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
-							
-				else
-					# Newtyon step
-						Ψ[iT,iZ] += NewtonStep[iZ]
-
-					# Correction of θ entering a dry soil 
-					if optionHypix.ZhaWetingDrySoil
-						Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, optionHypix, θ, θ₀, Ψ, Ψ₀)
-					end
-
-					# Making sure it is within the feasible band 
-						# Ψ[iT,iZ] = min(max(Ψ[iT,iZ], paramHypix.Ψ_MinMin), Ψ_Max[iZ])
-
+					# Assuring that the limits of Ψ are physical
+						paramHypix.Ψ_MinMin = -10E5
 						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], paramHypix.Ψ_MinMin), Ψ_Max[iZ])
 
-					if optionHypix.DynamicNewtonRaphsonStep
-						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, optionHypix, paramHypix, ΔLnΨmax, θ₀, Ψ)
-					
-						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
-						
-					else
-						Ψ[iT,iZ] = 0.5 * (Ψ[iT,iZ] +  Ψ₀)
+					# Correction of θ entering a dry soil 
+						if optionHypix.ZhaWetingDrySoil
+							Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, optionHypix, θ, θ₀, Ψ, Ψ₀)
+						end
 
-					end # if optionHypix.DynamicNewtonRaphsonStep
+					# Smootening the steps
+						Δθₘₐₓ_η, Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, optionHypix, paramHypix, ΔLnΨmax, Δθₘₐₓ_η, θ₀, Ψ)
+					
+					# if optionHypix.DynamicNewtonRaphsonStep
+						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
+					# else
+					# 	Ψ[iT,iZ] = 0.5 * (Ψ[iT,iZ] +  Ψ₀)
+
+					# end # if optionHypix.DynamicNewtonRaphsonStep
 
 					# if optionHypix.IterReduceOverShoting
 					# 	Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
 					# end
-
+				else
+					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
+	
 				end
 			end # for iZ=1:NiZ	
 
@@ -236,34 +210,23 @@ module richard
 	# 	end  # function: Ψ_REDUCE_OVERSHOOTING
 	# #---------------------------------------------------------------
 
-# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 	#		FUNCTION : Ψ_REDUCE_OVERSHOOTING
-# 	# 		Making sure that the steps of NR are not too big and within the limits of ΔLnΨmax
-# 	# 		Does not work
-# 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 	function Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
-# 		if Ψ[iT,iZ] ≤ Ψ₀
-# 			Ψ[iT,iZ] = max(Ψ[iT,iZ], Ψ₀ - expm1(ΔLnΨmax[iZ]))
-# 		else
-# 			Ψ[iT,iZ] = min(Ψ[iT,iZ], Ψ₀ +  expm1(ΔLnΨmax[iZ]))
-# 		end	
-# 	return Ψ
-# 	end  # function: Ψ_REDUCE_OVERSHOOTING
-# #------------------------------------------------------------
-
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NEWTO_NRAPHSON_STEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, optionHypix, paramHypix, ΔLnΨmax, θ₀, Ψ)
+		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, optionHypix, paramHypix, ΔLnΨmax, Δθₘₐₓ_η, θ₀, Ψ)
 
 			θ₁ = Ψ_2_θDual(optionHypix, Ψ[iT,iZ], iZ, hydro)
 
 			Δθ = abs(θ₁ - θ₀)
 
 			Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, optionHypix, ΔLnΨmax, Ψ) 
+
+			Δθₘₐₓ_η[iZ] = Δθ / Δθₘₐₓ
+
+			Ω =  paramHypix.NewtonStep_Max - (paramHypix.NewtonStep_Max - paramHypix.NewtonStep_Min) * min(Δθₘₐₓ_η[iZ], 1.0) ^ paramHypix.NewtonStep_Power
 			
-		return paramHypix.NewtonStep_Max - (paramHypix.NewtonStep_Max - paramHypix.NewtonStep_Min) * min(Δθ / Δθₘₐₓ, 1.0) ^ paramHypix.NewtonStep_Power
+		return Δθₘₐₓ_η, Ω 
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
 		
@@ -297,38 +260,88 @@ module richard
 	# 		WITH UPDATED Ψ
 	#     Rerun if updated ΔT is smaller compared to previously Ψ
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RERUN_HYPIX(Count_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
+		function RERUN_HYPIX(discret, Flag_NoConverge::Bool, Hpond::Vector{Float64}, hydro, iCount_ReRun::Int64, iNonConverge::Int64, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, Δθₘₐₓ_η::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64}; Nrerun=2 )
 
-			if optionHypix.Flag_ReRun && Count_ReRun ≤ 2		
-				Q[iT,1] = flux.Q!(optionHypix, discret, hydro, 1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
-				for iZ=1:NiZ
-					Q[iT,iZ+1] = flux.Q!(optionHypix, discret, hydro, iZ+1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				function RERUN_TIMESTEP⍰(hydro, iT::Int64, NiZ::Int64, optionHypix, ΔLnΨmax::Vector{Float64}, Δθₘₐₓ_η::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
+
+					Δθ_Δθₘₐₓ = 0.0::Float64
+
+					for iZ=1:NiZ
+						Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, optionHypix, ΔLnΨmax, Ψ)
+						Δθₘₐₓ_η[iZ] = abs(θ[iT, iZ] -  θ[iT-1, iZ])  / Δθₘₐₓ
+
+						Δθ_Δθₘₐₓ += Δθₘₐₓ_η[iZ]
+					end
+					Δθ_Δθₘₐₓ = Δθ_Δθₘₐₓ / Float64(NiZ)
+			
+					if Δθ_Δθₘₐₓ > 1.1 # paramHypix.ΔT_Rerun # paramHypix.ΔT_Rerun
+						return true
+					else
+						return false
+					end
+				end  # function: RERUN_STEP
+			# -------------------------------------------------
+
+			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				function COMPUTE_ΔT( discret, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
+
+					Q[iT,1] = flux.Q!(optionHypix, discret, hydro, 1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
+					for iZ=1:NiZ
+						Q[iT,iZ+1] = flux.Q!(optionHypix, discret, hydro, iZ+1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT, min(iZ+1, NiZ)], Ψ[iT,iZ])
+					end
+
+					ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, θ, Ψ)
+				return ΔT_New
+				end  # function: COMPUTE_ΔT  
+			# ------------------------------------------------------------------
+
+
+			if optionHypix.Flag_ReRun && iCount_ReRun ≤ Nrerun	
+
+				Flag_ReRun = RERUN_TIMESTEP⍰(hydro, iT, NiZ, optionHypix,  ΔLnΨmax, Δθₘₐₓ_η, θ, Ψ)
+
+				ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
+
+				if ΔTₒ * 1.5 < ΔT[iT]
+					Flag_ReRun = true
+				else
+					Flag_ReRun = false
 				end
 
-				ΔT_New, ~ = timeStep.ADAPTIVE_TIMESTEP(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, θ, Ψ)
+				if Flag_ReRun
+					ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-				if ΔT[iT] / ΔT_New ≥ paramHypix.ΔT_Rerun # <>=<>=<>=<>=<>
-					ΔT[iT] = ΔT_New
-					Flag_ReRun = true
-					Count_ReRun += 1
+					if ΔTₒ < ΔT[iT]
+						ΔT[iT] = ΔTₒ
+						iCount_ReRun += 1
+						Flag_ReRun = true
+					else
+						Flag_ReRun = false
+					end				
 				
 				elseif Flag_NoConverge
 					Flag_ReRun = true
-					Count_ReRun += 1
-					ΔT[iT] =  max( ΔT[iT] * inv(paramHypix.ΔT_Rerun), paramHypix.ΔT_Min)
+					iCount_ReRun += 1
+					ΔT[iT] =  (ΔT[iT] +  paramHypix.ΔT_Min) * 0.7
 
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false
-					Count_ReRun = 0
+					iCount_ReRun = 0
 				end
 			else
 				Flag_ReRun = false
-				Count_ReRun = 0
+				iCount_ReRun = 0
+
+				if Flag_NoConverge
+					iNonConverge += 1
+				end
 			end  # if: paramHypix.ΔT_Rerun
 
-		return Count_ReRun, Flag_ReRun, ΔT
+		return Flag_ReRun, iCount_ReRun, iNonConverge, ΔT
 		end  # function: RERUN_HYPIX
 	# ------------------------------------------------------------------
 
+		
 end # module: richard
 #......................................................................

@@ -29,13 +29,8 @@ module SoilWater_ToolBox
 				option.run.Hypix = false
 
 			elseif Soilwater_OR_Hypix⍰ == "Hypix"
-				# TODO dirty solution
-				option = options.OPTIONS(PathData_SoilWater, SiteName_Soilwater)
-				# option = options.OPTIONS(PathData_Hypix, SiteName_Hypix)
-
-				# param = params.PARAM(PathData_Hypix, SiteName_Hypix)
-
-				option.run.Hypix = true
+				hypixStart.HYPIX_START(SiteName_Soilwater)
+				println("Run HyPix as indepent model")
 
 			else
 				error("Soilwater_OR_Hypix⍰ = $Soilwater_OR_Hypix⍰ not available needs to be either <SoilWater> or <Hypix>")
@@ -64,16 +59,11 @@ module SoilWater_ToolBox
 		println("----- START READING -----------------------------------------------")
 	
 			# DETERMINE WHICH SOILS/ PROFILE TO RUN: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
-			if Soilwater_OR_Hypix⍰=="Hypix"
-				IdSelect, IdSelect_True, Soilname, NiZ = reading.ID(PathIdSelect=path.hyPix.IdSelect, PathOptionSelect=path.option.Select, PathModelName="")
-
-			else
 				IdSelect, IdSelect_True, Soilname, NiZ = reading.ID(PathIdSelect=path.inputSoilwater.IdSelect, PathOptionSelect=path.option.Select, PathModelName=path.option.ModelName)
 
 				# Deriving opt parameters
 					hydroₒ = hydroStruct.HYDROSTRUCT(option.hydro, 1)
 					hydroₒ, optim = reading.HYDRO_PARAM(option.hydro, hydroₒ, 1, path.inputGuiSoilwater.GUI_HydroParam)
-			end # if: option.run.Hypix
 
 			# IF WE HAVE Θ(Ψ) DATA: <>=<>=<>=<>=<>=<>=<>=<>=<>=<>
 				if option.data.θΨ && !(option.data.SimulationKosugiθΨK && option.hydro.HydroModel⍰≠"Kosugi" && option.hydro.σ_2_Ψm⍰=="Constrained")
@@ -320,14 +310,6 @@ module SoilWater_ToolBox
 		# ------------------------END: Infiltration---------------------------
 
 			
-		
-		# _______________________ START: HyPix _______________________ 
-		if option.run.Hypix
-			# hypixStart.HYPIX_START(Soilname, option, param, PathData_Hypix, PathData_SoilWater, SiteName_Hypix, SiteName_Soilwater, Soilwater_OR_Hypix⍰)
-			hypixStart.HYPIX_START(SiteName_Hypix)
-		end # option.run.Hypix
-		# ------------------------END: HyPix---------------------------
-
 
 		# _______________________ START: Jules _______________________ 
 		# TODO
