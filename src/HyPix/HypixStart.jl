@@ -40,9 +40,12 @@ module hypixStart
 						paramHypix.iOptMultiStep_End   = 1
 					end
 
-				for iMultistep = paramHypix.iOptMultiStep_Start:paramHypix.iOptMultiStep_End	
-				println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-				println("		=== === === START: Multistep= ", iMultistep, "steps, \n")
+				for iMultistep = paramHypix.iOptMultiStep_Start:paramHypix.iOptMultiStep_End
+					
+				if optionHypix.opt.Optimisation
+					println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+					println("		=== === === START: Multistep= ", iMultistep, "steps, \n")
+				end
 
 					# COUNT SIMULATIONS
 						iOpt_Count = iMultistep - paramHypix.iOptMultiStep_Start + 1

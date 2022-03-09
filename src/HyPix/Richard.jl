@@ -163,8 +163,12 @@ module richard
 					Ψ[iT,iZ] += NewtonStep[iZ]
 
 					# Assuring that the limits of Ψ are physical
-						paramHypix.Ψ_MinMin = -10E5
-						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], paramHypix.Ψ_MinMin), Ψ_Max[iZ])
+					if Ψ[iT-1,iZ] < 50.0
+						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], -1.0E4), Ψ_Max[iZ])
+					else
+						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], 0.0), Ψ_Max[iZ])
+					end
+						
 
 					# Correction of θ entering a dry soil 
 						if optionHypix.ZhaWetingDrySoil
@@ -172,18 +176,10 @@ module richard
 						end
 
 					# Smootening the steps
-						Δθₘₐₓ_η, Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, optionHypix, paramHypix, ΔLnΨmax, Δθₘₐₓ_η, θ₀, Ψ)
+						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, optionHypix, paramHypix, ΔLnΨmax, θ₀, Ψ)
 					
-					# if optionHypix.DynamicNewtonRaphsonStep
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
-					# else
-					# 	Ψ[iT,iZ] = 0.5 * (Ψ[iT,iZ] +  Ψ₀)
 
-					# end # if optionHypix.DynamicNewtonRaphsonStep
-
-					# if optionHypix.IterReduceOverShoting
-					# 	Ψ = Ψ_REDUCE_OVERSHOOTING(iT, iZ, ΔLnΨmax, Ψ, Ψ₀)
-					# end
 				else
 					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
 	
@@ -214,7 +210,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : NEWTO_NRAPHSON_STEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, optionHypix, paramHypix, ΔLnΨmax, Δθₘₐₓ_η, θ₀, Ψ)
+		function DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT::Int64, iZ::Int64, optionHypix, paramHypix, ΔLnΨmax, θ₀, Ψ)
 
 			θ₁ = Ψ_2_θDual(optionHypix, Ψ[iT,iZ], iZ, hydro)
 
@@ -222,11 +218,9 @@ module richard
 
 			Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, optionHypix, ΔLnΨmax, Ψ) 
 
-			Δθₘₐₓ_η[iZ] = Δθ / Δθₘₐₓ
+			Δθₘₐₓ_η = Δθ / Δθₘₐₓ
 
-			Ω =  paramHypix.NewtonStep_Max - (paramHypix.NewtonStep_Max - paramHypix.NewtonStep_Min) * min(Δθₘₐₓ_η[iZ], 1.0) ^ paramHypix.NewtonStep_Power
-			
-		return Δθₘₐₓ_η, Ω 
+		return paramHypix.NewtonStep_Max - (paramHypix.NewtonStep_Max - paramHypix.NewtonStep_Min) * min(Δθₘₐₓ_η, 1.0) ^ paramHypix.NewtonStep_Power
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
 		
@@ -263,27 +257,6 @@ module richard
 		function RERUN_HYPIX(discret, Flag_NoConverge::Bool, Hpond::Vector{Float64}, hydro, iCount_ReRun::Int64, iNonConverge::Int64, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, Δθₘₐₓ_η::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64}; Nrerun=2 )
 
 			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-				function RERUN_TIMESTEP⍰(hydro, iT::Int64, NiZ::Int64, optionHypix, ΔLnΨmax::Vector{Float64}, Δθₘₐₓ_η::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
-
-					Δθ_Δθₘₐₓ = 0.0::Float64
-
-					for iZ=1:NiZ
-						Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, optionHypix, ΔLnΨmax, Ψ)
-						Δθₘₐₓ_η[iZ] = abs(θ[iT, iZ] -  θ[iT-1, iZ])  / Δθₘₐₓ
-
-						Δθ_Δθₘₐₓ += Δθₘₐₓ_η[iZ]
-					end
-					Δθ_Δθₘₐₓ = Δθ_Δθₘₐₓ / Float64(NiZ)
-			
-					if Δθ_Δθₘₐₓ > 1.1 # paramHypix.ΔT_Rerun # paramHypix.ΔT_Rerun
-						return true
-					else
-						return false
-					end
-				end  # function: RERUN_STEP
-			# -------------------------------------------------
-
-			# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 				function COMPUTE_ΔT( discret, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, θ::Matrix{Float64}, Ψ::Matrix{Float64})
 
 					Q[iT,1] = flux.Q!(optionHypix, discret, hydro, 1, iT, NiZ, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ[iT,1], Ψ[iT,1])
@@ -296,34 +269,19 @@ module richard
 				end  # function: COMPUTE_ΔT  
 			# ------------------------------------------------------------------
 
-
 			if optionHypix.Flag_ReRun && iCount_ReRun ≤ Nrerun	
-
-				Flag_ReRun = RERUN_TIMESTEP⍰(hydro, iT, NiZ, optionHypix,  ΔLnΨmax, Δθₘₐₓ_η, θ, Ψ)
 
 				ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-				if ΔTₒ * 1.5 < ΔT[iT]
-					Flag_ReRun = true
-				else
-					Flag_ReRun = false
-				end
-
-				if Flag_ReRun
-					ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
-
-					if ΔTₒ < ΔT[iT]
-						ΔT[iT] = ΔTₒ
-						iCount_ReRun += 1
-						Flag_ReRun = true
-					else
-						Flag_ReRun = false
-					end				
+				if ΔTₒ * paramHypix.ΔT_Rerun < ΔT[iT]
+					ΔT[iT] = ΔTₒ
+					iCount_ReRun += 1
+					Flag_ReRun = true		
 				
 				elseif Flag_NoConverge
 					Flag_ReRun = true
 					iCount_ReRun += 1
-					ΔT[iT] =  (ΔT[iT] +  paramHypix.ΔT_Min) * 0.7
+					ΔT[iT] =  (ΔT[iT] * 0.8 +  paramHypix.ΔT_Min) 
 
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false

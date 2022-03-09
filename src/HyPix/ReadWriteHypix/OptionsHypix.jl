@@ -32,7 +32,7 @@ module optionsHypix
 		BottomBoundary⍰::String
 		∂R∂Ψ_NumericalAuto::Bool
 		# IterReduceOverShoting::Bool
-		DynamicNewtonRaphsonStep::Bool
+		# DynamicNewtonRaphsonStep::Bool
 		ZhaWetingDrySoil::Bool
 		AdaptiveTimeStep⍰::String
 		Flag_ReRun::Bool

@@ -82,7 +82,7 @@ module readHypix
                hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
 
                for iZ=1:N_Layer
-                  hydro.So[iZ] = 1.0E-7 # paramHypix.So
+                  hydro.So[iZ] = 1.0E-4 # 1.0E-4 paramHypix.So
                end
 
             end # optionHypix.Optimisation
