@@ -30,9 +30,7 @@ module paramsHypix
 		So::Float64
 		ΔT_Rerun::Float64
 		Δθ_Max::Float64
-		NewtonStep_Min::Float64
-		NewtonStep_Max::Float64
-		NewtonStep_Power::Float64
+		
 		WaterBalanceResidual_Max::Float64
 		ΔT_Output::Float64
 		opt::OPT

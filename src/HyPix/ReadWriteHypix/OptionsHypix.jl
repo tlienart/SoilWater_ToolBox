@@ -35,7 +35,7 @@ module optionsHypix
 		# DynamicNewtonRaphsonStep::Bool
 		ZhaWetingDrySoil::Bool
 		AdaptiveTimeStep⍰::String
-		Flag_ReRun::Bool
+		# Flag_ReRun::Bool
 		Lai_2_SintMax::Bool
 
 		θobs::Bool
