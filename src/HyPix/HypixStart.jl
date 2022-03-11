@@ -196,4 +196,4 @@ module hypixStart
 end  # module hydro
 # ............................................................
 
-@time hypixStart.HYPIX_START("TESTCASE")
+@time hypixStart.HYPIX_START("LYSIMETERS")

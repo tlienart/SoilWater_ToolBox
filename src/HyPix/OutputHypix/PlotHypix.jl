@@ -228,7 +228,7 @@ module plotHypix
 					Nticks = 12
 
 				# PATH
-					Path = pathHyPix.Plot_HypixTime * "_" * string(iMultistep) * "_val.svg"
+					Path = pathHyPix.Plot_HypixTime * "_" * string(iMultistep) * ".svg"
 					rm(Path, force=true, recursive=true)
 
 				# STYLE colour
