@@ -6,6 +6,8 @@ module paramsHypix
 	using Configurations
 
 	@option mutable struct OPT
+		iOptMultiStep_End::Int64
+		iOptMultiStep_Start::Int64
 		NmaxFuncEvals::Int64
 		ΔHpondMax::Float64
 	end
@@ -14,8 +16,6 @@ module paramsHypix
 		θΨ_Table::Vector{Float64}
 	end
 	@option mutable struct PARAMHYPIX
-		iOptMultiStep_Start::Int64
-		iOptMultiStep_End::Int64
 		ZfineCoarse::Float64
 		ΔZfine::Float64
 		ΔZcoarse::Float64
@@ -23,13 +23,13 @@ module paramsHypix
 		Ψ_MinMin::Float64
 		Ψ_Top::Float64
 		Ψ_Botom::Float64
-		Q_Botom::Float64
 		ΔT_Min::Float64
 		ΔT_Max::Float64
 		N_Iter::Int64
 		So::Float64
 		ΔT_Rerun::Float64
 		Δθ_Max::Float64
+		Hpond_Max::Float64
 		
 		WaterBalanceResidual_Max::Float64
 		ΔT_Output::Float64

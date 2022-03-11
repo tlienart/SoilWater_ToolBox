@@ -36,11 +36,11 @@ module hypixStart
 
 				# OPTIMISATION
 					if !(optionHypix.opt.Optimisation)
-						paramHypix.iOptMultiStep_Start = 1
-						paramHypix.iOptMultiStep_End   = 1
+						paramHypix.opt.iOptMultiStep_Start = 1
+						paramHypix.opt.iOptMultiStep_End   = 1
 					end
 
-				for iMultistep = paramHypix.iOptMultiStep_Start:paramHypix.iOptMultiStep_End
+				for iMultistep = paramHypix.opt.iOptMultiStep_Start:paramHypix.opt.iOptMultiStep_End
 					
 				if optionHypix.opt.Optimisation
 					println("		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -48,7 +48,7 @@ module hypixStart
 				end
 
 					# COUNT SIMULATIONS
-						iOpt_Count = iMultistep - paramHypix.iOptMultiStep_Start + 1
+						iOpt_Count = iMultistep - paramHypix.opt.iOptMultiStep_Start + 1
 
 					# OBTAINING HYDRAULIC AND VEGETATION PARAMETERS (depending of we have multistep optimisation)
 					if optionHypix.opt.Optimisation
@@ -130,16 +130,17 @@ module hypixStart
 						println("			∑ΔSink 			= ", -ceil(Int, ∑∑ΔSink[iOpt_Count]), "  [mm]")
 						println("			∑Infilt_Bot 		= ", -round(∑ΔQ_Bot[iOpt_Count],  digits=5), "  [mm]")
 						println("			Hpond at end 		= ", ceil(Int, Hpond[Nit]), "  [mm] \n")
+		
+						println("			Number_of_cells 	        = ", NiZ, "  [-]")
 
+						println("\n			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1]")
 						println("			iNonConverge 			= ", iNonConverge_iOpt[iOpt_Count], "  [count]")
 						println("			Global_WaterBalance_NormPr 	= ", round(Global_WaterBalance_NormPr[iOpt_Count], digits=8), "  [%]")
 						println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=8), "  [mm]")
 						println("			Average ΔT 			= ",  ΔT_Average[iOpt_Count] , "  [seconds]")
 						println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 						println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
-						println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")			
-						println("			Number_of_cells 	        = ", NiZ, "  [-]")
-						println("\n			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1] \n")
+						println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")	
 
 						∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, paramHypix, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], Hpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
 

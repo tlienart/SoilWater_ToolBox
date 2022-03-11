@@ -33,7 +33,6 @@ module optionsHypix
 		∂R∂Ψ_NumericalAuto::Bool
 		# IterReduceOverShoting::Bool
 		# DynamicNewtonRaphsonStep::Bool
-		ZhaWetingDrySoil::Bool
 		AdaptiveTimeStep⍰::String
 		# Flag_ReRun::Bool
 		Lai_2_SintMax::Bool

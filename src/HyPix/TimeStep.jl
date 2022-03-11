@@ -15,10 +15,14 @@ module timeStep
 				iT += 1 # Going to the next simulation
 				ΔT[iT] = ΔT₂
 
-				# No convergence need to slowdown
-					# if iTer == paramHypix.N_Iter
-					# 	ΔT[iT] = min(ΔT[iT], ΔT[iT-1])
-					# end
+				if iTer ≤ 5
+					ΔT[iT] = ΔT[iT] * 1.2
+				
+					# No convergence need to slowdown
+				elseif iTer == paramHypix.N_Iter
+						ΔT[iT] = min(ΔT[iT], ΔT[iT-1])
+				end
+
 			end
 
 			# Check if we are at the last time step

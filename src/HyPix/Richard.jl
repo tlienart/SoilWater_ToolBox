@@ -220,7 +220,7 @@ module richard
 
 			Δθₘₐₓ_η = Δθ / Δθₘₐₓ
 
-			# 1 - 0.2
+			# 1- (1 - 0.2)
 		return 1.0 - 0.8 * min(Δθₘₐₓ_η, 1.0) ^ 2.0
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
@@ -270,7 +270,7 @@ module richard
 				end  # function: COMPUTE_ΔT  
 			# ------------------------------------------------------------------
 
-			if iCount_ReRun ≤ 2	
+			if iCount_ReRun ≤ 3	
 
 				ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
@@ -286,11 +286,11 @@ module richard
 
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false
-					iCount_ReRun = 0
+					iCount_ReRun = 1
 				end
 			else
 				Flag_ReRun = false
-				iCount_ReRun = 0
+				iCount_ReRun = 1
 
 				if Flag_NoConverge
 					iNonConverge += 1

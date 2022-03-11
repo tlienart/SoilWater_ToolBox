@@ -385,7 +385,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, iScenario, NseBest, paramHypix, pathHyPix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
          
-         iSim₀ = paramHypix.iOptMultiStep_Start + iOpt	
+         iSim₀ = paramHypix.opt.iOptMultiStep_Start + iOpt	
 
          Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
          # println("			~  $(Path) ~")

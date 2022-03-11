@@ -72,7 +72,7 @@ module hypixModel
          ∑Pet[1]                = 0.0::Float64
          ∑Pr[1]                 = 0.0::Float64
          ∑T[1]                  = 0.0::Float64
-         iCount_ReRun            = 0::Int64
+         iCount_ReRun            = 1::Int64
 			
 		# Boundary conditions
 			if Flag_θΨini == :θini
