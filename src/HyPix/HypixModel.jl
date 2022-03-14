@@ -11,7 +11,7 @@ module hypixModel
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : HYPIX_MODEL
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	function HYPIX_MODEL(∂K∂Ψ::Vector{Float64}, ∂R∂Ψ::Vector{Float64}, ∂R∂Ψ△::Vector{Float64}, ∂R∂Ψ▽::Vector{Float64}, ∑Pet::Vector{Float64}, ∑Pet_Climate::Vector{Float64}, ∑Pr::Vector{Float64}, ∑Pr_Climate::Vector{Float64}, ∑T::Vector{Float64}, ∑T_Climate::Vector{Float64}, clim, CropCoeficientᵀ::Vector{Float64}, CropCoeficientᵀ_η::Vector{Float64}, discret, Flag_θΨini::Symbol, hydro, Laiᵀ::Vector{Float64}, Laiᵀ_η::Vector{Float64}, N_∑T_Climate::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, Residual::Vector{Float64}, veg, Z::Vector{Float64}, ΔEvaporation::Vector{Float64}, Hpond::Vector{Float64}, ΔPet::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, ΔLnΨmax::Vector{Float64}, θ::Matrix{Float64}, θini_or_Ψini::Vector{Float64}, Ψ::Matrix{Float64}, Ψ_Max::Vector{Float64}, Ψ_Min::Vector{Float64}, Ψbest::Vector{Float64})
+	function HYPIX_MODEL(∂K∂Ψ::Vector{Float64}, ∂R∂Ψ::Vector{Float64}, ∂R∂Ψ△::Vector{Float64}, ∂R∂Ψ▽::Vector{Float64}, ∑Pet::Vector{Float64}, ∑Pet_Climate::Vector{Float64}, ∑Pr::Vector{Float64}, ∑Pr_Climate::Vector{Float64}, ∑T::Vector{Float64}, ∑T_Climate::Vector{Float64}, clim, CropCoeficientᵀ::Vector{Float64}, CropCoeficientᵀ_η::Vector{Float64}, discret, Flag_θΨini::Symbol, hydro, Laiᵀ::Vector{Float64}, Laiᵀ_η::Vector{Float64}, N_∑T_Climate::Int64, NiZ::Int64, optionHypix, paramHypix, Q::Matrix{Float64}, Residual::Vector{Float64}, veg, Z::Vector{Float64}, ΔEvaporation::Vector{Float64}, Hpond::Vector{Float64}, ΔPet::Vector{Float64}, ΔPr::Vector{Float64}, ΔRunoff::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT::Vector{Float64}, ΔLnΨmax::Vector{Float64}, θ::Matrix{Float64}, θini_or_Ψini::Vector{Float64}, Ψ::Matrix{Float64}, Ψ_Max::Vector{Float64}, Ψ_Min::Vector{Float64}, Ψbest::Vector{Float64})
 
 		# VEGETATION PARAMETERS WHICH VARY WITH TIME
 			for iT = 1:clim.N_Climate
@@ -153,7 +153,7 @@ module hypixModel
 				Sorptivity = sorptivity.SORPTIVITY(θ[iT-1, 1], 1, hydro, optionHypix, optionHypix; Rtol = 10^-3.0, SorptivityModelScaled=false)
 		
 			# SOLVING THE EXPLICIT RICHARDS
-				iCount_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, iTer, IterCount, Q, Hpond, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iCount_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, paramHypix, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Min, Ψ_Max, Ψbest, optionHypix)
+			Flag_NoConverge, Flag_ReRun, Hpond, iCount_ReRun, iNonConverge, iTer, IterCount, Q, ΔRunoff, ΔT, θ, Ψ = richard.RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iCount_ReRun, discret, Flag_NoConverge, hydro, iNonConverge, iT, IterCount, NiZ, paramHypix, Q, Residual, Sorptivity, Hpond, ΔLnΨmax, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ, Ψ_Min, Ψ_Max, Ψbest, optionHypix)
 				
 			# SPECIAL BOUNDARY CONDITIONS
 				if optionHypix.TopBoundary⍰ == "Ψ"
@@ -165,7 +165,7 @@ module hypixModel
 
 		Nit = iT # Maximum time steps
 
-	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, Hpond, ΔRootDensity, ΔT, θ, Ψ
+	return ∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, Hpond, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔRootDensity, ΔRunoff, ΔT, θ, Ψ
 	end  # function: HYPIX_MODEL
 	
 end  # module hypix

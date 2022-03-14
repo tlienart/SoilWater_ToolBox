@@ -5,10 +5,12 @@ module Δtchange
 	import ..interpolate, ..tool, ..cst
 	import Dates: value, DateTime, Day, Second, Hour, now
 
-	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, Nit::Int64, NiZ::Int64, paramHypix, Q, ΔEvaporation, Hpond, ΔT, θ, Ψ, ∑T_Climate)
+	function CHANGE_OUTPUT_ΔT(∑Pet, ∑Pr, ∑T, ∑WaterBalance_η, ∑ΔSink, obsTheta, clim, Nit::Int64, NiZ::Int64, paramHypix, Q, ΔEvaporation, ΔRunoff, Hpond, ΔT, θ, Ψ, ∑T_Climate)
 
 		# PREPROCESSING ∑Evaporation, ∑ΔQ
          ∑Evaporation = fill(0.0::Float64, Nit)
+         ∑Pr_Gross    = fill(0.0::Float64, clim.N_Climate)
+         ∑Runoff      = fill(0.0::Float64, Nit)
          ∑ΔQ          = fill(0.0::Float64, Nit, NiZ+1)
 
 			∑Evaporation[1]    = 0.0
@@ -21,10 +23,15 @@ module Δtchange
 			end
 
 		# ∑Pr_Gross
-			∑Pr_Gross = fill(0.0::Float64, clim.N_Climate)
 			∑Pr_Gross[1] = 0.0
 			for iT= 2:clim.N_Climate
 				∑Pr_Gross[iT] = ∑Pr_Gross[iT-1] + clim.Pr[iT]
+			end
+
+		# ∑Runoff
+			∑Runoff[1] = ΔRunoff[1]
+			for iT=2:Nit
+				∑Runoff[iT] = ΔRunoff[iT-1] + ΔRunoff[iT]
 			end
 
 		# PREPARING DATA FOR PLOTS
@@ -63,6 +70,9 @@ module Δtchange
 
 			∑Evaporation_Reduced = fill(0.0::Float64, Nit_Reduced)
 				∑Evaporation_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, ∑Evaporation_Reduced, ∑Evaporation)
+
+			∑Runoff_Reduced = fill(0.0::Float64, Nit_Reduced)
+				∑Runoff_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, ∑Runoff_Reduced, ∑Runoff)
 
 			∑Pet_Reduced = fill(0.0::Float64, Nit_Reduced)
 				∑Pet_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, ∑Pet_Reduced, ∑Pet)
@@ -118,6 +128,8 @@ module Δtchange
 			end  # for iT=1:Nit
 		
 	return ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced
+
+	
 	end # function: CHANGE_OUTPUT_ΔT
 	
 end  # module: tincrease

@@ -16,6 +16,7 @@ module memory
       Hpond        = similar(ΔEvaporation)
       ΔPet         = similar(ΔEvaporation)
       ΔPr          = similar(ΔEvaporation)
+      ΔRunoff      = similar(ΔEvaporation)
       ΔT           = similar(ΔEvaporation)
       ∑Pet         = similar(ΔEvaporation)
       ∑Pr          = similar(ΔEvaporation)
@@ -46,7 +47,7 @@ module memory
 
       θSim = fill(0.0::Float64, obsTheta.Nit, NiZ)
 		
-	return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, Hpond, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔLnΨmax, ΔPet, ΔPr, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
+	return ∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pr, ∑T, CropCoeficientᵀ, Hpond, iNonConverge_iOpt, Laiᵀ, Q, Residual, ΔEvaporation, ΔLnΨmax, ΔPet, ΔPr, ΔRunoff, ΔSink, ΔT, θ, θSim, Ψ, Ψ_Max, Ψ_Min, Ψbest
 	end  # function: MEMORY
 
 

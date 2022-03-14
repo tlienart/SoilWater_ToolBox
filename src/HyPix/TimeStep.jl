@@ -16,13 +16,12 @@ module timeStep
 				ΔT[iT] = ΔT₂
 
 				if iTer ≤ 5
-					ΔT[iT] = ΔT[iT] * 1.2
+					ΔT[iT] = ΔT[iT] * inv(paramHypix.ΔT_MaxChange)
 				
-					# No convergence need to slowdown
+				# No convergence need to slowdown
 				elseif iTer == paramHypix.N_Iter
 						ΔT[iT] = min(ΔT[iT], ΔT[iT-1])
 				end
-
 			end
 
 			# Check if we are at the last time step

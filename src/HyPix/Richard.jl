@@ -11,7 +11,7 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD_ITERATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iCount_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, NiZ::Int64, paramHypix, Q, Residual, Sorptivity::Float64, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT, θ::Matrix{Float64}, Ψ::Matrix{Float64},Ψ_Min::Vector{Float64}, Ψ_Max::Vector{Float64}, Ψbest::Vector{Float64}, optionHypix)
+		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iCount_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, NiZ::Int64, paramHypix, Q, Residual, Sorptivity::Float64, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔRunoff::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT, θ::Matrix{Float64}, Ψ::Matrix{Float64},Ψ_Min::Vector{Float64}, Ψ_Max::Vector{Float64}, Ψbest::Vector{Float64}, optionHypix)
 
 			# INITIALIZING
 			@inbounds @simd for iZ = 1:NiZ
@@ -26,7 +26,7 @@ module richard
 				IterCount += 1 # Counting the iterations
 
 				# RESIDUAL MAX BEST: Deriving the Residual max because may be Ψ[iT-1,iZ] is the best solution
-				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, Hpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, NiZ, optionHypix, paramHypix, Q, Residual, Sorptivity, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max)
+				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, Hpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, NiZ, optionHypix, paramHypix, Q, Residual, Sorptivity, Hpond, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ, Ψ_Max)
 
 				# Computing Residual_Max_Best at the beginning before iteration
 				if iTer == 1
@@ -36,7 +36,7 @@ module richard
 				# The minimum Ψ depends if we are close to saturation
 					Ψ_Min = ΨMIN(iT, NiZ, paramHypix, Ψ, Ψ_Min)
 
-				Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, NiZ, optionHypix, paramHypix, Residual, ΔLnΨmax, θ, Ψ, Ψ_Min, Ψ_Max)
+					Ψ = SOLVING_TRIAGONAL_MATRIX(∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, hydro, iT, NiZ, optionHypix, paramHypix, Residual, ΔLnΨmax, θ, Ψ, Ψ_Min, Ψ_Max)
 
 				# Averaging the Residuals, depending on method
 					Residual_Max = CONVERGENCECRITERIA(discret, iT, NiZ,  Residual, ΔT)
@@ -76,7 +76,7 @@ module richard
 			# Determine if the simulation is going to rerun with a different time step
 			Flag_ReRun, iCount_ReRun, iNonConverge, ΔT = RERUN_HYPIX(discret, Flag_NoConverge, Hpond, hydro, iCount_ReRun, iNonConverge, iT, NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-		return iCount_ReRun, Flag_NoConverge, Flag_ReRun, iNonConverge, iTer,IterCount, Q, Hpond, ΔT, θ, Ψ
+		return Flag_NoConverge, Flag_ReRun, Hpond, iCount_ReRun, iNonConverge, iTer, IterCount, Q, ΔRunoff, ΔT, θ, Ψ
 		end  # function: RICHARD_SOLVING
 	#-----------------------------------------------------------------
 
@@ -84,10 +84,10 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : RICHARD
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q, Residual, Sorptivity, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ, Ψ_Max)
+		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q, Residual, Sorptivity, Hpond, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ, Ψ_Max)
 
 			if optionHypix.Ponding
-				Hpond = ponding.PONDING_SORPTIVITY!(discret, hydro, iT, optionHypix, paramHypix, Q, Sorptivity, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ)
+				Hpond, ΔRunoff = ponding.PONDING_RUNOFF_SORPTIVITY(discret, Hpond, hydro, iT, optionHypix, paramHypix, Sorptivity, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ)
 			else
 				Hpond[iT] = 0.0::Float64
 			end
@@ -186,7 +186,7 @@ module richard
 				
 					# Correction of θ entering a dry soil 
 						# if optionHypix.ZhaWetingDrySoil
-						# 	Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, optionHypix, θ, θ₀, Ψ, Ψ₀)
+							Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, optionHypix, θ, θ₀, Ψ, Ψ₀)
 						# end
 
 					# Smootening the steps
@@ -274,7 +274,7 @@ module richard
 
 				ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-				if ΔTₒ * paramHypix.ΔT_Rerun < ΔT[iT]
+				if ΔTₒ < ΔT[iT] * paramHypix.ΔT_MaxChange
 					ΔT[iT] = ΔTₒ
 					iCount_ReRun += 1
 					Flag_ReRun = true		
@@ -282,7 +282,7 @@ module richard
 				elseif Flag_NoConverge
 					Flag_ReRun = true
 					iCount_ReRun += 1
-					ΔT[iT] =  (ΔT[iT] * 0.8 +  paramHypix.ΔT_Min) 
+					ΔT[iT] =  (ΔT[iT] * paramHypix.ΔT_MaxChange +  paramHypix.ΔT_Min) 
 
 				else # <>=<>=<>=<>=<>
 					Flag_ReRun = false
@@ -295,7 +295,7 @@ module richard
 				if Flag_NoConverge
 					iNonConverge += 1
 				end
-			end  # if: paramHypix.ΔT_Rerun
+			end  # if: paramHypix.ΔT_MaxChange
 
 		return Flag_ReRun, iCount_ReRun, iNonConverge, ΔT
 		end  # function: RERUN_HYPIX
