@@ -23,7 +23,7 @@ module ofHypix
 			θobs_Layer = fill(0.0::Float64, obsTheta.Nit)
 			θSim_Layer = fill(0.0::Float64, obsTheta.Nit)
 
-			Wof = 0.0
+			Wof = 0.0::Float64
 
 			for iZ=1:obsTheta.Ndepth
 
@@ -44,7 +44,7 @@ module ofHypix
 			end # for iZ
 
 			# Penalty if we have too much ponding
-			 Wof_Pond = max(Hpond[NiZ] - paramHypix.opt.ΔHpondMax, 0.0) / 100.0
+			 Wof_Pond = max(Hpond[NiZ] - paramHypix.opt.ΔHpondMax, 0.0::Float64) / 100.0
 
 		return Wof + Wof_Pond
 		end # function WOF_θ

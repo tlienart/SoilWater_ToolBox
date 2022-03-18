@@ -15,10 +15,10 @@ module climate
 			Temp             = fill(0.0::Float64, clim.N_Climate)
 
 			 # Taking into acount that ΔT is the difference of time of T[iT]-T[iT-1]
-				∑Pr_Climate[1]  = 0.0
-				∑Pet_Climate[1] = 0.0
-				∑T_Climate[1]   = 0.0
-				Temp[1]         = 0.0
+				∑Pr_Climate[1]  = 0.0::Float64
+				∑Pet_Climate[1] = 0.0::Float64
+				∑T_Climate[1]   = 0.0::Float64
+				Temp[1]         = 0.0::Float64
 		 
 			 for iT = 2:clim.N_Climate
 				#Computing cumulative time 

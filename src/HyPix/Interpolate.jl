@@ -115,4 +115,30 @@ module interpolate
 		return X₀_Reduced
 	end  # function: θINTERPOLATION
 
+
+#	 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	#		FUNCTION : INTERPOLATE_1D_MAX
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	function INTERPOLATE_1D_MAX(∑T, ∑T_Reduced, Nit_Reduced, Nit::Int64, X₀_Reduced, X₀)
+		iT_X = 2::Int64
+		for iT_Reduced=1:Nit_Reduced
+			FlagBreak = false
+			Xmax = 0.0::Float64
+			while !(FlagBreak)
+				Xmax = max(Xmax,  X₀[iT_X])
+				if (∑T[iT_X-1] - eps(10.0) ≤ ∑T_Reduced[iT_Reduced] ≤ ∑T[iT_X] + eps(10.0)) || (iT_X == Nit) 
+					FlagBreak = true
+					break
+				else 
+					iT_X += 1
+					FlagBreak = false
+				end # if
+			end # while
+
+			X₀_Reduced[iT_Reduced] = Xmax
+		end # for: iT_Reduced=1:obsTheta.Nit
+	
+	return X₀_Reduced
+	end  # function: INTERPOLATE_1D_MAX
+
 end # module interpolate

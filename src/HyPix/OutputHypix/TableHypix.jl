@@ -4,14 +4,15 @@
 module tableHypix
 
    import ..cst, ..tool, ..wrc, ..kunsat
-   import DelimitedFiles
    import Dates: value, DateTime, year, month, day, hour, minute, second
+
+   import CSV, Tables
    export TABLE_HYPIX
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : TABLE_HYPIX
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function TABLE_HYPIX(∑∑ΔSink, ∑Pr, ∑T, ∑T_Climate, ∑T_Reduced, ∑WaterBalance_η, ∑WaterBalanceη_Reduced, ∑ΔQ_Bot, CccBest, clim, Date_Reduced, discret, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, Hpond, hydroHorizon, iMultistep, iNonConverge_iOpt, iScenario, N_Layer, Nit, Nit_Reduced, NiZ, NseBest, optionHypix, paramHypix, pathOutputHypix, Q, SwcRoots, veg, WilmotBest, WofBest, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr, ΔPr_Reduced, ΔQ_Reduced, ΔRunTimeHypix, ΔSink_Reduced, ΔT, ΔT_Average, θ_Reduced, θobs_Reduced, θsim_Aver, Ψ_Reduced)
+      function TABLE_HYPIX(∑∑ΔSink,  ∑WaterBalanceη_Reduced, ∑ΔQ_Bot, CccBest,  Date_Reduced, discret, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, hydroHorizon, iMultistep, iNonConverge_iOpt, N_Layer,  Nit_Reduced, NiZ, NseBest, optionHypix, paramHypix, pathOutputHypix, SwcRoots, veg, WilmotBest, WofBest, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRunoff_Reduced, ΔRunTimeHypix, ΔSink_Reduced, ΔT_Average, θ_Reduced, θobs_Reduced, θsim_Aver, Ψ_Reduced)
      
 			println("		=== === START: Table === ===")
 
@@ -21,14 +22,14 @@ module tableHypix
          # Writing values of veg parameters
          tableHypix.VEG(veg, iMultistep, pathOutputHypix)
 
-         tableHypix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iMultistep, iScenario, NseBest, paramHypix,  pathOutputHypix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
+         tableHypix.PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iMultistep, iMultistep, NseBest, paramHypix,  pathOutputHypix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
             
 
          if optionHypix.Table_Discretization
             tableHypix.DISCRETISATION_RRE(discret, NiZ, Z[1:NiZ], pathOutputHypix)
          end
-         if optionHypix.Table_TimeSeriesDaily
-            tableHypix.TIME_SERIES_DAILY(∑T_Reduced[1:Nit_Reduced], ∑WaterBalanceη_Reduced[1:Nit_Reduced], Date_Reduced[1:Nit_Reduced], iMultistep, Nit_Reduced, ΔEvaporation_Reduced[1:Nit_Reduced], ΔQ_Reduced[1:Nit_Reduced, NiZ+1], ΔPet_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], ΔSink_Reduced[1:Nit_Reduced], pathOutputHypix)
+         if optionHypix.Table_TimeSerie
+            tableHypix.TIME_SERIES_DAILY(  ∑WaterBalanceη_Reduced[1:Nit_Reduced], Date_Reduced[1:Nit_Reduced], iMultistep, Nit_Reduced, pathOutputHypix, ΔEvaporation_Reduced[1:Nit_Reduced], ΔPet_Reduced[1:Nit_Reduced], ΔPond_Reduced[1:Nit_Reduced], ΔPr_Reduced[1:Nit_Reduced], ΔPrGross_Reduced[1:Nit_Reduced],  ΔQ_Reduced[1:Nit_Reduced, NiZ+1], ΔRunoff_Reduced[1:Nit_Reduced], ΔSink_Reduced[1:Nit_Reduced])
          end
          if optionHypix.Table_θ
             tableHypix.θ(Date_Reduced[1:Nit_Reduced], θ_Reduced[1:Nit_Reduced,1:NiZ], discret.Znode[1:NiZ], iMultistep, pathOutputHypix)
@@ -43,9 +44,6 @@ module tableHypix
             tableHypix.θΨ(hydroHorizon, iMultistep, N_Layer, optionHypix, paramHypix, pathOutputHypix)
             tableHypix.KΨ(hydroHorizon, iMultistep, N_Layer, optionHypix, paramHypix, pathOutputHypix)
          end
-         if optionHypix.Table_Climate
-            tableHypix.DAILY_CLIMATE(∑T_Climate, clim, iMultistep, pathOutputHypix)
-         end
          if optionHypix.θavr_RootZone && optionHypix.θobs
             tableHypix.θAVERAGE(Date_Reduced[1:Nit_Reduced], iMultistep, θobs_Reduced[1:Nit_Reduced], θsim_Aver[1:Nit_Reduced], pathOutputHypix)
          end
@@ -55,115 +53,15 @@ module tableHypix
       end  # function: TABLE_HYPIX
    # ------------------------------------------------------------------
 
-   # ===================================================
-   #          DISCRETISATION AUTO
-   # ===================================================
-      function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Int64}, PathDiscretisation::String, Z::Vector{Float64}, θini_or_Ψini_Cell::Vector{Float64})
-
-         # println("			~  $(PathDiscretisation) ~")
-
-         if Flag_θΨini == :Ψini
-            Header = ["iZ";"Z"; "Layer"; "Ψini"]
-
-         elseif Flag_θΨini == :θini
-            Header = ["iZ";"Z"; "Layer"; "θini"]
-         end
-
-         iZ = collect(1:1:length(Z))
-
-         open(PathDiscretisation, "w") do io
-            DelimitedFiles.writedlm(io,[Header] , ",") # Header
-            DelimitedFiles.writedlm(io, [iZ Z Layer θini_or_Ψini_Cell], ",")
-         end # open
-
-      return nothing
-      end # Table DISCRETISATION_AUTO
-   #------------------------------------------------------
-
-
-   # ===================================================
-   #          Discretization
-   # ===================================================
-      function DISCRETISATION_RRE(discret, NiZ, Z, pathHyPix)
-         # println("			~  $(pathHyPix.Table_Discretisation) ~")
-
-         Header =  ["Z" "ΔZ" "ΔZ_⬓" "Znode" "ΔZ_Aver" "ΔZ_W" "Z_CellUp"]
-
-         open(pathHyPix.Table_Discretisation, "w") do io
-            DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [Z[1:NiZ] discret.ΔZ[1:NiZ] discret.ΔZ_⬓[1:NiZ] discret.Znode[1:NiZ] discret.ΔZ_Aver[1:NiZ] discret.ΔZ_W[1:NiZ] discret.Z_CellUp[1:NiZ]], ",")
-         end
-      return nothing
-      end # Table DISCRETISATION
-   #------------------------------------------------------
-
-
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : HYDRO
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function HYDRO(hydroHorizon, iScenario, N_Layer, pathOutputHypix)
-         Path = pathOutputHypix.Table_Hydro  * "_" * string(iScenario) * ".csv"
-         # println("			~ $(Path) ~")
-
-         Id = 1:1:N_Layer
-
-         Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_Layer, hydroHorizon)
-               
-         pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
-
-         open(Path, "w") do io
-            DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-            DelimitedFiles.writedlm(io, [Int64.(Id) Matrix], ",")
-         end
-      return nothing			
-      end  # function: HYDRO
-   #------------------------------------------------------
-      
-
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : veg
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function VEG(veg, iScenario, pathHyPix)
-         Path = pathHyPix.Table_Veg * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
-
-         Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(1, veg)
-
-         open(Path, "w") do io
-            DelimitedFiles.writedlm(io,[FieldName_String] , ",",) # Header
-            DelimitedFiles.writedlm(io, [Matrix], ",")
-         end
-      return nothing
-      end  # function: VEG
-   #------------------------------------------------------
-
-
-   # ===================================================
-   #          TimeStep at ΔT
-   # ===================================================
-      function TIME_SERIES(∑T, ΔT, ∑Pr, ΔPr, Hpond, Recharge, ∑WaterBalance_η, iScenario, pathHyPix)		
-         Path = pathHyPix.Table_TimeSerie * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
-         
-         Header =  ["∑T[mm]" "ΔT[mm]" "∑Pr[mm/ΔT]" "ΔPr[mm/ΔT]" "Hpond[mm]" "Recharge[mm/ΔT]" "∑WaterBalance_η[mm]"]
-
-         open(Path, "w") do io
-            DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [∑T ΔT ∑Pr ΔPr Hpond Recharge ∑WaterBalance_η], ",")
-         end
-      return nothing
-      end # Table DISCRETISATION
-   #------------------------------------------------------
-
 
    # ===================================================
    #          TimeStep daily
    # ===================================================
-      function TIME_SERIES_DAILY(∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, iScenario, Nit_Reduced, ΔEvaporation_Reduced, ΔRecharge_Plot, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔSink_Reduced, pathHyPix)
-         Header =  ["iD" "Year" "Month" "Day" "Hour" "Minute" "Second" "∑T[Hour]" "ΔPr_Through[mm/day]" "ΔPet[mm/day]" "ΔSink[mm/day]" "ΔEvaporation[mm/day]" "Hpond[mm]" "Recharge[mm/day]" "∑WaterBalance_η_Profile[mm/day]"]
+      function TIME_SERIES_DAILY(∑WaterBalanceη_Reduced, Date_Reduced, iMultistep, Nit_Reduced, pathOutputHypix, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRunoff_Reduced, ΔSink_Reduced)
 
-         Path = pathHyPix.Table_TimeSerie_Daily * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+         Header =  ["iD" ,"Year" ,"Month" ,"Day" ,"Hour" ,"Minute" ,"Second" ,"ΔPrGross[mm]", "ΔPrSoil[mm]" , "ΔPet[mm]" ,"ΔSink[mm]","ΔTranspiration[mm]" ,"ΔEvaporation[mm]" ,"ΔRecharge[mm]" ,"Hpond[mm]" ,"ΔRunoff[mm]","∑WaterBalance_η[mm]"]
+
+         Path = pathOutputHypix.Table_TimeSerie_Daily * "_" * string(iMultistep) * ".csv"
 
          Id = 1:1:Nit_Reduced
 
@@ -183,10 +81,7 @@ module tableHypix
             Second₁[iT] = second(Date_Reduced[iT])
          end
 
-         open(Path, "w") do io
-            DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [Id Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ∑T_Reduced ΔPr_Reduced ΔPet_Reduced ΔSink_Reduced ΔEvaporation_Reduced ΔPond_Reduced ΔRecharge_Plot ∑WaterBalanceη_Reduced], ",")
-         end
+         CSV.write(Path, Tables.table([Id Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ΔPrGross_Reduced ΔPr_Reduced ΔPet_Reduced ΔSink_Reduced ΔSink_Reduced.-ΔEvaporation_Reduced ΔEvaporation_Reduced ΔQ_Reduced ΔPond_Reduced ΔRunoff_Reduced ∑WaterBalanceη_Reduced]), writeheader=true, header=Header, bom=true)
       return nothing
       end # Table  TIME_SERIES_DAILY
    #------------------------------------------------------
@@ -195,9 +90,8 @@ module tableHypix
    # ===================================================
    #          θ
    # ===================================================
-      function θ(Date_Reduced, θ_Reduced, Znode, iScenario, pathHyPix)
-         Path = pathHyPix.Table_θ * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+      function θ(Date_Reduced, θ_Reduced, Znode, iMultistep, pathHyPix)
+         Path = pathHyPix.Table_θ * "_" * string(iMultistep) * ".csv"
 
          Nit_Reduced = length(Date_Reduced)
 
@@ -218,20 +112,40 @@ module tableHypix
          end
 
          # Adding an other column
-            Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
-
-         DelimitedFiles.writedlm(Path, [Header -transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ θ_Reduced], ",")
+            Header = ["θ[mm² mm⁻²]_Year", "Month", "Day", "Hour", "Minute", "Second Znode[mm]"]
+            Header = vcat(Header, string.(-Znode))
+      
+         CSV.write(Path, Tables.table([Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ θ_Reduced]), writeheader=true, header=Header, bom=true)
       return nothing
       end  # Table θ
+   #------------------------------------------------------
+
+
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   #		FUNCTION : θAVERAGE
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      function θAVERAGE(Date_Reduced, iMultistep, θobs_Reduced, θsim_Aver, pathHyPix)
+         Path = pathHyPix.Table_θaverage * string(iMultistep) * ".csv"
+
+         Header = ["Id", "Year","Month","Day" ,"θobs_Aver", "θsim_Aver"]
+
+         Id = 1:1:length(θsim_Aver)
+
+         Year = year.(Date_Reduced)
+         Month = month.(Date_Reduced)
+         Day = day.(Date_Reduced)
+
+         CSV.write(Path, Tables.table([Id Year Month Day θobs_Reduced θsim_Aver]), writeheader=true, header=Header, bom=true)
+      return nothing			
+      end # function: θAVERAGE
    #------------------------------------------------------
 
 
    # ===================================================
    #          Q
    # ===================================================
-      function Q(Date_Reduced, ΔQ_Reduced, Z_Bottom, Znode, iScenario, pathHyPix)	
-         Path = pathHyPix.Table_Q * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+      function Q(Date_Reduced, ΔQ_Reduced, Z_Bottom, Znode, iMultistep, pathHyPix)	
+         Path = pathHyPix.Table_Q * "_" * string(iMultistep) * ".csv"
 
          Nit_Reduced = length(Date_Reduced)
 
@@ -254,9 +168,10 @@ module tableHypix
          # Adding an other column
          append!(Znode, Z_Bottom)
 
-         Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
+         Header = ["ΔFlux[mm]_Year", "Month", "Day", "Hour", "Minute", "Second Znode[mm]"]
+         Header = vcat(Header, string.(-Znode))
 
-         DelimitedFiles.writedlm(Path, [Header transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ΔQ_Reduced], ",")
+         CSV.write(Path, Tables.table([Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ ΔQ_Reduced]), writeheader=true, header=Header, bom=true) 
       return nothing
       end  # function Q
    #------------------------------------------------------
@@ -265,9 +180,8 @@ module tableHypix
    # ===================================================
    #          Ψ
    # ===================================================
-      function Ψ(Date_Reduced, Ψ_Reduced, Znode, iScenario, pathHyPix)
-         Path = pathHyPix.Table_Ψ * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+      function Ψ(Date_Reduced, Ψ_Reduced, Znode, iMultistep, pathHyPix)
+         Path = pathHyPix.Table_Ψ * "_" * string(iMultistep) * ".csv"
 
          Nit_Reduced = length(Date_Reduced)
 
@@ -287,11 +201,31 @@ module tableHypix
             Second₁[iT] = second(Date_Reduced[iT])
          end
 
-         Header = ["Year" "Month" "Day" "Hour" "Minute" "Second"]
+         Header = ["Ψ[mm] Year", "Month", "Day", "Hour", "Minute", "Second Znode[mm"]
+         Header = vcat(Header, string.(-Znode))
 
-         DelimitedFiles.writedlm(Path, [Header -transpose(Znode); Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ -Ψ_Reduced], ",")
+         CSV.write(Path, Tables.table([Year₁ Month₁ Day₁ Hour₁ Minute₁ Second₁ -Ψ_Reduced]), writeheader=true, header=Header, bom=true)
       return nothing
       end  # function Ψ
+   #------------------------------------------------------
+
+
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   #		FUNCTION : PERFORMACE
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, iMultistep, NseBest, paramHypix, pathHyPix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
+            
+         iSim₀ = paramHypix.opt.iOptMultiStep_Start + iOpt	
+
+         Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
+
+         Header = ["Id", "WofBest", "NseBest" ,"CccBest", "WilmotBest", "Efficiency", "Global_WaterBalance" ,"Global_WaterBalance_NormPr" ,"ΔT_Average" ,"∑∑ΔSink" ,"∑ΔQ_Bot" , "SwcRoots" ,"iNonConverge" ,"ΔRunTimeHypix"]
+
+         Id = 1:1:length(WofBest)
+
+         CSV.write(Path, Tables.table([Id  WofBest NseBest CccBest WilmotBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iOpt ΔRunTimeHypix]), writeheader=true, header=Header, bom=true)
+      return nothing
+      end # function PERFORMACE
    #------------------------------------------------------
 
 
@@ -299,9 +233,8 @@ module tableHypix
    #		FUNCTION : θΨ
    # 		Tabular values of the hydroParam model
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function θΨ(hydroHorizon, iScenario, N_Layer, optionₘ, paramHypix, pathHyPix)		
-         Path = pathHyPix.Table_θΨ * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+      function θΨ(hydroHorizon, iMultistep, N_Layer, optionₘ, paramHypix, pathHyPix)		
+         Path = pathHyPix.Table_θΨ * "_" * string(iMultistep) * ".csv"
 
          N_θΨobs = Int64(length(paramHypix.ploting.θΨ_Table))
 
@@ -309,9 +242,9 @@ module tableHypix
             FieldName_String = fill(""::String, N_θΨobs)
 
             for i =1:N_θΨobs
-               FieldName_String[i] = string(paramHypix.ploting.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
+               FieldName_String[i] = string(-paramHypix.ploting.θΨ_Table[i] )
             end
-            pushfirst!(FieldName_String, string("Layer")) # Write the "Id" at the very begenning
+            pushfirst!(FieldName_String, string("Ψ[mm] / θ(Ψ)[mm² mm⁻²]")) # Write the "Id" at the very begenning
          
          # Computing θ at required θ
             θ_Mod = fill(0.0::Float64, (N_Layer, N_θΨobs))
@@ -326,13 +259,8 @@ module tableHypix
          θ_Mod = hcat(Id, θ_Mod)
 
          # Writting the table
-            open(Path, "w") do io
-               DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
-               for iZ = 1:N_Layer
-                  # DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
-                  DelimitedFiles.writedlm(io, [θ_Mod[iZ, 1:N_θΨobs+1]], ",")
-               end # i
-            end # Path
+            CSV.write(Path, Tables.table(θ_Mod[1:N_Layer, 1:N_θΨobs+1]), writeheader=true, header=FieldName_String, bom=true)
+
       return nothing	
       end  # function:  θΨK_PSD
    #------------------------------------------------------
@@ -342,9 +270,8 @@ module tableHypix
    #		FUNCTION : KΨ
    # 		Tabular values of the hydroParam model
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function KΨ(hydroHorizon, iScenario, N_Layer, optionₘ, paramHypix, pathHyPix)				
-         Path = pathHyPix.Table_KΨ * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+      function KΨ(hydroHorizon, iMultistep, N_Layer, optionₘ, paramHypix, pathHyPix)				
+         Path = pathHyPix.Table_KΨ * "_" * string(iMultistep) * ".csv"
 
          N_θΨobs = Int64(length(paramHypix.ploting.θΨ_Table))
 
@@ -352,15 +279,15 @@ module tableHypix
             FieldName_String = fill(""::String, N_θΨobs)
 
             for i =1:N_θΨobs
-               FieldName_String[i] = string(paramHypix.ploting.θΨ_Table[i] * cst.Mm_2_Cm) * "cm"
+               FieldName_String[i] = string(paramHypix.ploting.θΨ_Table[i])
             end
-            pushfirst!(FieldName_String, string("Layer Cm/H")) # Write the "Id" at the very begenning
+            pushfirst!(FieldName_String, string("Ψ[mm] / K(Ψ)[mm/hour]")) # Write the "Id" at the very begenning
          
          # Computing θ at required θ
             K_Mod = fill(0.0::Float64, (N_Layer, N_θΨobs))
             for iZ=1:N_Layer, iΨ =1:N_θΨobs
-                  Ψ_Mod =paramHypix.ploting.θΨ_Table[iΨ]
-                  K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_CmH
+               Ψ_Mod =paramHypix.ploting.θΨ_Table[iΨ]
+               K_Mod[iZ, iΨ] = kunsat.Ψ_2_KUNSAT(optionₘ, Ψ_Mod, iZ, hydroHorizon) .* cst.MmS_2_MmH
             end # iZ
 
          # Concatenating the 2 matrices
@@ -369,83 +296,73 @@ module tableHypix
          K_Mod = hcat(Id, K_Mod)
 
          # Writting the table
-            open(Path, "w") do io
-               DelimitedFiles.writedlm(io, [FieldName_String] , ",",) # Header
-               for iZ = 1:N_Layer
-                  DelimitedFiles.writedlm(io, [K_Mod[iZ,1:N_θΨobs+1]], ",")
-               end # i
-            end # Path
+            CSV.write(Path, Tables.table(K_Mod[1:N_Layer,1:N_θΨobs+1]), writeheader=true, header=FieldName_String, bom=true)
       return nothing	
       end  # function:  θΨK_PSD
    #------------------------------------------------------
 
 
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : PERFORMACE
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, iScenario, NseBest, paramHypix, pathHyPix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
-         
-         iSim₀ = paramHypix.opt.iOptMultiStep_Start + iOpt	
+   # ===================================================
+   #          DISCRETISATION AUTO
+   # ===================================================
+      function DISCRETISATION_AUTO(Flag_θΨini::Symbol, Layer::Vector{Int64}, PathDiscretisation::String, Z::Vector{Float64}, θini_or_Ψini_Cell::Vector{Float64})
 
-         Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
-         # println("			~  $(Path) ~")
+         if Flag_θΨini == :Ψini
+            Header = ["iZ","Z", "Layer", "Ψini"]
 
-         Header = ["Id" "WofBest" "NseBest" "CccBest" "WilmotBest" "Efficiency" "Global_WaterBalance" "Global_WaterBalance_NormPr" "ΔT_Average" "∑∑ΔSink" "∑ΔQ_Bot" "SwcRoots" "iNonConverge" "ΔRunTimeHypix"]
-
-         Id = 1:1:length(WofBest)
-
-         open(Path, "w") do io
-            # DelimitedFiles.write(io, [0xef,0xbb,0xbf])  # To reading utf-8 encoding in excel
-            DelimitedFiles.write(io, [0xef,0xbb,0xbf]) 
-            DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [Id  WofBest NseBest CccBest WilmotBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iOpt ΔRunTimeHypix], ",")
+         elseif Flag_θΨini == :θini
+            Header = ["iZ","Z", "Layer", "θini"]
          end
+
+         iZ = collect(1:1:length(Z))
+
+         CSV.write(PathDiscretisation, Tables.table([iZ Z Layer θini_or_Ψini_Cell]), writeheader=true, header=Header, bom=true)
       return nothing
-      end # function PERFORMACE
+      end # Table DISCRETISATION_AUTO
+   #------------------------------------------------------
+
+
+   # ===================================================
+   #          Discretization
+   # ===================================================
+      function DISCRETISATION_RRE(discret, NiZ, Z, pathHyPix)
+         Header =  ["Z", "ΔZ", "ΔZ_⬓", "Znode", "ΔZ_Aver", "ΔZ_W", "Z_CellUp"]
+
+         CSV.write(pathHyPix.Table_Discretisation, Tables.table( [Z[1:NiZ] discret.ΔZ[1:NiZ] discret.ΔZ_⬓[1:NiZ] discret.Znode[1:NiZ] discret.ΔZ_Aver[1:NiZ] discret.ΔZ_W[1:NiZ] discret.Z_CellUp[1:NiZ]]), writeheader=true, header=Header, bom=true)
+      return nothing
+      end # Table DISCRETISATION
    #------------------------------------------------------
 
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : DAILY_CLIMATE
+   #		FUNCTION : HYDRO
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function DAILY_CLIMATE(∑T_Climate, clim, iScenario, pathHyPix)
-         Path = pathHyPix.Table_DailyClimate * "_" * string(iScenario) * ".csv"
-         # println("			~  $(Path) ~")
+      function HYDRO(hydroHorizon, iMultistep, N_Layer, pathOutputHypix)
+         Path = pathOutputHypix.Table_Hydro  * "_" * string(iMultistep) * ".csv"
 
-         local ∑T_Int = ceil.(Int, ∑T_Climate[1:clim.N_Climate] .* cst.Second_2_Day)
+         Id = 1:1:N_Layer
 
-         Header = ["Year" "Month" "Day" "Pr" "Pr_Ground"]
+         Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(N_Layer, hydroHorizon)
+               
+         pushfirst!(FieldName_String, string("Id")) # Write the "Id" at the very begenning
 
-         open(Path, "w") do io
-            DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [year.(clim.Date[1:clim.N_Climate]) month.(clim.Date[1:clim.N_Climate]) day.(clim.Date[1:clim.N_Climate]) clim.Pr[1:clim.N_Climate] clim.Pr_Through] , ",")
-         end
-      return nothing	
-      end  # function: DAILY_CLIMATE
-   #------------------------------------------------------
-
-
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : θAVERAGE
-   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function θAVERAGE(Date_Reduced, iScenario, θobs_Reduced, θsim_Aver, pathHyPix)
-         Path = pathHyPix.Table_θaverage * ".csv"
-         # println("			~  $(Path) ~")
-
-         Header = ["Id", "Year","Month","Day" ,"θobs_Aver", "θsim_Aver"]
-
-         Id = 1:1:length(θsim_Aver)
-
-         Year = year.(Date_Reduced)
-         Month = month.(Date_Reduced)
-         Day = day.(Date_Reduced)
-
-         open(Path, "w") do io
-            DelimitedFiles.writedlm(io,[Header] , ",",) # Header
-            DelimitedFiles.writedlm(io, [Id Year Month Day θobs_Reduced θsim_Aver] , ",")
-         end # open
+         CSV.write(Path, Tables.table([Int64.(Id) Matrix]), writeheader=true, header=FieldName_String, bom=true)
       return nothing			
-      end # function: θAVERAGE
+      end  # function: HYDRO
+   #------------------------------------------------------
+   
+
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   #		FUNCTION : veg
+   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      function VEG(veg, iMultistep, pathHyPix)
+         Path = pathHyPix.Table_Veg * "_" * string(iMultistep) * ".csv"
+
+         Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(1, veg)
+       
+         CSV.write(Path, Tables.table(Matrix), writeheader=true, header=FieldName_String, bom=true)
+      return nothing
+      end  # function: VEG
    #------------------------------------------------------
 
 end  # module: tableHyix

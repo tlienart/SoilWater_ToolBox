@@ -9,7 +9,7 @@ module flux
 		function K_AVER!(optionHypix, paramHypix, discret, hydro, iZ::Int64, NiZ::Int64, ψ_, ψ▲; Pₘₑₐₙ=1)
 			if iZ == 1 # <>=<>=<>=<>=<>
 				if optionHypix.TopBoundary⍰  == "Flux" # <> = <> = <> = <> = <>
-					return 0.0
+					return 0.0::Float64
 
 				elseif optionHypix.TopBoundary⍰  == "Ψ" # <> = <> = <> = <> = <>
 					return max(Ψ_2_KUNSAT(optionHypix, ψ_, 1, hydro), 1.0E-14)
@@ -36,7 +36,7 @@ module flux
 		function Q!(optionHypix, discret, hydro, iZ::Int64, iT::Int64, NiZ::Int64, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, ψ_, ψ▲)
 			if iZ == 1  # <>=<>=<>=<>=<>
 				if optionHypix.TopBoundary⍰  == "Flux" 
-					return (ΔPr[iT] + Hpond[iT-1] - Hpond[iT]) / ΔT[iT]
+					return max(ΔPr[iT] + Hpond[iT-1] - Hpond[iT], 0.0::Float64) / ΔT[iT]
 
 				elseif optionHypix.TopBoundary⍰ == "Ψ" 
 					K_Aver = K_AVER!(optionHypix, paramHypix, discret, hydro, iZ, NiZ, ψ_, ψ▲)
@@ -89,7 +89,7 @@ module flux
 
 				if iZ == 1 # <>=<>=<>=<>=<>
 					if optionHypix.TopBoundary⍰ == "Flux" # =<>=<>=<>=<>=<>
-						return 0.0
+						return 0.0::Float64
 
 					elseif optionHypix.TopBoundary⍰ == "Ψ" # =<>=<>=<>=<>=<>
 						K_Aver = flux.K_AVER!(optionHypix, paramHypix, discret, hydro, iZ, NiZ, Ψ[iT,iZ], Ψ[iT,iZ])

@@ -136,7 +136,7 @@ module readHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : HYPIX_PARAM
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function HYPIX_PARAM(Layer, hydro, hydroHorizon, iMultistep::Int64, NiZ::Int64, option, param, Path::String, veg)
+      function HYPIX_PARAM(Layer, hydro, hydroHorizon, iMultistep::Int64, NiZ::Int64, optionHypix, paramHypix, Path::String, veg)
          # Read data
             Data = DelimitedFiles.readdlm(Path, ',')
          # Read header
@@ -179,7 +179,7 @@ module readHypix
          """Determening if multistep optimisation is performed (not the first step)
          This is such that the optimal values of the previous optimisation step is kept in memory
          We need to determine what next param to optimize"""
-            if Flag_Opt && (iMultistep ≥ param.hyPix.iOptMultiStep_Start + 1)
+            if Flag_Opt && (iMultistep ≥ paramHypix.opt.iOptMultiStep_Start + 1)
                Flag_MultiStepOpt = true
             else
                Flag_MultiStepOpt = false 
@@ -263,29 +263,28 @@ module readHypix
                if Param_Min[iNameOpt] > Param_Max[iNameOpt]
                   error("HYPIX ERROR: $(Param_Min[iNameOpt]) < $(Name_Unique[i]) < $(Param_Max[iNameOpt]) !")
                end
-
             end
          end # for loop
 
          if !(Flag_MultiStepOpt)
             # Hydraulic parameters per horizon to layers
-            hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, option)
+            hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
          end
 
          NparamOpt = length(ParamOpt)
 
          # CHECKING FOR UNCONSISTENCY WITH OPTIONS	
-         if Flag_Opt && option.hyPix.σ_2_Ψm⍰ ≠ "No" && "Ψm" ∈ ParamOpt
+         if Flag_Opt && optionHypix.opt.σ_2_Ψm⍰ ≠ "No" && "Ψm" ∈ ParamOpt
             iψm = findfirst(isequal("Ψm"), ParamOpt)[1]
 
-            if option.hyPix.σ_2_Ψm⍰=="UniqueRelationship" && "Ψm" ∈ ParamOpt
-               error( "**** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==UniqueRelationship) && (Optimise=Ψm)!")
+            if optionHypix.opt.σ_2_Ψm⍰=="UniqueRelationship" && "Ψm" ∈ ParamOpt
+               error( "**** HyPix Error: combination of options which are not possible (optionHypix.opt.σ_2_Ψm⍰==UniqueRelationship) && (Optimise=Ψm)!")
 
-            elseif option.hyPix.σ_2_Ψm⍰=="Constrained" && !("Ψm" ∈ ParamOpt)
-               error("*** HyPix Error: combination of options which are not possible (option.hyPix.σ_2_Ψm⍰==Constrained) && (not Optimising=Ψm)!")
+            elseif optionHypix.opt.σ_2_Ψm⍰=="Constrained" && !("Ψm" ∈ ParamOpt)
+               error("*** HyPix Error: combination of options which are not possible (optionHypix.opt.σ_2_Ψm⍰==Constrained) && (not Optimising=Ψm)!")
 
-            elseif option.hyPix.σ_2_Ψm⍰=="Constrained" && ParamOpt_LogTransform[iψm]==1
-               error("*** option.hyPix.σ_2_Ψm⍰==Constrained CANNOT log transforme Ψm") 
+            elseif optionHypix.opt.σ_2_Ψm⍰=="Constrained" && ParamOpt_LogTransform[iψm]==1
+               error("*** optionHypix.opt.σ_2_Ψm⍰==Constrained CANNOT log transforme Ψm") 
             end
          end # Flag_Opt
 
@@ -487,7 +486,7 @@ module readHypix
 
          # ∑T_Reduced = collect(range(Date[1], step=Hour[1], stop=Date[end])) 
             # ΔTimeStep = param.hyPix.ΔT_Output
-            # if option.hyPix.θobs_Reduced && ΔTimeStep < 86400
+            # if optionHypix.θobs_Reduced && ΔTimeStep < 86400
             # 	True = falses(Nit)
             # 	iCount = 0 
             # 	for iT=1:Nit
@@ -525,16 +524,14 @@ module readHypix
             LookUpTable_Lai, ~   = tool.readWrite.READ_HEADER(PathLai, "Lai")
          end
          
-         i = 1
          Laiᵀ_Norm = fill(0.0::Float64, clim.N_Climate) 
-         for Date in clim.Date
+         for (i, Date) in enumerate(clim.Date)
             Month = month(Date)
             if optionHypix.LookupTable_Lai == true
                Laiᵀ_Norm[i] = LookUpTable_Lai[Month]
             else
                Laiᵀ_Norm[i] = veg.Lai
             end
-            i += 1
          end
       
       return Laiᵀ_Norm
@@ -545,16 +542,14 @@ module readHypix
             LookUpTable_CropCoeficient, ~   = tool.readWrite.READ_HEADER(PathLai, "CropCoeficient")
          end
          
-         i = 1
          CropCoeficientᵀ_Norm = fill(0.0::Float64, clim.N_Climate) 
-         for Date in clim.Date
+         for (i, Date) in enumerate(clim.Date)
             Month = month(Date)
             if optionHypix.LookUpTable_CropCoeficient == true
                CropCoeficientᵀ_Norm[i] = LookUpTable_CropCoeficient[Month]
             else
                CropCoeficientᵀ_Norm[i] = veg.CropCoeficient
             end
-            i+=1
          end
       return CropCoeficientᵀ_Norm
       end  # function: LOOKUPTABLE_LAI

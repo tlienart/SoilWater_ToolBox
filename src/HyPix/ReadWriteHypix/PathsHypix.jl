@@ -6,9 +6,10 @@ module pathsHypix
 	using Configurations
 
 	@option mutable struct PATHYPIX
+		ScenarioName::String
+
 		Input_OfStep::String
 
-		Table_DailyClimate::String
 		Table_Discretisation::String
 		Table_Hydro::String
 		Table_KΨ::String
@@ -54,29 +55,30 @@ module pathsHypix
 
 					Path_Hypix_Table = Path_Hypix_Table * SiteName₀ * "_"
 
-					pathHypix.Table_DailyClimate    = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_DailyClimate
-					pathHypix.Table_Discretisation  = Path_Hypix_Table  *  SiteName₀ * "_" *pathHypix.Table_Discretisation
-					pathHypix.Table_Hydro           = Path_Hypix_Table  *  SiteName₀ * "_" *pathHypix.Table_Hydro
-					pathHypix.Table_KΨ              = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_KΨ
-					pathHypix.Table_Performance     = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_Performance
-					pathHypix.Table_Q               = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_Q
-					pathHypix.Table_TimeSerie_Daily = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_TimeSerie_Daily
-					pathHypix.Table_Veg             = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_Veg
-					pathHypix.Table_θ               = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_θ
-					pathHypix.Table_θΨ              = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_θΨ
-					pathHypix.Table_Ψ               = Path_Hypix_Table  *  SiteName₀ * "_"* pathHypix.Table_Ψ
+					pathHypix.Table_Discretisation  = Path_Hypix_Table  *  pathHypix.ScenarioName * "_" *pathHypix.Table_Discretisation
+					pathHypix.Table_Hydro           = Path_Hypix_Table  *  pathHypix.ScenarioName * "_" *pathHypix.Table_Hydro
+					pathHypix.Table_KΨ              = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_KΨ
+					pathHypix.Table_Performance     = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_Performance
+					pathHypix.Table_Q               = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_Q
+					pathHypix.Table_TimeSerie_Daily = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_TimeSerie_Daily
+					pathHypix.Table_Veg             = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_Veg
+					pathHypix.Table_θ               = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_θ
+					pathHypix.Table_θΨ              = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_θΨ
+					pathHypix.Table_Ψ               = Path_Hypix_Table  *  pathHypix.ScenarioName * "_"* pathHypix.Table_Ψ
 
 				# HYPIX PLOT
 					Path_Hypix_Plot = Path_OutputHypix * "/Plots/" 	
 						mkpath(Path_Hypix_Plot)
 
-						pathHypix.Plot_HypixTime            = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Plot_HypixTime
-						pathHypix.Plot_θprofile             = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Plot_θprofile
-						pathHypix.Plot_Hypix_θΨK            = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Plot_Hypix_θΨK
-						pathHypix.Plot_RainfallInterception = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Plot_RainfallInterception
-						pathHypix.Plot_Se_Time              = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Plot_Se_Time
-						pathHypix.Plot_Sorptivity           = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Plot_Sorptivity
-						pathHypix.Vegetation                = Path_Hypix_Plot * SiteName₀  * "_" * pathHypix.Vegetation
+						Path_Hypix_Plot = Path_Hypix_Plot * SiteName₀ * "_"
+
+						pathHypix.Plot_HypixTime            = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Plot_HypixTime
+						pathHypix.Plot_θprofile             = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Plot_θprofile
+						pathHypix.Plot_Hypix_θΨK            = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Plot_Hypix_θΨK
+						pathHypix.Plot_RainfallInterception = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Plot_RainfallInterception
+						pathHypix.Plot_Se_Time              = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Plot_Se_Time
+						pathHypix.Plot_Sorptivity           = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Plot_Sorptivity
+						pathHypix.Vegetation                = Path_Hypix_Plot * pathHypix.ScenarioName  * "_" * pathHypix.Vegetation
 
 				# HYPIX OTHERS
 					Path_Hypix_Other =  Path_Hypix * "\\data\\OUTPUT\\Hypix\\" * ProjectHypix * "\\" * "OTHER" *  "\\"  

@@ -78,7 +78,7 @@ module richard
 
 		return Flag_NoConverge, Flag_ReRun, Hpond, iCount_ReRun, iNonConverge, iTer, IterCount, Q, ΔRunoff, ΔT, θ, Ψ
 		end  # function: RICHARD_SOLVING
-	#-----------------------------------------------------------------
+	#----------------------------------------------------------]-------
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,10 +86,11 @@ module richard
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge::Bool, hydro, iT::Int64, NiZ::Int64, optionHypix, paramHypix, Q, Residual, Sorptivity, Hpond, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ, Ψ_Max)
 
-			if optionHypix.Ponding
+			if optionHypix.Ponding && (ΔPr[iT] > eps(100.) || Hpond[iT-1] > eps(100.))
 				Hpond, ΔRunoff = ponding.PONDING_RUNOFF_SORPTIVITY(discret, Hpond, hydro, iT, optionHypix, paramHypix, Sorptivity, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ)
 			else
-				Hpond[iT] = 0.0::Float64
+            Hpond[iT]   = 0.0::Float64
+            ΔRunoff[iT] = 0.0::Float64
 			end
 
 	#----------------------------------------------------------------

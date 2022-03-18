@@ -80,16 +80,16 @@ module hypixOpt
 			if (optionHypix.opt.σ_2_Ψm⍰=="Constrained") && ("Ψm" ∈ optim.ParamOpt)
 				iψm = findfirst(isequal("Ψm"), optim.ParamOpt)[1]
 
-				ParamOpt_Min₂[iψm] = 0.0
-				ParamOpt_Max₂[iψm] = 1.0
+				ParamOpt_Min₂[iψm] = 0.0::Float64
+				ParamOpt_Max₂[iψm] = 1.0::Float64
 			end # optionHypix.opt.σ_2_Ψm⍰==Constrained
 
       # "θs_Opt⍰"                 = "No" #  <θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all profiles; <No>
 			if  ("θs" ∈ optim.ParamOpt) && (optionHypix.opt.θs_Opt⍰ ≠ "No")
 				iθs = findfirst(isequal("θs"), optim.ParamOpt)[1]
 
-				ParamOpt_Min₂[iθs] = 0.0
-				ParamOpt_Max₂[iθs] = 1.0
+				ParamOpt_Min₂[iθs] = 0.0::Float64
+				ParamOpt_Max₂[iθs] = 1.0::Float64
 			end # "θs" ∈ optim.ParamOpt
 
 			SearchRange = (collect(zip(Float64.(ParamOpt_Min₂), Float64.(ParamOpt_Max₂))))
@@ -150,7 +150,7 @@ module hypixOpt
 					iHorizon_Start = optim.ParamOpt_HorizonEq[iParam][1]
 					iHorizon_End   = optim.ParamOpt_HorizonEq[iParam][2]
 
-					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, optionHypix, paramHypix)
+					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, optionHypix.opt)
 
 				# Updating the horizons which are optimised simultaneously
 					for iZ = iHorizon_Start:iHorizon_End
@@ -159,7 +159,7 @@ module hypixOpt
 			end # optionHypix.opt.σ_2_Ψm⍰ ≠ No
 
 			#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
-				if optionHypix.opt.σ_2_θr⍰ && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
+				if optionHypix.opt.σ_2_θr && ("θr" ∉ optim.ParamOpt) && ("σ" ∈ optim.ParamOpt)
 					iParam = findfirst(isequal("σ"), optim.ParamOpt)[1]
 
 					iHorizon_Start = optim.ParamOpt_HorizonEq[iParam][1]

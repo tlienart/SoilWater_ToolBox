@@ -100,9 +100,9 @@ module hypixModel
 
 			for iZ = 1:NiZ
             Ψbest[iZ] = Ψ[1,iZ]
-            Q[1,NiZ]  = 0.0
+            Q[1,NiZ]  = 0.0::Float64
 			end
-			Q[1,NiZ+1] = 0.0
+			Q[1,NiZ+1] = 0.0::Float64
 
 		# =+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+=+=+=+==+=+=+=+=+=+
 		while true # this controles the time loop
@@ -127,7 +127,7 @@ module hypixModel
 					ΔPet_Evap, ΔPet_Transp = pet.BEER_LAMBERT_LAW(iT, Laiᵀ[iT_Pr-1], ΔPet, veg)
 				else
 					ΔPet_Transp = ΔPet[iT]
-					ΔPet_Evap = 0.0
+					ΔPet_Evap = 0.0::Float64
 				end
 				
 			# ROOT WATER UPTAKE MODEL

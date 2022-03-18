@@ -1,5 +1,5 @@
 # =============================================================
-#		MODULE: tincrease
+#		MODULE: Δtchange
 # =============================================================
 module Δtchange
 	import ..interpolate, ..tool, ..cst
@@ -13,8 +13,8 @@ module Δtchange
          ∑Runoff      = fill(0.0::Float64, Nit)
          ∑ΔQ          = fill(0.0::Float64, Nit, NiZ+1)
 
-			∑Evaporation[1]    = 0.0
-         ∑ΔQ[1, 1:NiZ+1]  .= 0.0
+			∑Evaporation[1]    = 0.0::Float64
+         ∑ΔQ[1, 1:NiZ+1]  .= 0.0::Float64
 			for iT=2:Nit
 				∑Evaporation[iT] = ∑Evaporation[iT-1] + ΔEvaporation[iT]
 				for iZ=1:NiZ+1
@@ -23,7 +23,7 @@ module Δtchange
 			end
 
 		# ∑Pr_Gross
-			∑Pr_Gross[1] = 0.0
+			∑Pr_Gross[1] = 0.0::Float64
 			for iT= 2:clim.N_Climate
 				∑Pr_Gross[iT] = ∑Pr_Gross[iT-1] + clim.Pr[iT]
 			end
@@ -31,13 +31,13 @@ module Δtchange
 		# ∑Runoff
 			∑Runoff[1] = ΔRunoff[1]
 			for iT=2:Nit
-				∑Runoff[iT] = ΔRunoff[iT-1] + ΔRunoff[iT]
+				∑Runoff[iT] = ∑Runoff[iT-1] + ΔRunoff[iT]
 			end
 
 		# PREPARING DATA FOR PLOTS
 			ΔT_Sim = value(obsTheta.Date[obsTheta.Nit] - obsTheta.Date[1]) / 1000
 
-			∑T_Reduced = collect(range(0.0, step=paramHypix.ΔT_Output, stop=ΔT_Sim)) 
+			∑T_Reduced = collect(range(0.0::Float64, step=paramHypix.ΔT_Output, stop=ΔT_Sim)) 
 			
 			# Take account that we are starting at Date_Start_Calibr
 			ΔT_Start_Calibr = value(obsTheta.Date[1] - clim.Date[1]) / 1000
@@ -90,24 +90,26 @@ module Δtchange
 				∑PrGross_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T_Climate[1:clim.N_Climate], ∑T_Reduced, Nit_Reduced, clim.N_Climate, ∑PrGross_Reduced, ∑Pr_Gross)
 
 			ΔPond_Reduced = fill(0.0, Nit_Reduced)
-				ΔPond_Reduced = interpolate.INTERPOLATE_1D_LOOP(∑T, ∑T_Reduced, Nit_Reduced, Nit, ΔPond_Reduced, Hpond)
+				ΔPond_Reduced = interpolate.INTERPOLATE_1D_MAX(∑T, ∑T_Reduced, Nit_Reduced, Nit, ΔPond_Reduced, Hpond)
 
 			# From ∑ to Δ
             ΔEvaporation_Reduced = fill(0.0::Float64, Nit_Reduced)
-            ΔQ_Reduced        = fill(0.0::Float64, Nit_Reduced, NiZ+1)
+            ΔQ_Reduced           = fill(0.0::Float64, Nit_Reduced, NiZ+1)
             ΔPet_Reduced         = fill(0.0::Float64, Nit_Reduced)
-				ΔPr_Reduced          = fill(0.0::Float64, Nit_Reduced)
-				ΔPrGross_Reduced     = fill(0.0::Float64, Nit_Reduced)
+            ΔPr_Reduced          = fill(0.0::Float64, Nit_Reduced)
+            ΔPrGross_Reduced     = fill(0.0::Float64, Nit_Reduced)
             ΔSink_Reduced        = fill(0.0::Float64, Nit_Reduced)
+            ΔRunoff_Reduced       = fill(0.0::Float64, Nit_Reduced)
 				
 			# Root Water Uptake daily 
 				# Initial condition
-            ΔEvaporation_Reduced[1]         = 0.0
-            ΔQ_Reduced[1,1:NiZ+1]           .= 0.0
-            ΔPet_Reduced[1]                 = 0.0
-            ΔPr_Reduced[1]                  = 0.0
-            ΔPrGross_Reduced[1]             = 0.0
-            ΔSink_Reduced[1]                = 0.0
+            ΔEvaporation_Reduced[1]         = 0.0::Float64
+            ΔQ_Reduced[1,1:NiZ+1]           .= 0.0::Float64
+            ΔPet_Reduced[1]                 = 0.0::Float64
+            ΔPr_Reduced[1]                  = 0.0::Float64
+            ΔPrGross_Reduced[1]             = 0.0::Float64
+            ΔSink_Reduced[1]                = 0.0::Float64
+				ΔRunoff_Reduced[1]              = 0.0::Float64
 
 			# ∑T_Reduced[1] = ∑T_Reduced[1]
 			for iT=2:Nit_Reduced
@@ -120,17 +122,19 @@ module Δtchange
 
             ΔPet_Reduced[iT]         = ∑Pet_Reduced[iT] - ∑Pet_Reduced[iT-1]
 
-            ΔPr_Reduced[iT]          = max(∑Pr_Reduced[iT] - ∑Pr_Reduced[iT-1], 0.0) # Numerical stability
+            ΔPr_Reduced[iT]          = max(∑Pr_Reduced[iT] - ∑Pr_Reduced[iT-1], 0.0::Float64) # Numerical stability
 
-            ΔPrGross_Reduced[iT]     = max(∑PrGross_Reduced[iT] - ∑PrGross_Reduced[iT-1], 0.0)
+            ΔPrGross_Reduced[iT]     = max(∑PrGross_Reduced[iT] - ∑PrGross_Reduced[iT-1], 0.0::Float64)
 				
-            ΔEvaporation_Reduced[iT] = max(∑Evaporation_Reduced[iT] -  ∑Evaporation_Reduced[iT-1], 0.0)
+            ΔEvaporation_Reduced[iT] = max(∑Evaporation_Reduced[iT] -  ∑Evaporation_Reduced[iT-1], 0.0::Float64)
+				
+            ΔRunoff_Reduced[iT]      = max(∑Runoff_Reduced[iT] - ∑Runoff_Reduced[iT-1], 0.0::Float64)
 			end  # for iT=1:Nit
 		
-	return ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced
+	return ∑Runoff_Reduced, ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRunoff_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced
 
 	
 	end # function: CHANGE_OUTPUT_ΔT
 	
-end  # module: tincrease
+end  # module: Δtchange
 # ............................................................

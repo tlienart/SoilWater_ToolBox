@@ -28,7 +28,7 @@ module discretisation
 			# Cell 1[p]
 				ΔZ[1]       = Z[1];
 				ΔZ_⬓[1]     = ΔZ[1] * 0.5
-				Z_CellUp[1] = 0.0
+				Z_CellUp[1] = 0.0::Float64
 				Znode[1]    = ΔZ_⬓[1]	
 				ΔZ_Aver[1]  = NaN
 				ΔZ_W[1]     = NaN

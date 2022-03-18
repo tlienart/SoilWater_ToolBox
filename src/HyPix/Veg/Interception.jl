@@ -6,9 +6,9 @@ module interception
 	function RAINFALL_INTERCEPTION_START(∑Pet_Climate::Vector{Float64}, ∑Pr_Climate::Vector{Float64}, clim, Laiᵀ_Norm::Vector{Float64}, optionHypix, veg)
 			
 		# INTERCEPTION MODEL
-		Sint = 0.0::Float64
-		clim.Pr_Through[1] = 0.0::Float64
-		clim.Pet[1] = 0.0::Float64
+      Sint               = 0.0::Float64
+      clim.Pr_Through[1] = 0.0::Float64
+      clim.Pet[1]        = 0.0::Float64
 
 		@fastmath @inbounds for iT = 2:clim.N_Climate
 			# Maximum water storage of the vegetation
@@ -61,7 +61,7 @@ module interception
 			ΔEvap_Int = min(ΔPet_Int * (Sint₂ / Sint_Sat) ^ PevapInt, Sint₂)
 	
 		# ΔPr that overflows because the vegetation cannot store more water
-			ΔPr_Over = max(Sint + ΔPr_Int - ΔEvap_Int - Sint_Sat, 0.0)
+			ΔPr_Over = max(Sint + ΔPr_Int - ΔEvap_Int - Sint_Sat, 0.0::Float64)
 
 		# Amount of water stored in the vegetaion. Sint =< Sint_Sat
 			Sint = Sint + ΔPr_Int - ΔEvap_Int - ΔPr_Over

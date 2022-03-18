@@ -44,12 +44,10 @@ module optionsHypix
 		Table::Bool
 		Table_Discretization::Bool
 		Table_Q::Bool
-		Table_TimeSeries::Bool
 		Table_Ψ::Bool
 		Table_θ::Bool
-		Table_TimeSeriesDaily::Bool
+		Table_TimeSerie::Bool
 		Tabule_θΨ::Bool
-		Table_Climate::Bool
 		Ploting::Bool
 		Plot_θprofile::Bool
 		Plot_Vegetation::Bool

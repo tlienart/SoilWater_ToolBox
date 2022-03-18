@@ -48,7 +48,7 @@ module residual
 			if iZ ≥ 2
 				∂R∂Ψ△ = - ΔT[iT] * ∂Q∂Ψ△₁
 			else
-				∂R∂Ψ△ = 0.0
+				∂R∂Ψ△ = 0.0::Float64
 			end
 
 			∂R∂Ψ = discret.ΔZ[iZ] * (∂θ∂Ψ₁ * (1.0 - Sw * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) ) - Sw * θ[iT,iZ]) - ΔT[iT] * (∂Q∂Ψ₁ - ∂Q▽∂Ψ₁)
@@ -56,7 +56,7 @@ module residual
 			if iZ ≤ NiZ-1
 				∂R∂Ψ▽ = ΔT[iT] * ∂Q▽∂Ψ▽₁
 			else
-				∂R∂Ψ▽ = 0.0
+				∂R∂Ψ▽ = 0.0::Float64
 			end
 
 		return ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽
@@ -92,7 +92,7 @@ module residual
 
 			ψ = Ψ_
 
-			∂R∂Ψ_Func(ψ) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, max(ψ,0.0), Ψ▼, Ψ_Max)[1]
+			∂R∂Ψ_Func(ψ) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, max(ψ,0.0::Float64), Ψ▼, Ψ_Max)[1]
 
 			∂R∂Ψ_Derivative_1 = ψ -> derivative(∂R∂Ψ_Func, ψ)	
 
@@ -109,13 +109,13 @@ module residual
 			if iZ ≤ NiZ-1
 				ψ▼ = Ψ▼
 
-				∂R∂Ψ_Func(ψ▼) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, max(ψ▼,0.0), Ψ_Max)[1]
+				∂R∂Ψ_Func(ψ▼) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, max(ψ▼,0.0::Float64), Ψ_Max)[1]
 
 				∂R∂Ψ_Derivative_1 = ψ▼ -> derivative(∂R∂Ψ_Func, ψ▼)			
 				
 				return ∂R∂Ψ_Derivative_1(ψ▼)
 			else
-				return 0.0
+				return 0.0::Float64
 			end
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
@@ -135,7 +135,7 @@ module residual
 				
 				return ∂R∂Ψ_Derivative_1(ψ▲)
 			else
-				return 0.0
+				return 0.0::Float64
 			end
 		end # function: ∂RESIDUAL∂Ψ_NUMERICAL
 	#-------------------------------------------------------------------
@@ -147,7 +147,7 @@ module residual
 		function ∂∂R∂Ψ_FORWARDDIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)	
 			ψ = Ψ_
 
-			∂R∂Ψ_Func(ψ) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, max(ψ,0.0), Ψ▼, Ψ_Max)[1]
+			∂R∂Ψ_Func(ψ) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, max(ψ,0.0::Float64), Ψ▼, Ψ_Max)[1]
 			
 			∂R∂Ψ_Derivative_1 = ψ -> derivative(∂R∂Ψ_Func, ψ)	
 
@@ -168,7 +168,7 @@ module residual
 		function ∂∂R∂Ψ▽_FORWARDDIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)
 			ψ▼ = Ψ▼
 
-			∂R∂Ψ_Func(ψ▼) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, max(ψ▼,0.0), Ψ_Max)[1]
+			∂R∂Ψ_Func(ψ▼) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, max(ψ▼,0.0::Float64), Ψ_Max)[1]
 			
 			∂R∂Ψ_Derivative_1 = ψ▼ -> derivative(∂R∂Ψ_Func, ψ▼)
 			
@@ -185,7 +185,7 @@ module residual
 		function ∂∂R∂Ψ△_FORWARDDIFF(Flag_NoConverge::Bool, discret, hydro, iT::Int64, iZ::Int64, NiZ::Int64, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, Ψ▲, Ψ₀, Ψbest_, Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)
 			ψ▲ = Ψ▲
 
-			∂R∂Ψ_Func(ψ▲) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, max(ψ▲,0.0), Ψ₀, Ψbest_,Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)[1]
+			∂R∂Ψ_Func(ψ▲) = RESIDUAL_DIFF(Flag_NoConverge, discret, hydro, iT, iZ, NiZ, optionHypix, paramHypix, Hpond, ΔPr, ΔSink, ΔT, θ, max(ψ▲,0.0::Float64), Ψ₀, Ψbest_,Ψbest▲, Ψbest▼, Ψ_, Ψ▼, Ψ_Max)[1]
 			
 			∂R∂Ψ_Derivative_1 = ψ▲ -> derivative(∂R∂Ψ_Func, ψ▲)
 			

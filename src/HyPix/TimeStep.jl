@@ -68,12 +68,12 @@ module timeStep
 	#		FUNCTION : ΔθMAX
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ΔθMAX(hydro, iT::Int64, iZ::Int64, optionHypix, ΔLnΨmax::Vector{Float64}, Ψ::Matrix{Float64})
-			Ψ₀ = max(Ψ[iT,iZ], 0.0)
+			Ψ₀ = max(Ψ[iT,iZ], 0.0::Float64)
 
 			if log1p(Ψ₀) > ΔLnΨmax[iZ]
 				Ψ▽ = expm1(log1p(Ψ₀) - ΔLnΨmax[iZ])		
 			else
-				Ψ▽ = 0.0
+				Ψ▽ = 0.0::Float64
 			end	
 
 			Ψ△  = expm1(log1p(Ψ₀) + ΔLnΨmax[iZ])

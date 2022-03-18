@@ -22,10 +22,10 @@ module waterBalance
 		
 		for iT=i∑T_CalibrStart:Nit
 			# Computing ΔStorage
-				ΔStorage = 0.0
+				ΔStorage = 0.0::Float64
 
 				@fastmath @inbounds for iZ = 1:NiZ
-					ΔStorage += discret.ΔZ[iZ] * ( (θ[iT,iZ] - θ[i∑T_CalibrStart-1,iZ]) )
+					ΔStorage += discret.ΔZ[iZ] * ((θ[iT,iZ] - θ[i∑T_CalibrStart-1,iZ]))
 	
 					ΔStorageSo += discret.ΔZ[iZ] * hydro.So[iZ] * (Ψ[iT,iZ] - Ψ[iT-1,iZ]) * (θ[iT,iZ] / hydro.θs[iZ])
 				end # for iT=1:NiZ
@@ -44,8 +44,8 @@ module waterBalance
 
 			∑∑WaterBalance = ΔStorage - (∑ΔQtop - ∑ΔQbottom) + ∑ΔSink[iT] - ΔStorageSo
 
-
-			∑WaterBalance_η[iT] = ∑∑WaterBalance / ∑ΔQtop
+			# Normalised water balance, performed min algorithme to avoid issues when ∑ΔQtop is small at the beginning of time
+				∑WaterBalance_η[iT] = min(abs(∑∑WaterBalance / ∑ΔQtop), abs(∑∑WaterBalance))
 		end  # for iT=1:Nit
 
 	return ∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage

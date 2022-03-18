@@ -73,6 +73,8 @@ module hypixStart
 					# Computed after the warmup period
 						∑∑WaterBalance, ∑WaterBalance_η, ∑ΔSink, i∑T_CalibrStart, ΔStorage = waterBalance.WATERBALANCE(∑T, obsTheta, discret, hydro, N_iRoot, Nit, NiZ, Q, ΔSink, ΔT, θ, Ψ)
 
+						∑Runoff_Reduced, ∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRunoff_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, paramHypix, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], ΔRunoff[1:Nit], Hpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
+
 					# SUMMARY HOW GOOD THE SIMULATION
 						# Computed climate day after the warmup period
 							i∑T_CalibrStart_Day = 1::Int64 
@@ -108,7 +110,7 @@ module hypixStart
 							∑∑ΔSink[iOpt_Count]                    = ∑ΔSink[Nit]
 						
 						# Ground water recharge
-							∑ΔQ_Bot[iOpt_Count] = 0.0
+							∑ΔQ_Bot[iOpt_Count] = 0.0::Float64
 							for iT=i∑T_CalibrStart:Nit
 								∑ΔQ_Bot[iOpt_Count] = ∑ΔQ_Bot[iOpt_Count] + ΔT[iT] * Q[iT, NiZ+1]
 							end
@@ -129,7 +131,8 @@ module hypixStart
 						println("			∑SoilWaterContentRootEnd = ", round(SwcRoots[iOpt_Count], digits=3), "  [mm]")
 						println("			∑ΔSink 			= ", -ceil(Int, ∑∑ΔSink[iOpt_Count]), "  [mm]")
 						println("			∑Infilt_Bot 		= ", -round(∑ΔQ_Bot[iOpt_Count],  digits=5), "  [mm]")
-						println("			Hpond at end 		= ", ceil(Int, Hpond[Nit]), "  [mm] \n")
+						println("			Hpond at end 		= ", ceil(Int, Hpond[Nit]), "  [mm] ")
+						println("			∑Runof 				= ", round(∑Runoff_Reduced[end], digits=0), "  [mm] \n" )
 		
 						println("			Number_of_cells 	        = ", NiZ, "  [-]")
 
@@ -140,9 +143,8 @@ module hypixStart
 						println("			Average ΔT 			= ",  ΔT_Average[iOpt_Count] , "  [seconds]")
 						println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 						println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
-						println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds]")	
+						println("			ΔT_HyPix 			= ", ceil(Int, ΔRunTimeHypix[iOpt_Count]) , "  [seconds] \n")	
 
-						∑T_Reduced, ∑WaterBalanceη_Reduced, Date_Reduced, Nit_Reduced, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔSink_Reduced, ΔT_Reduced, θ_Reduced, θobs_Reduced, Ψ_Reduced = Δtchange.CHANGE_OUTPUT_ΔT(∑Pet[1:Nit], ∑Pr[1:Nit], ∑T[1:Nit], ∑WaterBalance_η[1:Nit], ∑ΔSink[1:Nit], obsTheta, clim, Nit, NiZ, paramHypix, Q[1:Nit,1:NiZ+1], ΔEvaporation[1:Nit], ΔRunoff[1:Nit], Hpond[1:Nit], ΔT[1:Nit], θ[1:Nit,1:NiZ], Ψ[1:Nit,1:NiZ], ∑T_Climate)
 
 					# Computing average simulated θ to comapre it with average observed θ
 					if optionHypix.θavr_RootZone && optionHypix.θobs	
@@ -173,7 +175,7 @@ module hypixStart
 					println("		=== === END: summary \n")
 
 					if optionHypix.Table
-						tableHypix.TABLE_HYPIX(∑∑ΔSink, ∑Pr, ∑T, ∑T_Climate, ∑T_Reduced, ∑WaterBalance_η, ∑WaterBalanceη_Reduced, ∑ΔQ_Bot, CccBest, clim, Date_Reduced, discret, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, Hpond, hydroHorizon, iMultistep, iNonConverge_iOpt, iScenario, N_Layer, Nit, Nit_Reduced, NiZ, NseBest, optionHypix, paramHypix, pathOutputHypix, Q, SwcRoots, veg, WilmotBest, WofBest, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced, ΔPr, ΔPr_Reduced, ΔQ_Reduced, ΔRunTimeHypix, ΔSink_Reduced, ΔT, ΔT_Average, θ_Reduced, θobs_Reduced, θsim_Aver, Ψ_Reduced)
+						tableHypix.TABLE_HYPIX(∑∑ΔSink, ∑WaterBalanceη_Reduced, ∑ΔQ_Bot, CccBest,  Date_Reduced, discret, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, hydroHorizon, iMultistep, iNonConverge_iOpt, N_Layer,Nit_Reduced, NiZ, NseBest, optionHypix, paramHypix, pathOutputHypix, SwcRoots, veg, WilmotBest, WofBest, Z, ΔEvaporation_Reduced, ΔPet_Reduced, ΔPond_Reduced,  ΔPr_Reduced, ΔPrGross_Reduced, ΔQ_Reduced, ΔRunoff_Reduced, ΔRunTimeHypix, ΔSink_Reduced, ΔT_Average, θ_Reduced, θobs_Reduced, θsim_Aver, Ψ_Reduced)
 					end
 		
 					if optionHypix.Ploting
