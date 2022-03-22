@@ -6,10 +6,14 @@ module paramsHypix
 	using Configurations
 
 	@option mutable struct OPT
-		iOptMultiStep_End::Int64
-		iOptMultiStep_Start::Int64
-		NmaxFuncEvals::Int64
-		ΔHpondMax::Float64
+      NmaxFuncEvals       ::Int64
+      iOptMultiStep_End   ::Int64
+      iOptMultiStep_Start ::Int64
+      ΔHpondMax           ::Float64
+      ΨmacMat             ::Float64
+      Ψσ                  ::Float64
+      Ψσ_Max              ::Float64
+      Ψσ_Min              ::Float64
 	end
 	@option mutable struct PLOT
 		θprofile_Time::Vector{Float64}

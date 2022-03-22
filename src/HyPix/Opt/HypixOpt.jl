@@ -150,7 +150,7 @@ module hypixOpt
 					iHorizon_Start = optim.ParamOpt_HorizonEq[iParam][1]
 					iHorizon_End   = optim.ParamOpt_HorizonEq[iParam][2]
 
-					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, optionHypix.opt)
+					hydroHorizon = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydroHorizon, iHorizon_Start, optionHypix.opt, paramHypix.opt; Pσ=3.0)
 
 				# Updating the horizons which are optimised simultaneously
 					for iZ = iHorizon_Start:iHorizon_End

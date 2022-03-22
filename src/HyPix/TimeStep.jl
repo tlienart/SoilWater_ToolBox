@@ -14,14 +14,6 @@ module timeStep
 				ΔT₂, Δθ_Max = ADAPTIVE_TIMESTEP(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, ΔLnΨmax, ΔSink, θ, Ψ)
 				iT += 1 # Going to the next simulation
 				ΔT[iT] = ΔT₂
-
-				if iTer ≤ 5
-					ΔT[iT] = ΔT[iT] * inv(paramHypix.ΔT_MaxChange)
-				
-				# No convergence need to slowdown
-				elseif iTer == paramHypix.N_Iter
-						ΔT[iT] = min(ΔT[iT], ΔT[iT-1])
-				end
 			end
 
 			# Check if we are at the last time step

@@ -80,7 +80,7 @@ module readHypix
                hydroHorizon, ~ = tool.readWrite.READ_STRUCT_SIMPLE(hydroHorizon, pathInputHypix.HydroInput[iScenario])
 
                @inbounds @simd for iZ=1:N_Layer
-                  hydroHorizon.So[iZ] = paramHypix.So # 1.0E-4
+                  hydroHorizon.So[iZ] = paramHypix.So # 1.0E-8
                end
 
                hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)

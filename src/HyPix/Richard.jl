@@ -12,7 +12,7 @@ module richard
 	#		FUNCTION : RICHARD_ITERATION
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function RICHARD_ITERATION(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, iCount_ReRun::Int64, discret, Flag_NoConverge::Bool, hydro, iNonConverge::Int64, iT::Int64, IterCount::Int64, NiZ::Int64, paramHypix, Q, Residual, Sorptivity::Float64, Hpond::Vector{Float64}, ΔLnΨmax::Vector{Float64}, ΔPr::Vector{Float64}, ΔRunoff::Vector{Float64}, ΔSink::Matrix{Float64}, ΔT, θ::Matrix{Float64}, Ψ::Matrix{Float64},Ψ_Min::Vector{Float64}, Ψ_Max::Vector{Float64}, Ψbest::Vector{Float64}, optionHypix)
-
+						
 			# INITIALIZING
 			@inbounds @simd for iZ = 1:NiZ
 					Ψ[iT,iZ] = Ψ[iT-1,iZ]
@@ -131,14 +131,14 @@ module richard
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#		FUNCTION : name
+	#		FUNCTION : ΨMIN
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ΨMIN(iT::Int64, NiZ::Int64, paramHypix, Ψ::Matrix{Float64}, Ψ_Min::Vector{Float64})
 			@inbounds @simd for iZ=1:NiZ
-				if Ψ[iT-1,iZ] < 50.0 # mm
-					Ψ_Min[iZ] = paramHypix.Ψ_MinMin::Float64
+				if Ψ[iT-1,iZ] < paramHypix.opt.ΨmacMat / 2.0 # mm
+					Ψ_Min[iZ] = paramHypix.Ψ_MinMin
 				else
-					Ψ_Min[iZ] = 0.0::Float64
+					Ψ_Min[iZ] = 0.0
 				end
 			end
 		return Ψ_Min
@@ -181,28 +181,25 @@ module richard
 				if !isnan(NewtonStep[iZ])
 					# Newton step
 					Ψ[iT,iZ] += NewtonStep[iZ]
+				
+					# Correction of θ entering a dry soil 
+						Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, optionHypix, θ, θ₀, Ψ, Ψ₀)
 
 					# Assuring that the limits of Ψ are physical
 						Ψ[iT,iZ] = min(max(Ψ[iT,iZ], Ψ_Min[iZ]), Ψ_Max[iZ])
-				
-					# Correction of θ entering a dry soil 
-						# if optionHypix.ZhaWetingDrySoil
-							Ψ = ZHA_WETING_DRYSOIL(hydro, iT, iZ, optionHypix, θ, θ₀, Ψ, Ψ₀)
-						# end
 
 					# Smootening the steps
-						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, optionHypix, ΔLnΨmax, θ₀, Ψ)
-					
+						Ω = DYNAMIC_NEWTON_RAPHSON_STEP(hydro, iT, iZ, optionHypix, ΔLnΨmax, θ₀, Ψ)		
 						Ψ[iT,iZ] = Ω * Ψ[iT,iZ] + (1.0 - Ω) * Ψ₀
 
 				# No comvergence
 				else
 					# @warn error("===== Difficulties in inverting Tridiagonal =====")
 					Ψ[iT,iZ] = Ψ₀ + eps(100.0)
+					println(" ================   STRUGGLING ====================")
 
 				end
 			end # for iZ=1:NiZ	
-
 		return Ψ
 		end  # function: SOLVING_TRIAGONAL_MATRIX
 	# ------------------------------------------------------------------
@@ -218,11 +215,7 @@ module richard
 			Δθ = abs(θ₁ - θ₀)
 
 			Δθₘₐₓ = timeStep.ΔθMAX(hydro, iT, iZ, optionHypix, ΔLnΨmax, Ψ) 
-
-			Δθₘₐₓ_η = Δθ / Δθₘₐₓ
-
-			# 1- (1 - 0.2)
-		return 1.0 - 0.8 * min(Δθₘₐₓ_η, 1.0) ^ 2.0
+		return 1.0 - 0.8 * min(Δθ / Δθₘₐₓ, 1.0) ^ 2.0
 		end  # function: NEWTO_NRAPHSON_STEP
 	# ------------------------------------------------------------------
 		
@@ -271,23 +264,22 @@ module richard
 				end  # function: COMPUTE_ΔT  
 			# ------------------------------------------------------------------
 
-			if iCount_ReRun ≤ 3	
-
+			if iCount_ReRun ≤ 2	
 				ΔTₒ = COMPUTE_ΔT(discret, hydro, iT, NiZ, optionHypix, paramHypix, Q, Hpond, ΔLnΨmax, ΔPr, ΔSink, ΔT, θ, Ψ)
 
-				if ΔTₒ < ΔT[iT] * paramHypix.ΔT_MaxChange
-					ΔT[iT] = ΔTₒ
-					iCount_ReRun += 1
-					Flag_ReRun = true		
+				if ΔTₒ < paramHypix.ΔT_Min + paramHypix.ΔT_MaxChange * max(ΔT[iT] - paramHypix.ΔT_Min, 0.0)
+               Flag_ReRun     = true
+               ΔT[iT]         = ΔTₒ
+               iCount_ReRun  += 1
 				
 				elseif Flag_NoConverge
-					Flag_ReRun = true
-					iCount_ReRun += 1
-					ΔT[iT] =  (ΔT[iT] * paramHypix.ΔT_MaxChange +  paramHypix.ΔT_Min) 
+               Flag_ReRun     = true
+               ΔT[iT]         = paramHypix.ΔT_Min + paramHypix.ΔT_MaxChange * max(ΔT[iT] - paramHypix.ΔT_Min, 0.0)
+               iCount_ReRun   += 1
 
 				else # <>=<>=<>=<>=<>
-					Flag_ReRun = false
-					iCount_ReRun = 1
+               Flag_ReRun   = false
+               iCount_ReRun = 1
 				end
 			else
 				Flag_ReRun = false
@@ -302,6 +294,5 @@ module richard
 		end  # function: RERUN_HYPIX
 	# ------------------------------------------------------------------
 
-		
 end # module: richard
 #......................................................................

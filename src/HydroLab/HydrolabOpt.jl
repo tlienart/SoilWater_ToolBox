@@ -202,7 +202,7 @@ module hydrolabOpt
 
 			# RELATIONSHIP BETWEEN σ AND Ψm
 			if (optionₘ.σ_2_Ψm⍰ ≠ "No") && ("Ψm" ∈ optim.ParamOpt)
-				hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ; Pσ=3.0, ΨmacMat=param.hydro.ΨmacMat, Ψσ=param.hydro.Ψσ)
+				hydro = hydroRelation.FUNCTION_σ_2_Ψm_SOFTWARE(hydro, iZ, optionₘ, param.hydro; Pσ=3.0)
 			end # optionₘ.σ_2_Ψm⍰ ≠ No
 
 			#  <>=<>=<>=<>=<>=<> Relationship between σ and θr
