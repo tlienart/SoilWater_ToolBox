@@ -1,0 +1,35 @@
+	# Simulation Name
+		ScenarioName = "Daily"
+		
+	# hypixinputdata
+      Input_OfStep       = "Wof_Steps.csv"
+
+	# hypixoutputtable
+		Table_Discretisation  = "Table_Discretisation.csv"
+		Table_Hydro           = "Table_Hydro"
+		"Table_KΨ"            = "Table_KΨ"
+		Table_Performance     = "Table_Performance"
+		Table_Q               = "Table_ΔFlux"
+		Table_TimeSerie_Daily = "Table_TimeSerie"
+		Table_Veg             = "Table_Veg"
+		"Table_Ψ"             = "Table_Ψ"
+		"Table_θ"             = "Table_θ"
+		"Table_θΨ"            = "Table_θΨ"
+
+	# hypixplots
+		Plot_HypixTime            = "Plot_HypixTime"
+		"Plot_θprofile"           = "Plot_θprofile"
+		"Plot_Hypix_θΨK"          = "Plot_ThetaPsiK"
+		Plot_RainfallInterception = "Plot_RainfallInterception"
+		Plot_Se_Time              = "Plot_Se_Time.png"
+		Plot_Sorptivity           = "Plot_Sorptivity"
+
+		Vegetation                = "Plot_Vegetation"
+
+	# OTHER
+      Plot_OfStep             = ""
+      "Plot_Se_Ψ_Constrained" = "Plot_Se_Ψ_Constrained.svg"
+      "Plot_Ψmin_Ψmax"        = "Plot_ΨminΨmax.svg"
+      "Plot_θΨ_Δθ"            = "Plot_θΨ_Δθ.svg"
+      "Plot_σ2θr"             = "Plot_θr2σ.svg"
+      "Plot_θ∂θ∂Ψ"            = "Plot_θ∂θ∂Ψ.svg"
