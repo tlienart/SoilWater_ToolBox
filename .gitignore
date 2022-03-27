@@ -1,6 +1,8 @@
 *.json
 # SoilWater-ToolBox
 data
+data/INPUT/
+data/OUTPUT/
 data/Private
 data/Share
 
