@@ -8,19 +8,19 @@ SoilWater_Toolbox/data/OUTPUT/Hypix/TESTCASE/Tc1/TableSoilWater_Toolbox/data/OUT
 
 ### TABLE_Hydro.csv
 
-| col1          | Parameter              | Units                                                                                                      |
-| ------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Id            | \[-\]                  | Layers                                                                                                     |
-| θs           | mm$^3 $ mm$^{-3}$ | saturated and residual volumetric soil water content                                                       |
-| θr           | mm$^3$ mm$^{-3}$     | residual volumetric soil water content                                                                     |
-| Ks            | mm s$^-1$\]          | saturated hydraulic conductivity                                                                           |
-| Ψm           | mm\]                   | mean of ln ψ                                                                                              |
-| σ            | \[-\]                  | standard deviation of ln ψ                                                                                |
+| col1        | Parameter         | Units                                                        |
+| ----------- | ----------------- | ------------------------------------------------------------ |
+| Id          | \[-\]             | Layers                                                       |
+| θs          | mm$^3 $ mm$^{-3}$ | saturated and residual volumetric soil water content         |
+| θr          | mm$^3$ mm$^{-3}$  | residual volumetric soil water content                       |
+| Ks          | mm s$^{-1}$       | saturated hydraulic conductivity                             |
+| Ψm          | mm\]              | mean of ln ψ                                                 |
+| σ           | \[-\]             | standard deviation of ln ψ                                   |
 | θsMacMat\_ƞ | mm$^33$ mm$^-3−3$ | normalised volumetric saturated water content that differentiates inter-aggregate pores and matrix domains |
-| σMac         | \[-\]                  | standard deviation of ln ψ in the macropore domaine                                                       |
-| ΨmMac        | mm                     | mean of ln ψ in the macropore domain                                                                      |
-| So            | \[mm$^-1−1$\]       | fluid compressibility                                                                                      |
-| θsMacMat     | mm$^33$ mm$^-3−3$ | volumetric saturated water content that differentiates inter-aggregate pores and matrix domains            |
+| σMac        | \[-\]             | standard deviation of ln ψ in the macropore domaine          |
+| ΨmMac       | mm                | mean of ln ψ in the macropore domain                         |
+| So          | \[mm$^-1−1$\]     | fluid compressibility                                        |
+| θsMacMat    | mm$^3$ mm$^-3−3$  | volumetric saturated water content that differentiates inter-aggregate pores and matrix domains |
 
 ### TABLE_Veg.csv
 
