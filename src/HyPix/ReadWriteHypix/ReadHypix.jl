@@ -8,7 +8,7 @@ module readHypix
    import Dates: value, DateTime, hour, minute, month, now, Hour
    import DelimitedFiles
    import CSV, Tables
-   export READ_START
+   export READ_START, HYPIX_PARAM_OPT
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#		FUNCTION : READ_START
@@ -40,7 +40,6 @@ module readHypix
             else
                # Read discretisation
                Flag_θΨini, Layer, N_Layer, NiZ, Z, θini_or_Ψini = readHypix.DISCRETISATION(pathInputHypix.Discretisation[iScenario])
-
             end # if optionHypix.Discretisation_File_Auto⍰ == "Auto" 
 
             # Process discretisation of the soil profile ~~~~~
@@ -77,13 +76,13 @@ module readHypix
                veg, ~ = tool.readWrite.READ_STRUCT_SIMPLE(veg, pathInputHypix.Vegetation[iScenario])
 
          # HYDRAULIC PARAMETERS
-               hydroHorizon, ~ = tool.readWrite.READ_STRUCT_SIMPLE(hydroHorizon, pathInputHypix.HydroInput[iScenario])
+            hydroHorizon, ~ = tool.readWrite.READ_STRUCT_SIMPLE(hydroHorizon, pathInputHypix.HydroInput[iScenario])
 
-               @inbounds @simd for iZ=1:N_Layer
-                  hydroHorizon.So[iZ] = paramHypix.So # 1.0E-8
-               end
+            @inbounds @simd for iZ=1:N_Layer
+               hydroHorizon.So[iZ] = paramHypix.So # 1.0E-8
+            end
 
-               hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
+            hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
 
             end # optionHypix.Optimisation
 
@@ -134,9 +133,9 @@ module readHypix
 
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   #		FUNCTION : HYPIX_PARAM
+   #		FUNCTION : HYPIX_PARAM_OPT
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function HYPIX_PARAM(Layer, hydro, hydroHorizon, iMultistep::Int64, NiZ::Int64, optionHypix, paramHypix, Path::String, veg)
+      function HYPIX_PARAM_OPT(Layer, hydro, hydroHorizon, iMultistep::Int64, NiZ::Int64, optionHypix, paramHypix, Path::String, veg)
          # Read data
             Data = DelimitedFiles.readdlm(Path, ',')
          # Read header
@@ -152,7 +151,7 @@ module readHypix
 
             Name_Unique = unique(Name)
 
-            N_NameUnique = length(Name_Unique)
+            # N_NameUnique = length(Name_Unique)
       
          # Reading the values of the parameters for the simulation of interest
             Param, ~   = tool.readWrite.READ_HEADER_FAST(Data, Header, "SIM_$(iMultistep)")
@@ -303,7 +302,7 @@ module readHypix
             println("	=== === ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ === === \n")
          end
    return hydro, hydroHorizon, optim, veg
-   end  # function: HYPIX_PARAM
+   end  # function: HYPIX_PARAM_OPT
 
 
 

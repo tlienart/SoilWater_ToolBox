@@ -22,8 +22,8 @@ module richard
 			Residual_Max_Best = Inf
 			iTer = 0::Int64
 			while iTer ≤ paramHypix.N_Iter - 1	
-				iTer += 1
-				IterCount += 1 # Counting the iterations
+            iTer      += 1
+            IterCount += 1 # Counting the iterations
 
 				# RESIDUAL MAX BEST: Deriving the Residual max because may be Ψ[iT-1,iZ] is the best solution
 				∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, Q, Residual, Hpond, θ = richard.RICHARD(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, discret, Flag_NoConverge, hydro, iT, NiZ, optionHypix, paramHypix, Q, Residual, Sorptivity, Hpond, ΔPr, ΔRunoff, ΔSink, ΔT, θ, Ψ, Ψ_Max)
@@ -274,7 +274,7 @@ module richard
 				
 				elseif Flag_NoConverge
                Flag_ReRun     = true
-               ΔT[iT]         = paramHypix.ΔT_Min + paramHypix.ΔT_MaxChange * max(ΔT[iT] - paramHypix.ΔT_Min, 0.0)
+               ΔT[iT]         = paramHypix.ΔT_Min + 0.8 * max(ΔT[iT] - paramHypix.ΔT_Min, 0.0)
                iCount_ReRun   += 1
 
 				else # <>=<>=<>=<>=<>

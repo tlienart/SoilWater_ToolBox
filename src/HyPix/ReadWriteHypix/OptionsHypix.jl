@@ -15,6 +15,7 @@ module optionsHypix
 		σ_2_θr::Bool
 		θs_Opt⍰::String
 		Optimisation::Bool
+		HydroVegParamReadFromOutput::Bool
 	end
 
 	@option mutable struct OPTIONHYPIX

@@ -9,7 +9,7 @@ module hypixStart
 	import ..cst, ..horizonLayer, ..hydroStruct, ..hypixModel, ..hypixOpt, ..readHypix, ..readLinkingFile, ..stats, ..tableHypix, ..waterBalance, ..θaver, ..Δtchange
 	import Statistics: mean
 	import Dates: now, value
-	import ..plotHypix
+	import ..plotHypix, ..tool
 
 	export HYPIX_START
 
@@ -52,7 +52,25 @@ module hypixStart
 
 					# OBTAINING HYDRAULIC AND VEGETATION PARAMETERS (depending of we have multistep optimisation)
 					if optionHypix.opt.Optimisation
-						hydro, hydroHorizon, optim, veg = readHypix.HYPIX_PARAM(Layer, hydro, hydroHorizon, iMultistep, NiZ, optionHypix, paramHypix, pathInputHypix.MultistepOpt[iScenario], veg)
+						hydro, hydroHorizon, optim, veg = readHypix.HYPIX_PARAM_OPT(Layer, hydro, hydroHorizon, iMultistep, NiZ, optionHypix, paramHypix, pathInputHypix.MultistepOpt[iScenario], veg)
+
+						# INJECTING HYDRAULIC & VEGETATION PARAMETERS FROM OUTPUT
+						if optionHypix.opt.HydroVegParamReadFromOutput && paramHypix.opt.iOptMultiStep_Start == iMultistep
+							@warn( "\n ========= HydroVegParamReadFromOutput = true ========= \n" )
+
+							# Reading hydraulic parameters
+								Path = pathOutputHypix.Table_Hydro  * "_" * string(paramHypix.opt.iOptMultiStep_Start-1) * ".csv"
+								hydroHorizon, ~ = tool.readWrite.READ_STRUCT_SIMPLE(hydroHorizon, Path)
+								@inbounds @simd for iZ=1:N_Layer
+									hydroHorizon.So[iZ] = paramHypix.So # 1.0E-8
+								end
+								hydro = horizonLayer.HYDROHORIZON_2_HYDRO(hydroHorizon, Layer, NiZ, optionHypix)
+
+							# Reading vegetation parameters
+								Path = pathOutputHypix.Table_Veg * "_" * string(paramHypix.opt.iOptMultiStep_Start-1) * ".csv"
+								veg, ~ = tool.readWrite.READ_STRUCT_SIMPLE(veg, Path)
+						end # INJECTING HYDRAULIC & VEGETATION PARAMETERS FROM OUTPUT
+
 					else
 						# options of optim		
 							Flag_Opt = false
@@ -137,9 +155,9 @@ module hypixStart
 						println("			Number_of_cells 	        = ", NiZ, "  [-]")
 
 						println("\n			Efficiency 			= ", Efficiency[iOpt_Count], "  [iTer day-1]")
-						println("			iNonConverge 			= ", iNonConverge_iOpt[iOpt_Count], "  [count]")
+						println("			iNonConverge 			= ", iNonConverge, "  [count]")
 						println("			Global_WaterBalance_NormPr 	= ", round(Global_WaterBalance_NormPr[iOpt_Count], digits=8), "  [%]")
-						println("			Global_WaterBalance 		= ", 	round(Global_WaterBalance[iOpt_Count], digits=8), "  [mm]")
+						println("			Global_WaterBalance 		= ", 	round(∑∑WaterBalance, digits=8), "  [mm]")
 						println("			Average ΔT 			= ",  ΔT_Average[iOpt_Count] , "  [seconds]")
 						println("			ΔTmin 				= ",   round(minimum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")
 						println("			ΔTmax 				= ",  round(maximum(ΔT[i∑T_CalibrStart:Nit]), digits=0) , "  [seconds]")

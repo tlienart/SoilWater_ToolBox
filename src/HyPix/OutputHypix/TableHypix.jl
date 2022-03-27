@@ -215,7 +215,7 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       function PERFORMANCE(∑∑ΔSink, ∑ΔQ_Bot, CccBest, Efficiency, Global_WaterBalance, Global_WaterBalance_NormPr, iNonConverge_iOpt, iOpt, iMultistep, NseBest, paramHypix, pathHyPix, SwcRoots, WilmotBest, WofBest, ΔRunTimeHypix, ΔT_Average)	
             
-         iSim₀ = paramHypix.opt.iOptMultiStep_Start + iOpt	
+         iSim₀ = paramHypix.opt.iOptMultiStep_Start + iOpt - 1	
 
          Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
 
@@ -355,8 +355,8 @@ module tableHypix
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    #		FUNCTION : veg
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      function VEG(veg, iMultistep, pathHyPix)
-         Path = pathHyPix.Table_Veg * "_" * string(iMultistep) * ".csv"
+      function VEG(veg, iMultistep, pathOutputHypix)
+         Path = pathOutputHypix.Table_Veg * "_" * string(iMultistep) * ".csv"
 
          Matrix, FieldName_String = tool.readWrite.STRUCT_2_FIELDNAME(1, veg)
        

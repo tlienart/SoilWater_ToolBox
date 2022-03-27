@@ -40,7 +40,6 @@ module timeStep
 	# 		Computing ΔΨMAX required by ADAPTIVE_TIMESTEP
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		function ΔΨMAX!(hydro, NiZ::Int64, optionHypix, paramHypix, ΔLnΨmax::Vector{Float64})
-
 			for iZ=1:NiZ
 				θ½ = (hydro.θsMacMat[iZ] + hydro.θr[iZ]) * 0.5
 				
@@ -49,8 +48,7 @@ module timeStep
 				θ▽ = max(θ½ - paramHypix.Δθ_Max * 0.5, hydro.θr[iZ])
 
 				ΔLnΨmax[iZ] = (log1p(wrc.θ_2_ΨDual(optionHypix, θ▽, iZ, hydro)) - log1p(wrc.θ_2_ΨDual(optionHypix, θ△, iZ, hydro))) * 0.5	
-			end # for iZ=1:NiZ
-	
+			end # for iZ=1:NiZ	
 		return ΔLnΨmax
 		end  # function: ΔΨMAX!
 	#--------------------------------------------------------------------

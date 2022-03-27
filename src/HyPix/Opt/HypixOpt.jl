@@ -2,8 +2,10 @@
 #		module: hypixOpt
 # =============================================================
 module hypixOpt
-	import ..horizonLayer, ..hydroRelation, ..hypixModel, ..ofHypix, ..tool
+	import ..horizonLayer, ..hydroRelation, ..hypixModel, ..ofHypix, ..tool, ..cst
 	using BlackBoxOptim
+	import Statistics: mean
+	import Dates: now, value
 
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,13 +59,28 @@ module hypixOpt
 			# New optimized paramHypix which are put into the matching veg or hydro parameters
 				hydro, hydroHorizon, veg = PARAM_2_hydro_veg(hydro, hydroHorizon, Layer, N_Layer, NiZ, optim, optionHypix, paramHypix, X, veg)
 		
+			# Timing start
+				Time_Start = now()
+
 			# Running Hypix model	
 			∑Pet, ∑Pr, ∑T, ∑T_Climate, clim, discret, Hpond, iNonConverge, IterCount, N_iRoot, Nit, NiZ, Q, veg, ΔEvaporation, ΔRootDensity, ΔRunoff, ΔT, θ, Ψ = hypixModel.HYPIX_MODEL(∂K∂Ψ, ∂R∂Ψ, ∂R∂Ψ△, ∂R∂Ψ▽, ∑Pet, ∑Pet_Climate, ∑Pr, ∑Pr_Climate, ∑T, ∑T_Climate, clim, CropCoeficientᵀ, CropCoeficientᵀ_η, discret, Flag_θΨini, hydro, Laiᵀ, Laiᵀ_η, N_∑T_Climate, NiZ, optionHypix, paramHypix, Q, Residual, veg, Z, ΔEvaporation, Hpond, ΔPet, ΔPr, ΔRunoff, ΔSink, ΔT, ΔLnΨmax, θ, θini_or_Ψini, Ψ, Ψ_Max, Ψ_Min, Ψbest)
 
+			# Timing end
+				Time_End = now()
+
 			# Weighted Objective Function
 				Wof = ofHypix.WOF_θ(∑T[1:Nit], Nit, NiZ, obsTheta, paramHypix, Hpond[1:Nit], θ[1:Nit,1:NiZ], θSim)
-				
-		println("\n			~ Wof = $Wof ~")
+		
+		if iNonConverge > 5		
+			println("\n			~ Wof = $Wof ~")
+			println("\n			Efficiency 			= ", ceil(Int, cst.Day_2_Second * IterCount / ∑T[Nit] ), "  [iTer day-1]")
+			println("			iNonConverge 			= ", iNonConverge, "  [count]")
+			println("			Average ΔT 			= ", ceil(Int, mean(ΔT[1:Nit])) , "  [seconds]")
+			println("			ΔTmin 				= ",   round(minimum(ΔT[2:Nit]), digits=0) , "  [seconds]")
+			println("			ΔTmax 				= ",  round(maximum(ΔT[2:Nit]), digits=0) , "  [seconds]")
+			println("			ΔT_HyPix 			= ", ceil(Int, value(Time_End - Time_Start) / 1000) , "  [seconds] \n")
+		end
+
 		return Wof
 		end  # function: OF_HYPIX
 
@@ -193,12 +210,12 @@ module hypixOpt
 				end 
 
 				if "hydro" ∈ optim.ParamOpt_Type
-					println("\n			~ θs = ",  hydroHorizon.θs[iHorizon_Start])
-					println("			~ θsMacMat = ",  hydroHorizon.θsMacMat[iHorizon_Start])
-					println("			~ θr = ",  hydroHorizon.θr[iHorizon_Start])
-					println("			~ Ψm = ",  hydroHorizon.Ψm[iHorizon_Start])
-					println("			~ σ = ",  hydroHorizon.σ[iHorizon_Start])
-					println("			~ Ks = ",  hydroHorizon.Ks[iHorizon_Start])
+					println("\n			~ θs = ",   round.(hydroHorizon.θs, digits=2))
+					println("			~ θsMacMat = ",   round.(hydroHorizon.θsMacMat, digits=2))
+					println("			~ θr = ",   round.(hydroHorizon.θr, digits=2))
+					println("			~ Ψm = ",   round.(hydroHorizon.Ψm, digits=0))
+					println("			~ σ = ",   round.(hydroHorizon.σ, digits=2))
+					println("			~ Ks = ",  round.(hydroHorizon.Ks, digits=3))
 				end
 
 			# Transforming horizonLayer -> hydro
@@ -208,4 +225,4 @@ module hypixOpt
 		end  # function: PARAM_2_hydro_veg
 		
 	end  # module hypixOpt
-# ............................................................rm 
+# ............................................................
