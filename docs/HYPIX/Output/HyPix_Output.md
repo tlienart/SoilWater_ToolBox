@@ -37,7 +37,7 @@ These are the optimal Kosugi hydraulic parameters for every layers:
 
 ### TABLE\_$\theta \Psi$.csv
 
-Relationship between the *soil water pressure*, $\Psi$ [cm] in the headers and  *volumetric soil water content* *θ* [L$^3$ L$^{-3}$] , for which the values of the $\Psi$ are selected by the users. 
+The water retention curve,  $\theta(\Psi)$ ,  which is the relationship between the *soil water pressure*, $\Psi$ [cm] and  the *volumetric soil water content* *θ* [L$^3$ L$^{-3}$] , for  values of $\Psi$ are selected by the users. 
 
 ### TABLE\_$\theta K \Psi$.csv
 
