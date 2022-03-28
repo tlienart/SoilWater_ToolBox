@@ -13,13 +13,13 @@ These are the optimal Kosugi hydraulic parameters for every layers:
 | Parameters    | Units                  | Explantions                                                                                                               |
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Id            | [-]                  | Layers                                                                                                                    |
-| θs           | [m$$^3 $$ m$$^{-3}$$]  | Saturated volumetric soil water content.                                                                                  |
+| θs           | [m $^3 $$ m$^{-3}$]  | Saturated volumetric soil water content.                                                                                  |
 | θr           | [mm$^3$ mm$^{-3}$] | Residual volumetric soil water content.                                                                                   |
 | Ks            | [mm s$^{-1}$]        | Saturated hydraulic conductivity.                                                                                         |
 | Ψm           | [mm]                   | Mean of ln ψ in the matrix domaine.                                                                                      |
-| σ            | \[-\]                  | Standard deviation of ln ψ in the matrix domaine.                                                                        |
+| σ            | [-]                  | Standard deviation of ln ψ in the matrix domaine.                                                                        |
 | θsMacMat\_ƞ | [mm$^3$ mm$^{-3}$] | Normalized volumetric saturated water content that differentiates inter-aggregate pores and matrix domains.               |
-| σMac         | \[-]                   | Standard deviation of ln ψ in the macropore domaine.                                                                     |
+| σMac         | [-]                   | Standard deviation of ln ψ in the macropore domaine.                                                                     |
 | ΨmMac        | [mm]                   | Mean of ln ψ in the macropore domain.                                                                                    |
 | So            | \[mm$^{-1}$\]        | Fluid compressibility.                                                                                                    |
 | θsMacMat     | [mm$^3$ mm$^{-3}$] | Volumetric saturated water content that differentiates inter-aggregate pores and matrix domains with θsMacMat$\le$θs. |
