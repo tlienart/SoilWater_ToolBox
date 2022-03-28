@@ -8,7 +8,7 @@
 	"ΔZcoarse"    = 10.0  # 50.0 [mm] {50-100} maximum discretisation size below the root zone
 
 # RUNOFF
-	Hpond_Max = 10.0 # [mm] Maximum depth of ponding before the ponding water turns into runoff 
+	Hpond_Max = 1000.0 # [mm] Maximum depth of ponding before the ponding water turns into runoff 
 
 # Slope[radiant]
 	"Cosα" = 1.0
@@ -20,7 +20,7 @@
 # 					Richards equation
 #==========================================
 	# Water balance
-		WaterBalanceResidual_Max = 1.0E-10 #  10.0E-11 10.0E-12 10.0E-11
+		WaterBalanceResidual_Max = 1.0E-10 #   1.0E-9 [10.0E-9 -  10.0E-10]
 		"Δθ_Max"   = 8.0E-3	      # 8.0E-3 6.0E-3  5.0E-3 Best result between [10^-4.5 ; 10^-5.0] smaller the smaller the time step
 
    # Minimum Ψ
@@ -31,7 +31,7 @@
 		"ΔT_Max"   = 5400.0 # 3600.0
 
 	# Iterations
-		N_Iter     = 50			   # 70 Maximum number of iteration before changing time step
+		N_Iter     = 70			   # 70 Maximum number of iteration before changing time step
 		"ΔT_MaxChange" = 0.5				# [0.2, 0.9] Allowable change of ΔT without rerun of the model
 
 	# Water compressibility
