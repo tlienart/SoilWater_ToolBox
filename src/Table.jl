@@ -91,7 +91,7 @@ module table
 						end
 
 				elseif Orientation == "Vertical" # <>=<>=<>=<>=<>=<>
-					FieldName_String = ["Id","H[mm]","Theta[0-1]"]
+					FieldName_String = ["Id","Ψ[mm]","Theta[0-1]"]
 					N = N_Ψ * NiZ
 					Id₂ = fill(0::Int64, N)
 					Ψ₂  = fill(0.0::Float64, N)
