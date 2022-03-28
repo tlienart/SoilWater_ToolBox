@@ -1,0 +1,65 @@
+
+# HyPix modules: 
+	RainfallInterception = false # <true>*, <false>
+	Evaporation          = false # <true>*, <false>
+	RootWaterUptake      = false # <true>*, <false>
+	RootWaterUptakeComp  = false # <true>*  Compensation Root Water Uptake, <false>
+	Ponding              = false  # <true>*, <false> can create numerical instability
+
+# Richards equation boundary conditions:
+	"TopBoundary⍰"           = "Flux" # Top boundary condition: <Flux>* climate data; <Ψ> special case where constant Ψ
+	"BottomBoundary⍰"        = "Ψ" # Bottom boundary condition: <Free>*  free; <Ψ> constant pressure can be used to describe water table;
+
+# Discretisation:
+	"Discretisation_File_Auto⍰" = "Auto" # <Auto>* Discretisation derived automatically from SOILLAYER folder <File> Discretisation derived from user defined DISCRETISATION folder 
+	HydrostaticEquilibrium      = true # <false>*, <true> special case were initial pressure is computed as a hydrostastic equilibriun
+
+# Vegetation: 
+	LookupTable_Lai            = true # <false>* Lai is constant; <true> Lai varies per month
+	LookUpTable_CropCoeficient = true # <false>* CropCoeficient is constant; <true> CropCoeficient varies per month
+	Lai_2_SintMax              = false # Rainfall interception module: <false> derive Sint_Satfrom input file; <true> derive maximum storage of vegetation Sint_Sat from LAI_2_SINTMAX
+
+# Data
+	"θobs"         = true # <true>; <false> data of observed θ
+	"θobs_Reduced"  = true # NOT IN USE θ data can be very large so we reduce the data to hourly
+
+# OUTPUTS OF INTEREST
+	"θavr_RootZone" = false # <false>* <true> compute average θ in the root zone;
+
+	Table                      = true
+      Table_Discretization = true
+      Table_Q              = true
+      "Table_Ψ"            = true
+      "Table_θ"            = true
+      Table_TimeSerie      = true
+      "Tabule_θΨ"          = true
+
+	# Plot outputs
+		Ploting    = true # <true>* plot; <false> no plotting
+			Plot_Vegetation   = false
+			"Plot_θΨK"        = false
+			Plot_Interception = false
+			Plot_Other        = false
+			Plot_Sorptivity   = false
+			"Plot_θprofile"   = true
+			Plot_Hypix        = false
+				Plot_Climate      = false
+				"Plot_θ"          = true
+				Plot_Flux         = true
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# 					Richards equation param
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   "AdaptiveTimeStep⍰"      = "ΔΨ" # <ΔΨ>* slower but more accurate; <Δθ>
+   "∂R∂Ψ_NumericalAuto"     = false # <false>* perform the derivatives analytically; <true> perform the derivatives numerically;
+   "HydroModel⍰"            = "Kosugi" # <Kosugi>* will implement future models in the future
+
+[opt]
+# OPTIMISATION
+   Optimisation = false # <true>*; <false>
+
+	HydroVegParamReadFromOutput = true # <true> hydraulic and vegeation parameters will be read from Output at iOptMultiStep_Start -1, <false> hydraulic and vegeation parameters will be read directly from MULTISTEP_OPT 	
+	
+   "σ_2_Ψm⍰"    = "Constrained"  # <Constrained>* Ψm physical feasible range is computed from σ; <UniqueRelationship> Ψm is computed from σ; <No> optimisation of σ & Ψm with no constraints
+   "σ_2_θr"     = true # <true>* derive θr from σ <false>
+   "θs_Opt⍰"    = "No" # <No>* optimisation normal <θs_Opt> θs is derived by multiplying a parameter to Max(θobs) for all soil profiles;
