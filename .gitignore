@@ -1,6 +1,6 @@
 *.json
 # SoilWater-ToolBox
-data/
+!data/
 data/*
 !data/INPUT/Data_Hypix/TESTCASE/*.csv
 !data/OUTPUT/Hypix/TESTCASE/*.csv
