@@ -1,5 +1,3 @@
-![]()
-
 # HYPIX OUTPUTS
 
 The following files are table output in HyPix with the following Path for which in this case the project name is TESTCASE for name of site TC1:
@@ -14,7 +12,7 @@ These are the optimal Kosugi hydraulic parameters for every layers:
 
 | Parameters    | Units                  | Explantions                                                                                                               |
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Id            | \[-\]                  | Layers                                                                                                                    |
+| Id            | [-]                  | Layers                                                                                                                    |
 | θs           | [m$$^3 $$ m$$^{-3}$$]  | Saturated volumetric soil water content.                                                                                  |
 | θr           | [mm$^3$ mm$^{-3}$] | Residual volumetric soil water content.                                                                                   |
 | Ks            | [mm s$^{-1}$]        | Saturated hydraulic conductivity.                                                                                         |
