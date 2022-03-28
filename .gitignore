@@ -2,8 +2,8 @@
 # SoilWater-ToolBox
 **/data
 data
-!D:\Main\MODELS\SoilWater_ToolBox\data\INPUT\Data_Hypix\TESTCASE\
-!D:\Main\MODELS\SoilWater_ToolBox\data\OUTPUT\Hypix\TESTCASE\
+!data/INPUT/Data_Hypix/TESTCASE/
+!data/OUTPUT/Hypix/TESTCASE/
 # data/INPUT/
 # data/OUTPUT/
 # data/Private
