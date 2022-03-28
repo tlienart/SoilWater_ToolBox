@@ -15,7 +15,7 @@ These are the optimal Kosugi hydraulic parameters for every layers:
 | Parameters    | Units                  | Explantions                                                                                                               |
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Id            | \[-\]                  | Layers                                                                                                                    |
-| θs           | [m$^3 $ m$^{-3}$]  | Saturated volumetric soil water content.                                                                                  |
+| θs           | [m$$^3 $$ m$$^{-3}$$]  | Saturated volumetric soil water content.                                                                                  |
 | θr           | [mm$^3$ mm$^{-3}$] | Residual volumetric soil water content.                                                                                   |
 | Ks            | [mm s$^{-1}$]        | Saturated hydraulic conductivity.                                                                                         |
 | Ψm           | [mm]                   | Mean of ln ψ in the matrix domaine.                                                                                      |
@@ -67,31 +67,21 @@ $$
 | ΔRunoff           | \[mm\]   | Runoff                                                                               |
 | ∑WaterBalance\_η | [mm\]    | Normalized water balance                                                             |
 
-### 
-
 ## TIME SERIES WITH DEPTH
 
 The following are output with time series at time step interval defined by user with depth. The header are the the depth of the center of the cell (Znode):
-
-
 
 ### TABLE\_$\theta$.csv
 
 A matrice of time series with depth of volumetric soil water content $\theta$ [m$^3 $ m$^{-3}$].
 
-
-
 ### TABLE\_$\Psi$.csv
 
 A matrice of time series with depth of volumetric soil water content $\Psi$ [mm].
 
-
-
 ### TABLE\_$\Delta$Flux.csv
 
 A matrice of time series with depth of flux $\Delta Q$ [mm].
-
-
 
 ## # HOW GOOD THE SIMULATIONS
 
