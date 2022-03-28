@@ -1,113 +1,187 @@
-<!-- MathJax -->
+@def title = "Franklin Example"
+@def tags = ["syntax", "code"]
 
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+# How to use Franklin
 
-# International SoilWater-ToolBox 2021
+\tableofcontents <!-- you can use \toc as well -->
 
-## *Current state and future*
+This section is meant as a refresher if you're new to Franklin.
+Have a look at both how the website renders and the corresponding markdown (`index.md`).
+Modify at will to get a feeling for how things work!
 
-J.A.P. Pollacco <sup> 1 </sup>, J. Fernández-Gálvez  <sup> 2 </sup>, L. Lilburne <sup> 1  </sup>, S. Carrick  <sup> 1  </sup>, S. McNeill  <sup> 1  </sup>, D.A. Peltzer <sup> 1  </sup> B. Belfort <sup> 3  </sup>, P. Ackerer<sup> 3  </sup>, L. Lassabatere <sup> 4  </sup>, R. Angulo-Jaramillo <sup> 4  </sup>, S.C. Zammit <sup> 5  </sup>, C. Rajanayaka <sup> 5  </sup>
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Ps: if you want to modify the header or footer or the general look of the website, adjust the files in
+* `src/_css/` and
+* `src/_html_parts/`.
 
-> <sup> 1 </sup> Manaaki Whenua -- Landcare Research, Lincoln 7608, **New Zealand**
+## The base with Markdown
 
-> <sup> 2 </sup> Department of Regional Geographic Analysis and Physical Geography, University of Granada, **Spain**
+The [standard markdown syntax](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) can be used such as titles using `#`, lists:
 
-> <sup> 3 </sup> Université de Strasbourg, CNRS/EOST, ITES UMR 7063, Institut Terre et Environnement de Strasbourg, **France**
+* element with **bold**
+* element with _emph_
 
-> <sup> 4 </sup> Univ Lyon, Université Claude Bernard Lyon 1, CNRS, ENTPE, UMR5023 LEHNA, Vaulx en Velin, Lyon 69518, **France**
+or code-blocks `inline` or with highlighting (note the `@def hascode = true` in the source to allow [highlight.js](https://highlightjs.org/) to do its job):
 
-> <sup> 5 </sup> National Institute of Water and Atmospheric Research, Christchurch, **New Zealand**
+```julia
+abstract type Point end
+struct PointR2{T<:Real} <: Point
+    x::T
+    y::T
+end
+struct PointR3{T<:Real} <: Point
+    x::T
+    y::T
+    z::T
+end
+function len(p::T) where T<:Point
+  sqrt(sum(getfield(p, η)^2 for η ∈ fieldnames(T)))
+end
+```
 
----
+You can also quote stuff
 
----
+> You must have chaos within you to ...
 
----
+or have tables:
 
-## 1. Open source software
+| English         | Mandarin   |
+| --------------- | ---------- |
+| winnie the pooh | 维尼熊      |
 
-The open source **SoilWater-ToolBox** software is written in the performant and readable Julia language ([https://julialang.org/](https://julialang.org/)). It can be downloaded from [https://github.com/manaakiwhenua/SoilWater_ToolBox.jl/](https://github.com/manaakiwhenua/SoilWater_ToolBox.jl/) and is available under the **GP-3.0 License**. This software includes a set of interlinked modules that can also be used independently.
+Note that you may have to do a bit of CSS-styling to get these elements to look the way you want them (the same holds for the whole page in fact).
 
-## 2. Mission statement
+### Symbols and html entities
 
-The aim of the **SoilWater-ToolBox** is to derive soil hydraulic parameters and soil water fluxes using wide range of physically based, cost-effective methods. The estimated hydraulic parameters can be directly implemented into the physically based Hydrological Pixel (**HyPix**) model to compute the soil-water balance. The **HyPix** model can also be used to derive the soil hydraulic parameters from time series of *soil water content* measurements. The **SoilWater-ToolBox** enables the user to perform inter-comparison and sensitivity of the hydraulic parameters computed from different methods on soil-water fluxes of interest.
+If you want a dollar sign you have to escape it like so: \$, you can also use html entities like so: &rarr; or &pi; or, if you're using Juno for instance, you can use `\pi[TAB]` to insert the symbol as is: π (it will be converted to a html entity).[^1]
 
-## 3.  SoilWater-ToolBox based on peer-reviewed publications
+If you want to show a backslash, just use it like so: \ ; if you want to force a line break, use a ` \\ ` like \\ so (this is on a new line).[^blah]
 
-The following modules are implemented in the **SoilWater-ToolBox.** They were developed for the following specific scientific purposes, based on peer-reviewed scientific publications:
+If you want to show a backtick, escape it like so: \` and if you want to show a tick in inline code use double backticks like ``so ` ...``.
 
-- **the Intergranular Mixing Particle size distribution (IMP) model,** which derives unimodal hydraulic parameters using particle size distribution (Pollacco et al., 2020)
-- **the General Beerkan Estimation of Soil Transfer parameters method,** which derives the unimodal hydraulic parameters from single ring infiltration experiments (Fernández-Gálvez et al., 2019)
-- **the HyPix model,** a physically based hydrological model which solves the Richards equation, and computes *soil-water content*, *transpiration*, *evaporation*, and *drainage* when input with climate data and hydraulic parameters (Pollacco et al., 2021)
-- **the sorptivity model,** a novel procedure for straightforward computation of sorptivity (Lassabatere et al., 2021), which is implemented into the General Beerkan Estimation of Soil Transfer parameters method (Lassabatere et al., 2021) and in the **HyPix** model (Pollacco et al., 2021)
-- **to derive saturated hydraulic conductivity** from unimodal and bimodal *θ*(*ψ*) (Pollacco et al., 2017, 2013)
-- **to invert hydraulic parameters** from *soil moisture* time series using the **HyPix** model (Pollacco et al., 2021)
-- **to derive unique and physical bimodal Kosugi hydraulic parameters** from inverse modelling (Fernández-Gálvez et al., 2021) using water retention and/or unsaturated hydraulic conductivity data directly measured in the laboratory, or indirectly obtained from inverting *soil moisture* time series using the **HyPix** model (Pollacco et al., 2021).
+Footnotes are nice too:
 
-## 4.  Schematic flow chart
+[^1]: this is the text for the first footnote, you can style all this looking at `.fndef` elements; note that the whole footnote definition is _expected to be on the same line_.
+[^blah]: and this is a longer footnote with some blah from veggie ipsum: turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko.
 
-A simplified schematic flow chart of the **SoilWater-ToolBox** is provided below. It shows the complex relationship between the different modules, the required input data and outputs prodcued by the **SoilWater-ToolBox.** .
+## Basic Franklin extensions
 
-![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/SoilWater-ToolBox-FlowChart.bmp "SoilWater-ToolBox Flowchart")
+### Divs
 
-## 5.  Current applications
+It is sometimes useful to have a short way to make a part of the page belong to a div so that it can be styled separately.
+You can do this easily with Franklin by using `@@divname ... @@`.
+For instance, you could want a blue background behind some text.
 
-The management of both soil and water resources is of primarily importance. Current pressure on natural resources together with climate trends, increase the need for better understanding and predicting the movement of water in the soil. Characterizing soil properties to model soil water dynamic is also directly link to the water cycle with direct implications into the environment, management of crop production, and related socio-economical aspects.
+@@colbox-blue
+Here we go! (this is styled in the css sheet with name "colbox-blue").
+@@
 
-The **SoilWater-ToolBox** is being used in several projects in New Zealand (Manaaki Whenua -- Landcare Research, NIWA, Plant & Food), as well as in France and Spain, for:
+Since it's just a `<div>` block, you can put this construction wherever you like and locally style your text.
 
-- **laboratory data**, to derive unique sets of physical hydraulic parameters from laboratory data even when key data are missing, such as the *unsaturated hydraulic conductivity*;
-- **S-Map-Hydro** **across New-Zealand**, to derive physical hydraulic parameters suitable for a wide range of hydrological models -- the derived hydraulic parameters are **scaled** to the vertical scale of interest and corrected for **stone** content;
-- **validating/adjusting S-Map-Hydro** by feeding the hydraulic parameters into a physical hydrological model, **HyPix,** and comparing the *soil-water content* outputs with measured values;
-- **inverting hydraulic parameters**, to derive hydraulic parameters by inverting time series *soil-water content* data (e.g. TDR, soil moisture capacitance sensor FDR, neutron probe);
-- the **automatic infiltrometer**, to derive physical hydraulic parameters from automatic infiltration tests ;
-- **particle size distribution**, to derive physical hydraulic parameters exclusively from *soil particle size distribution*.
+### LaTeX and Maths
 
-## 6.  Potential future applications
+Essentially three things are imitated from LaTeX
 
-Potential future applications include:
+1. you can introduce definitions using `\newcommand`
+1. you can use hyper-references with `\eqref`, `\cite`, ...
+1. you can show nice maths (via KaTeX)
 
-- **SoilWater-HyPix-2D:** spatialising the **HyPix** model such that it predicts spatially distributed water balance;
-- **wilding pines:** quantifying the impact of the succession of different vegetation types on the hydrological balance;
-- **particle size distribution from laser:** deriving bimodal hydraulic parameters that account for the matrix and macropore domains of soils;
-- **National Soils Data Repository (NSDR):** automatically feeding soil data from the NSDR into the **SoilWater-ToolBox;**
-- **Land Cover Database (LCDB):** deriving vegetation parameters automatically from remote sensing and the **LCDB;**
-- **infiltration data from NSDR:** automatically feeding data into the software for soil hydraulic characterization;
-- **additional vegetation data from remote sensing:** when available, this will be implemented to improve the transpiration module and its impact on the soil-water balance;
-- **SoilWater-HyPix-CenW:** coupling **HyPix** with **CenW** model -- the **HyPix** hydrological model has an advanced unsaturated module which accurately predicts the movement of water in the unsaturated soil; **CenW** has an advanced comprehensive forest growth model based on linked flows of *carbon*, *energy*, *nutrients* and *water* in trees and the soil.
+The definitions can be introduced in the page or in the `config.md` (in which case they're available everywhere as opposed to just in that page).
+For instance, the commands `\scal` and `\R` are defined in the config file (see `src/config.md`) and can directly be used whereas the command `\E` is defined below (and therefore only available on this page):
 
-## 7.  Advantages of the Julia language
+\newcommand{\E}[1]{\mathbb E\left[#1\right]}
 
-**The Julia language:**
+Now we can write something like
 
-- runs as fast as C+, and is suitable for hydrological modelling,
-- is suitable for use with large data sets and parallel computing,
-- supports encoding via Unicode, UTF-8,
-- harmonises different packages, making code easy to read,
-- allows interoperability with other programming languages, such as C, Fortran, R and Python,
-- facilitates package management,
-- has a great Julia community for support,
-- has mature libraries.
+$$  \varphi(\E{X}) \le \E{\varphi(X)}. \label{equation blah} $$
 
-## 9. Further links (tests)
+since we've given it the label `\label{equation blah}`, we can refer it like so: \eqref{equation blah} which can be convenient for pages that are math-heavy.
 
-For information on the author [Authors](https://manaakiwhenua.github.io/SoilWater_ToolBox/Authors)
+In a similar vein you can cite references that would be at the bottom of the page: \citep{noether15, bezanson17}.
 
-For information on HyPix model [HyPixhttps://github.com/manaakiwhenua/SoilWater_ToolBox](https://manaakiwhenua.github.io/SoilWater_ToolBox/HYPIX/HyPix_Introducing)
+**Note**: the LaTeX commands you define can also incorporate standard markdown (though not in a math environment) so for instance let's define a silly `\bolditalic` command.
 
-## ## 8.  Publications
+\newcommand{\bolditalic}[1]{_**!#1**_} <!--_ ignore this comment, it helps atom to not get confused by the trailing underscore when highlighting the code but is not necessary.-->
 
-Fernández-Gálvez, J., Pollacco, J.A.P., Lassabatere, L., Angulo-Jaramillo, R., Carrick, S., 2019. A general Beerkan Estimation of Soil Transfer parameters method predicting hydraulic parameters of any unimodal water retention and hydraulic conductivity curves: Application to the Kosugi soil hydraulic model without using particle size distribution data. Advances in Water Resources 129, 118--130. https://doi.org/10.1016/j.advwatres.2019.05.005Fernández-Gálvez,
+and use it \bolditalic{here for example}.
 
-J., Pollacco, J.A.P., Lilburne, L., McNeill, S., Carrick, S., Lassabatere, L., Angulo-Jaramillo, R., 2021. Deriving physical and unique bimodal soil Kosugi hydraulic parameters from inverse modelling. Advances in Water Resources 153, 103933. https://doi.org/10/gkbdsxLassabatere,
+Here's another quick one, a command to change the color:
 
-L., Peyneau, P.-E., Yilmaz, D., Pollacco, J., Fernández-Gálvez, J., Latorre, B., Moret-Fernández, D., Di Prima, S., Rahmati, M., Stewart, R.D., Abou Najm, M., Hammecker, C., Angulo-Jaramillo, R., 2021. Scaling procedure for straightforward computation of sorptivity. Hydrology and Earth System Sciences. https://doi.org/10.5194/hess-2021-150Pollacco,
+\newcommand{\col}[2]{~~~<span style="color:~~~#1~~~">~~~!#2~~~</span>~~~}
 
-J.A.P., Fernández-Gálvez, J., Carrick, S., 2020. Improved prediction of water retention curves for fine texture soils using an intergranular mixing particle size distribution model. Journal of Hydrology 584, 124597. https://doi.org/10.1016/j.jhydrol.2020.124597Pollacco,
+This is \col{blue}{in blue} or \col{#bf37bc}{in #bf37bc}.
 
-J.A.P., Fernandez-Galvez, J., Carrick, S., McNeill, S., Peltzer, D.A., Lassabatere, Laurent, Raphael, A.-J., Ackerer, P., Belfort, B., Zammit, C., Channa, R., 2021. HyPix: 1D Richards equation hydrological model in Julia language using a multistep optimization scaling method for flexible soil vertical discretization. Submitted to Environmental Modelling & Software.
+### A quick note on whitespaces
 
-Pollacco, J.A.P., Nasta, P., Ugalde, J.M.S., Angulo-Jaramillo, R., Lassabatere, L., Mohanty, B.P., Romano, N., 2013. Reduction of feasible parameter space of the inverted soil hydraulic parameters sets for Kosugi model. Soil Science SS-S-12-00268.
+For most commands you will use `#k` to refer to the $k$-th argument as in LaTeX.
+In order to reduce headaches, this forcibly introduces a whitespace on the left of whatever is inserted which, usually, changes nothing visible (e.g. in a math settings).
+However there _may be_ situations where you do not want this to happen and you know that the insertion will not clash with anything else.
+In that case, you should simply use `!#k` which will not introduce that whitespace.
+It's probably easier to see this in action:
 
-Pollacco, J.A.P., Webb, T., McNeill, S., Hu, W., Carrick, S., Hewitt, A., Lilburne, L., 2017. Saturated hydraulic conductivity model computed from bimodal water retention curves for a range of New Zealand soils. Hydrol. Earth Syst. Sci. 21, 2725--2737. https://doi.org/10.5194/hess-21-2725-2017
+\newcommand{\pathwith}[1]{`/usr/local/bin/#1`}
+\newcommand{\pathwithout}[1]{`/usr/local/bin/!#1`}
+
+* with: \pathwith{script.jl}, there's a whitespace you don't want 🚫
+* without: \pathwithout{script.jl} here there isn't ✅
+
+### Raw HTML
+
+You can include raw HTML by just surrounding a block with `~~~`.
+Not much more to add.
+This may be useful for local custom layouts like having a photo next to a text in a specific way.
+
+~~~
+<div class="row">
+  <div class="container">
+    <img class="left" src="/assets/rndimg.jpg">
+    <p>
+    Marine iguanas are truly splendid creatures. They're found on the Gálapagos islands, have skin that basically acts as a solar panel, can swim and may have the ability to adapt their body size depending on whether there's food or not.
+    </p>
+    <p>
+    Evolution is cool.
+    </p>
+    <div style="clear: both"></div>      
+  </div>
+</div>
+~~~
+
+**Note 1**: again, entire such blocks can be made into latex-like commands via `\newcommand{\mynewblock}[1]{...}`.
+
+**Note 2**: whatever is in a raw HTML block is *not* further processed (so you can't have LaTeX in there for instance). A partial way around this is to use `@@...` blocks which *will* be recursively parsed. The following code gives the same result as above with the small difference that there is LaTeX being processed in the inner div.
+
+@@row
+@@container
+@@left ![](/assets/rndimg.jpg) @@
+@@
+Marine iguanas are **truly splendid** creatures. They're not found in equations like $\exp(-i\pi)+1$. But they're still quite cool.
+~~~
+<div style="clear: both"></div>
+~~~
+@@
+
+## Pages and structure
+
+Here are a few empty pages connecting to the menu links to show where files can go and the resulting paths. (It's probably best if you look at the source folder for this).
+
+* [menu 1](/menu1/)
+* [menu 2](/menu2/)
+* [menu 3](/menu3/)
+
+## References (not really)
+
+* \biblabel{noether15}{Noether (1915)} **Noether**,  Körper und Systeme rationaler Funktionen, 1915.
+* \biblabel{bezanson17}{Bezanson et al. (2017)} **Bezanson**, **Edelman**, **Karpinski** and **Shah**, [Julia: a fresh approach to numerical computing](https://julialang.org/research/julia-fresh-approach-BEKS.pdf), SIAM review 2017.
+
+## Header and Footer
+
+As you can see here at the bottom of the page, there is a footer which you may want on all pages but for instance you may want the date of last modification to be displayed.
+In a fashion heavily inspired by [Hugo](https://gohugo.io), you can write things like
+
+```html
+Last modified: {{ fill fd_mtime }}.
+```
+
+(cf. `src/_html_parts/page_foot.html`) which will then replace these braces with the content of a dictionary of variables at the key `fd_mtime`.
+This dictionary of variables is accessed locally by pages through `@def varname = value` and globally through the `config.md` page via the same syntax.
+
+There's a few other such functions of the form `{{fname p₁ p₂}}` as well as support for conditional blocks. If you wander through the `src/_html_parts/` folder and its content, you should be able to see those in action.
