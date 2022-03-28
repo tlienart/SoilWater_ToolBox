@@ -58,7 +58,7 @@ For every layer, the hydraulic conductivity  $K(\Psi)$ , which is the relationsh
 
 The meaning of Δ*X* means:
 
-\[ \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} \]
+$$  \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} $$
 
 | Id                 | Units    | Explanations                                                                         |
 | ------------------ | -------- | ------------------------------------------------------------------------------------ |
