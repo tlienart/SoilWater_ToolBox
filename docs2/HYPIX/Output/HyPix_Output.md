@@ -1,5 +1,16 @@
 ![]()
 
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    tags: 'all'
+  },
+  svg: {fontCache: 'global'}
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
 # HYPIX OUTPUTS
 
 The following files are table output in HyPix with the following Path for which in this case the project name is TESTCASE for name of site TC1:
@@ -24,20 +35,9 @@ These are the optimal Kosugi hydraulic parameters for every layers:
 | σMac         | [-]                   | Standard deviation of ln ψ in the macropore domaine.                                                                     |
 | ΨmMac        | [mm]                   | Mean of ln ψ in the macropore domain.                                                                                    |
 | So            | [mm$^{-1}$]        | Fluid compressibility.                                                                                                    |
-| θsMacMat     | mm$^3$ mm$^{-3}$ | Volumetric saturated water content that differentiates inter-aggregate pores and matrix domains with θsMacMat$\le$θs. |
+| θsMacMat     | [mm$^3$ mm$^{-3}$] | Volumetric saturated water content that differentiates inter-aggregate pores and matrix domains with θsMacMat$\le$θs. |
 
 ### TABLE_Veg.csv
-
-<script>
-MathJax = {
-  tex: {
-    inlineMath: [['\\(', '\\)']],
-    tags: 'all'
-  },
-  svg: {fontCache: 'global'}
-};
-</script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
 ## HYDRAULIC RELATIONSHIPS
 
@@ -74,9 +74,8 @@ $$ \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} $$
 | ΔRecharge         | [mm]   | Recharge at the bottom cell                                                          |
 | Hpond              | [mm]    | Maximum ponding depth between 2 time steps                                           |
 | ΔRunoff           | [mm]   | Runoff                                                                               |
-| ∑WaterBalance\_η | [mm\]    | Normalized water balance                                                             |
+| ∑WaterBalance\_η | [mm]    | Normalized water balance                                                             |
 
-### 
 
 ## TIME SERIES WITH DEPTH
 
@@ -94,10 +93,12 @@ A matrice of time series with depth of volumetric soil water content $\theta$ [m
 
 A matrice of time series with depth of volumetric soil water content $\Psi$ [mm].
 
+
 ### TABLE\_$\Delta$Flux.csv
 
 A matrice of time series with depth of flux $\Delta Q$ [mm].
 
 ## # HOW GOOD THE SIMULATIONS
+
 
 ### TABLE_Performance.csv
