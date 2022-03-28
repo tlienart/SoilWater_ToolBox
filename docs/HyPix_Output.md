@@ -58,7 +58,7 @@ For every layer, the hydraulic conductivity  $K(\Psi)$ , which is the relationsh
 
 The meaning of Δ*X* means:
 
-$$  \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} $$
+$  \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} $
 
 | Id                 | Units    | Explanations                                                                         |
 | ------------------ | -------- | ------------------------------------------------------------------------------------ |
@@ -69,15 +69,15 @@ $$  \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} $$
 | Minute             | [Minute] | Minute                                                                               |
 | Second             | [Second] | Second                                                                               |
 | ΔPrGross          | [mm]     | Precipitation reaching the top of vegetation                                         |
-| ΔPrSoil           | [mm\]    | Precipitation infiltrating into the soil through throughfall and which is not runoff |
-| ΔPet              | \[mm\]   | Potential evapotranspiration                                                         |
-| ΔSink             | \[mm\]   | Sink term =Transpiration + Evaporation                                               |
-| ΔTranspiration    | [mm\]    | Transpiration                                                                        |
-| ΔEvaporation      | mm\]     | Evaporation                                                                          |
-| ΔRecharge         | \[mm\]   | Recharge at the bottom cell                                                          |
-| Hpond              | [mm\]    | Maximum ponding depth between 2 time steps                                           |
-| ΔRunoff           | \[mm\]   | Runoff                                                                               |
-| ∑WaterBalance\_η | [mm\]    | Normalized water balance                                                             |
+| ΔPrSoil           | [mm]    | Precipitation infiltrating into the soil through throughfall and which is not runoff |
+| ΔPet              | [mm]   | Potential evapotranspiration                                                         |
+| ΔSink             | [mm]   | Sink term =Transpiration + Evaporation                                               |
+| ΔTranspiration    | [mm]    | Transpiration                                                                        |
+| ΔEvaporation      | [mm]     | Evaporation                                                                          |
+| ΔRecharge         | [mm]   | Recharge at the bottom cell                                                          |
+| Hpond              | [mm]    | Maximum ponding depth between 2 time steps                                           |
+| ΔRunoff           | [mm]   | Runoff                                                                               |
+| ∑WaterBalance\_η | [mm]    | Normalized water balance                                                             |
 
 ## TIME SERIES WITH DEPTH
 
