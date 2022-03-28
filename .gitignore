@@ -1,11 +1,17 @@
 *.json
 # SoilWater-ToolBox
-data/OUTPUT/
-data/INPUT/Data_SoilWater
 
+data/INPUT/Data_SoilWater
 
 data/INPUT/Data_Hypix/*
 !data/INPUT/Data_Hypix/TESTCASE/
+
+data/OUTPUT/VirtualClimateStation
+data/OUTPUT/SoilWater
+data/OUTPUT/Smap2Hypix
+
+data/OUTPUT/Hypix/*
+!data/OUTPUT/Hypix/TESTCASE/
 
 # data/Private
 # data/Share
