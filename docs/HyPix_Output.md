@@ -69,15 +69,15 @@ $  \Delta X = \sum_{t=1}^T{X^t-}\sum_{t=1}^{T-1}{X^t} $
 | Minute             | [Minute] | Minute                                                                               |
 | Second             | [Second] | Second                                                                               |
 | ΔPrGross          | [mm]     | Precipitation reaching the top of vegetation                                         |
-| ΔPrSoil           | [mm]    | Precipitation infiltrating into the soil through throughfall and which is not runoff |
-| ΔPet              | [mm]   | Potential evapotranspiration                                                         |
-| ΔSink             | [mm]   | Sink term =Transpiration + Evaporation                                               |
-| ΔTranspiration    | [mm]    | Transpiration                                                                        |
+| ΔPrSoil           | [mm]     | Precipitation infiltrating into the soil through throughfall and which is not runoff |
+| ΔPet              | [mm]     | Potential evapotranspiration                                                         |
+| ΔSink             | [mm]     | Sink term =Transpiration + Evaporation                                               |
+| ΔTranspiration    | [mm]     | Transpiration                                                                        |
 | ΔEvaporation      | [mm]     | Evaporation                                                                          |
-| ΔRecharge         | [mm]   | Recharge at the bottom cell                                                          |
-| Hpond              | [mm]    | Maximum ponding depth between 2 time steps                                           |
-| ΔRunoff           | [mm]   | Runoff                                                                               |
-| ∑WaterBalance\_η | [mm]    | Normalized water balance                                                             |
+| ΔRecharge         | [mm]     | Recharge at the bottom cell                                                          |
+| Hpond              | [mm]     | Maximum ponding depth between 2 time steps                                           |
+| ΔRunoff           | [mm]     | Runoff                                                                               |
+| ∑WaterBalance\_η | [mm]     | Normalized water balance                                                             |
 
 ## TIME SERIES WITH DEPTH
 
@@ -98,3 +98,21 @@ A matrice of time series with depth of flux $\Delta Q$ [mm], where positive is w
 ## # HOW GOOD THE SIMULATIONS
 
 ### TABLE_Performance.csv
+
+The outputs are computed by not taking into account the warm up period
+
+| Id                         |  Units     |  EXPLANATIONS                                                                                                                                                      |
+| -------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| WofBest                    |  [mm]      |   statistics between \thetaθ obs and  \thetaθ sim: Root Mean Square Error                                                                                        |  |
+| NseBest                    |  [-]       |   statistics between \thetaθ obs and  \thetaθ sim: Nash–Sutcliffe model efficiency coefficient                                                                  |  |
+| CccBest                    |  [-]       |   statistics between \thetaθ obs and  \thetaθ sim: concordance correlation coefficient CCC and the refined index of agreement proposed by Willmott et al. (2012) |  |
+| WilmotBest                 |  [-]       |  statistics between \thetaθ obs and  \thetaθ sim: Wilmot coefficient                                                                                             |  |
+| ΔT_Average                |  [-]       |  to determine                                                                                                                                                      |  |
+| ∑∑ΔSink                 |  []        |  Cumulative transpiration + Evaporation                                                                                                                            |  |
+| ∑ΔQ_Bot                  |  [mm]      |  Cumulative water flux at the bottom of the cell                                                                                                                   |  |
+| Efficiency                 |  [Count]   |  Average number of iterations required to perform a day of simulation                                                                                              |  |
+| Global_WaterBalance        |  [mm]      |  Overall water balance of the simulation                                                                                                                           |  |
+| Global_WaterBalance_NormPr |  [-]       |  Normalised water balance of the simulation                                                                                                                        |  |
+| SwcRoots                   |  [mm]      |  Soil water content at the end of simulation                                                                                                                       |  |
+| iNonConverge               |  [Cout]    |  Number of times HYPix did not reach the required water balance                                                                                                    |  |
+| ΔRunTimeHypix             |  [seconds] |  Total time it took to run HyPix                                                                                                                                   |  |

@@ -219,11 +219,11 @@ module tableHypix
 
          Path = pathHyPix.Table_Performance * "_" * string(iSim₀) * ".csv"
 
-         Header = ["Id", "WofBest", "NseBest" ,"CccBest", "WilmotBest", "Efficiency", "Global_WaterBalance" ,"Global_WaterBalance_NormPr" ,"ΔT_Average" ,"∑∑ΔSink" ,"∑ΔQ_Bot" , "SwcRoots" ,"iNonConverge" ,"ΔRunTimeHypix"]
+         Header = ["Id", "WofBest", "NseBest" ,"CccBest", "WilmotBest"  ,"∑∑ΔSink" ,"∑ΔQ_Bot" , "SwcRoots" ,"Global_WaterBalance" ,"Global_WaterBalance_NormPr", "ΔT_Average","iNonConverge" , "Efficiency", "ΔRunTimeHypix"]
 
          Id = 1:1:length(WofBest)
 
-         CSV.write(Path, Tables.table([Id  WofBest NseBest CccBest WilmotBest Efficiency Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average ∑∑ΔSink ∑ΔQ_Bot SwcRoots iNonConverge_iOpt ΔRunTimeHypix]), writeheader=true, header=Header, bom=true)
+         CSV.write(Path, Tables.table([Id  WofBest NseBest CccBest WilmotBest  ∑∑ΔSink ∑ΔQ_Bot SwcRoots Global_WaterBalance Global_WaterBalance_NormPr ΔT_Average iNonConverge_iOpt Efficiency ΔRunTimeHypix]), writeheader=true, header=Header, bom=true)
       return nothing
       end # function PERFORMACE
    #------------------------------------------------------
