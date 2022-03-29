@@ -1,2 +1,2 @@
-﻿Id,WofBest,NseBest,CccBest,WilmotBest,∑∑ΔSink,∑ΔQ_Bot,SwcRoots,Global_WaterBalance,Global_WaterBalance_NormPr,ΔT_Average,iNonConverge,Efficiency,ΔRunTimeHypix
-1.0,0.0,0.9926426011390496,0.9388487627587192,0.9630617723271575,0.0,26.701339163329994,3.846091511157999,-1.1877786057823414e-5,1.483724995601069e-5,5396.0,0.0,34.0,25.834
+﻿Multisteps,WofBest[mm],NseBest[-],CccBest[-],WilmotBest[-],∑∑ΔSink[mm],∑ΔQ_Bot[mm],SwcRoots[mm],Global_WaterBalance[mm],Global_WaterBalance_NormPr[-],ΔT_Average[second],iNonConverge[count],Efficiency[count],ΔRunTimeHypix[second]
+1.0,0.0,0.9926426011390496,0.9388487627587192,0.9630617723271575,0.0,26.701339163329994,3.846091511157999,-1.1877786057823414e-5,1.483724995601069e-5,5396.0,0.0,34.0,20.273
