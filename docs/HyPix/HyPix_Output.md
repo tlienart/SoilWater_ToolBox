@@ -1,3 +1,18 @@
+<!-- MathJax -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+		     TeX: {
+      equationNumbers: {
+        autoNumber: "AMS"
+      }
+    },
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        inlineMath: [['$','$']]
+      }
+    });
+  </script>
+<script id="MathJax-script" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 # HYPIX OUTPUTS: TABLES
 
