@@ -16,6 +16,7 @@ generate_rss = true
 website_title = "SoilWater-ToolBox"
 website_descr = "SoilWater-ToolBox"
 website_url   = "https://manaakiwhenua.github.io/SoilWater-ToolBox.jl/"
+prepath = "SoilWater-ToolBox"
 +++
 
 <!--
