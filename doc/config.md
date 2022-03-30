@@ -13,10 +13,10 @@ ignore = ["node_modules/"]
 
 # RSS (the website_{title, descr, url} must be defined to get RSS)
 generate_rss = true
-website_title = "SoilWater-ToolBox"
-website_descr = "SoilWater-ToolBox"
-website_url   = "https://manaakiwhenua.github.io/SoilWater-ToolBox.jl/"
-prepath = "SoilWater-ToolBox"
+website_title = "SoilWater_ToolBox"
+website_descr = "SoilWater_ToolBox"
+website_url   = "https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/"
+prepath = "SoilWater_ToolBox"
 +++
 
 <!--
