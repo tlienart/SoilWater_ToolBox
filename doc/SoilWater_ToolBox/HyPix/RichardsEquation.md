@@ -7,7 +7,7 @@ Modelling unsaturated flow in highly heterogeneous soils can be accurately perfo
 Assuming a rigid solid matrix ([Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp)), the mixed form of RE is written as:
 
 $$\begin{equation}
-\frac{\theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t-1} \right)}{\varDelta T^t}-S_o\frac{\theta _i\left( \psi _{i}^{t} \right)}{\theta _{s_i}}\frac{\left| \psi _{i}^{t} \right|-\left| \psi _{i}^{t-1} \right|}{\varDelta T^t}=\frac{Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t}}{\varDelta Z_i}-Sink_i\left( \psi _{i}^{t-1} \right) 
+\frac{\theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t-1} \right)}{\varDelta T^t}-S_o\frac{\theta _i\left( \psi _{i}^{t} \right)}{\theta _{s_i}}\frac{\left| \psi _{i}^{t} \right|-\left| \psi _{i}^{t-1} \right|}{\varDelta T^t}=\frac{Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t}}{\varDelta Z_i}-Sink_i\left( \psi _{i}^{t-1} \right)
 \end{equation}$$
 
 where $\varDelta T^t$ [T] is the time-step at time $t$; $\varDelta Z_{i}$ [L] is the mesh size of the cell $i$, with the vertical coordinate positive downwards; $θ_{i}$ [L<sup>3</sup> L<sup>-3</sup>] is the volumetric soil water content of the cell $i$; $θ_{s}$ [L<sup>3</sup> L<sup>-3</sup>]  is the saturated volumetric soil water content; $S_{0}$ [L<sup>-1</sup>] is a parameter that accounts for fluid compressibility, which is assumed to be constant with depth; $ψ_{i}$ [L] is the soil water pressure of cell $i$, considering $ψ > 0$ for unsaturated soils; $Q$ [L T<sup>-1</sup>] is the soil water flux based on the extended Darcy’s law, positive downward and negative when water moves upwards; and $Sink_{i}$ [L<sup>3</sup> L<sup>-3</sup>], taken as positive, is the sink term defined as the volume of water per unit time removed from cell $i$ by *evaporation* and *root water uptake*.
@@ -24,21 +24,21 @@ $$\begin{equation}
 \begin{cases}	B=K_s\left( \frac{2-\beta}{3}+\frac{1+\beta}{3}\frac{K\left( \theta _{1}^{t-1} \right)}{K_s} \right)\\	\varDelta Qmax_{\frac{1}{2}}^{t}=Qmax_{\frac{1}{2}}^{t}\,\,\varDelta T^t=\cos  \alpha \left[ Sorpt\left( \theta _{1}^{t-1} \right) \,\,\sqrt{\varDelta T^t}\,\, +B\,\,Ks_1\,\,\varDelta T^t \right]\\\end{cases}
 \end{equation}$$
 
-where $Qmax_{\frac{1}{2}}^{t}$[L T<sup>-1</sup>] is the maximum soil water flux; $Sorpt$  [L T<sup>-1/2</sup>] is the soil sorptivity; $\beta$ [-] is an integral shape parameter, typically fixed at 0.6 ([Haverkamp *et al*., 1994](#_ENDREF_18); [Parlange *et al*., 1982](#_ENDREF_19)); and the slope, $α$ [radian], is the angle between the flow direction of recharge and the vertical axis ($0 ≤ α ≤ π/2$ for inclined flow). 
+where $Qmax_{\frac{1}{2}}^{t}$[L T<sup>-1</sup>] is the maximum soil water flux; $Sorpt$  [L T<sup>-1/2</sup>] is the soil sorptivity; $\beta$ [-] is an integral shape parameter, typically fixed at 0.6 ([Haverkamp *et al*., 1994](#_ENDREF_18); [Parlange *et al*., 1982](#_ENDREF_19)); and the slope, $α$ [radian], is the angle between the flow direction of recharge and the vertical axis ($0 ≤ α ≤ π/2$ for inclined flow).
 
 We use the physically based sorptivity model of [Lassabatere *et al*. (2021)](#_ENDREF_20), which uses a mixed formulation that was validated against analytical expressions for several types of soils using different models of hydraulic functions. The procedure to compute sorptivity is efficient for all types of hydraulic functions and shape parameters with insignificant errors ([Lassabatere *et al*., 2021](#_ENDREF_20)). The sorptivity model is computed as:
 
 $$\begin{equation}
- Sorpt^2\left( \theta _0,\theta _s \right) =\int_0^{\frac{\theta _s-\theta _r}{2}}{\left( \theta _s+\theta -2\theta _0 \right)}D\left( \theta \right) d\theta +\int_0^{\psi \left( \frac{\theta _s-\theta _r}{2} \right)}{\left( \theta _s+\theta \left( \psi \right) -2\theta _0 \right)}K\left( \psi \right) d\psi 
+ Sorpt^2\left( \theta _0,\theta _s \right) =\int_0^{\frac{\theta _s-\theta _r}{2}}{\left( \theta _s+\theta -2\theta _0 \right)}D\left( \theta \right) d\theta +\int_0^{\psi \left( \frac{\theta _s-\theta _r}{2} \right)}{\left( \theta _s+\theta \left( \psi \right) -2\theta _0 \right)}K\left( \psi \right) d\psi
  \end{equation}$$
 
-where $D(θ)$ is the diffusivity function with $D\left( \theta \right) =K\left( \theta \right) \frac{d\psi}{d\theta}$. This equation splits the integral 
+where $D(θ)$ is the diffusivity function with $D\left( \theta \right) =K\left( \theta \right) \frac{d\psi}{d\theta}$. This equation splits the integral
 
 $$\begin{equation}
 Sorpt^2\left( \theta _0,\theta _s \right) =\int_{\theta _r}^{\theta _s}{\left( \theta _s+\theta -2\theta _0 \right)}D\left( \theta \right) d\theta
 \end{equation}$$
 
-into two parts to allow the integration of continuous functions over closed intervals. In the regular expression, the diffusivity function is infinite close to saturation, $θ \to θ_{s}$, which complexes its integration in the vicinity of $θ_{s}$. In the specific equation, the last part of the integration based on $ψ$ is replaced with the integration of the hydraulic conductivity as a function of the water pressure, $K(ψ)$, alleviating the problem of convergence. 
+into two parts to allow the integration of continuous functions over closed intervals. In the regular expression, the diffusivity function is infinite close to saturation, $θ \to θ_{s}$, which complexes its integration in the vicinity of $θ_{s}$. In the specific equation, the last part of the integration based on $ψ$ is replaced with the integration of the hydraulic conductivity as a function of the water pressure, $K(ψ)$, alleviating the problem of convergence.
 
 Also, $\varDelta Qmax_{\frac{1}{2}}^{t}$, which is the maximum water infiltrating into the top cell, must be less than the maximum available pore volume of the top cell:
 
@@ -51,7 +51,7 @@ where $θs_{1}$ [L<sup>3</sup> L<sup>-3</sup>] is the saturated volumetric soil 
 The amount of water that is not able to infiltrate into the soil can either run off laterally due to the slope or get ponded at the surface, where the ponding $\varDelta H_{pond}^{t}$, [L] is computed as:
 
 $$\begin{equation}
-\varDelta H_{pond}^{t}=Max\left\{ \varDelta Pr_{through}^{^t}+\varDelta H_{pond}^{t-1}-\varDelta Qmax_{\frac{1}{2}}^{t};\,\,0 \right\} 
+\varDelta H_{pond}^{t}=Max\left\{ \varDelta Pr_{through}^{^t}+\varDelta H_{pond}^{t-1}-\varDelta Qmax_{\frac{1}{2}}^{t};\,\,0 \right\}
 \end{equation}$$
 
 where $\varDelta Pr_{through}^{t}$ [L] is the *throughfall precipitation* (i.e., the amount of water reaching the top cell; computed in [rainfall interception](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Interception)).
@@ -66,18 +66,18 @@ where $\varDelta Pr_{through}^{t}$ [L] is the *throughfall precipitation* (i.e.,
    \begin{cases}	Q_{i-\frac{1}{2}}^{t}=-K_{i-\frac{1}{2}}\,\,\left[ \frac{\left| \psi _{i-1}^{t} \right|-\left| \psi _{i}^{t} \right|}{\varDelta Z_{i-\frac{1}{2}}}-\cos  \alpha \right]\\	\varDelta Z_{i-\frac{1}{2}}=\frac{\varDelta Z_i+\varDelta Z_{i-1}}{2}\\	K_{i-\frac{1}{2}}=\omega _i\,\,K_i\left( \psi _{i}^{t} \right) +\left[ 1-\omega _i \right] \,\,K_{i-1}\left( \psi _{i-1}^{t} \right)\\	\omega _i=\frac{\varDelta Z_i}{\varDelta Z_i+\varDelta Z_{i-1}}\\\end{cases}
    \end{equation}$$
 
-   >>where $Q_{i-\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux entering cell $i$ from the top, and $ Q_{i+\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux exiting cell $i$ from the bottom; $K_{i-\frac{1}{2}}$ [L T<sup>-1</sup>] refers to the weighted average inter-cell hydraulic conductivity (e.g. [Haverkamp and Vauclin, 1979](#_ENDREF_21); [Belfort *et al*., 2013](#_ENDREF_22)), computed with $\omega _i$; and $\varDelta Z_{i-\frac{1}{2}}$ [L] is the distance between cell centres $i$ and $i – 1$, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp). 
-   
+   >>where $Q_{i-\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux entering cell $i$ from the top, and $ Q_{i+\frac{1}{2}}^{t}$ [L T<sup>-1</sup>] is the flux exiting cell $i$ from the bottom; $K_{i-\frac{1}{2}}$ [L T<sup>-1</sup>] refers to the weighted average inter-cell hydraulic conductivity (e.g. [Haverkamp and Vauclin, 1979](#_ENDREF_21); [Belfort *et al*., 2013](#_ENDREF_22)), computed with $\omega _i$; and $\varDelta Z_{i-\frac{1}{2}}$ [L] is the distance between cell centres $i$ and $i – 1$, as described in [Figure 1](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure1.bmp).
+
 
 #### *Free drainage bottom condition: $i = N_{i} + 1$*
 
 >>The water flux leaving the bottom cell represents the drainage, and it can be described as a function of the hydraulic conductivity of the bottom cell as:
 
 $$\begin{equation}
-Q_{N_{{i}}+1}^{t}=K_{N_{{i}}}\left( \psi _{N_{{i}}}^{t} \right) \,\,\cos \alpha 
+Q_{N_{i}+1}^{t}=K_{N_{i}}\left( \psi _{N_{i}}^{t} \right) \,\,\cos \alpha
 \end{equation}$$
 
->>where $K_{N_{{i}}}\left( \psi_{N_{{i}}}^{t} \right)$ is the [*unsaturated hydraulic conductivity*](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions)
+>>where $K_{N_{i}}\left( \psi_{N_{i}}^{t} \right)$ is the [*unsaturated hydraulic conductivity*](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions)
 
 >>This free drainage condition is the most widely used when the water table is assumed to be at significant depth. Typically, our model addresses the modelling of water flow in the unsaturated or vadose zone.
 
@@ -87,16 +87,16 @@ Q_{N_{{i}}+1}^{t}=K_{N_{{i}}}\left( \psi _{N_{{i}}}^{t} \right) \,\,\cos \alpha
 The Picard and Newton–Raphson (NR) iterative methods are the most widely used procedures for solving the RE. NR has been found to be more efficient than the Picard iteration method ([Lehmann and Ackerer, 1998](#_ENDREF_23); [Paniconi and Putti, 1994a](#_ENDREF_24), [1994b](#_ENDREF_25)), so we solved the RE by using the NR algorithm. NR is computed using a first-order Taylor development by solving the Jacobian matrices of the residuals, R [Eq. (12)] (described in Appendix 7.1) in an iterative way that updates $\left[ \psi _i^{t,k+1}-\psi _{i}^{t,k} \right] $ until convergence is achieved. The numerical discretization is a tridiagonal, nonlinear set of equations that needs to be solved for $\left[ \psi _i^{t,k+1}-\psi _{i}^{t,k} \right] $, and for every iteration, $k$:
 
 $$\begin{equation}
-\begin{cases}	
-\psi _i^{t,k=1}=\psi _{i}^{t-1}\\	
-\psi _i^{t,k+1}=\psi _i^{t,k}-\frac{R\left( \psi _{i}^{t,k} \right)}{\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i-1}^{t,k}}+\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i}^{t,k}}+\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i+1}^{t,k}}}\\	
+\begin{cases}
+\psi _i^{t,k=1}=\psi _{i}^{t-1}\\
+\psi _i^{t,k+1}=\psi _i^{t,k}-\frac{R\left( \psi _{i}^{t,k} \right)}{\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i-1}^{t,k}}+\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i}^{t,k}}+\frac{\partial R\left( \psi _i^{t,k} \right)}{\partial \psi _{i+1}^{t,k}}}\\
 \psi _i^{t,k+1}=\varOmega \,\,\min \left[ \max \left( \psi _i^{t,k+1},0 \right) ,\psi _{\max} \right] +\left( 1-\varOmega \right) \psi _i^{t,k}\\
 \end{cases}
 \end{equation}$$
 
 where $\psi_{\max} = 10^{7}$ mm is the maximum value of $\psi $; and $Ω [1 ; 0[$ is a parameter used to avoid "overshooting" of the Newton step. Therefore, when $Ω = 1$ there is no reduction of the Newton step. We use $Ω = 0.5$, as recommended by ([Kelley, 2003](#_ENDREF_26)). The feasible range of Ω is set to $[0.2 ; 1.0]$ as indicated in [Table 2](XXXX). In this study the initial $\psi _{i}^{t=0}$ is derived from measured $θ^{t=0}$.
 
-It is expected that for every $k$, $R$ decreases such that $\left| R\left( \psi _{i}^{t,k+1} \right) \right|\,\,\leqslant \left| R\left( \psi _{i}^{t,k} \right) \right|$. The solution of the Jacobian takes place by means of the *tridiagonal function* that is an effective modification of the Gauss algorithm for the solution of the tridiagonal linear set of equations ([Appendix 7.1](XXXXX)). We use the efficient *tridiagonal function* derived from the LAPACK package within Julia to solve the matrix (https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/). 
+It is expected that for every $k$, $R$ decreases such that $\left| R\left( \psi _{i}^{t,k+1} \right) \right|\,\,\leqslant \left| R\left( \psi _{i}^{t,k} \right) \right|$. The solution of the Jacobian takes place by means of the *tridiagonal function* that is an effective modification of the Gauss algorithm for the solution of the tridiagonal linear set of equations ([Appendix 7.1](XXXXX)). We use the efficient *tridiagonal function* derived from the LAPACK package within Julia to solve the matrix (https://docs.julialang.org/en/v1/stdlib/LinearAlgebra/).
 
 ### **Residuals of the Richards equation**
 
@@ -106,12 +106,12 @@ $$\begin{equation}
 \begin{cases}	R_{i}^{t}=\varDelta Z_i\left[ \theta _i\left( \psi _{i}^{t} \right) -\theta _i\left( \psi _{i}^{t-1} \right) \right] -\varDelta Z_i\,\,S_o\frac{\theta _i\left( \psi _{i}^{t} \right)}{\theta _{s_i}}\left( \left| \psi _{i}^{t} \right|-\left| \psi _{i}^{t-1} \right| \right) -\varDelta T^t\left[ Q_{i-\frac{1}{2}}^{t}-Q_{i+\frac{1}{2}}^{t} \right] +\varDelta Sink_i\left( \psi _{i}^{t-1} \right)\\	\varDelta Sink_i\left( \psi _{i}^{t-1} \right) =\varDelta Z_i\,\,\varDelta T^t\,\,Sink_i\left( \psi _{i}^{t-1} \right)\\\end{cases}
 \end{equation}$$
 
-where $\varDelta Sink_{i}$ [L] is the sink computed for a given $\varDelta T$. To stabilize the numerical scheme, $\varDelta Sink_{i}$ is computed with the $ψ_{i}$ values derived from the previous time-step. 
+where $\varDelta Sink_{i}$ [L] is the sink computed for a given $\varDelta T$. To stabilize the numerical scheme, $\varDelta Sink_{i}$ is computed with the $ψ_{i}$ values derived from the previous time-step.
 
 ### **Automatic differentiation of the Jacobian with Julia language**
 
 One of the shortcomings of the NR solver is that it requires the mathematical derivatives of $R$ [Eq. (9)]() (Appendix 7.2),  the implementation of which is complicated and time consuming. For example, if we wish to modify the inter-cell hydraulic conductivity [Eq. (7)](), it requires recalculation of the derivatives.
-To address this shortcoming, HyPix implements an option whereby the derivatives are analytically derived automatically by using the forward-mode automatic differentiation *[ForwardDiff](https://github.com/JuliaDiff)* in the Julia package ([Revels *et al*., 2016](#_ENDREF_27)). *ForwardDiff* (version 0.10.16) was found to be as accurate as using the mathematical derivatives, and only 10–25% slower compared to using mathematical derivatives. 
+To address this shortcoming, HyPix implements an option whereby the derivatives are analytically derived automatically by using the forward-mode automatic differentiation *[ForwardDiff](https://github.com/JuliaDiff)* in the Julia package ([Revels *et al*., 2016](#_ENDREF_27)). *ForwardDiff* (version 0.10.16) was found to be as accurate as using the mathematical derivatives, and only 10–25% slower compared to using mathematical derivatives.
 
 
 ### **Convergence criterion**
@@ -140,7 +140,7 @@ where Ni is the total number of cells, as described in [Figure 1](https://manaak
 
 The time management module optimizes the size of the time-step, $\varDelta T$, such that HyPix uses the largest $\varDelta T$ while meeting the targeted water balance accuracy. There are a large number of heuristic time-stepping methods in the literature (e.g. [Thomas and Gladwell, 1988](#_ENDREF_30); [Kavetski *et al.*, 2001](#_ENDREF_31); [Kavetski and Binning, 2004](#_ENDREF_32); [Miller *et al.*, 2006](#_ENDREF_33)). Among them we selected and improved on the adaptive time-step management of Kirkland et al. (1992) and Ross (2003), because their method is physically based, such that $\varDelta T$ is directly derived from the residuals of the water balance [Eq. (10)]() and requires only one physical fitting physical parameter. $\varDelta T$ is calculated via a maximum increase or decrease of the degree of saturation for each cell, which ensures a higher time resolution when $θ$ variations are large. This improves the convergence rate at the wetting front.
 
-#### **Traditional adaptive time-step management: $\varDelta T$-$\varDelta θ$** 
+#### **Traditional adaptive time-step management: $\varDelta T$-$\varDelta θ$**
 
 The time-step management of [Kirkland *et al.* (1992)](#_ENDREF_34) and [Ross (2003)](#_ENDREF_35) was developed specifically for the RE based on $θ$. $\varDelta T$-$Δθ$ is derived by rearranging the terms of the residual [Eq. (10)]() assuming that $R ≈ 0$ and $S_{0} ≈ 0$ ($S_{0}$ is by definition small and strictly 0 for non-compressible fluids), leading to:
 
@@ -158,7 +158,7 @@ where $N_i$ is the total number of cells, as described in [Figure 1](https://man
 
 The computational time in HyPix decreases when $\varDelta T$ increases when, for example: **(a)** the size of the cell, $\varDelta Z$, increases, **(b)** the hydraulic properties from one cell to another, depicted by $Q$, do not change dramatically (homogeneous soils), and **(c)** the amplitude of the variation of $θ$ decreases.
 
-#### **Novel adaptive time-step management: $\varDelta T$-$\varDelta \psi$** 
+#### **Novel adaptive time-step management: $\varDelta T$-$\varDelta \psi$**
 
 For the robustness of the solution of the RE [(Eq. (1))]() based on $ψ$ , the change of $\varDelta \psi$ between two consecutive time-steps needs to be small. Nevertheless, as shown in [Figure 2](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp), a small change of $θ$ could result in a large change of $\psi$, particularly near saturation and at the dry end of the $θ(ψ)$ curve. To address this shortcoming, we improve the traditional [Ross (2003)](#_ENDREF_39) time-step, $\varDelta T-\varDeltaθ$ [(Eq. (12))](), by allowing $\varDelta θ_{max}$ to vary $\varDelta θ_{max_i}$. For that we introduce a temporary parameter, $\varDelta ψ_{max}$, computed from $θ(ψ)$ and $\varDelta θ_{max}$ [(Eq. (12))]():
 
@@ -188,7 +188,7 @@ The selected $\varDelta T$ is computed using [Eq. (13)]().
 ![HyPix](https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure2.bmp "Figure 2. Example illustrating that small changes of θ could result in large changes of ψ, particularly near saturation and at the dry end of the unimodal θ(ψ) [Eq. (1)].")
 <figcaption align = "center"><b>Figure 2 - Example illustrating that small changes of θ could result in large changes of ψ, particularly near saturation and at the dry end of the unimodal θ(ψ) [Eq. (1) FROM HYDRAULIC FUNCTIONS!!!!].</b></figcaption></figure>
 
-## **Condition to rerun the time-step** 
+## **Condition to rerun the time-step**
 $\varDelta T^t$ is computed by using past pressure, $ψ^{t-1}$, which may not reflect, for example, the passage of a wetting front. Therefore, to assure a good water balance and the stability of the solution of the RE, HyPix recomputes $\varDelta T^t$ if $\varDelta T^t(\psi ^t)\ll \varDelta T^t(\psi ^{t-1})$. HyPix is rerun if the following condition is met:
 
 $$\begin{equation}
@@ -222,9 +222,7 @@ An acceptable water balance at the end of the simulation occurs when $WB^{*t}$ i
 The efficiency of a simulation, $E_{ff}$ [T <sup>-1</sup>], is defined as the average number of iterations, $k$, per day required to achieve a suitable $WB^*$ [[Eq.(20)]](), and it is computed as:
 
 $$\begin{equation}
-E_{ff}=\frac{N_{iter}}{\sum_{t=1}^{N_{\mathrm{t}}}{\varDelta T^t}}\,\, 
+E_{ff}=\frac{N_{iter}}{\sum_{t=1}^{N_{\mathrm{t}}}{\varDelta T^t}}\,\,
 \end{equation}$$
 
 where $N_{iter}$ is the number of iterations. Therefore, the smaller the $E_{ff}$, the faster HyPix would run for a given $WB^*$.
-
-
