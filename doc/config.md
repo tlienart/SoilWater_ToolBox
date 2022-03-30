@@ -15,7 +15,7 @@ ignore = ["node_modules/"]
 generate_rss = true
 website_title = "SoilWater_ToolBox"
 website_descr = "SoilWater_ToolBox"
-website_url   = "https://manaakiwhenua.github.io"
+website_url   = "https://manaakiwhenua.github.io/SoilWater_ToolBox.js"
 prepath = "SoilWater_ToolBox.js"
 +++
 
