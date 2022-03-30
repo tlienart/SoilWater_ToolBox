@@ -2,7 +2,7 @@
 Add here global page variables to use throughout your website.
 -->
 +++
-author = "Septimia Zenobia"
+author = "Joseph Pollacco, Jesus-0Fernandez"
 mintoclevel = 2
 
 # Add here files or directories that should be ignored by Franklin, otherwise
@@ -13,10 +13,10 @@ ignore = ["node_modules/"]
 
 # RSS (the website_{title, descr, url} must be defined to get RSS)
 generate_rss = true
-website_title = "SoilWater_ToolBox"
+website_title = "SoilWater ToolBox"
 website_descr = "SoilWater_ToolBox"
-website_url   = "https://manaakiwhenua.github.io/SoilWater_ToolBox.jl"
-prepath = "SoilWater_ToolBox.jl"
+website_url   = "https://manaakiwhenua.github.io/SoilWater_ToolBox/"
+prepath = "SoilWater_ToolBox"
 +++
 
 <!--
