@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="/SoilWater_ToolBox/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/SoilWater_ToolBox/css/franklin.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/pure.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/side-menu.css">
+<!-- style adjustments -->
+<style>
+.franklin-content{padding-left:10%;}
+@media (min-width: 940px) {
+  .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;}
+  .header {width: 700px;}
+}
+</style>
+<link rel="icon" href="/SoilWater_ToolBox/assets/favicon.png">
+
+   <title>SINK TERM MODEL</title>  
+</head>
+<body>
+  <div id="layout">
+    <!-- Menu toggle / hamburger icon -->
+    <a href="#menu" id="menuLink" class="menu-link"><span></span></a>
+    <div id="menu">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="#">Pure-SM</a>
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/" class="pure-menu-link">Home</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu1/" class="pure-menu-link">Code blocks</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu2/" class="pure-menu-link">More goodies</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu3/" class="pure-menu-link">Tags</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="main"> <!-- Closed in foot -->
+      <div class="header">
+        <h1>SINK TERM MODEL</h1>
+        <h2>Using the Pure/Side-Menu template</h2>
+      </div>
+
+
+<!-- Content appended here -->
+<div class="franklin-content"><p>&lt;script type&#61;&quot;text/x-mathjax-config&quot;&gt;     MathJax.Hub.Config&#40;&#123; 		     TeX: &#123;       equationNumbers: &#123;         autoNumber: &quot;AMS&quot;       &#125;     &#125;,       tex2jax: &#123;         skipTags: &#91;&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;&#93;,         inlineMath: &#91;&#91;&#39;&#36;&#39;,&#39;&#36;&#39;&#93;&#93;       &#125;     &#125;&#41;;   &lt;/script&gt; &lt;script id&#61;&quot;MathJax-script&quot; async src&#61;&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config&#61;TeX-MML-AM_CHTML&quot;&gt;&lt;/script&gt;</p>
+<h1 id="sink_term_model"><a href="#sink_term_model" class="header-anchor">SINK TERM MODEL</a></h1>
+<p>The <em>sink term</em>, \(\varDelta Sink\), described in the Richards equation is a function of the <em>soil evaporation</em> depth, \( \varDelta Evap \) &#91;L&#93;, and the <em>root water uptake</em> depth of the vegetation, \(\varDelta Rwu\) &#91;L&#93;:</p>
+\[\begin{equation}
+\varDelta Sink=\varDelta Evap+\varDelta Rwu
+\end{equation}\]
+<p>##	<em>Soil evaporation</em>: \(\varDelta Evap\)</p>
+<p>The evaporation model based on <a href="#_ENREF_6">Romano and Giudici &#40;2009&#41;</a> and adapted by <a href="#_ENREF_7">Pollacco and Mohanty &#40;2012&#41;</a> is computed as:</p>
+\[\begin{equation}
+\varDelta Evap\,\,=\,\,\varDelta Pet_{evap}^{}\,\,Se_{1}^{}
+\end{equation}\]
+<p>where \(Se_{1}\) &#91;0-1&#93; &#91;-&#93; refers to the <em>effective soil water content</em> defined for the top cell. \(\varDelta Pet_{evap}\) &#91;L&#93; is the <em>potential evaporation</em> depth computed with the Beer–Lambert law.</p>
+<p>##	<em>Root water uptake</em>: \(\varDelta Rwu\)</p>
+<p>The <em>root water uptake</em> computes the volume of water removed per unit time from a unit volume of soil in the root zone and is computed for each cell \(i\):</p>
+\[\begin{equation}
+\varDelta Rwu_i=K_c\cdot \varDelta Pet_{transp}^{}\cdot \varDelta Rdf_i\cdot FwaterStress_i\cdot RootComp_i 
+\end{equation}\]
+<p>where \(\varDelta Rwu\) &#91;L&#93; is the <em>root water uptake</em> depth; \(Kc\) &#91;-&#93; is the <em>crop coefficient</em>; \(\varDelta Pet_{\mathrm{transp}}\) &#91;L&#93; corresponds to the <em>potential transpiration</em> depth; \(\varDelta Rdf_{i}\) &#91;-&#93; refers to the percentage of roots per cell; \(FwaterStress\) &#91;-&#93; is the <em>water stress function</em> per cell, which computes the reduction of transpiration based on \(ψ\); and \(RootComp\) &#91;-&#93; is the <em>root compensation</em> by enabling water uptake from deeper layers when the upper layers are depleted.</p>
+<h3 id="root_density_function_vardelta_rootdensity"><a href="#root_density_function_vardelta_rootdensity" class="header-anchor"><em>Root density function</em>: \(\varDelta RootDensity\)</a></h3>
+<p>The percentage of roots per cell is given by \(Rdf_{i}\), which defines the general shape of the roots, as given by the example provided in <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp">Figure 6</a>. The root distribution is based on an empirical function of <a href="#_ENDREF_8">Gale and Grigal &#40;1987&#41;</a>, which was modified by <a href="#_ENDREF_9">Pollacco et al. &#40;2008&#41;</a>. The model requires, as parameters, the <em>maximum rooting depth</em>, \(Z_{Nroot}\) &#91;L&#93; and the percentage of roots in the top 30 cm &#40;other values can also be considered&#41;, \(\varDelta Rdf_{Top}\) &#91;&#37;&#93;.</p>
+<p>The fraction of roots, \(Rdf_{i}\) &#91;-&#93;, for each cell, \(i\), is computed as:</p>
+\[\begin{equation}
+\begin{cases}	\varDelta Rdf_i=\frac{R_d^{Z_{i+\frac{1}{2}}}-R_d^{Z_{i-\frac{1}{2}}}}{1-R_d^{Z_{Nroot}}}\\	with\,\,\sum_{i=1}^{i=Nroot}{\varDelta Rdf_i=1}\\\end{cases}
+\end{equation}\]
+<p>where \(Z_{i-\frac{1}{2}}\) and \(Z_{i+\frac{1}{2}}\) &#91;L&#93; are respectively the depth of the top and the bottom of cell \(i\); \(Rd\) &#91;-&#93; is the routing distribution parameter &#40;computed numerically from \(Z_{Nroot}\) and \(\varDelta Rdf_{Top}\)&#41;. \(R_{d}\) varies between 0.7000 and 0.9999, such that when \(R_{d}\) is close to 0.7, all the roots are distributed at the top, and when \(R_{d}\) is close to 1, the roots are evenly distributed within the root zone.</p>
+<p>The value of \(R_{d}\) is computed by solving the following equation:</p>
+\[\begin{equation}
+\varDelta Rdf_{Top}=\frac{R_d^0-R_d^{30}}{1-R_d^{\left| Z_{root} \right|}}=\frac{1-R_d^{30}}{1-R_d^{\left| Z_{root} \right|}}
+\end{equation}\]
+<p>An example of \(\varDelta Rdf\) is provided in <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp">Figure 6a</a> for a soil that has equal discretization.</p>
+<p><img src="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp &quot;Figure 6. Pasture grass models used for all lysimeters: &#40;a&#41; root density function plotted with depth and &#40;b&#41; schematic of the &#91;Feddes et al. &#40;1978&#41;&#93;&#40;#_ENDREF_10&#41; plant water stress function.&quot;" alt="HyPix" /></p>
+<h4 id="water_stress_response_function_f_waterstress"><a href="#water_stress_response_function_f_waterstress" class="header-anchor"><em>Water Stress response function</em>: \(F_{WaterStress}\)</a></h4>
+<p>The <em>water stress response function</em>, \(F_{WaterStress}\) &#91;-&#93; shown in <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp">Figure 6b</a> is a prescribed dimensionless function of \(ψ\), where &#40;0 \(\le\) \(F_{WaterStress}\) \(\le\) 1&#41;. Following <a href="#_ENDREF_10">Feddes et al. &#40;1978&#41;</a>, \(F_{WaterStress}\) is defined by using four soil water pressure values leading to a trapezoidal curve, so that:</p>
+<ul>
+<li><p>\(F_{WaterStress} = 0\) close to saturation at a pressure greater than \(\varPsi _{\mathrm{Feddes}1}\) and also above the permanent wilting point soil water pressure, \(\varPsi _{\mathrm{Feddes}4}\)</p>
+</li>
+<li><p>\(F_{WaterStress} = 1\) between soil water pressures \(\varPsi _{\mathrm{Feddes}2}\) and \(\varPsi _{\mathrm{Feddes}3}\)</p>
+</li>
+<li><p>for soil water pressure between \(\varPsi _{\mathrm{Feddes}1}\) and \(\varPsi _{\mathrm{Feddes}2}\), \(F_{WaterStress}\) increases linearly</p>
+</li>
+<li><p>for soil water pressure between \(\varPsi _{\mathrm{Feddes}3}\) and \(\varPsi _{\mathrm{Feddes}4}\), \(F_{WaterStress}\) decreases linearly.</p>
+</li>
+</ul>
+<p>A schematic plot of this stress response function is depicted in <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/FIGURE/Figure6.bmp">Figure 6b</a>.</p>
+<h4 id="compensation_mechanism_root_comp"><a href="#compensation_mechanism_root_comp" class="header-anchor"><em>Compensation mechanism</em>: \(Root_{comp}\)</a></h4>
+<p>A <em>root water uptake compensation</em> mechanism is introduced to improve the prediction of transpiration by enabling water uptake from deeper layers when the upper layers are depleted, although the percentage of roots at deeper depth is limited. The compensation mechanism of <a href="#_ENDREF_11">Li et al. &#40;2001&#41;</a>, validated by <a href="#_ENDREF_12">Braud et al. &#40;2005&#41;</a>, is introduced. The model requires the <em>compensation mechanism parameter</em> \(C\) &#91;-&#93;, which accounts for the general soil water content profile before computing the water uptake from individual cell i and is derived as:</p>
+\[\begin{equation}
+\varDelta RootComp_{i}^{}=\frac{FwaterStress_i\,\,\varDelta Rdf_{i}^{C-1}}{\sum_{i=1}^{i=N_{root}}{FwaterStress_i\,\,\varDelta Rdf_i^C}}
+\end{equation}\]
+<p>where \(Rdf_{i}\) is the vertical fraction of the root density function for each \(i\) cell &#91;&#37;&#93;; \(F_{WaterStress}\) is the reduction of root water uptake at pressure head \(ψ\) for every cell; and \(C\) is a parameter such that when \(C\) &#61; 1 the model is not compensated, and when \(C\) &#61; 0 the \(Rdf_{i}\) becomes constant throughout the whole root-zone depth &#40;\(i=N_{root}\)&#41;. In HyPix, \(C\) &#61; 0.5, as suggested by <a href="#_ENDREF_11">Li et al. &#40;2001&#41;</a> and <a href="#_ENDREF_12">Braud et al. &#40;2005&#41;</a>.</p>
+<div class="page-foot">
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Joseph Pollacco, Jesus-0Fernandez. Last modified: March 31, 2022.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+      </div> <!-- end of id=main -->
+  </div> <!-- end of id=layout -->
+  <script src="/SoilWater_ToolBox/libs/pure/ui.min.js"></script>
+  
+      <script src="/SoilWater_ToolBox/libs/katex/katex.min.js"></script>
+<script src="/SoilWater_ToolBox/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+  
+  
+</body>
+</html>

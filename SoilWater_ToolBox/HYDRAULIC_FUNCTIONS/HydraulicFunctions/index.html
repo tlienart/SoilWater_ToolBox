@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="/SoilWater_ToolBox/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/SoilWater_ToolBox/css/franklin.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/pure.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/side-menu.css">
+<!-- style adjustments -->
+<style>
+.franklin-content{padding-left:10%;}
+@media (min-width: 940px) {
+  .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;}
+  .header {width: 700px;}
+}
+</style>
+<link rel="icon" href="/SoilWater_ToolBox/assets/favicon.png">
+
+   <title>Soil hydraulic functions </title>  
+</head>
+<body>
+  <div id="layout">
+    <!-- Menu toggle / hamburger icon -->
+    <a href="#menu" id="menuLink" class="menu-link"><span></span></a>
+    <div id="menu">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="#">Pure-SM</a>
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/" class="pure-menu-link">Home</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu1/" class="pure-menu-link">Code blocks</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu2/" class="pure-menu-link">More goodies</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu3/" class="pure-menu-link">Tags</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="main"> <!-- Closed in foot -->
+      <div class="header">
+        <h1>Soil hydraulic functions </h1>
+        <h2>Using the Pure/Side-Menu template</h2>
+      </div>
+
+
+<!-- Content appended here -->
+<div class="franklin-content"><p>&lt;script type&#61;&quot;text/x-mathjax-config&quot;&gt;     MathJax.Hub.Config&#40;&#123; 		     TeX: &#123;       equationNumbers: &#123;         autoNumber: &quot;AMS&quot;       &#125;     &#125;,       tex2jax: &#123;         skipTags: &#91;&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;&#93;,         inlineMath: &#91;&#91;&#39;&#36;&#39;,&#39;&#36;&#39;&#93;&#93;       &#125;     &#125;&#41;;   &lt;/script&gt; &lt;script id&#61;&quot;MathJax-script&quot; async src&#61;&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config&#61;TeX-MML-AM_CHTML&quot;&gt;&lt;/script&gt;</p>
+<h1 id="soil_hydraulic_functions"><a href="#soil_hydraulic_functions" class="header-anchor">Soil hydraulic functions </a></h1>
+<h2 id="bimodal_kosugi_hydraulic_functions"><a href="#bimodal_kosugi_hydraulic_functions" class="header-anchor">Bimodal Kosugi hydraulic functions</a></h2>
+<p>The representation of the \(θ(ψ)\) and \(K(θ)\) functions is based on the dual porosity models of <a href="#_ENDREF_40">Pollacco <em>et al</em>. &#40;2017&#41;</a>, and we use the bimodal lognormal expressions of the Kosugi model from <a href="#_ENDREF_41">Fernández-Gálvez <em>et al</em>. &#40;2021&#41;</a>: </p>
+\[\begin{equation}
+\begin{cases}	\theta \left( \psi \right) =\theta _{\mathrm{Mat}}\left( \psi \right) +\theta _{\mathrm{Mac}}\left( \psi \right)\\	\theta _{\mathrm{Mat}}\left( \psi \right) =\frac{1}{2}\left( \theta _{s\mathrm{MacMat}}-\theta _r \right) \,\,erfc\left( \frac{\ln \psi  -\ln  \psi _m}{\sigma \sqrt{2} } \right) +\theta _r\\	\theta _{\mathrm{Mac}}\left( \psi \right) =\frac{1}{2}\left( \theta _s-\theta _{s\mathrm{MacMat}} \right) \,\,erfc\left( \frac{\ln \psi  -\ln  \psi _{m\mathrm{Mac}}}{\sigma _{\mathrm{Mac}}\sqrt{2} } \right)\\\end{cases}
+\end{equation}\]
+\[\begin{equation}
+\begin{cases}	K\left( \psi \right) =K_{\mathrm{Mat}}\left( S_{e\,\,\mathrm{Mat}}\left( \psi \right) \right) +K_{\mathrm{Mac}}\left( S_{e\,\,\mathrm{Mac}}\left( \psi \right) \right)\\	S_e=\frac{\theta -\theta _r}{\theta _s-\theta _r}\\	K_{\mathrm{Mat}}\left( \psi \right) =K_s\frac{\theta _{s\mathrm{MacMat}}-\theta _{\mathrm{r}}}{\theta _s-\theta _r}\,\,\sqrt{S_{e\,\,\mathrm{Mat}}\left( \psi \right)}\,\,\left[ \frac{1}{2}erfc\left( erfc^{-1}\left( 2S_{e\,\,\mathrm{Mat}}\left( \psi \right) \right) +\frac{\sigma}{\sqrt{2}} \right) \right] ^2\\	K_{\mathrm{Mac}}\left( \psi \right) =K_s\frac{\theta _{\mathrm{s}}-\theta _{s\mathrm{MacMat}}}{\theta _s-\theta _r}\,\,\sqrt{S_{e\,\,\mathrm{Mac}}\left( \psi \right)}\,\,\left[ \frac{1}{2}erfc\left( erfc^{-1}\left( 2S_{e\,\,\mathrm{Mac}}\left( \psi \right) \right) +\frac{\sigma _{\mathrm{Mac}}}{\sqrt{2}} \right) \right] ^2\\\end{cases}
+\end{equation}\]
+<p>where \(erfc\) is the complementary error function; \(θ\) &#91;L&lt;sup&gt;3&lt;/sup&gt; L&lt;sup&gt;-3&lt;/sup&gt;&#93; represents the volumetric soil water content and \(ψ\) &#91;L&#93; the soil water pressure, considering \(ψ > 0\) for unsaturated soils &#40;i.e. matric suction&#41;; \(θ_s\) &#91;L&lt;sup&gt;3&lt;/sup&gt; L&lt;sup&gt;-3&lt;/sup&gt;&#93; and \(θ_r\) &#91;L&lt;sup&gt;3&lt;/sup&gt; L&lt;sup&gt;-3&lt;/sup&gt;&#93; are the saturated and residual volumetric soil water content, respectively; ln \(ψ_m\) <a href="with the argument of ln in units of length, i.e., \(ψ_m\) in &#91;L&#93;">L</a> and \(σ\) &#91;-&#93; denote the mean and standard deviation of ln \(ψ\) &#91;L&#93;, respectively in the soil matrix domain; ln \(ψ_{mMac}\) &#91;L&#93; and \(σ_{Mac}\) &#91;-&#93; denote the mean and standard deviation of ln \(ψ\), respectively, in the macropore soil domain; \(θ_{sMacMat}\) &#91;L&lt;sup&gt;3&lt;/sup&gt; L&lt;sup&gt;-3&lt;/sup&gt;&#93; is the volumetric saturated water content that theoretically differentiates inter-aggregate pores &#40;structural macropores&#41; and matrix domains &#40;intra-aggregate micropores&#41;, defining the corresponding soil water pressure threshold between macropore and matrix \(ψ_{MacMat}\) &#91;L&#93;; \(K_s\) &#91;L T&lt;sup&gt;-1&lt;/sup&gt;&#93; is the saturated hydraulic conductivity; and \(S_{e\ Mat}\) &#91;-&#93; and \(S_{e\ Mac}\) &#91;-&#93; denote the effective saturation as a function of \(ψ\) in the soil matric and macropore domains, with values between 0 and 1. Finally, \(K(ψ)\) refers to the unsaturated hydraulic conductivity, written as a function of \(ψ\).</p>
+<h2 id="constrained_soil_bimodal_kosugi_hydraulic_parameters"><a href="#constrained_soil_bimodal_kosugi_hydraulic_parameters" class="header-anchor">Constrained soil bimodal Kosugi hydraulic parameters</a></h2>
+<p>Estimating the bimodal Kosugi soil hydraulic parameters from observed volumetric soil water content requires the simultaneous estimation of eight parameters &#40;\(θ_s\), \(θ_r\), \(σ\), \(ψ_m\), \(K_s\), \(θ_{sMacMat}\), \(σ_{Mac}\), and \(ψ_{mMac}\)&#41;, using limited measurement data. Here, we use the term ‘optimize’ in the estimation of the parameters since the task is to produce a set of values for the parameters that optimizes &#40;typically, minimizes&#41; some objective function. Here, optimization is used in the sense of parameter estimation.</p>
+<p>In certain cases where, for example, the measurements have a restricted range <a href="#_ENDREF_42">&#40;Pollacco <em>et al</em>., 2008b&#41;</a>, full inversion of the data to produce parametric estimates of the bimodal Kosugi soil hydraulic model is not possible, leading to highly sensitive parameters &#40;eg. <a href="#_ENDREF_43">Pollacco <em>et al</em>., 2008b</a>, <a href="#_ENDREF_44">2013</a>; <a href="#_ENDREF_45">Pollacco and Mohanty, 2012</a>&#41;. Reducing the sensitivity of the parameters requires either adding novel independent measurements or incorporating constraints to reduce the effective complexity of the model. Since gathering new measurements is, in this case, not feasible, here we use the set of constraints proposed by <a href="#_ENDREF_41">Fernández-Gálvez <em>et al.</em> &#40;2021&#41;</a>, which reduces the number of parameters to be optimized without compromising the fit of the hydraulic functions, while the estimated hydraulic parameters still have physical meaning. </p>
+<p>This set of constraints can be summarized as follows: \(θ_r\) is derived from \(σ\), \(ψ_{mMac}\) and \(σ_{Mac}\), which are considered constant from a fixed value of \(ψ_{MacMat}\), equal to 100 mm, and \(ψ_m\) and \(σ\) are dynamically constrained, based on the assumption that \(θ(ψ)\) and \(K(θ)\) are lognormally distributed. Therefore, the number of hydraulic parameters to be optimized is reduced from eight to five using the principles of soil physics. Although \(θ_s\) can be derived from total porosity when soil bulk density and particle density data are available, in this case it is an optimized parameter with a feasible range determined from the maximum observed \(θ\) in the corresponding layer. The soil hydraulic parameters are optimized using the bimodal \(θ(ψ)\) and \(K(θ)\) model described this <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions">section</a>. This is performed by matching the simulated \(θ\) time series from the HyPix hydrological model with the observed \(θ\) time series at the corresponding depth. </p>
+<p>The dynamic, physically feasible range of the five optimized bimodal Kosugi hydraulic parameters using the unconstrained conditions and the full set of constraints derived from <a href="#_ENDREF_41">Fernández-Gálvez <em>et al</em>. &#40;2021&#41;</a> is indicated in <a href="">Table 1</a>. In both cases, \(ψ_{MacMat}\) is constant, with a value of 100 mm and \(P_σ = 3\). Here, \(θ_r\) is derived from \(σ\) in <a href="">Eq. &#40;3&#41;</a> and <a href="">Table 1</a>, and is given by:</p>
+\[\begin{equation}
+\begin{cases}	\sigma^{*}=\frac{\sigma -\sigma_{min}}{\sigma_{max}-\sigma_{min}}\\	\theta_{r}\left( \sigma \right) =\,\,\theta_{rMax}\,\,\frac{1-e^{-\alpha_1\cdot \sigma^{*\,^{\alpha_2}}}}{1-e^{-\alpha_1}}\\\end{cases}
+\end{equation}\]
+<p>where \(θ_{rMax}\) is set at 0.20, the maximum value for \(θ_r\) that was found to be satisfactory; \(α_1 = 15\) and \(α_2 = 4\) are two optimized empirical parameters; \(σ^*\) &#91;-&#93; is the normalized \(σ\); and \(σ_{min}\) &#91;-&#93; and \(σ_{max}\) &#91;-&#93; are set at 0.75 and 4.00 from <a href="">Table 1</a>. Therefore, with all these simplifications and additional constraints, we define a model that requires only five parameters: \(θ_s\), \(σ\), \(ψ_m\), \(K_s\), and \(θ_{sMacMat}\).</p>
+<p>&lt;figcaption align &#61; &quot;center&quot;&gt;&lt;b&gt;Table 1 - Feasible dynamic range of the optimized bimodal Kosugi hydraulic parameters from observed θ. Both the unconstrained and constrained sets of hydraulic parameters have five parameters to be optimized. The difference is that in the dynamically constrained set of hydraulic parameters there is a relationship between σ and ψm &#40;Fernández-Gálvez et al., 2021&#41;. The feasible range of Ks is derived from Carsel and Parrish &#40;1988&#41;. For both the unconstrained and constrained sets of hydraulic parameters, ψMacMat &#61; 100 mm, and Pσ &#61; 3. θr&#40;σ&#41; is described in &#91;Eq. &#40;3&#41;&#93;.&lt;/b&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+<p>\(\\\) | \(\boldsymbol{\theta_{s}}\) &#91;m &lt;sup&gt;3&lt;/sup&gt;m&lt;sup&gt;-3&lt;/sup&gt;&#93; | \(\boldsymbol{\theta_{r}}\) &#91;m &lt;sup&gt;3&lt;/sup&gt;m&lt;sup&gt;-3&lt;/sup&gt;&#93;| \(\boldsymbol{σ}\) &#91;-&#93;| \(\boldsymbol{\psi _{m}}\) &#91;mm&#93;| \(\boldsymbol{K_{s}}\) &#91;cm h&lt;sup&gt;-1&lt;/sup&gt;&#93; | \(\boldsymbol{\theta_{sMacMat}}\) &#91;m &lt;sup&gt;3&lt;/sup&gt;m&lt;sup&gt;-3&lt;/sup&gt;&#93;| \(\boldsymbol{\psi _{mMac}}\) &#91;mm&#93; | \(\boldsymbol{σ_{Mac}}\) &#91;-&#93; –|–-|––––––––––|––-|––|–––––-|–––––-|––|–- \(\\\) |\(\\\) |\(\\\) |\(\\\) |\(\\\) |\(\\\) |\(\\\) |\(\\\) |\(\\\) | <strong>Min</strong> | \(Max(\theta)\) | \(\theta_{r}(σ)\) | 0.75 | \(\sqrt{\psi_{MacMat}}e^{σ_{min}P_{σ}}\) | 0.02 | \(0.75\theta_s\) | \(\sqrt{\psi_{MacMat}}\) | \(ln \psi_{MacMat}/2P_{σ}\) <strong>Max</strong> | 0.65 | \(\theta_{r}(σ)\) | 4.00 | \(\sqrt{\psi_{MacMat}}e^{σ_{max}P_{σ}}\) | 30.00 | \(\theta_s\) | \(\sqrt{\psi_{MacMat}}\) |\(ln \psi_{MacMat}/2P_{σ}\) \(\\\) |\(\\\) |\(\\\) |\(\\ \) |\(\\\) |\(\\\) |\(\\\) |\(\\\) |\(\\\) | <strong>Min</strong> | \(Max(\theta)\) | \(\theta_{r}(σ)\) | 0.75 | \(\sqrt{\psi_{MacMat}}e^{σP_{σ}}\) | 0.02 | \(0.75\theta_s\) | \(\sqrt{\psi_{MacMat}}\) | \(ln \psi_{MacMat}/2P_{σ}\) <strong>Max</strong> | 0.65 | \(\theta_{r}(σ)\) | 4.00 | \(\sqrt{\psi_{MacMat}}e^{σP_{σ}}\) | 30.00 | \(\theta_s\) | \(\sqrt{\psi_{MacMat}}\) | \(ln \psi_{MacMat}/2P_{σ}\)</p>
+<h2 id="bimodal_van_genuchten_hydraulic_functions"><a href="#bimodal_van_genuchten_hydraulic_functions" class="header-anchor">Bimodal van Genuchten hydraulic functions</a></h2>
+<h2 id="brorks_and_corey_hydraulic_functions"><a href="#brorks_and_corey_hydraulic_functions" class="header-anchor">Brorks and Corey hydraulic functions</a></h2>
+<h2 id="clapp_and_hornberger_hydraulic_functions"><a href="#clapp_and_hornberger_hydraulic_functions" class="header-anchor">Clapp and Hornberger hydraulic functions</a></h2>
+<div class="page-foot">
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Joseph Pollacco, Jesus-0Fernandez. Last modified: March 31, 2022.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+      </div> <!-- end of id=main -->
+  </div> <!-- end of id=layout -->
+  <script src="/SoilWater_ToolBox/libs/pure/ui.min.js"></script>
+  
+      <script src="/SoilWater_ToolBox/libs/katex/katex.min.js"></script>
+<script src="/SoilWater_ToolBox/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+  
+  
+</body>
+</html>

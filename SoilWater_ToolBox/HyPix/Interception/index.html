@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="/SoilWater_ToolBox/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/SoilWater_ToolBox/css/franklin.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/pure.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/side-menu.css">
+<!-- style adjustments -->
+<style>
+.franklin-content{padding-left:10%;}
+@media (min-width: 940px) {
+  .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;}
+  .header {width: 700px;}
+}
+</style>
+<link rel="icon" href="/SoilWater_ToolBox/assets/favicon.png">
+
+   <title>INTERCEPTION MODEL</title>  
+</head>
+<body>
+  <div id="layout">
+    <!-- Menu toggle / hamburger icon -->
+    <a href="#menu" id="menuLink" class="menu-link"><span></span></a>
+    <div id="menu">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="#">Pure-SM</a>
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/" class="pure-menu-link">Home</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu1/" class="pure-menu-link">Code blocks</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu2/" class="pure-menu-link">More goodies</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu3/" class="pure-menu-link">Tags</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="main"> <!-- Closed in foot -->
+      <div class="header">
+        <h1>INTERCEPTION MODEL</h1>
+        <h2>Using the Pure/Side-Menu template</h2>
+      </div>
+
+
+<!-- Content appended here -->
+<div class="franklin-content"><p>&lt;script type&#61;&quot;text/x-mathjax-config&quot;&gt;     MathJax.Hub.Config&#40;&#123; 		     TeX: &#123;       equationNumbers: &#123;         autoNumber: &quot;AMS&quot;       &#125;     &#125;,       tex2jax: &#123;         skipTags: &#91;&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;&#93;,         inlineMath: &#91;&#91;&#39;&#36;&#39;,&#39;&#36;&#39;&#93;&#93;       &#125;     &#125;&#41;;   &lt;/script&gt; &lt;script id&#61;&quot;MathJax-script&quot; async src&#61;&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config&#61;TeX-MML-AM_CHTML&quot;&gt;&lt;/script&gt;</p>
+<h1 id="interception_model"><a href="#interception_model" class="header-anchor">INTERCEPTION MODEL</a></h1>
+<p>The parsimonious physically based interception model is an improvement of <a href="#_ENREF_21">Pollacco <em>et al.</em> &#40;2013a&#41;</a>. The following interception model uses <em>potential evaporation of a wet canopy</em> &#40;<a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Potential_evapotranspiration">\( \varDelta Pet_{int} \) &#91;L&#93;</a>&#41;, \(LAI\) &#91;-&#93;, and <em>extinction coefficient for solar radiation</em> &#40;\(K_{g}\) &#91;-&#93;&#41; set to 0.5. The <em>gross precipitation depth</em> that falls on top of a canopy, &#91;L&#93;, is partitioned following <a href="#_ENREF_22">Rutter <em>et al.</em> &#40;1971&#41;</a> as:</p>
+\[\begin{equation} 
+	\varDelta Pr\,\,=\,\,\varDelta Pr_{int}+\varDelta Pr_{ground}
+\end{equation}\]
+<p>where \( \varDelta Pr_{ground} \) &#91;L&#93; is the fraction of precipitation reaching the soil surface through gaps in the canopy, and \(\varDelta Pr_{int}\) &#91;L&#93; is the <em>intercepted precipitation depth.</em> They are computed as:</p>
+\[\begin{equation}
+ \varDelta Pr_{ground}\,\,=G_{apFrac}\,\,\varDelta Pr\\                                                               \varDelta Pr_{int}=\,\,\left[ 1-G_{apFrac} \right] \,\,\varDelta Pr 
+ \end{equation}\]
+<p>where the gap fraction, \(G_{apFrac}\) &#91;-&#93;, is calculated using the Beer–Lambert law as:</p>
+\[\begin{equation}
+G_{apFrac}=1-\,\,e^{-K_g⋅LAI}
+ \end{equation}\]
+<p>The foliage of the canopy is considered as a water storage filled up to a depth \(Sint\) &#91;L&#93;, <em>with a saturated storage capacity</em>, \(Sint_{sat}\) &#91;L&#93;. When the canopy is fully saturated &#40;\(Sint=Sint_{sat}\)&#41;, then any excess of \(\varDelta Pr_{int}\) overflows, \(\varDelta Pr_{over}\) &#91;L&#93;, to the soil surface. The amount of water that reaches the soil surface is the <em>throughfall precipitation</em> &#91;L&#93;:</p>
+\[\begin{equation}
+ \varDelta Pr_{through}=\varDelta Pr_{ground}+\varDelta Pr_{over} 
+ \end{equation}\]
+<p>The water storage of the canopy is first computed as:</p>
+\[\begin{equation}
+ Sint^t=Sint^{t-1}+\varDelta Pr_{int} 
+ \end{equation}\]
+<p>A fraction of the water from \(Sint\) will be evaporated at the rate of the <em>actual evaporation</em> depth, \(\varDelta Evap_{int}\) &#91;L&#93;, during and after a rainfall event. The maximum quantity of water that can be evaporated from a wet canopy during a time-step is computed according to <a href="#_ENREF_3">Deardorff &#40;1978&#41;</a>, which assumes that \(\varDelta Evap_{int}\) is proportional to the fraction of the canopy that is wet:</p>
+\[\begin{equation}
+ \varDelta Evap_{int}=\,\,\varDelta Pet_{int}\left[ \frac{Min\left\{ Sint^t;Sint_{sat} \right\}}{Sint_{sat}} \right] ^{Pevap_{int}} 
+\end{equation}\]
+<p>where \(Pevap_{int}\) &#91;-&#93; is a constant parameter for which <a href="#_ENREF_3">Deardorff &#40;1978&#41;</a> gives a constant value of 2/3.</p>
+<p>\( \varDelta Pr_{over} \) is computed as:</p>
+\[\begin{equation}
+\begin{cases}                                                               \varDelta Pr_{over}=\,\,Min\left[ Sint_{}^{t-1}+\varDelta Pr_{int}-\varDelta Evap_{int}-S_{sat}^{}\,\,;\,\,0 \right]\\                                                       Sint_{}^{t}=Min\left[ Sint_{}^{t-1}+\varDelta Pr_{int}-\varDelta Evap_{int}-\varDelta Pr_{over};0 \right]\\\end{cases} 
+\end{equation}\]
+<p>Rainfall interception of gross rainfall loss, \(InterceptionLoss\) &#91;0–1&#93;, is computed by:</p>
+\[\begin{equation}
+ InterceptionLoss\,\,=1-\frac{\sum_{\mathrm{t}=1}^{\mathrm{N}_{\mathrm{t}}}{\varDelta Pr_{through}^{\mathrm{t}}}}{\sum_{\mathrm{t}=1}^{\mathrm{N}_{\mathrm{t}}}{\varDelta Pr^{\mathrm{t}}}} 
+\end{equation}\]
+<p>In the HyPix model the rainfall interception module is run first, followed by the computation of <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Interceptionhttps://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYPIX/Potential_evapotranspiration">\(\varDelta Pet_{transp}\) and \(\varDelta Pet_{evap}\)</a>.</p>
+<div class="page-foot">
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Joseph Pollacco, Jesus-0Fernandez. Last modified: March 31, 2022.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+      </div> <!-- end of id=main -->
+  </div> <!-- end of id=layout -->
+  <script src="/SoilWater_ToolBox/libs/pure/ui.min.js"></script>
+  
+      <script src="/SoilWater_ToolBox/libs/katex/katex.min.js"></script>
+<script src="/SoilWater_ToolBox/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+  
+  
+</body>
+</html>

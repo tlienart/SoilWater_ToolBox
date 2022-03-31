@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="/SoilWater_ToolBox/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/SoilWater_ToolBox/css/franklin.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/pure.css">
+<link rel="stylesheet" href="/SoilWater_ToolBox/css/side-menu.css">
+<!-- style adjustments -->
+<style>
+.franklin-content{padding-left:10%;}
+@media (min-width: 940px) {
+  .franklin-content {width: 640px; margin-left: 0px; padding-left: 80px;}
+  .header {width: 700px;}
+}
+</style>
+<link rel="icon" href="/SoilWater_ToolBox/assets/favicon.png">
+
+   <title>Vertical Multistep Optimization</title>  
+</head>
+<body>
+  <div id="layout">
+    <!-- Menu toggle / hamburger icon -->
+    <a href="#menu" id="menuLink" class="menu-link"><span></span></a>
+    <div id="menu">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="#">Pure-SM</a>
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/" class="pure-menu-link">Home</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu1/" class="pure-menu-link">Code blocks</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu2/" class="pure-menu-link">More goodies</a></li>
+          <li class="pure-menu-item "><a href="/SoilWater_ToolBox/menu3/" class="pure-menu-link">Tags</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="main"> <!-- Closed in foot -->
+      <div class="header">
+        <h1>Vertical Multistep Optimization</h1>
+        <h2>Using the Pure/Side-Menu template</h2>
+      </div>
+
+
+<!-- Content appended here -->
+<div class="franklin-content"><p>&lt;script type&#61;&quot;text/x-mathjax-config&quot;&gt;     MathJax.Hub.Config&#40;&#123; 		     TeX: &#123;       equationNumbers: &#123;         autoNumber: &quot;AMS&quot;       &#125;     &#125;,       tex2jax: &#123;         skipTags: &#91;&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;&#93;,         inlineMath: &#91;&#91;&#39;&#36;&#39;,&#39;&#36;&#39;&#93;&#93;       &#125;     &#125;&#41;;   &lt;/script&gt; &lt;script id&#61;&quot;MathJax-script&quot; async src&#61;&quot;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config&#61;TeX-MML-AM_CHTML&quot;&gt;&lt;/script&gt;</p>
+<h1 id="vertical_multistep_optimization"><a href="#vertical_multistep_optimization" class="header-anchor">Vertical Multistep Optimization</a></h1>
+<p>This section describes the strategy to optimize the hydraulic parameters of the parsimonious bimodal <a href="https://manaakiwhenua.github.io/SoilWater_ToolBox.jl/HYDRAULIC_FUNCTIONS/HydraulicFunctions">θ&#40;ψ&#41; and K&#40;θ&#41;</a> for each layer of the soil profile by using the <a href="">HyPix</a> model. Each layer of the profile corresponds to the depths where \(θ\) is experimentally measured. </p>
+<p>It is challenging to optimize a large number of parameters simultaneously, and <a href="#_ENDREF_46">Pollacco &#40;2005&#41;</a> found that optimizing each layer separately, one by one, produces poor results, particularly for a highly heterogeneous soil profile, in the presence of lenses of clay, pebbles, or macropore flow. This is because an optimization method that isolates each layer without considering the overall water flow in the soil profile causes unrepresentative parameters, and thus poor representation of the soil water fluxes. Therefore, we present an inverse modelling algorithm for layered soil. </p>
+<p>When optimizing the profile soil hydraulic parameters, initially the soil profile is considered to be homogeneous. Then a stepwise grouping of local layers &#40;zones defined by the end-user&#41; allows heterogeneous patterns to be addressed. The optimization of the different layers in a specified order and pattern is presented in <a href="">Table 1</a>, where 0 or 1 indicates which soil layer is optimized simultaneously at each specific step. For example, layers containing the number 1 in <a href="">Table 1</a> show the grouping of different layers &#40;zones&#41; in which the soil hydraulic parameters have the same optimal value &#40;i.e., homogeneous layer&#41;.</p>
+<p>In the first step &#40;<em>Opt_1</em>&#41; it is assumed that the soil is homogeneous, and therefore the whole profile is modelled with five optimized soil hydraulic parameters, and the same values were given for each parameter in the different layers of the soil profile. The derived effective optimal hydraulic parameters will be used for hydrological models requiring only one homogeneous layer. In the second step &#40;<em>Opt_2</em>&#41; &#40;optimal hydraulic parameters for models requiring two layers&#41;, only the parameters of the upper half of the profile are optimized, maintaining the bottom half &#40;below the root zone&#41; with the value of optimized parameters derived from the previous step; and then the third step &#40;<em>Opt_3</em>&#41; &#40;optimal hydraulic parameters for models requiring three layers, etc&#41; operates on the deeper zone, keeping the upper half of the profile with the previously optimized parameters.</p>
+<p>Optimizing from top to bottom produce better results than from bottom to top, because water percolates downwards and so a change of the hydraulic parameters of the top layer will affect the lower layer. Note that the top layer is also the layer where the water content has larger variations with time. Each zone of the profile is successively split into two zones from top to bottom, and the optimization is repeated by copying the values of the optimal parameters from the previous optimization step. The vertical multistep optimization assumes that the number of soil layers, \(iL\), corresponds to the number of \(θ\) observations, located at the centre of each soil layer.</p>
+<p>&lt;figcaption align &#61; &quot;center&quot;&gt;&lt;b&gt;Table 1a - The vertical multistep optimization method for an odd number of measurement depths is described, where the order in which the optimization is performed for the different groups of layers, iL, is presented for five measurement depths. The layers that correspond to 0 are the cells that keep their values from the previous optimization steps. The N layer splitting ‘mimics’ the number of measurement depths.&lt;/b&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+<table><tr><th align="right">Layers</th><th align="right"><em>Opt_1</em></th><th align="right"><em>Opt_2</em></th><th align="right"><em>Opt_3</em></th><th align="right"><em>Opt_4</em></th><th align="right"><em>Opt_5</em></th><th align="right"><em>Opt_6</em></th><th align="right"><em>Opt_7</em></th><th align="right"><em>Opt_8</em></th><th align="right"><em>Opt_9</em></th></tr><tr><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td></tr><tr><td align="right"><strong>iL</strong></td><td align="right">1</td><td align="right">2a</td><td align="right">2b</td><td align="right">3a</td><td align="right">3b</td><td align="right">4a</td><td align="right">4b</td><td align="right">5a</td><td align="right">5b</td></tr><tr><td align="right"><strong>1</strong></td><td align="right">1</td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">0</td></tr><tr><td align="right"><strong>2</strong></td><td align="right">1</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">1</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">0</td></tr><tr><td align="right"><strong>3</strong></td><td align="right">1</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td></tr><tr><td align="right"><strong>4</strong></td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">1</td><td align="right">0</td></tr><tr><td align="right"><strong>5</strong></td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">1</td></tr></table>
+<p>&lt;figcaption align &#61; &quot;center&quot;&gt;&lt;b&gt;Table 1b - The vertical multistep optimization method for pair number of measurements depths is described, where the order in which the optimization is performed for the different groups of layers, iL is presented for four measurement depths. The layers that correspond to 0 are the cells that keep their values from the previous optimization steps. The N layer splitting ‘mimics’ the number of measurement depths.&lt;/b&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+<table><tr><th align="right">Layers</th><th align="right"><em>Opt_1</em></th><th align="right"><em>Opt_2</em></th><th align="right"><em>Opt_3</em></th><th align="right"><em>Opt_4</em></th><th align="right"><em>Opt_5</em></th><th align="right"><em>Opt_6</em></th><th align="right"><em>Opt_7</em></th></tr><tr><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td><td align="right">\(\\\)</td></tr><tr><td align="right"><strong>iL</strong></td><td align="right">1</td><td align="right">2a</td><td align="right">2b</td><td align="right">3a</td><td align="right">3b</td><td align="right">4a</td><td align="right">4b</td></tr><tr><td align="right"><strong>1</strong></td><td align="right">1</td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">0</td></tr><tr><td align="right"><strong>2</strong></td><td align="right">1</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td></tr><tr><td align="right"><strong>3</strong></td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">1</td><td align="right">0</td></tr><tr><td align="right"><strong>4</strong></td><td align="right">1</td><td align="right">0</td><td align="right">1</td><td align="right">0</td><td align="right">0</td><td align="right">0</td><td align="right">1</td></tr></table>
+<h2 id="improvement_of_the_accuracy_by_increasing_the_number_of_layers"><a href="#improvement_of_the_accuracy_by_increasing_the_number_of_layers" class="header-anchor">Improvement of the accuracy by increasing the number of layers</a></h2>
+<p>Relative errors are presented below. We assume that the HyPix model computed with the greatest number of layers, <em>iL</em>, is reference &#40;free of error&#41;, <em>ref</em>, and models computed with a reduced number of layers are simulated, <em>sim</em>. The reduction of error in different steps of computation &#40;a&#41; drainage <a href="">Eq. &#40;1&#41;</a>, &#40;b&#41; evapotranspiration <a href="">Eq. &#40;2&#41;</a> and &#40;c&#41; root zone soil water content &#40;top 600 mm&#41; <a href="">Eq. &#40;3&#41;</a> is possible by increasing the number of layers, <em>iL</em>, as described in <a href="">Table 1</a>.</p>
+<p>Relative error &#40;&#37;&#41; for <em>drainage</em></p>
+\[\begin{equation}
+\zeta_Q = \frac{\left| \sum_{t=1}^{t=N_t}{\varDelta T^t\,\,Q_{sim_{N_z+\frac{1}{2}}}^{t}-\sum_{t=1}^{t=N_t}{\varDelta T^t Q_{ref_{N_z+\frac{1}{2}}}^{t}}} \right|}{\sum_{t=1}^{t=N}{\varDelta T^t Q_{ref_{N_z+\frac{1}{2}}}^{t}}}
+\end{equation}\]
+<p>Relative error &#40;&#37;&#41; for <em>evapotranspiration</em></p>
+\[\begin{equation}
+\begin{cases}	\varDelta Et = \varDelta Evap + \varDelta Rwu \\	\zeta_{et} = \frac{\left| \sum_{t=1}^{t=N_t}{\varDelta Et_{sim}^t-\sum_{t=1}^{t=N_t}{\varDelta Et_{ref}^t}} \right|}{\sum_{t=1}^{t=N_t}{\varDelta Et_{ref}^t}}\\
+\end{cases}
+\end{equation}\]
+<p>Relative error &#40;&#37;&#41; for <em>root zone soil water content</em> </p>
+\[\begin{equation}
+\zeta _{swc}=\frac{\left| \sum_{t=1}^{N_t}{\sum_{\mathrm{i}=1}^{Z_{Nroot}}{\theta_{sim_{i}}^{t}-}}\sum_{t=1}^{N_t}{\sum_{\mathrm{i}=1}^{Z_{Nroot}}{\theta_{ref_{i}}^{t}}} \right|}{\sum_{t=1}^{N_t}{\sum_{\mathrm{i}=1}^{Z_{Nroot}}{\theta_{ref_{i}}^{t}}}}
+\end{equation}\]
+<h2 id="weighted_objective_function_of_the_multistep_optimization"><a href="#weighted_objective_function_of_the_multistep_optimization" class="header-anchor">Weighted objective function of the multistep optimization</a></h2>
+<p>The global optimizer searches for the optimal hydraulic parameters by minimizing a weighting objective function, \(WOF\). We selected the robust global optimiser <a href="https://github.com/robertfeldt/BlackBoxOptim.jl">BlackBoxOptim v0.5.0</a> written in Julia <a href="#_ENDREF_47">&#40;Bezanson <em>et al</em>. 2017&#41;</a> and selected the <em>adaptive<em>de</em>rand<em>1</em>bin_radiuslimited</em> method. </p>
+<p>We designed the <em>WOF</em> to address the issue that observed \(θ\), \(θ_{obs}\) &#91;L&lt;sup&gt;3&lt;/sup&gt; L&lt;sup&gt;-3&lt;/sup&gt;&#93;, in deeper layers &#40;below the rooting zone&#41;, contains greater uncertainties compared to \(θ_{obs}\) measurements in the rooting zone. It is also important that simulated \(θ\), \(θ_{sim}\) &#91;L&lt;sup&gt;3&lt;/sup&gt; L&lt;sup&gt;-3&lt;/sup&gt;&#93;, gives more accurate predictions in the rooting zone compared to below the rooting zone. This is because all the dynamism of soil evaporation and root water uptake takes place in the rooting zone. Prioritizing the root zone by optimizing from top to bottom is performed in the algorithm used by the vertical multistep optimization &#40;see above&#41;. This is performed by introducing a weighting, \(W\), in the \(WOF\) by assuming the measurements placed at different depths are equally spaced. The \(WOF\) is computed as follows:</p>
+\[\begin{equation}
+\begin{cases}	W_{iL}=2\frac{N_{iL}+1-iL}{N_{iL}\left( N_{iL}+1 \right)}\\	\sum_{iL=1}^{N_{iL}}{W_{iL}=1}\\	WOF_{\theta}=\sqrt{\frac{\sum_t^{N_t}{\sum_{iL}^{N_{iL}}{W_{iL}\left| \theta obs_{iL}^{t}-\theta sim_{iL}^{t} \right|^2}}}{N_{iL}\,\,N_t}}\\\end{cases}
+\end{equation}\]
+<p>where \(N_{iL}\) is the total number of layers, \(iL\) , where \(θ\) is measured; \(N_t\) is the total number of time-steps; and \(θ_{obs}\) and \(θ_{sim}\)  are observed and simulated \(θ\), respectively.</p>
+<div class="page-foot">
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Joseph Pollacco, Jesus-0Fernandez. Last modified: March 31, 2022.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div><!-- CONTENT ENDS HERE -->
+      </div> <!-- end of id=main -->
+  </div> <!-- end of id=layout -->
+  <script src="/SoilWater_ToolBox/libs/pure/ui.min.js"></script>
+  
+      <script src="/SoilWater_ToolBox/libs/katex/katex.min.js"></script>
+<script src="/SoilWater_ToolBox/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+  
+  
+</body>
+</html>
